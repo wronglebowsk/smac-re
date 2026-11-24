@@ -1,0 +1,4 @@
+run1 rc=0 sha256=1c67bfc29723e1aa
+run2 rc=0 sha256=1c67bfc29723e1aa
+stdout identical: True
+PASS M371-TWICE: byte-identical (PASS M371: 18/18 gates digest 4e82206112fe63ad)

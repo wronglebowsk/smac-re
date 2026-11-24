@@ -630,6 +630,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **PITFALL**: ghidra_out/index.csv ends FUN_00510730 at 0x51080b; four handler stores at
   0x510901..0x5109f8 need pad-delimited attribution, not the index (`:30-42`).
 
+
 ## Session 337-chain1 (2026-11-24) — B36: the faction-relations STATE MACHINE (10/10, 14 mutants, zero box)
 
 - **ACCEPT** `python3 -u -m sim.relations` -> **`PASS B36: 10/10 gates  digest b20f5818dee2d861`** (`evidence/b36_relations.txt:82`), rerun byte-identical; `--b36` relays it. **Harness** `python3 -u scripts/b36_mutate.py` -> `RUN PASS 14 mutants, NO-OP []` (`evidence/b36_mutate.txt:16`).
@@ -639,3 +640,30 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **REVIEW #402** (4 P1 / 6 P2, all fixed in the instrument): G0 pairs stores with stored ops, G1 pins the SIX-block shape against a 10-entry op table, G2 adds a FLAT executor, G3 derives its expectations from the program, G5 counts the war-only class (2,563), G6 pins the 16-insn window + ZF semantics, G7 reads the poster strings from terran.exe via the PE table; 14 mutants. B18 stub carries full `path:line` (`--verify` rejects bare cites).
 - **PITFALL**: a pre-state carrying 0x1 without 0x2 is NOT repaired by a write that lacks pact - the first G5 draft asserted the wrong invariant and collected 320 false violations. Scope "pact implies treaty" to the WRITE.
 - No new retraction; M364's AT WAR (M369) and M368's ranked ladder stay retracted. NAMED rotated `## B18` (sha1 `da5bb857bde0`, `--verify` PASS).
+
+## Session 337-chain2 (2026-11-24) — M371: the war-initiation hosts' 0x8 is COMMLINK; contact and vendetta are TWO bits
+
+- **ACCEPT** `python3 -u scripts/m371_war_contact.py` -> **`PASS M371: 18/18 gates`** digest
+  `4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`); `scripts/m371_twice.py` byte-identical
+  (`evidence/m371_twice.txt:4`); `scripts/m371_mutate.py` **27/27 killed** (`evidence/m371_mutate.txt:35`).
+- **HOSTS** (`:8-25`): 10 setter calls in the four hosts; the 6 bit-8 rows are exactly
+  {0x554389 0x80000008, 0x554426 0x88000008, 0x554e88 0x18, 0x55566e+0x555bb9 0x88000008,
+  0x507653 0x80000018}. Roles: FUN_00554d10 MAJORATROCITY, FUN_00507460 AIDSTHEM/AIDSUS,
+  FUN_005551e0 -> FUN_00554350 @0x5558cf.
+- **SETTER LAW** (`:28-40`): `test bl,0x10`@0x551abf -> measured `or ebx,0x80000108`@0x551b11
+  (31,8,0x100): any war request leaves as war+contact, both directions 0x551be6/0x551c09.
+  16 callers request war with NO contact bit (14x0x10, 0x8010, 0x50), incl. both FUN_005076d0
+  exits (`:64-68`).
+- **PEACE** (`:35-40`): of three and-masks x2 sites only the 0x7 mask 0xffee7faf clears 0x10;
+  none clears bit 8. Pure-8 writes = 4: new game 0x5a7c0a, council 0x42999d, commit 0x4dae13,
+  pod 0x56f5ad (`:69-76`).
+- **READS** (`:74-80`): `(rel&0x40018)==8`@0x555491, `(rel&0x18)==8`@0x555502; the atrocity
+  host tests `al,0x10`@0x554e6b BEFORE writing 0x18.
+- **NOUNS** (`:88-97`): id 8 -> labels.txt:886 "Commlink"; 0x10 -> :657 "Vendetta".
+- **DECISION: two bits** — rival "8 = war companion" DEAD on three printed predictions (R1
+  `:108-113`); pending masks measured 3x0x88000008 + 1x0x80000008 with no 0x10 (R2 `:115-118`);
+  a stored 0x18 is the setter's implication (R3).
+- **OPEN**: 0x88000008 bits 27/31 (INF); 24 carried sites (5 register masks, 19 not visible);
+  the 0x100. **PITFALL**: pushes split by lea/shl — scan 14 insns back, require a 3-push run
+  with one immediate (0x554426; MU21). `## M318` rotated to
+  `docs/named-archive-m371-rows.md` (`evidence/m371_named_rotate.txt:1`).

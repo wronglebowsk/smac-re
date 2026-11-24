@@ -1103,17 +1103,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | REVIEW ROUND #317 + the squash title: the title's 459f47e3178f439d / 12-12+1 are the PRE-REVIEW harness; the ACCEPT row is what held at merge head (same defect as M314's "20/20"). Governance note - adds no byte claim | - | lead |
 | OPEN (one lane CLOSED by M321): what gates the 8 - `BYTE PTR [eax+0x38],0x40` x3 is now NAMED (base_array field 56 bit 6, gating the FUN_004f41f0 talent-request leg: `NAMED ## M321`, `evidence/m321_memo_owners.txt:30-34`); still unnamed: al,0x10; eax,0x1; ecx,eax. Also open: 0x4f3f7f callers; never live. Caveat: `guarded()` accepts via-copy on copy-liveness AT THE JCC (over-approximation) - the 4/8 split stands on agreement with M315 + the pinned kinds | - | lead |
 
-## M318 (s289, STATIC, zero box; 12/12+1 NO-OP) - pick (iv) ANSWERED: the selection-REFRESH PAIR = FUN_004e8d60 (selected-base UNIT-SUPPORT CENSUS) then FUN_004e78e0 (selected-base PANE REFRESH); both void(void), driven by the CURRENT selection
-
-| claim | evidence | conf |
-|---|---|---|
-| PAIR: 12 back-to-back sites (gap 5) in 7 owners = M315's 12 memo sites; each follows a ds:0x68cbb4 store within 17 B of the SECOND call (worst = 17); the REFRESH tuple holds TARGETS | G2/G3 (`evidence/m318_refresh_pair.txt:6-35`) | V |
-| A = UNIT-SUPPORT CENSUS: unit walk (count ds:0x985af0, stride 0x34), faction + home-base filter (unit+0x2e == ds:0x68cbb0); yield triad 4e6960/4e6d40/4e7070 switched on unit+0x26; over-capacity bit 0x10 (limit 94d684 clamp 0..7); foreign-tile bits 0x400000/0x200000 (4e3b50 owner, keyed 94d690 ==-3/<-3); 6-store bank 8f0c2c..8f0cc8 | C1/C2 (`:37-53,55-75`) | V (structure) / INFERRED (nouns) |
-| B = PANE REFRESH: first call 4e63b0 scan-pool rebuild @4e78e9; rows from faction array 94dc34 into pane+0xbc..; dispatcher 4e75f0 x7; region bits 507410 x5 (first 0x1d); base flags +0x95da9c x5 halve unimproved rows; 15 selection reads; 8f0c68 countdown | C1/C3 (`:37-53,77-86`) | V (structure) / INFERRED (display) |
-| KIND LAW SHARED: dispatcher 4e75f0 switch (cmp 3) = same triad + case-3 ds:0x8f0cc8=0, identical to A's inline switch | C4 (`:88-91`) | V |
-| ACCEPT: `m318_refresh_pair.py` twice-equal, PRINTED digest 2e81643277e3a23b (`:100`, green `:102`); `m318_mutate.py` 17/17+1 NO-OP 39e6ce9f2334fe87 (`evidence/m318_mutate.txt:21`) | as cited | V |
-| REVIEW #311 (3 P2 accepted): condition pins added (home-base cmp/je, 94d684 clamp chain, dispatcher ja + jump-table BYTES from the PE); G3 reach measured store->SECOND call (worst 17, was implicitly 22); digest now computed+printed by the instrument (was an external file hash). MU14-MU18 gate the fixes | `evidence/m318_mutate.txt:15-20` | V |
-| OPEN: kinds' game words (resource triad candidate); unit+0x26; the 52-B array 98ada8 indexed by unit+0xa; pane+3 clamp byte | - | lead |
+## M318 — VERBATIM at `docs/named-archive-m371-rows.md` (sha1 `3f2a4dfaf04a31685049d1e5864f516f48435e09`, 2070 B); this stub governs: the selection-REFRESH PAIR = FUN_004e8d60 (selected-base unit-support census) then FUN_004e78e0 (pane refresh)
 
 ## M317 (s288, STATIC, zero box; 22/22+1 NO-OP post-review) - pick (iii') ANSWERED: FUN_00556690(faction) = per-faction AI STRATEGY PASS: decides goals-at-bases/units, region-state flips, inline unit orders, goal cancels
 
@@ -1654,6 +1644,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | `FUN_005076d0` pushes 0x10 on both exits (0x507abc/0x507c6d), 0 push 0x8: the war record carries 8 only via the setter's implication | `:117-121` | V MU13,14 |
 | RIVALS refuted: AT WAR (pod/council set it with war bits clear), high-dword label (0x80000008/0x80002000 = other texts), bookkeeping flag (row 1 is a page noun), case-8 membership (same guard on a non-war option) | `:123-140` | V MU13,16,18,20,37 |
 | INF: is 0x8 also the AI's "can address them" predicate inside the 0x18/0x88000008 war writes? | - | INF |
+
 ## B36 (s337-chain1, BUILD 10/10, zero box; 14 mutants, review #402 hardened) — the relations STATE MACHINE: FUN_00551a20 extracted and RUN. ACCEPT `python3 -u -m sim.relations` -> `PASS B36: 10/10` `b20f5818dee2d861` x2 (`evidence/b36_relations.txt:82`); harness 14/14 NO-OP `[]` (`evidence/b36_mutate.txt:16`).
 | claim | ev | conf |
 |---|---|---|
@@ -1664,3 +1655,13 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | TRANSCRIPT 16/16 (`ac8c2caad0d71d55`); classifier chain @0x507975..0x5079a7 (16 insns) == sim.classify on 65,536 pairs; pact+treaty does NOT satisfy a want of treaty | `evidence/b36_relations.txt:58,61-68` | V MU3,7,13 |
 | ACTION LAYER (4,0x691144)=(ENEMYTRUCE), (2,0x691150)=(ENEMYTREATY), (1,none) — the BYTES read through the PE table at image base 0x400000; 5 rivals differ, min 2,424 | `evidence/b36_relations.txt:69-78` | V MU8,9 |
 | UNMODELED: the nouns of 0x800000 / 0x40 / 0x8000 / 0x10000 / 0x100000; which site fires each transition in a live game | - | lead |
+
+## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..128) of `evidence/m371_war_contact.txt:8`.
+| claim | evidence | conf |
+|---|---|---|
+| HOSTS/SETTER: 6/10 host setter calls carry bit 8 — FUN_00554350 0x80000008@0x554389 + 0x88000008@0x554426, FUN_00554d10 0x18@0x554e88, FUN_005551e0 0x88000008@0x55566e/0x555bb9, FUN_00507460 0x80000018@0x507653; `test bl,0x10`@0x551abf -> measured `or ebx,0x80000108`@0x551b11 stores war+contact both ways 0x551be6/0x551c09 | `:8-40` G1a,G2a,G2b | V MU1-2,5-8 |
+| WAR ALONE: 16 callers name 0x10/0x8010/0x50 with NO bit 8 (both FUN_005076d0 exits) — contact is supplied by the setter, never requested | `:64-68` G3b | V MU9-12 |
+| PEACE keeps bit 8 (only 0xffee7faf clears 0x10, of three masks x2 sites); CONTACT ALONE: 4 exact-0x8 writes (new game 0x5a7c0a, council 0x42999d, commit 0x4dae13, pod 0x56f5ad) | `:35-40,:69-76` G2c,G4a | V MU3-4,13-15 |
+| READ AS PREDICATE: `(rel&0x40018)==8`@0x555491, `(rel&0x18)==8`@0x555502; FUN_00554d10 `test al,0x10`@0x554e6b before 0x18 | `:74-80` G4b,G4c | V MU16-18 |
+| NOUNS id 8 = labels.txt:886 "Commlink", 0x10 = :657 "Vendetta"; RIVAL '8=war companion' DEAD on 3 predictions; pending masks measured (3x0x88000008, 1x0x80000008, no 0x10) | `:88-123` G5a,R1-R2 | V MU19-20,26-27 |
+| ACCEPT `PASS M371: 18/18 digest 4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`), twice byte-identical (`evidence/m371_twice.txt:4`); harness 27/27 (`evidence/m371_mutate.txt:35`); OPEN: 0x88000008 bits 27/31 (INF), 24 carried sites, 0x100 | as cited | V |
