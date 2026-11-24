@@ -1752,6 +1752,14 @@ def run_b37(sav_path, results):
     return stt.main([])
 
 
+def run_b38(sav_path, results):
+    """Rung B38: the #SOCIO SE-effect matrix - sim/socio.py authors every claim (the grid, the
+    application, the agenda consumer), so --b38 and `python3 -m sim.socio` cannot print
+    different text."""
+    from . import socio
+    return socio.main([])
+
+
 def run_b35(sav_path, results):
     """Rung B35: WHO calls the grant family - sim/grantcall.py authors every claim (the site
     census, the item decode, the mapper law, the recorded births), so --b35 and
@@ -1979,6 +1987,8 @@ def main(argv=None):
     ap.add_argument("--b36", nargs="*", metavar="ARG",
                     help="rung B36: the faction-relations state machine - writer parity, "
                          "classifier chain, action layer (no input needed)")
+    ap.add_argument("--b38", nargs="*", metavar="ARG",
+                    help="B38: the #SOCIO SE-effect matrix (relays sim.socio)")
     ap.add_argument("--b37", nargs="*", metavar="ARG",
                     help="rung B37: the treaty lifecycle - arm/countdown/expiry, the peace-vs-war "
                          "null write (no input needed)")
@@ -2093,6 +2103,8 @@ def main(argv=None):
         return run_b34(None, results)
     if args.b36 is not None:
         return run_b36(None, results)
+    if args.b38 is not None:
+        return run_b38(None, results)
     if args.b37 is not None:
         return run_b37(None, results)
     if args.b35 is not None:

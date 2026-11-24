@@ -1483,3 +1483,41 @@ DECLARED UNMODELED: what `0x800` (set by both `0x840` arms) and `0x20000`/`0x400
 same masks) mean; whether a live game reaches the upkeep pass once per turn per pair (the loop
 stride is modelled as one pass = one tick, never measured on the box); which of the four arms a
 given treaty action takes; the `0x551d2a` site's caller. No box time, no /proc, no gdb.
+
+**B38 — THE SE-EFFECT MATRIX MADE EXECUTABLE: the rules file's `#SOCIO` grid drives a faction's
+11 effects, and the agenda signature the AI consumes** (`sim/socio.py` = the matrix, the
+application and the consumer; s342 authors this rung, as B14-B37 did). B36 modelled the
+diplomacy WORD and B37 the one bit with a clock; neither touches the other half of the faction
+record. M376 proved `0x92babc` is alpha's `#SOCIO` 4x4x11 grid and that FUN_0057a070 builds it by
+counting each effect token's leading `+`/`-` against the 11 keyword names at `0x9270c0`; M379
+proved the only consumers of the stored signature (`+0x594`) are two AI scorers that add on `>0`
+and reject on `<0`. This rung loads the matrix from the rules file the exe itself reads, applies a
+faction's four SE settings, and runs the bit-24 agenda consumer over the result — the effects
+table stops being a table and becomes a function of a faction's politics.
+
+`python3 -u -m sim.socio` must print `PASS B38: <n>/<n> gates` (and `python3 -u -m sim.selftest
+--b38` only relays) with: **G0** pins: `data/alpha.json` and the text dump's sha1, the 11 keywords
+and 4 categories agreeing with M376's own evidence line, digest printed twice from two decodes;
+**G1** geometry computed from the dump's coefficients, not assumed: rows `0x350/0xd4`=4, cells
+`0xb0/0x2c`=4, cell width 11 at `0x52b822`/`0x5a1203`, the `lea` disp `0x92babc`, and the model's
+own shape equal to it; **G2** parity against the two vectors M376 measured off the emulated parser
+(`Police State`, `Free Market`) RE-READ out of `evidence/m376_socio_grid.txt` and compared field by
+field, plus its structural counts (4 empty cells all at choice 0, 12 first-positive cells, Police
+State's first positive = 2); **G3** all 16 vectors printed with values derived from the token
+lengths only, every effect keyword resolving to exactly one column, |v| <= 5, and each cell's
+tokens distinct; **G4** the application: four settings produce one 11-vector — exclusive per
+category, linear over the whole 256-setting sweep against a from-scratch reference, with a printed
+single-category delta; **G5** the consumer: the bit-24 writer's stored triple (category, choice,
+first-positive signature) for every cell, the 4 empty cells' signature = -1, and the polarity
+MEASURED at M379's two readers (`mov eax,[..+0x927b24]` / `test eax,eax` / `jl` = the reject arm);
+**G6** the measured NEGATIVE:
+zero `0x92babc`/`0x92ba98` operands in M383's per-unit military chain (`0x557980..0x557a20`), so the
+matrix is NOT an input to `0x94e48c` and the model refuses to wire one; **G7** five rivals FAIL on
+the printed numbers (sign-only counting: Free Market POLICE -1 not -5; alphabetical columns;
+all four choices of a category accumulated; the Future Society row dropped; last-positive instead
+of first); **G8** the digests are pinned and reproduced on a second decode. Each gate has a named
+mutant in `scripts/b38_mutate.py`.
+DECLARED UNMODELED: which live event selects each category (the UI path); whether row 3 is
+reachable at all (M376: the agenda consumer never samples Future Society); any arithmetic between
+the 11 totals and the unit/energy stats — no such consumer is measured, so none is invented. No box
+time, no /proc, no gdb.

@@ -1,0 +1,14 @@
+MU1   ok   red=['G8'] want=['G8']  the pinned digest is not the digest: G8's second-decode identity alone no longer pins it
+MU2   ok   red=['G1'] want=['G1']  the row bound divided by the CELL stride: 19 rows, and G1's shape equality reddens
+MU3   ok   red=['G2', 'G4', 'G5', 'G7', 'G8'] want=['G2', 'G4', 'G5', 'G7', 'G8']  the column index mirrored (the alphabetical-order rival made real): the vectors, the totals and the signatures all move while the keyword list stays correct
+MU4   ok   red=['G2', 'G5'] want=['G2', 'G5']  first-NON-ZERO instead of first-positive: a cell's signature lands on its penalty column (Police State -> 1, EFFIC -2)
+MU5   ok   red=['G4', 'G7'] want=['G4', 'G7']  the category's 4 choices accumulated instead of the selected one: the printed totals and the sweep differ from the reference, and the all-cells rival stops differing
+MU6   ok   red=['G6'] want=['G6']  the store classifier stops distinguishing a LOAD from a STORE: 0x5579da joins the store list and the 'one store' claim reddens
+MU7   ok   red=['G4'] want=['G4']  the dict reference counts signs: the sweep finds disagreements the model does not have and G4 reddens on a rival that is now wrong
+MU8   ok   red=['G7'] want=['G7']  the 'Future Society dropped' rival made complete: it becomes the model and stops failing
+MU9   ok   red=['G0'] want=['G0']  the evidence comparison off by one: the keyword line no longer matches and G0 reddens
+MU10  ok   red=['G2', 'G3', 'G4', 'G8'] want=['G2', 'G3', 'G4', 'G8']  every effect doubled: the parity vectors, the 5 magnitude bound, the totals and the grid digest all move
+MU11  ok   red=['G6'] want=['G6']  the military window truncated before the store: the 'one store at 0x5579ea' claim reddens on a dump drift
+NOOP  ok   red=[] want=[]  the identity: nothing may redden
+
+RUN PASS 12 mutants, NO-OP []
