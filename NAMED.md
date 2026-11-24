@@ -1657,3 +1657,20 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | 106 callers, 95 masks resolve: 5 set 0x400 (0x41b2d2 0x4cd6f6 0x5470d6 0x59aef0; 0x594cf7 0x420), 2 clear (0x4db11b 0xc20, 0x519bb5 0xc00) | `:199` `:210` | V MU4 MU5 MU6 MU15 |
 | FUN_00551a20: one arm ANDs `0xfaeef378` (~0x05110c87 carries bit 10 -> wipes 0x400), then ORs `mask\|0x80000108` | `:87` | V MU20 |
 | OPEN: 7 runtime mask args (0x4dadxx, `[ebx+0x18]`), 4 passthrough; FUN_004dacc0 is a caller-mask SET/CLEAR gate whose 0x400 caller is M385 `:55` (8th setter, behind the arg) | `:215` | OPEN |
+
+## B39 (s343-chain1, BUILD 12/12, zero box; 12 mutants) — the relations API family: four entry points, TWO words. **`PASS B39: 12/12`** `1c0a06e178521ef3` (`evidence/b39_relapi.txt:48`), re-run identical; `RUN PASS 12 mutants, NO-OP MU9` (`evidence/b39_mutate.txt:13`).
+
+| claim | cite | conf |
+|---|---|---|
+| four relation APIs separated by FIELD: `0x551a20`->A `0x94d448` (8 stores), `0x551cf0`->A+lease `0x94d4c8` (3), `0x551c40`->**B `0x94d468`** (4), `0x551d70`->B (2) | `:29` | V MU1 MU2 |
+| all four carry the `f*2095` row scale; `0x94d468-0x94d448 = 0x20` = 8 dwords of the SAME per-faction block (M297) | `:30` | V MU1 MU6 |
+| `0x551c40`'s two OR stores take DIFFERENT partner registers (`eax`, `ecx`) — word B is written BOTH directions in one call, and no store of it touches A | `:29` | V MU2 |
+| the `test bl,0x20` arm of `0x551c40` ANDs `0xffffffbf`: it CLEARS `0x40` and does not set `0x20` (seeded 0x2050 -> 0x2010) | `:32` `:34` | V MU3 |
+| `0x551cf0` ORs the mask into A; the lease store's own immediate, read from the dump, is `0x32` (B37 parity) | `:32` `:35` | V MU2 MU3 |
+| peace block order: `0x551a20(esi,edx,0x50)`, `0x551a20(esi,edi,0x1)`, `0x551c40(esi,edi,0x2000)` (`0x523f3c`/`4c`/`58`) | `:38` | V MU10 |
+| host guard chain pinned from the bytes: `test al,0x1 / je 0x523f38`, `test eax,0x2000000 / jne 0x523f7a`, `cmp esi,edi / je 0x523f60` | `:39` `:40` | V MU12 |
+| `0x2000000` skips the block only when A-row bit0 is SET; bit0 CLEAR runs the writes and never consults it; a self-pair skips only the `0x1` and `0x2000` writes | `:42` `:43` | V MU11 MU5 |
+| `0x551d70`'s 4th argument is a mode: set ORs the mask into B, clear ANDs its complement | `:31` `:35` | V MU7 |
+| M381's `0x2000` PEACE also lands on word B (via `0x551c40`) — PEACE is carried in BOTH words | `:34` | V MU1 |
+| four rivals die on the printed numbers: one-matrix, B-as-mirror, unconditional `0x1`, `0x94d468` as padding | `:44` | V MU5 MU1 MU2 |
+| OPEN: the noun of the `0x1` write on A (M364's PACT candidate), every noun on B, and which readers read B | `:38` | OPEN |
