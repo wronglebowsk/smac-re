@@ -470,3 +470,30 @@ printers of measured values need the same None-guard as the gate.
 - **REVIEW #365 (10 findings, all P1/P2 accepted into the instrument or the docs):** gates raised so each row is MEASURED, not labelled — G1 now counts the indexed functions (12) and `,0xa40` immediate forms (0); G4/G5 count ALL 97 refs (not the field subset); G3 asserts the pair set is exactly 4 names; G6 asserts the `[this+0x2228]` -> `[+8]` -> `+0xec` chain and the `call` adjacency for every store; G7 walks a 10-link identity chain including 0x5f3d6a. New MU10/MU11 redden the two new chain clauses; the doc wording "+0x64 of all six vtables" is CORRECTED (0x671644 is +0x6c).
 - **PITFALL:** `"DWORD PTR"` CONTAINS `"WORD PTR"` — a width test that checks WORD first read all 72 refs as 2-byte (first run: dword 0, G1 red). PITFALL 2: the CPane subobject vtable 0x671644 carries the same two functions at +0xb0/+0x6c, not at the class offsets +0xa8/+0x64.
 - **UNKNOWN:** who dispatches the +0x64 slot (19 `call [reg+0x64]` sites image-wide, none direct); the container's item record past +0xec; any consumer of `[this+0x3100]` (5759 stages the arg there).
+
+## Session 324 — B31 BUILD (round 5/10): the recorded run as the completion ORACLE
+
+Command: `python3 -u -m sim.facoracle` -> `PASS B31: 15/15 gates` (`evidence/b31_facoracle.txt:60`),
+rows `ce7688c0cb3b5f9d` / oracle `7afda4dd49566fb4` / score `9a4f2c466f3d18b7` / img `fb0bc0caa186b766`,
+re-run byte-identical. `python3 -u -m sim.selftest --b31` relays the same text. Harness
+`python3 -u scripts/b31_mutate.py` -> `PASS HARNESS B31: 10/10`, digest `a8bb479abbe42272`
+(`evidence/b31_mutate.txt:12`); NO-OP `[]`, every gate G1-G7 covered, MU5 forced a NEW gate (G4e) when
+it reddened nothing.
+
+What B31 measured (from `evidence/trace_m56_build_20261026_145157.jsonl`, the full 304-B record hex at
+20 samples): 6 facility-bit gains and 2 losses — the recorded bitmap is NOT monotonic, so a completion
+cannot explain every change. The rule "the queue head id is the bit that appeared" scores 0/6: 5 heads
+are unit-encoded (-2, -3, -6, -8, 321) and the single in-window head (Virgin Soil, 2) did not stamp.
+Korolev r0 replayed with the stamp attached: spend `8+1-9=0` matches B23's recorded after, head id 2 is
+inside the facility window, and the recorded bitmap stays `[8]` — so the recorded negative is not
+vacuous. The pop-first rival (read the head after the pop) stamps the next item (6 vs 2 on the declared
+2-deep fixture), so M344's spend→stamp→pop order is load-bearing.
+
+QUALIFIES `## B30` in place: B30's reader-inverse setter was ASSUMED and this round finds no positive
+completion case in the game's own run, plus one negative at a facility-range head. B30's table row was
+patched to say so; nothing in B30's own gates is retracted (they ran on a declared fixture).
+
+Docs: NAMED 245,757 B (B24 4,772 B rotated VERBATIM to `docs/named-archive-b31-rows.md`, sha1
+`6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `--verify` ok). NEXT_PROMPT patched by section.
+STILL OPEN: the unit-id decoding (M68/M69 NEG_TYPE); which loss is a raze vs a record identity change;
+whether a facility completion stamps at all.

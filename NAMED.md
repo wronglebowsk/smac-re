@@ -927,8 +927,21 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | the write is ONE byte: diff `[140]`, delta 4 = `1<<(item&7)`, inside `+0x8c..+0x8f` | `:24` | V MU1 |
 | writer round-trip: identity build byte-identical, file diff = 1 offset, reload owns `[1,2,8]`, shape/tail equal, 17/17 other records byte-identical, wrong-base rival misses THROUGH THE RELOAD | `:25-26` | V MU3/MU5 |
 | the bill moves by the DERIVED table under M46's disabled rule (0 -> 1, delta 1 == rule 1, 0 per-id mismatches), priced off the RELOADED record; the 'table value' rival differs at exactly `[8]`; G6 runs the instrument twice, so determinism is a gate | `:27` | V MU4/ME3/ME4 |
-| the completion ROUTINE that stamps the bit was ASSUMED (reader-inverse) in this rung - **SUPERSEDED by `## M342`**: the setter is `FUN_004e44f0` (`or` @`0x4e4528`, 27 call sites) and the pop `FUN_004ef5d0` is a non-writer | `evidence/m342_completion_setter.txt:190` | V (M342) |
+| the completion ROUTINE that stamps the bit was ASSUMED (reader-inverse) in this rung - **QUALIFIED by `## M342`** (the setter is `FUN_004e44f0`'s inline `or` @`0x4f0ec0`, the pop `FUN_004ef5d0` a non-writer) **and by `## B31`**: the game's own run has NO positive completion case and one NEGATIVE at a facility-range head, so the assumption is UNVERIFIED against recorded bytes | `evidence/m342_completion_setter.txt:190` | V (M342) |
 | OPEN: every other real-completion effect (queue-pop order beyond B11, storage/mineral reset, messages); ids 39..71's shared-field question | - | lead |
+
+## B31 (s324 BUILD, zero box) — the game's own 10-boundary run is the COMPLETION ORACLE: 6 facility-bit gains / 2 losses, the rule "the queue head id is the bit that appeared" scores 0/6, and Korolev r0 replays to st 0 with NO stamp (`sim/facoracle.py`; spine §B31). ACCEPT `python3 -u -m sim.facoracle` -> **`PASS B31: 15/15 gates`**, rows `ce7688c0cb3b5f9d` oracle `7afda4dd49566fb4` score `9a4f2c466f3d18b7` img `fb0bc0caa186b766` (`evidence/b31_facoracle.txt:60`), 2 runs identical; harness `python3 -u scripts/b31_mutate.py` -> **`PASS HARNESS B31: 10/10`** digest `a8bb479abbe42272` (`evidence/b31_mutate.txt:12`). NAMED cap: B24 rotated VERBATIM to `docs/named-archive-b31-rows.md:4`, sha1 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `scripts/b31_named_rotate.py --verify` ok.
+
+| claim | evidence | conf |
+|---|---|---|
+| the oracle is the RECORDED run read from bytes: 10 before + 10 after samples, 407 base-records, every bitmap decoded from its own `+0x8c..+0x8f`; counts and digest pinned | `:4`, `:57` | V MU1/MU9 (G7 red) |
+| the recorded bitmaps are NOT monotonic — 6 gains, 2 losses at 6 changed samples, every symmetric difference fully accounted | `:14` | V MU7 (losses dropped → G2 red) |
+| "the queue head id is the bit that appeared" FAILS: 0/6 matches, 5 heads unit-encoded (negative or >31), the one in-window head (Virgin Soil, 2) did not stamp | `:25` | V MU2 (head offset → G3 red) |
+| Korolev r0 replays with the stamp attached: spend `8+1-9=0` == the recorded after, head id 2 IS inside the facility window, and the recorded bitmap does NOT move — so the stamp is NOT a function of the paid pop; the type gate is OPEN | `:33-35`, `:37` | V MU3/MU5 (price/stamp → G4a/G4e red) |
+| pop-first (reading the head AFTER the pop) stamps the NEXT item: on the declared 2-deep fixture it writes 6, the measured order writes 2 — M344's spend→stamp→pop order is load-bearing | `:36` | V MU6 (G4d/G6c red) |
+| the writer carries an ARBITRARY bitmap including a LOSS (which the OR-only setter cannot express): 2-byte diff, reload `[1,4]`, identity build byte-identical, other 17 records untouched | `:43` | V MU8 (write shifted → G5 red) |
+| QUALIFIES `## B30`: B30's setter was ASSUMED; this run measures no positive completion case and one recorded NEGATIVE at a facility-range head, so "a paid queue item becomes a facility" is UNVERIFIED against the game's own run | `:35` | V (measurement) |
+| OPEN: the unit-id decoding that maps a queue head onto a bitmap id (M68/M69 `NEG_TYPE`); which recorded loss is a raze vs a record-identity change; whether a facility completion stamps at all | - | lead |
 
 ## B22 (s273, BUILD 12/12, zero box; post-Greptile #286: one P1 arithmetic error retracted, the falsifier made load-bearing) - BOTH save record arrays grow in ONE writer call, and the CREATE leg demonstrably reads its ARGUMENTS out of the reloaded image (sim/composedgrowth.py)
 | claim | evidence | conf |
