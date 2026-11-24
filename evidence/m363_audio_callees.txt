@@ -1,0 +1,132 @@
+# M363 — the four A/V audio callees vs the preference cells 0x985ab8/0x985abc
+corpus: 781379 instructions (scratch/m574/text.txt), 10284 functions (ghidra_out/index.csv)
+
+-- G1 function extents (index.csv), parsed insn counts, entry/exit shape --
+0x4b87f0 FUN_004b87f0 extent=0x4b87f0..0x4b881f size=47B idx_insns=23 parsed=23 first=push last=ret idx_callers=5 idx_callees=0
+0x4b8820 FUN_004b8820 extent=0x4b8820..0x4b884f size=47B idx_insns=23 parsed=23 first=push last=ret idx_callers=5 idx_callees=0
+0x4b8a60 FUN_004b8a60 extent=0x4b8a60..0x4b8ae9 size=137B idx_insns=50 parsed=50 first=push last=ret idx_callers=2 idx_callees=2
+0x4b8af0 FUN_004b8af0 extent=0x4b8af0..0x4b8b76 size=134B idx_insns=50 parsed=50 first=push last=ret idx_callers=2 idx_callees=2
+[PASS] G1 every target extent parses to its index insn count, opens with push, closes with ret  insns=[23, 23, 50, 50]
+
+-- G2 absolute data-window operands (0x800000..0xbfffff) per body --
+0x4b87f0 abs_data=0 []  indirect_calls=['DWORD PTR [edx+0x60]']
+0x4b8820 abs_data=0 []  indirect_calls=['DWORD PTR [edx+0x64]']
+0x4b8a60 abs_data=0 []  indirect_calls=['DWORD PTR [eax+0x8c]']
+0x4b8af0 abs_data=0 []  indirect_calls=['DWORD PTR [eax+0x14]']
+[PASS] G2 the four bodies hold ZERO absolute data operands  total=0
+
+-- G3 transitive direct-call closure (edges printed) --
+0x4b87f0 FUN_004b87f0 size=47   callees=[]
+0x4b8820 FUN_004b8820 size=47   callees=[]
+0x4b8a60 FUN_004b8a60 size=137  callees=['0x4b9330', '0x4b9370']
+0x4b8af0 FUN_004b8af0 size=134  callees=['0x4b9330', '0x4b9370']
+0x4b9330 FUN_004b9330 size=54   callees=['0x4b94a0']
+0x4b9370 FUN_004b9370 size=69   callees=['0x4b9460', '0x4b94a0']
+0x4b9460 FUN_004b9460 size=25   callees=[]
+0x4b94a0 FUN_004b94a0 size=25   callees=[]
+closure size=8: 0x4b87f0 0x4b8820 0x4b8a60 0x4b8af0 0x4b9330 0x4b9370 0x4b9460 0x4b94a0
+[PASS] G3 the closure is exactly the four plus the four voice-table accessors  extra=[] missing=[]
+
+-- G4 absolute data operands summed over the WHOLE closure --
+0x4b87f0 FUN_004b87f0 abs_data=0 []
+0x4b8820 FUN_004b8820 abs_data=0 []
+0x4b8a60 FUN_004b8a60 abs_data=0 []
+0x4b8af0 FUN_004b8af0 abs_data=0 []
+0x4b9330 FUN_004b9330 abs_data=0 []
+0x4b9370 FUN_004b9370 abs_data=0 []
+0x4b9460 FUN_004b9460 abs_data=0 []
+0x4b94a0 FUN_004b94a0 abs_data=0 []
+[PASS] G4 no function in the closure holds one absolute data operand  total=0
+
+-- G5 .text census of the preference cells, split by the closure --
+0x985ab8 sites=121 functions=62 inside_closure=0
+         functions: 0x000000 0x4042c0 0x404550 0x41e730 0x429df0 0x43a990 0x446250 0x446360 0x446490 0x447440 0x447620 0x4478b0 0x463dd0 0x464570 0x464bb0 0x4654e0 0x46a610 0x4824e0 0x482780 0x48a170 0x48b9a0 0x492030 0x493ff0 0x4b0a80 0x4c2be0 0x4c2c40 0x4cce50 0x4cf4c0 0x4d1280 0x4ebef0 0x4ef6d0 0x4f5a70 0x5010d0 0x501fc0 0x502cd0 0x507ef0 0x50a040 0x50c550 0x50cd90 0x50ef60 0x50f420 0x511240 0x512b40 0x516b80 0x51d3f0 0x51e700 0x5208f0 0x521070 0x521ee0 0x522850 0x52a720 0x556690 0x55a940 0x57f740 0x585720 0x58f3d0 0x596850 0x59a2b0 0x59c3f0 0x5a0aa0 0x5a3190 0x5a7970
+0x985abc sites=99 functions=34 inside_closure=0
+         functions: 0x000000 0x40c8d0 0x464bb0 0x4654e0 0x467a00 0x4699d0 0x46a610 0x46ebd0 0x470010 0x473840 0x4748b0 0x476580 0x47f390 0x4894c0 0x48f100 0x492030 0x493ff0 0x4d3f70 0x4eb6f0 0x4ebef0 0x4ef540 0x4ef6d0 0x502cd0 0x512b40 0x516b80 0x521070 0x55a940 0x55f650 0x56d960 0x572800 0x57c550 0x585720 0x58f3d0 0x5a3470
+[PASS] G5 both cells are read/written across .text but NOT ONE site lies in the closure (counts pinned)  inside=0 got={'0x985ab8': (121, 62), '0x985abc': (99, 34)} pins={'0x985ab8': (121, 62), '0x985abc': (99, 34)}
+
+-- G6 FUN_00493ff0, the four's only game caller, does touch both cells --
+0x494117 mov  esi,DWORD PTR ds:0x985ab8
+0x494129 mov  DWORD PTR ds:0x985ab8,esi
+0x494182 mov  ecx,DWORD PTR ds:0x985ab8
+0x494188 mov  eax,ds:0x985abc
+0x494193 mov  DWORD PTR ds:0x985ab8,ecx
+0x494199 mov  ds:0x985abc,eax
+[PASS] G6a the handler holds exactly 6 cell-referencing sites, 3 loads + 3 stores  addrs=['0x494117', '0x494129', '0x494182', '0x494188', '0x494193', '0x494199']
+0x494182 mov  ecx,DWORD PTR ds:0x985ab8
+0x494188 mov  eax,ds:0x985abc
+0x49418d and  ch,0xf3
+0x494190 and  ah,0xbf
+0x494193 mov  DWORD PTR ds:0x985ab8,ecx
+0x494199 mov  ds:0x985abc,eax
+[PASS] G6b the master-off arm loads both cells, masks ch&0xf3 / ah&0xbf, stores both back  window 0x494182..0x494199
+
+-- G7 who calls the four: every direct call site in .text --
+0x4b87f0 sites=4 idx_callers=5 -> ['0x4941c2@0x493ff0', '0x4bcd62@0x4bcd10', '0x4c67c8@0x4c6530', '0x5edb31@0x5edaf3']
+0x4b8820 sites=4 idx_callers=5 -> ['0x49417d@0x493ff0', '0x4bcc9c@0x4bcc70', '0x4c65bb@0x4c6530', '0x5edcec@0x5edc95']
+0x4b8a60 sites=2 idx_callers=2 -> ['0x49405c@0x493ff0', '0x4940b7@0x493ff0']
+0x4b8af0 sites=2 idx_callers=2 -> ['0x494026@0x493ff0', '0x49407b@0x493ff0']
+total=12 in_handler=6 outside=['0x4bcc70', '0x4bcd10', '0x4c6530', '0x5edaf3', '0x5edc95']
+[PASS] G7 12 call sites: 6 in the A/V handler, 6 in five mixer internals, none in the closure  n=12 in_handler=6 outside=[4967536, 4967696, 5006640, 6216435, 6216853]
+
+-- G8 the `this` argument at each handler call site (nearest preceding ecx write) --
+0x4941c2 call 0x4b87f0  this<-0x8a7920  OK
+0x49417d call 0x4b8820  this<-0x8a7920  OK
+0x49405c call 0x4b8a60  this<-0x8a7920  OK
+0x4940b7 call 0x4b8a60  this<-0x8a7920  OK
+0x494026 call 0x4b8af0  this<-0x8a7920  OK
+0x49407b call 0x4b8af0  this<-0x8a7920  OK
+[PASS] G8 all six handler call sites pass the static sound object 0x8a7920 in ecx
+
+-- G9 the per-slot voice table in 0x4b8a60 (start) / 0x4b8af0 (stop) --
+0x4b8a60 imul=['eax,eax,0x18', 'eax,eax,0x18', 'ecx,ecx,0x18', 'eax,eax,0x18'] bound=[4950636] flag_read=[4950660] flag_write=[(4950745, '0x1')] table_lea=['ecx,[ecx+eax*1+0x2c]', 'ecx,[edx+ecx*1+0x2c]']
+0x4b8af0 imul=['eax,eax,0x18', 'eax,eax,0x18', 'ecx,ecx,0x18', 'eax,eax,0x18'] bound=[4950780] flag_read=[4950804] flag_write=[(4950886, '0x0')] table_lea=['ecx,[ecx+eax*1+0x2c]', 'ecx,[edx+ecx*1+0x2c]']
+[PASS] G9 both take index*0x18 (every imul by 0x18), bound the index at 0xf, read the byte flag at slot+0x24 and lea the slot+0x2c entry  imul=4/4 lea=2/2
+[PASS] G9c the two arms are byte-symmetric: the same imul/lea displacement multiset  lea=['ecx,[ecx+eax*1+0x2c]', 'ecx,[edx+ecx*1+0x2c]'] vs ['ecx,[ecx+eax*1+0x2c]', 'ecx,[edx+ecx*1+0x2c]']
+[PASS] G9b the flag STORE distinguishes start from stop: 1 in 0x4b8a60, 0 in 0x4b8af0  ['BYTE PTR [ecx+eax*1+0x24],0x1'] vs ['BYTE PTR [ecx+eax*1+0x24],0x0']
+
+-- G10 the 47-byte pair: one vtable slot each on the +0x14 inner object --
+0x4b87f0 indirect=[(4950035, 'DWORD PTR [edx+0x60]')] direct=0 guard=[(4950015, 'DWORD PTR [eax+0x14],0x0')] branch=[(4950019, 'je', '0x4b8816')]
+0x4b8820 indirect=[(4950083, 'DWORD PTR [edx+0x64]')] direct=0 guard=[(4950063, 'DWORD PTR [eax+0x14],0x0')] branch=[(4950067, 'je', '0x4b8846')]
+[PASS] G10 each pair member makes exactly ONE call, into slot 0x60 / 0x64 of [this+0x14], guarded by cmp [this+0x14],0
+
+-- G11 call forms over the closure: vtable only, no import thunk --
+0x4b87f0 FUN_004b87f0 indirect=['DWORD PTR [edx+0x60]'] import_form=0
+0x4b8820 FUN_004b8820 indirect=['DWORD PTR [edx+0x64]'] import_form=0
+0x4b8a60 FUN_004b8a60 indirect=['DWORD PTR [eax+0x8c]'] import_form=0
+0x4b8af0 FUN_004b8af0 indirect=['DWORD PTR [eax+0x14]'] import_form=0
+[PASS] G11 zero import-form calls: the closure reaches the outside only through 4 vtable slots (0x60, 0x64, 0x8c, 0x14)  slots=['DWORD PTR [eax+0x14]', 'DWORD PTR [eax+0x8c]', 'DWORD PTR [edx+0x60]', 'DWORD PTR [edx+0x64]']
+
+-- G12 the handler's switch: jump table 0x4941ec (read out of the image) --
+cmd -> target: 0x4b->0x494154, 0x4c->0x494068, 0x4d->0x49400e, 0x4e->0x4940c3
+case 0x4b rows 0x136d4: 0x494154..0x4941e9 audio_calls=['0x49417d->0x4b8820', '0x4941c2->0x4b87f0']
+case 0x4c rows 0x14220: 0x494068..0x4940c3 audio_calls=['0x49407b->0x4b8af0', '0x4940b7->0x4b8a60']
+case 0x4d rows 0x14d6c: 0x49400e..0x494068 audio_calls=['0x494026->0x4b8af0', '0x49405c->0x4b8a60']
+case 0x4e rows 0x158b8: 0x4940c3..0x494154 audio_calls=[]
+[PASS] G12 the jump table maps 0x4b..0x4e to four distinct case blocks  tbl=['0x494154', '0x494068', '0x49400e', '0x4940c3']
+
+-- G13 which rows reach the audio object, and the row-flag value they pair with --
+case 0x4b row 0x136d4: audio=['0x49417d->0x4b8820', '0x4941c2->0x4b87f0'] row_flag_stores=[(4800869, 'ebx'), (4800938, 'edi')] row_flag_loads=[4800852]
+case 0x4c row 0x14220: audio=['0x49407b->0x4b8af0', '0x4940b7->0x4b8a60'] row_flag_stores=[(4800640, 'ebx'), (4800666, 'edi')] row_flag_loads=[4800616]
+case 0x4d row 0x14d6c: audio=['0x494026->0x4b8af0', '0x49405c->0x4b8a60'] row_flag_stores=[(4800544, 'ebx'), (4800575, 'edi')] row_flag_loads=[4800526]
+case 0x4e row 0x158b8: audio=[] row_flag_stores=[(4800742, 'ebx'), (4800768, 'edi')] row_flag_loads=[4800707]
+call/flag pairs: [('0x4c', '0x49407b', '0x4b8af0', 'ebx', 'xor', 0), ('0x4c', '0x4940b7', '0x4b8a60', 'edi', 'mov', 1), ('0x4d', '0x494026', '0x4b8af0', 'ebx', 'xor', 0), ('0x4d', '0x49405c', '0x4b8a60', 'edi', 'mov', 1)]
+[PASS] G13 the start call (0x4b8a60) is only reached from the turn-ON branch (row flag <- 1) and stop (0x4b8af0) only from turn-OFF (row flag <- 0)  start=[('0x4c', 1), ('0x4d', 1)] stop=[('0x4c', 0), ('0x4d', 0)]
+case 0x4e (row 0x158b8) calls: ['0x4940dd:DWORD PTR [edx+0x8]', '0x494112:0x493ec0', '0x49412f:0x446490', '0x494147:DWORD PTR [edx+0x12c]']
+[PASS] G13b the fourth row (0x4e, flag 0x158b8) is NOT wired to the audio object  calls=['0x4940dd', '0x494112', '0x49412f', '0x494147']
+
+-- G14 rivals that must FAIL on the printed numbers --
+R1 "the four reach the pref cells indirectly, through a callee" | holds=False | closure abs_data=0, closure pref sites=0
+R2 "the object passed in ecx IS the pref block"      | holds=False | this=0x8a7920, cell=0x985ab8, delta=0xde198
+R3 "the callee's argument is a pref-derived value"   | holds=False | args=['0x4941c2:-', '0x49417d:-', '0x49405c:ebx', '0x4940b7:edi', '0x494026:ebx', '0x49407b:0x1']
+R4 "the four ARE the preference toggles (M361 INFERRED)" | holds=False | their only state is the slot+0x24 byte; the row-flag they pair with is the caller's
+[PASS] R all four rivals are refuted by the printed numbers  r1=False r2=False r3=False r4=False
+
+-- VERDICT --
+0x4b8a60 = voice-slot START (flag<-1, play via buffer-vtable+0x8c), 0x4b8af0 = voice-slot STOP
+(flag<-0, buffer-vtable+0x14); 0x4b87f0/0x4b8820 = mixer enable/disable, one vtable slot each
+(0x60/0x64) on the +0x14 inner object.  Reached with this=0x8a7920 (static sound object) and
+a constant slot index.  The preference cells 0x985ab8/0x985abc are touched ONLY in the A/V
+handler 0x493ff0 (6 sites, master-off mask), never by the four or their closure.
+
+PASS  M363: 18/18 gates  digest 00277b4215de2a60

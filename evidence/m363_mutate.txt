@@ -1,0 +1,38 @@
+listing: 781379 instructions from /home/paul/reverse/smac/scratch/m574/text.txt
+baseline rc=0  PASS  M363: 18/18 gates  digest 00277b4215de2a60
+
+ id    gate addr       verdict what breaks
+ MU1   G2   4b8808     RED     a body loses its this-relative load for a pref cell
+        [FAIL] G2 the four bodies hold ZERO absolute data operands  total=1
+ MU3   G5   494193     RED     a cell store lands one byte off -> census drops to 120
+        [FAIL] G5 both cells are read/written across .text but NOT ONE site lies in the closure (counts pinned)  inside=0 got=
+ MU4   G6b  49418d     RED     master-off stops clearing bits 0x400|0x800
+        [FAIL] G6b the master-off arm loads both cells, masks ch&0xf3 / ah&0xbf, stores both back  window 0x494182..0x494199
+ MU5   G6a  494129     RED     a cell store becomes a load -> 2 loads + 4 stores
+        [FAIL] G6a the handler holds exactly 6 cell-referencing sites, 3 loads + 3 stores  addrs=['0x494117', '0x494129', '0x4
+ MU6   G7   49405c     RED     one row start call disappears from the census
+        [FAIL] G7 12 call sites: 6 in the A/V handler, 6 in five mixer internals, none in the closure  n=11 in_handler=5 outsi
+ MU8   G8   494057     RED     the `this` passed to one audio call shifts by 4
+        [FAIL] G8 all six handler call sites pass the static sound object 0x8a7920 in ecx
+ MU9   G9b  4b8ad9     RED     start and stop both write flag 0
+        [FAIL] G9b the flag STORE distinguishes start from stop: 1 in 0x4b8a60, 0 in 0x4b8af0  ['BYTE PTR [ecx+eax*1+0x24],0x0
+ MU10  G9   4b8a6c     RED     the voice index bound narrows to 15 slots
+        [FAIL] G9 both take index*0x18 (every imul by 0x18), bound the index at 0xf, read the byte flag at slot+0x24 and lea t
+ MU11  G10  4b8813     RED     one enable/disable thunk calls a shifted vtable slot
+        [FAIL] G10 each pair member makes exactly ONE call, into slot 0x60 / 0x64 of [this+0x14], guarded by cmp [this+0x14],0
+ MU13  G13  494020     RED     the stop arm pairs with a turn-ON row store
+        [FAIL] G13 the start call (0x4b8a60) is only reached from the turn-ON branch (row flag <- 1) and stop (0x4b8af0) only 
+ MU2   G4   +4b9462       RED     a closure leaf gains an absolute pref-cell load
+        [FAIL] G4 no function in the closure holds one absolute data operand  total=1
+ MU7   G7   +4469a3       RED     a ninth caller of 0x4b87f0 appears outside the handler
+        [FAIL] G7 12 call sites: 6 in the A/V handler, 6 in five mixer internals, none in the closure  n=13 in_handler=6 outsi
+ MU12  G11  +4b9332       RED     a closure member gains an import-form call
+        [FAIL] G11 zero import-form calls: the closure reaches the outside only through 4 vtable slots (0x60, 0x64, 0x8c, 0x14
+ MU16  G1   +4b87f4       RED     a target extent gains one instruction -> count != index
+        [FAIL] G1 every target extent parses to its index insn count, opens with push, closes with ret  insns=[24, 23, 50, 50]
+ MU14  G13  jumptable  RED     cmds 0x4c and 0x4e swap case blocks
+        [FAIL] G13 the start call (0x4b8a60) is only reached from the turn-ON branch (row flag <- 1) and stop (0x4b8af0) only 
+ MU15  G12  jumptable  RED     cmd 0x4e falls into the 0x4d block
+        [FAIL] G12 the jump table maps 0x4b..0x4e to four distinct case blocks  tbl=['0x494154', '0x494068', '0x49400e', '0x49
+
+RUN PASS  16 mutants, NO-OP []
