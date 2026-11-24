@@ -57,6 +57,11 @@ MUTANTS = [
     ("MU11", 0x44AF9B, "edx,[edx+eax*3]",          "G4"),
     ("MU12", 0x449985, "BYTE PTR [ebx+0x1],0x40",  "G7"),
     ("MU13", 0x44AF9E, "esi,[eax+edx*1-0x4]",      "G4"),
+    ("MU14", 0x44AECB, "eax,ds:0x91b5b8",          "G4"),
+    ("MU15", 0x44AF72, "0x4",                      "G4"),
+    ("MU16", 0x44B5C6, "edi,[edx*4+0x983a18]",     "G3"),
+    ("MU17", 0x44B5BF, "eax,[ecx*7+0x0]",          "G3"),
+    ("MU18", 0x449982, "ebx,DWORD PTR [ebp-0x18]", "G7"),
     ("ALG1", 0x449796, "ecx,[ebx+ecx*1-0x5]",      "G1"),  # decoder mutated
 ]
 

@@ -143,6 +143,12 @@ def affine(expr, env=None):
     return {k: v for k, v in out.items() if v}
 
 
+def ev(aff, vals):
+    """Numeric value of an affine form at a concrete register assignment."""
+    return sum(c * vals.get(k, 0) for k, c in aff.items() if k != "#") \
+        + aff.get("#", 0)
+
+
 def fmt(aff):
     if not aff:
         return "0"
@@ -157,15 +163,21 @@ def fmt(aff):
 
 
 def chain(lo, hi):
-    """Decode a run of `lea <reg>,<expr>` instructions read from the image,
-    keeping every destination's affine value so a two-register chain
-    (SITE B: edx = slot+4n, then esi = n+edx-5) resolves."""
+    """Decode a run of `lea <reg>,<expr>` / `sub <reg>,<reg>` instructions read
+    from the image, keeping every destination's affine value so a
+    two-register chain (SITE B: edx = slot+4n, then esi = n+edx-5) resolves."""
     env = {}
     ins = window(lo, hi)
     for a, mn, ops in ins:
         d, s = split_ops(ops)
         if mn == "lea":
             env[d] = affine(s, env)
+        elif mn == "sub" and re.match(r"^[a-z]{3}$", s) and d in env:
+            neg = {k: -v for k, v in affine(s, env).items()}
+            cur = dict(env[d])
+            for k, v in neg.items():
+                cur[k] = cur.get(k, 0) + v
+            env[d] = {k: v for k, v in cur.items() if v}
     return env, ins
 
 
@@ -191,17 +203,18 @@ def site_c():
     return env.get("edx", {}), imm, ins + add
 
 
-def cover(step=5, const=-5, pages=PAGES, rows=ROWS):
+def cover(step=5, const=-5, pages=PAGES, rows=ROWS, start=1):
     idx = {}
-    for n in range(1, pages + 1):
+    for n in range(start, start + pages):
         for s in range(rows):
             i = step * n + const + s
             idx.setdefault(i, []).append((n, s))
     return idx
 
 
-def bounds(step=5, const=-5, pages=PAGES, rows=ROWS, base=BASE, stride=STRIDE):
-    idx = cover(step, const, pages, rows)
+def bounds(step=5, const=-5, pages=PAGES, rows=ROWS, base=BASE, stride=STRIDE,
+           start=1):
+    idx = cover(step, const, pages, rows, start)
     lo, hi = min(idx), max(idx)
     return idx, lo, hi, base + lo * stride, base + (hi + 1) * stride
 
@@ -303,16 +316,27 @@ def main():
 
     # ---------------- G3 SITE C insert-shift ----------------
     law_c, dst_signed, c = site_c()
+    env_c, _ = chain(0x44B5AF, 0x44B5D6)
     say("G3 SITE C 0x44b5a1..0x44b5d6 insert-shift (%d insns):" % len(c))
     for a, mn, ops in c[:8]:
         say("   0x%x %s %s" % (a, mn, ops))
-    say("   src law: %s ; dst = src %+d -> delta %d"
-        % (fmt(law_c), dst_signed - (-5), (dst_signed - (-5))))
-    two_bases = [i[0] for i in window(0x44B5BF, 0x44B5D8)
-                 if i[1] == "lea" and "0x983a10" in i[2]]
+    say("   src index law: %s ; dst = src %+d"
+        % (fmt(law_c), dst_signed - (-5)))
+    # evaluate both address chains: they must be base + idx*0x8c
+    n_val, k_val = 2, 3
+    idx_src = ev(law_c, {"esi": n_val, "edi": k_val})
+    idx_dst = idx_src + (dst_signed - (-5))
+    a_src = ev(env_c.get("edi", {}), {"edx": idx_src, "ecx": idx_dst})
+    a_dst = ev(env_c.get("esi", {}), {"edx": idx_src, "ecx": idx_dst})
+    want_src = 0x983A10 + idx_src * 0x8C
+    say("   index(%d,%d) = %d -> %d ; address chains: edi=0x%x esi=0x%x ;"
+        " want src 0x%x, dst = src+0x8c"
+        % (n_val, k_val, idx_src, idx_dst, a_src, a_dst, want_src))
     g3 = (law_c == {"esi": 5, "edi": 1, "#": -5} and dst_signed == -4
-          and len(two_bases) == 2 and (dst_signed - (-5)) == 1)
-    rows.append(("G3 insert-shift src=5n+k-5 dst=5n+k-4 (delta +1)", g3))
+          and (dst_signed - (-5)) == 1
+          and a_src == want_src and a_dst == want_src + 0x8C)
+    rows.append(("G3 insert-shift src=5n+k-5 dst=5n+k-4 (delta +1), both *0x8c",
+                 g3))
 
     # ---------------- G4 SITE B ----------------
     law_b, b = site_b()
@@ -321,24 +345,39 @@ def main():
         say("   0x%x %s %s" % (a, mn, ops))
     eax_src = [i for i in window(0x44aed4, 0x44aee0)
                if i[1] == "mov" and "[esi+0xa4c]" in i[2]]
+    # dataflow: eax <- ds:0x91b5b4 at 0x44aecb, then stored to [esi+0xa4c]
+    load_91b5b4 = [i for i in window(0x44aec6, 0x44aed2)
+                   if i[1] == "mov" and split_ops(i[2])[0] == "eax"
+                   and "0x91b5b4" in split_ops(i[2])[1]]
+    eax_between = [i for i in window(0x44AECC, 0x44AED9)
+                   if i[1] in ("mov", "lea", "xor", "add", "sub")
+                   and split_ops(i[2])[0] == "eax"]
+    # push/call pairing: each k immediate must feed a call to 0x44b450
+    push_call = []
+    for i, (a, mn, ops) in enumerate(window(0x44af45, 0x44af90)):
+        if mn == "push" and re.match(r"^0x[0-9a-f]+$", ops):
+            nxt = [x for x in window(a, a + 0xC) if x[1] == "call"]
+            push_call.append((a, int(ops, 0), nxt[0][2] if nxt else None))
     scan = window(0x44af1d, 0x44af43)
     probe = [i for i in scan if i[1] == "mov" and "0xe" != i[2][:1]
              and re.match(r"^(eax|edx),0x", i[2])]
-    calls = [i for i in window(0x44af50, 0x44af8c) if i[1] == "push"]
-    kvals = sorted(int(i[2], 0) for i in calls
-                   if re.match(r"^0x[0-9a-f]+$", i[2]))
+    kvals = sorted(v for _, v, tgt in push_call if tgt == "0x44b450")
     seed = int(split_ops(probe[0][2])[1], 0) if probe else -1
     tail = [i for i in scan if i[1] == "jge" and i[2] == "0x44af2b"]
     rows_n = seed + 1                       # probes seed, seed-1, ... 0
-    say("   n cell: 0x44aed9 %s ; probe seed: 0x%x ; loop tail: %s ;"
-        " insert-shift k immediates: %s"
-        % ([i[2] for i in eax_src], seed,
-           [hex(i[0]) for i in tail], ["0x%x" % k for k in kvals]))
+    say("   n cell: 0x44aed9 %s ; load 0x91b5b4: %s ; eax writes between: %d"
+        % ([i[2] for i in eax_src],
+           [(hex(i[0]), i[2]) for i in load_91b5b4], len(eax_between)))
+    say("   push->call 0x44b450: %s ; probe seed: 0x%x ; loop tail: %s"
+        % ([(hex(a), "0x%x" % v, t) for a, v, t in push_call], seed,
+           [hex(i[0]) for i in tail]))
     say("   affine law: %s ; slot rows measured: %d (indices 0..%d)"
         % (fmt(law_b), rows_n, seed))
-    g4 = (law_b == {"eax": 5, "edx": 1, "#": -5} and "0x91b5b4" in
-          " ".join(i[2] for i in window(0x44aecb, 0x44aee0))
-          and kvals == list(range(rows_n - 1)) and len(eax_src) >= 1
+    g4 = (law_b == {"eax": 5, "edx": 1, "#": -5}
+          and len(load_91b5b4) == 1 and not eax_between
+          and len(eax_src) == 1 and "eax" in split_ops(eax_src[0][2])[1]
+          and kvals == list(range(rows_n - 1))
+          and all(t == "0x44b450" for _, _, t in push_call)
           and len(tail) == 1 and tail[0][2] == "0x44af2b")
     rows.append(("G4 SITE B law = 5*[obj+0xa4c] + slot - 5; k in 0..3", g4))
 
@@ -380,57 +419,98 @@ def main():
 
     # ---------------- G6 no page clamp ----------------
     direct, indexed = byte_hits("0x59f4", "0x59f4")
-    say("G6 0x59f4 census: direct %s ; indexed-form (other array) %d hits"
-        % (["0x%x" % a for a in direct], len(indexed)))
+    insns = len(image())
+    idx_forms = []
+    for a in indexed:
+        ops = [i[2] for i in window(a, a)][0]
+        inner = re.search(r"\[([^\]]*0x59f4[^\]]*)\]", ops).group(1)
+        idx_forms.append(inner)
+    say("G6 0x59f4 census over %d insns: direct %s ; indexed-form %d hits"
+        % (insns, ["0x%x" % a for a in direct], len(indexed)))
+    say("   indexed forms: %s" % sorted(set(idx_forms)))
+    say("   any indexed form that is a plain [reg+0x59f4]: %s"
+        % [f for f in idx_forms if "*" not in f])
     lin = [i for i in window(0x44971B, 0x449793)
            if i[1] in ("cmp", "test") and "ebx" in i[2]]
     say("   cmp/test on ebx between load and use: %d" % len(lin))
-    g6 = direct == [0x44970F] and len(indexed) == 12 and not lin
+    g6 = (insns > 780000 and direct == [0x44970F] and len(indexed) == 12
+          and all("*" in f and f.count("+") >= 2 for f in idx_forms)
+          and not lin)
     rows.append(("G6 no direct 0x59f4 store/clamp in .text (page bound OPEN)",
                  g6))
 
     # ---------------- G7 columns ----------------
     probes = []
-    for a, mn, ops in window(0x449900, 0x449B60):
-        if mn == "test" and re.match(r"^BYTE PTR \[(\w+)\+0x1\],(0x[0-9a-f]+)$",
-                                     ops):
-            m = re.match(r"^BYTE PTR \[(\w+)\+0x1\],(0x[0-9a-f]+)$", ops)
-            probes.append((a, m.group(1), int(m.group(2), 0)))
-        if mn == "test" and re.match(r"^al,(0x[0-9a-f]+)$", ops):
-            probes.append((a - 3, "al", int(split_ops(ops)[1], 0)))
+    w7 = window(0x449900, 0x449B60)
+    for i, (a, mn, ops) in enumerate(w7):
+        m = re.match(r"^BYTE PTR \[(\w+)\+0x1\],(0x[0-9a-f]+)$", ops)
+        if mn == "test" and m:
+            probes.append((a, m.group(1), int(m.group(2), 0), a))
+        m2 = re.match(r"^(\w+),BYTE PTR \[(\w+)\+0x1\]$", ops)
+        if mn == "mov" and m2 and i + 1 < len(w7):
+            nxt = w7[i + 1]
+            m3 = re.match(r"^al,(0x[0-9a-f]+)$", nxt[2])
+            if nxt[1] == "test" and m3 and nxt[0] - a <= 6:
+                probes.append((a, m2.group(1), int(m3.group(1), 0), a))
     ebx_defs7 = [i for i in window(0x449982, 0x449B40)
-                 if i[1] in ("mov", "lea", "add", "inc", "sub")
+                 if i[1] in ("mov", "lea", "add", "inc", "sub", "xor")
                  and split_ops(i[2])[0] == "ebx"]
-    say("G7 column probes on record+1: %s" % [(hex(a), r, hex(v))
-                                              for a, r, v in probes])
-    say("   ebx definitions in the probe run: %s"
-        % [(hex(a), mn, ops) for a, mn, ops in ebx_defs7])
-    g7 = ([v for _, _, v in probes] == [1, 2, 4, 8, 0x10, 0x20]
-          and len(ebx_defs7) == 1 and "[ebp-0x1c]" in ebx_defs7[0][2]
-          and all(r in ("ebx", "al") for _, r, _ in probes))
+    ptr_loads = [i for i in window(0x449900, 0x449990)
+                 if i[1] == "mov" and "ebp-0x1c" in i[2]]
+    say("G7 column probes on record+1: %s"
+        % [(hex(a), r, hex(v)) for a, r, v, _ in probes])
+    say("   ebx definitions in the probe run: %s ; record-pointer loads: %s"
+        % ([(hex(a), mn, ops) for a, mn, ops in ebx_defs7],
+           [(hex(a), ops) for a, mn, ops in ptr_loads]))
+    g7 = ([(v, a) for _, _, v, a in probes]
+          == [(1, 0x449915), (2, 0x449985), (4, 0x4499F1),
+              (8, 0x449A5C), (0x10, 0x449AC8), (0x20, 0x449B34)]
+          and len(ebx_defs7) == 1 and ebx_defs7[0][0] == 0x449982
+          and ebx_defs7[0][2] == "ebx,DWORD PTR [ebp-0x1c]"
+          and any("0x449982" == hex(a).replace("0x0", "0x") or a == 0x449982
+                  for a, _, _ in ptr_loads))
     rows.append(("G7 six bit probes = columns of ONE record, not rows", g7))
 
     # ---------------- RIVALS ----------------
     say("RIVALS:")
-    r1_idx, _, r1hi, _, r1end = bounds(step, 0, pages, rows_n)
+    # R1: a 0-based page (n in 0..pages-1, const 0) covers the SAME 35 records:
+    # bounds do NOT discriminate -- only the decoded constant does.
+    r1_idx, _, r1hi, _, _ = bounds(step, 0, pages, rows_n, base, stride, 0)
     r1_bad = sorted(k for k in r1_idx if k < 0 or k > 34)
-    say("   R1 0-based page (%dn+s): hi=%d out-of-buffer=%s -> %s"
-        % (step, r1hi, r1_bad, "DEAD" if r1_bad else "ALIVE"))
-    r2_idx, _, r2hi, _, _ = bounds(step, const, pages, rows_n + 1)
-    r2_over = r2hi + 1 > 35
-    say("   R2 %d rows/page: grid cells=%d hi=%d over=%s -> %s"
-        % (rows_n + 1, len(r2_idx), r2hi, r2_over,
+    say("   R1 0-based page (n=0..%d, const 0): indices %d..%d, out-of-buffer=%s"
+        " => bounds %s ; decoded const is %d not 0 => DEAD by DECODE (MU2)"
+        % (pages - 1, min(r1_idx), r1hi, r1_bad,
+           "ALIVE" if not r1_bad else "DEAD", const))
+    r1d = (not r1_bad) and const != 0          # dead because the const is -5
+    # R2: a coherent 6-row page (step 6, const -6) needs 6 pages for 36 cells
+    w = rows_n + 1
+    r2_pages = -(-35 // w)
+    r2_idx, _, r2hi, _, _ = bounds(w, -w, r2_pages, w, base, stride)
+    r2_over = r2hi > 34
+    say("   R2 %d rows/page: step %d, pages %d, cells %d, indices %d..%d,"
+        " over-buffer=%s -> %s"
+        % (w, w, r2_pages, len(r2_idx), min(r2_idx), r2hi, r2_over,
            "DEAD" if r2_over else "ALIVE"))
-    say("   R3 flat list: three sites decode to 5n+s (G1/G3/G4) and the"
-        " insert-shift is k<=3 -> DEAD")
+    r2d = r2_over
+    # R3: a flat list has coefficient 1 on a single counter; the three sites
+    # all carry coefficient 5 (renamed n) and 1 (slot).
+    trip = [("A", law, "ebx", "eax"), ("B", law_b, "eax", "edx"),
+            ("C", law_c, "esi", "edi")]
+    trip_n = []
+    for tag, lw, nreg, sreg in trip:
+        sc = lw.get(sreg, 0)
+        trip_n.append((tag, lw.get(nreg, 0) // sc if sc else 0,
+                       lw.get("#", 0) // sc if sc else 0))
+    say("   R3 per-site (coef_n, const): %s ; a flat list needs coef_n == 1 ->"
+        " %s" % (trip_n, "DEAD" if any(c != 1 for _, c, _ in trip_n) else "ALIVE"))
+    r3d = any(c != 1 for _, c, _ in trip_n) and len({(c, k) for _, c, k in trip_n}) == 1
     r4_last = 0x983984 + 34 * stride + stride
     say("   R4 base 0x983984: one-past-last 0x%x != 0x%x -> %s"
         % (r4_last, term, "DEAD" if r4_last != term else "ALIVE"))
-    r1d = bool(r1_bad)
-    r2d = r2_over
     r4d = r4_last != term
     rows.append(("R1 0-based page DEAD", r1d))
     rows.append(("R2 six rows/page DEAD", r2d))
+    rows.append(("R3 flat list (coef_n == 1) DEAD", r3d))
     rows.append(("R4 base 0x983984 DEAD", r4d))
 
     # ---------------- verdict ----------------

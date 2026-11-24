@@ -421,24 +421,32 @@ printers of measured values need the same None-guard as the gate.
 
 - **ANSWER:** the 0x983a10 record index is `5*n - 5 + s` at THREE .text sites:
   SITE A 0x449793/96 (n=[obj+0x59f4] @0x44970f, s=[obj+0xa918] @0x449715), SITE B
-  0x44af9b/9e (n=[obj+0xa4c] <- ds:0x91b5b4 @0x44aed9, s from the 5-probe rank
-  scan), SITE C 0x44b5a7..b9 insert-shift (src 5n+k-5 -> dst 5n+k-4, k in 0..3).
+  0x44af9b/9e (n=[obj+0xa4c] <- ds:0x91b5b4 @0x44aeb9/0x44aed9, s from the 5-probe
+  rank scan), SITE C 0x44b5a7..b9 insert-shift (src 5n+k-5 -> dst 5n+k-4, k in 0..3).
 - **BOUND:** five zero-init/fault sites all measure base 0x983a10, stride 0x8c,
   inner 5, term 0x984d34 => 0x1324 = 35*0x8c = 7*0x2bc; {1..7}x{0..4} is a
   bijection onto 0..34 and index 35 lands ON the terminator: the buffer is
   7 blocks x 5 rows, not a flat 35-list.
-- **NO CLAMP:** the only direct 0x59f4 ref in 790,695 insns is the load 0x44970f
-  (12 other hits are `[reg+reg*4+0x59f4]`, a different array); 0 cmp/test on ebx
-  between the load and the lea => the page's legality is its writer's job, and no
-  named .text store to it exists (OPEN).
-- **6 IS NOT ROWS:** the six `test BYTE[rec+1],{1,2,4,8,0x10,0x20}` probes are
-  COLUMNS of the one record in [ebp-0x1c] (ebx reloaded once, 0x449982).
-- ACCEPT `m341_hof_window.py` -> **`PASS M341: 10/10`** `c9baf9f6ef0521ce`, two
-  runs diff-identical (`evidence/m341_hof_window.txt:41-53`); `m341_mutate.py`
-  **14/14** `ea5c77bf6ba5c0c0`, ST 4/4 (`evidence/m341_mutate.txt:16`), baseline
-  re-run = the NO-OP control.
+- **NO CLAMP:** over 781,379 parsed insns the only direct 0x59f4 ref is the load
+  0x44970f; all 12 further hits print as `[reg+reg*4+0x59f4]` (a different array);
+  0 cmp/test on ebx between the load and the lea => the page's legality is its
+  writer's job, and no named .text store to it exists (OPEN).
+- **6 IS NOT ROWS:** six probes {1,2,4,8,0x10,0x20} at {0x449915,0x449985,
+  0x4499f1,0x449a5c,0x449ac8,0x449b34} on byte +1 of ONE record (one ebx def:
+  `mov ebx,[ebp-0x1c]` @0x449982).
+- ACCEPT `m341_hof_window.py` -> **`PASS M341: 11/11`** `1cfdea39295dadce`, two runs
+  diff-identical (`evidence/m341_hof_window.txt:45-58`); `m341_mutate.py` **19/19**
+  `e1c003e81552f53f`, ST 4/4 (`evidence/m341_mutate.txt:21`).
+- RIVALS (review-round fixed): R1 0-based page covers 0..34 as well, so bounds do
+  NOT discriminate — it dies on the decoded const -5 (MU2); R2 a coherent 6-row
+  page (step 6, 6 pages) reaches index 35 = terminator (MU3); R3 flat list needs
+  coef_n == 1, all three sites decode (5,-5) (MU11); R4 base 0x983984 ends at
+  0x984ca8 (MU4).
 - NAMED: `## M338` rotated VERBATIM to `docs/named-archive-m341-rows.md:5`
-  (sha1 `b82cddad74c8`, `m341_named_rotate.py --verify`): 246,635 -> 245,663 B.
-- PITFALL: decode chains must track EVERY lea destination — SITE B is a
-  two-register chain (edx=slot+4n, then esi=n+edx-5) and SITE C's source lands
-  in edx, not ecx; a one-register chain silently drops the 5n term.
+  (sha1 `b82cddad74c8`, `m341_named_rotate.py --verify`).
+- PITFALL: decode chains must track EVERY lea destination AND `sub reg,reg` —
+  SITE B is a two-register chain (edx=slot+4n, then esi=n+edx-5), SITE C's source
+  lands in edx (not ecx) and its address chains are formed by *8/sub/*5/*4. The
+  address-chain eval must use the INDEX symbols (edx/ecx), not the (n,k) symbols.
+- PITFALL: `690k` insn counts are parser-dependent — the count is len(image()),
+  printed, never hardcoded from an earlier session (790,695 vs 781,379).
