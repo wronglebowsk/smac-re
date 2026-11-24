@@ -327,3 +327,11 @@ printers of measured values need the same None-guard as the gate.
   clamp hi) instead of comparing against the script's constants, and measures that exactly 1 of the
   169 `call 0x423af0` sites is fed by `0x8f0c11`. Harness 13 -> 20 mutants (`6e0e05a8ffb388d8`);
   MU1's declared set corrected to the measured {G2,G3,G6} (G6 reads the loader bound).
+
+- **MERGE BLOCKED (infra, not the work):** after the review-round fixes were pushed, GitHub Actions
+  created NO run for the new head (`gh api .../actions/runs?head_sha=<ea16d16>` -> total_count 0;
+  newest run in the repo is 01:06Z, before the fixes). Pushes, a close+reopen and an empty re-push
+  all failed to trigger; `workflow_dispatch` is not a trigger of `gate.yml` (HTTP 422). Local
+  `gate.py --base main` is GREEN at the head and `review_lint --id M335` PASS, but PR #353 was NOT
+  merged: the law requires `gh pr checks` PASS on the post-review head. NEXT FIRE: if a run exists
+  for PR #353's head, merge #353; otherwise re-push to trigger one.
