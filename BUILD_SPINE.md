@@ -1099,3 +1099,56 @@ re-derivable from the committed bytes - the gate measures the consequence, not t
 price column but the 11-token path's re-sync is INFERRED, as M337 declared; whether the game's
 runtime table is patched by any non-loader writer (no such writer is claimed either way here).
 No box time, no /proc, no gdb, no game-binary load.
+
+**B30 - the COMPLETION leg made executable: a paid queue item BECOMES a facility the base HAS -
+the reader's inverse setter writes one bitmap byte, the writer carries it into the container's own
+304-B record, the reload reads it back, and the NEXT round's bill moves by B29's DERIVED upkeep
+(not by a constant), with M46's disabled-list rule deciding when it does NOT move**
+(`sim/composedfacility.py` = the run and its gates; s321 authors this rung from main 134be9a, as
+B14-B29 did).** B11 executes the queue mechanics and B29 prices the bitmap, but nothing yet
+executes the step that CONNECTS them: the moment the queue's item id is stamped into
+`base+0x8c..+0x8f`, the same bitmap the feeder charges. The bit law is already in `sim.feeder`
+(`fac_bit`: byte `item>>3`, bit `1<<(item&7)`, M46's `0x421fe0` reader form); B30 executes its
+INVERSE as the completion, because the mapper `FUN_00507410` is the single 39-bit splitter that
+produces the `(byte, mask)` pair once and every consumer in the census applies it to `+0x8c`.
+The setter itself ASSUMED (no completion routine in this rung's evidence) - G2 measures that the
+pair is a bijection over ids 0..38, which is what makes the inverse the only candidate; the
+missing writer opens a census pick, declared below.
+
+`python3 -u -m sim.composedfacility` must print `PASS B30: 6/6 gates` (and
+`python3 -u -m sim.selftest --b30` only relays, so the two entry points cannot print different
+text) with: **G1** the completion is READ out of the container's own queue - all 18 base records
+are decoded (idx, name, owner, the `+0x50` head id, the ids the base already owns), the eligible
+set is `1 <= id <= 31` (the four PINNED bitmap bytes) AND inside the feeder's parsed charge window
+AND not owned - heads in 32..38 are ineligible and their count is printed and pinned (`[]` here);
+the target is the first eligible base of the save's OWN player, and the printed count of eligible
+bases and the target triple are asserted, so a save whose queue changed changes the run, not just
+the commentary; **G2** the setter is the reader's
+INVERSE - for every one of the 32 ids in the pinned window, set-then-read through `sim.base.facilities` contains that
+id and no other new bit lands in the 32-bit window, the SWAPPED-orientation rival (byte
+`item&7`, bit `item>>3`) is scored on the same loop and fails at a counted number of ids, and id
+39 is REFUSED by the guard (its byte `5` is outside the confirmed four-byte window); **G3** the
+write is ONE BYTE of the 304-B record - the per-byte diff of the target record against the
+original is exactly `{0x8c + (item>>3)}` with delta `1<<(item&7)`, `facilities()` before/after
+differs by exactly `[item]`, and the other 17 records are byte-identical, all counted; **G4** the
+WRITER carries it - `build_image(..., base_writes=[(idx, off, val)])` (rung B30's byte-granular
+companion to B27's dword-shaped `block_writes`) recomposes the container, the RELOADED image
+reads the item back through the same `facilities()` decoder, `n_bases`/`n_units`/year/tail are
+unchanged, and an identity build with no `base_writes` is byte-identical to the original file
+(the hook is inert when unused; the rival that writes the WRONG base index fails the reload); **G5**
+the BILL moves by the measured rule, not a constant - the target base's `sim.feeder.charge_base`
+total on the reloaded bitmap minus the original equals
+`sim.economy.item_upkeep(B29 table, item, disabled)` priced off the RELOADED record, and the same
+delta is computed for all 32 ids in the window, where the "table value" rival differs at exactly the disabled ids parsed out of the
+M46 archive row (`[8]` here) and nowhere else; **G6** rivals + determinism - the NO-WRITE rival
+("a completion changes nothing") is scored across all 39 ids and ties only where the rule itself
+is 0, the `+0x4c` pending-count misread is scored as a wrong id, every scored rival fails on the
+printed numbers, and G6 RUNS THE INSTRUMENT TWICE in-process, requiring an identical rows digest,
+an identical written-image sha256 and an identical printed-table digest, all three pinned to
+literals as well.
+DECLARED UNMODELED: the game routine that SETS the bit (ASSUMED inverse - census pick); everything
+else a real completion does (the queue-pop order beyond B11's law, the minerals/storage reset,
+the message and the `0x45`-handler side effects); the bitmap bytes `+0x90..+0x93` (ids 32..63),
+which this rung neither sets nor reads for ids past 31 (id 39's guard is a refusal, not a claim);
+whether a completed PROJECT (ids 39..71) shares the same field. No box time, no /proc, no gdb,
+no game-binary load.

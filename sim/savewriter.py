@@ -58,7 +58,7 @@ def modeled_spans(extra=None):
 
 def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
                 lift_all=False, bases_override=None, orig_n_bases=None,
-                append_units=None, block_writes=None):
+                append_units=None, block_writes=None, base_writes=None):
     """Recompose the container. Defaults are the model values read from the loaded image,
     so an unmutated build is the identity map iff every layout constant is right.
     lift_all=True builds the rival 'pure re-emitter' (composes regions, lifts every byte);
@@ -147,9 +147,25 @@ def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
         orec = sv.n_bases if orig_n_bases is None else orig_n_bases
         if len(bases_override) < orec:
             raise ValueError("bases_override shorter than orig count %d" % orec)
+        # rung B30: byte-granular writes into a base record the writer has already composed.
+        # The completed-facility bitmap is a BYTE field, so the dword-shaped `block_writes`
+        # hook cannot express it.  A write that escapes the record is refused, never shifted.
+        bw = {}
+        for (bi, roff, val) in (base_writes or ()):
+            if not 0 <= int(bi) < len(bases_override):
+                raise ValueError("base write on record %r outside 0..%d"
+                                 % (bi, len(bases_override) - 1))
+            if not 0 <= int(roff) < so.BASE_LEN:
+                raise ValueError("base write at record+%r escapes the %d B record"
+                                 % (roff, so.BASE_LEN))
+            if not 0 <= int(val) < 256:
+                raise ValueError("base write at +%r is not a byte: %r" % (roff, val))
+            bw.setdefault(int(bi), []).append((int(roff), int(val)))
         for i in range(len(bases_override)):
             b = bases_override[i]
             if b.get("identity"):          # rung B23: emit the original verbatim
+                if i in bw:
+                    raise ValueError("base write on the IDENTITY record %d would be dropped" % i)
                 out += d[sv.bases_off + so.BASE_LEN * i:
                          sv.bases_off + so.BASE_LEN * (i + 1)]
                 continue
@@ -183,6 +199,8 @@ def build_image(sv, year=None, cur=None, tf=None, moves=None, unit_len=None,
                     struct.pack_into("<i", rec, 0x98, int(q["mirror"]))
                 if q.get("d0") is not None:
                     struct.pack_into("<i", rec, 0xd0, int(q["d0"]))
+            for roff, val in bw.get(i, ()):     # rung B30: the byte fields (the bitmap)
+                rec[roff] = val
             out += rec
         out += d[sv.bases_off + so.BASE_LEN * orec:]
     return bytes(out)

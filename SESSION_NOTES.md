@@ -1,19 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-304-305.md` (2 sessions: Session 304-chain2, Session 305-chain2). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 308.
-
-## Session 308 (2026-11-19, hygiene + landing of M329, zero box) — cap trim, stale-number fix, evidence WARN adjudicated
-
-- **Ownership**: the ONLY running row for job 789931d4b621 is this fire (`python3 -c sqlite3` over `~/.hermes/cron/executions.db` — `sqlite3` CLI is absent, exit 127; the table's `pid` column carries the gateway pid 858969 for EVERY row, so it cannot distinguish fires — use `job_id`+`started_at`+`status`); chain 2 (9a0b613bb1ac) running in `~/reverse/wt-chain2` = the known parallel lane, untouched. `ps` shows no milestone/gate/gdb in the main checkout.
-- **Cap trim**: NEXT_PROMPT 13,137 -> **11,362 B** (`wc -c`) via `scripts/m329_trim_s308.py`: the B26 build-track paragraph (1,548 B, sha1 `bb2b39f698a6`) + the (viii)/M329 summary (1,390 B, sha1 `dfae97811347`) retired VERBATIM to `docs/pick-archive.md` §trim-s308-chain1 (a)/(b), byte-substring asserted after the append, script FAILs if the head is still >12,000 B.
-- **STALE NUMBERS CORRECTED IN PLACE**: `NAMED ## M329`'s headroom row and `NEXT_PROMPT`'s two DOC-CAP lines said 240,534/9,466 (the pre-M321-refinement reading) -> **239,090 B / 10,910 B headroom** (`wc -c NAMED.md`). SESSION_NOTES s307's 240,534 stays as the historical measurement.
-- **EVIDENCE WARN ADJUDICATED, NOT PRUNED**: `evidence.py budget` is NOT broken (rc=0, prints `warn` as text — only `[FAIL]`/rc!=0 reddens the gate). `evidence.py prune` runs clean and has **no victims** (it scopes images outside a 7-day hot window; 0 found). The 21.5 MB WARN stands, honest and documented, because the noted candidate `m294_gate_rows_raw.txt` (2.2 MB) is **LOAD-BEARING** — it is the recorded-parity input of `sim/precheck.py:62`, `sim/scanleg.py:41`, `sim/sitegate.py`, `scripts/m294_gate_row_census.py:508`, `m295_nogo_fit.py:102`, `m296_argmax_fit.py:66`. `git rm` there would break the build track, not free dead weight.
-- `skill/` untouched this fire: `diff -rq skill/ ~/.hermes/skills/smac-cvr-format/` = no output.
-- STATE: M329 docs complete, gate + review_lint + submit + local ai_review next in this fire. (v)-(viii) answered, (ix) operator-gated; **next fire = BUILD rung B27, spine text must be authored first**. Chain 2 open on M328/M330 in its own worktree.
-- **RETRACTION FOUND WHILE CROSS-CHECKING THE BLOCK vs ITS OWN EVIDENCE (s308)**: `NAMED ## M329` rows 1-3 asserted "**5 call sites, 4 owners**" (incl. `0x4a9e63`/`0x512232`), "5 `ret 0x4`", "all 5 `.text` refs of `s_GVGOVPREFS`" + "`0x511b3e`/`0x512307`" + "vtable slots +0xec/0xf0/0xf4 call it with page 1/2/3". NONE of those numbers are in the census: G1/T1 print **exactly 4 `e8` sites** (`0x41e3bd`,`0x49b306`,`0x4a9e0e`,`0x5120d0`), `ret 0x4` sites=**4** (`evidence/m329_scratchtree.txt:5-13,33`); the two imported addresses are G9 READER lines (`mov eax,[edx*4+0x94d600]` + the adjacent `mov [reg+0x38],eax` stores `0x4a9e69`/`0x512239`); my own checks: the frame window has **0 jmp** exits to it image-wide, ONE `push 0x6899ec` (`0x41aba5`), ZERO hits for `511b3e|512307` in `scratch/m574/text.txt`. All three rows now carry the retraction IN PLACE + their measured mutants (L1 law: every V row names the MU that reddens it). PITFALL LAW: the row's numbers must be transcribed FROM the printed evidence, never from the working notes — "5 sites" was plausibility prose that survived three docs layers (NAMED, pick-archive §trim-s307/s308, this fire's continuity report) because nothing diffed the row against the gate lines it cites.
-- **#339 Strata review (local, `evidence/ai_review/pr339_20261120_011206.md`): 5 P1 + 4 P2, ALL ACCEPTED, 0 dismissed — the whole class is PROSE OUTRUNNING THE GATE.** Measured, not argued: `NAMED ## M329` claimed "5 call sites / 5 `ret 0x4` / 5 string refs / vtable slots +0xec/0xf0/0xf4 / count 1..37 / rank 1..3 / +3584 / 19 write-back pairs + 1 clear / defaults `0xdfbe41`+`0xdfbe01`@`0x5a0510` / reader `0x59ed40`"; the census prints **4 e8-sites, 4 `ret 0x4`, 1 `push 0x6899ec`, 19 write-back legs of which 11 resolve and 8 print `no direct op`, writers `0xdfbe41`@`0x59ed6c` + `0xc0dfbe41`@`0x59ed7a`, reader `0x4e494c`** (`evidence/m329_scratchtree.txt:13,33,62-81,91,96-97`). All retracted IN PLACE; every V row now names its reddening MUs (the L1 sweep was the second failure mode).
-- **NEW INSTRUMENT (the retraction needed its own measurement)**: `python3 -u scripts/m329_verify_s308.py` -> `== M329 s308 verify: PASS (4 e8-sites, 0 direct jmps, 0 absolute FN-encodings, 1 tag push; 3919 indirect calls / 362 indirect jumps printed as UNKNOWN) ==` `evidence/m329_verify_s308.txt:13`, 2 runs diff-identical. It byte-decodes eb/e9/e8 targets (23,632 jmps scanned) instead of grepping operand text, and PRINTS the indirect/jump-table classes it cannot resolve. PITFALL LEARNED: my first version matched lines with a byte regex and printed **0 for everything** (a silently-empty parser, exactly the "gate that passes on an unmeasured state" defect) — the run now carries a `sanity-known-site` assertion so a dead parser FAILS immediately.
-- **LAW ADDED**: a registry row's numbers must be transcribed FROM the printed evidence lines it cites, and a V row may not carry a number that no gate computes — if the census does not print it, it is INFERRED/OPEN or it goes. M321's clause I patched at s307 inherited the same bad constant (`0xdfbe01`) and is fixed here too.
+Older sessions: `docs/sessions/sessions-308-308.md` (1 sessions: Session 308). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 307-chain2.
 
 ## Session 307-chain2 (2026-11-19, M330 CLOSED, STATIC: block+300 = upkeep spend accumulator)
 
@@ -390,6 +377,7 @@ printers of measured values need the same None-guard as the gate.
 - PITFALL: a sub-register write (`mov dl,BYTE PTR [eax+0x20]`) is not "a write to edx" to a
   first-operand test — widen to the register family or the def-use gate finds the earlier
   `xor edx,edx` and reads a bounded index as unclamped for the wrong reason.
+
 ## Session 320-chain2 (2026-11-24) — pick (x6): `0x5f1394` = the modal SCREEN RUNNER
 
 - **ANSWER:** `FUN_005f1394` (11,207 B / 2,235 insns, `ret 0x8`, args = only
@@ -416,3 +404,30 @@ printers of measured values need the same None-guard as the gate.
   `07cec1770614`, `m339_named_rotate.py --verify`): 249,287 -> 243,834 -> 246,196.
 - PITFALL: objdump prints `[ebp-0x4]` and `DWORD PTR [ebp-0x4]` alike; long immediates
   leave 3 trailing bytes on their own line (14 gaps) — normalise both.
+
+## Session 321-chain1 (2026-11-24) — B30: the COMPLETION leg executable (queue item -> +0x8c -> writer -> reload -> bill)
+
+- **ANSWER:** a paid queue item becomes a facility the base HAS. `sim/composedfacility.py`
+  reads the completion from the container's OWN queue (18 records, own player 3, 2 eligible;
+  target base 0 'University Base', item 2 'Children's Creche', rule delta 1), applies the
+  reader's inverse (byte `item>>3`, bit `1<<(item&7)`), and the write is ONE byte: diff
+  `[140]` = `0x8c+0`, delta 4. The writer carries it (`base_writes=`, B30's byte-granular
+  companion to B27's `block_writes`), 1 file byte differs, the RELOAD owns `[1,2,8]`, 17/17
+  other records byte-identical, identity build byte-identical (hook inert). B29's DERIVED
+  table reprices the bill 0 -> 1 (delta == rule); the "table value always" rival differs at
+  exactly `[8]` (M46's disabled list), the no-write rival at 26 ids, the swapped-orientation
+  setter lands on only 4/32 ids, id 39 is REFUSED.
+- ACCEPT `python3 -u -m sim.selftest --b30` -> **`PASS B30: 6/6`** rows `234ab3d83a88dbea`
+  print `29f408c79329a5a8` img `3a503c638ba45330` (`evidence/b30_facility_completion.txt:35-36`),
+  2 runs + relay byte-identical. Harness `scripts/b30_mutate.py` -> **`10/10`**
+  `76a481b5d8a7d8b0` (`evidence/b30_mutate.txt:12`), every gate G1-G6 reddened, NO-OP `[]`, ST 4/4, baseline tree green.
+- **ASSUMED / census pick:** the game routine that SETS the bit is not in this rung's evidence;
+  the setter is the mapper's inverse (`FUN_00507410` = the one 39-bit splitter). G2 measures the
+  bijection (32/32) that makes it the only candidate.
+- NAMED: M310 rotated VERBATIM to `docs/named-archive-b30-rows.md:5` (sha1
+  `ca3caf3785c9d6e9`, `scripts/b30_named_rotate.py --verify`): 246,635 -> 244,146 -> 246,098.
+- PITFALL: measuring the bit law on the TARGET record is confounded when the base already owns
+  the id (base 0 owns 1 and 8) — the first run read 2/32; measure on a zeroed-window reference.
+- PITFALL: a cross-record check must compare each record to ITS OWN original bytes (my first G3
+  compared every other record to the target's and read 0/17 — a false red); and a digest must
+  never hash a placeholder line appended for context, or it can never be re-pinned.
