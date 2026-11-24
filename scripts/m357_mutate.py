@@ -47,6 +47,21 @@ MUT = [
     ("MU13", 0x4929D2, "or     DWORD PTR [esi+0xa34],0x100000",
      "or     DWORD PTR [esi+0xa40],0x100000", "G6b",
      "Auto-prune id 64 -> a34 bit 20 (a40 bit 20 is taken)"),
+    ("MU17", 0x4911CC, "push   0x68b764", "push   0x6926fc", "G1a",
+     "BASEWARNINGS row0 copies into table slot 0x68b764"),
+    ("MU18", 0x492A5C, "or     DWORD PTR [esi+0xa30],ebx",
+     "or     DWORD PTR [esi+0xa30],ecx", "G4a",
+     "every id decodes to a field AND a bit (id 11's ebx form)"),
+    ("MU19", 0x492E3A, "push   0x26", "push   0x66", "G4b",
+     "id 0x26 is the rebuild's WARN row 1"),
+    ("MU20", 0x49247A, "ds:0x92bf04,ecx", "ds:0x92bf00,ecx", "G5d",
+     "a28|a48 lands in 0x92bf04"),
+    ("MU21", 0x492E4D, "or     al,0x1", "or     al,ch", "G6a",
+     "WARN row 0's store form is parseable"),
+    ("MU22", 0x492DA0, "or     al,0x80", "or     al,0x40", "G7a",
+     "the Laptop delta's A bit 7 is the movies row (bit 6 is unwritten)"),
+    ("MU23", 0x58EB38, "add    esi,0x3a7168", "add    esi,0x3b7168", "G7d",
+     "the More Preferences default word is 0x3a7168"),
 ]
 
 SCR_MUT = [
@@ -54,6 +69,8 @@ SCR_MUT = [
      "BASICPREFS offers 8 lines (row count == text count)"),
     ("MU15", "Tutorial messages.", "Messages tutorial.", "G7c",
      "Preferences bit 5 names the Tutorial row"),
+    ("MU18b", "#BASICPREFS\r\n", "#BASIC_PREFS\r\n", "G3a",
+     "the BASIC page's section is named BASICPREFS"),
     ("MU16", "Stop for random events.\r\n", "Stop for random events.\r\nStop for extra.\r\n", "G3b",
      "BASEWARNINGS offers 17 labelled lines"),
 ]

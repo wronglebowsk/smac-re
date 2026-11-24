@@ -611,9 +611,10 @@ whether a facility completion stamps at all.
 
 ## Session 330-chain3 (2026-11-24) - M357: bit -> option LABELS of the two `Laptop` bitmaps
 
-- **ACCEPT** `python3 -u scripts/m357_pref_bits.py` -> **`PASS M357: 23/23`**, digest
-  `095258c8b40d0e23`, sha1 `045c7f75` x2 identical (`evidence/m357_x2.txt:1-3`);
-  `m357_mutate.py` -> **15/15 killed**, 1 NO-OP (`evidence/m357_mutate.txt`).
+- **ACCEPT** `python3 -u scripts/m357_pref_bits.py` -> **`PASS M357: 18/18`**, digest
+  `095258c8b40d0e23`, sha1 `bb36f237` x2 identical (`evidence/m357_x2.txt:1-3`);
+  `m357_mutate.py` -> **23/23 killed**, 1 NO-OP (`evidence/m357_mutate.txt`) — every gate
+  named in `## M357` is reddened by its own mutant (MU1-MU23).
 - **PAIRING**: six builders read a Script.txt section by name (0x5ea431: BASICPREFS
   0x49043b, ADVANCED 0x4906d2, AUTOMATION 0x490a67, AUDIOVISUAL 0x490e70,
   BASEWARNINGS 0x49112a, MAPPREFS 0x4916b8) and per row take the next line

@@ -205,12 +205,14 @@ def build_pages():
                 end = q
                 break
         rows, lines = [], 0
+        last_line_at = None
         for q in range(n, end):
             i = INS[q]
             if i["op"] == "call" and imm(i["arg"]) == 0x5EA422 and rows:
                 break
             if i["op"] == "call" and imm(i["arg"]) == SEC_LINE:
                 lines += 1
+                last_line_at = q
             if i["op"] == "call" and imm(i["arg"]) == ITEM_ADD:
                 idv = None
                 for b in range(q - 1, max(n, q - 8), -1):
@@ -226,7 +228,10 @@ def build_pages():
                         if v is not None and 0x68B600 <= v <= 0x68B7FF:
                             buf = v
                             break
-                rows.append({"addr": i["a"], "id": idv, "slot": buf})
+                copied = any(INS[b]["op"] == "call" and imm(INS[b]["arg"]) == STRCPY
+                             for b in range(max(n, q - 14), q))
+                rows.append({"addr": i["a"], "id": idv, "slot": buf,
+                             "copied": copied, "line_at": last_line_at})
         out.append({"sec": sec, "rows": rows, "lines": lines, "slot0": slot0,
                     "name_va": nva, "entry": INS[n]["a"]})
     return out
@@ -314,6 +319,9 @@ def apply_dataflow():
                 reg[dst] = reg[dst] | val if i["op"] == "or" else reg[dst] & val
             elif dm:
                 mem[dm.group(1)] = mem.get(dm.group(1), frozenset()) | val
+            elif CELL.search(dst) and val:
+                out[int(CELL.search(dst).group(1), 16)] = \
+                    out.get(int(CELL.search(dst).group(1), 16), frozenset()) | val
     return out
 
 
@@ -364,11 +372,14 @@ for p in PAGE_BUILD:
     row(p["sec"], hexa(p.get("entry") or 0),
         "0x5ea431" if p.get("entry") is not None else "-", len(p["rows"]),
         p.get("lines"), hexa(p.get("slot0") or 0))
-gate("G0a", ok0 and len(PAGE_BUILD) == 6,
-     "all six section builds located by their `push <section-name>` + call 0x5ea431")
-gate("G0b", len({p["sec"] for p in PAGE_BUILD}) == 6
+names_ok = all(cstr(p["name_va"]) == p["sec"] for p in PAGE_BUILD)
+print("    name strings:", [(p["sec"], cstr(p["name_va"])) for p in PAGE_BUILD])
+gate("G0a", ok0 and len(PAGE_BUILD) == 6 and names_ok
+     and len({p["sec"] for p in PAGE_BUILD}) == 6
      and len({p.get("entry") for p in PAGE_BUILD}) == 6,
-     "six distinct sections, six distinct builders (rows: %s)" % [len(p["rows"]) for p in PAGE_BUILD])
+     "six distinct builders, each pushing the VA of its OWN section-name string (cstr == section) "
+     "and calling 0x5ea431")
+print("    rows per page: %s" % [len(p["rows"]) for p in PAGE_BUILD])
 
 print("\n-- G1  row = (label slot, option id) --")
 row("section", "seq", "slot", "id", "add_item @")
@@ -376,10 +387,13 @@ ok1 = True
 ROWS = []
 for p in PAGE_BUILD:
     for n, r in enumerate(p["rows"]):
-        row(p["sec"], n, hexa(r["slot"]), r["id"], hexa(r["addr"]))
+        row(p["sec"], n, hexa(r["slot"]) if r["slot"] else "-", r["id"], hexa(r["addr"]))
         ROWS.append(dict(r, sec=p["sec"], n=n))
         ok1 &= (r["slot"] is not None and r["id"] is not None)
-gate("G1a", ok1, "every row carries a slot VA and an id immediate (%d rows)" % len(ROWS))
+ok1c = sum(1 for r in ROWS if r.get("copied"))
+gate("G1a", ok1 and ok1c == len(ROWS),
+     "every row carries a slot VA, an id immediate AND a strcpy (0x64b9e0) between its "
+     "line read and its add_item (%d/%d rows)" % (ok1c, len(ROWS)))
 ids = [r["id"] for r in ROWS]
 gate("G1b", len(ids) == len(set(ids)),
      "the %d option ids are distinct across the six pages" % len(ids))
@@ -394,16 +408,14 @@ for p in PAGE_BUILD:
     after = p["slot0"] + 4 * len(sl)
     row(p["sec"], hexa(p["slot0"]), len(sl), "consecutive" if sl == want else "BROKEN",
         "%s = %r" % (hexa(after), cstr(after)))
-gate("G2a", ok2, "each page's slots are +4 consecutive from its table entry")
-# the table's own layout: name then slots, next name after
 ok2b = True
 for k, (sec, nva, slot0) in enumerate(PAGES):
     nxt = PAGES[k + 1][1] if k + 1 < len(PAGES) else None
     if nxt is not None:
         last = PAGE_BUILD[k]["slot0"] + 4 * len(PAGE_BUILD[k]["rows"])
         ok2b &= last <= nxt
-gate("G2b", ok2b,
-     "each page's slot run ends before the next page's name string in the table")
+gate("G2a", ok2 and ok2b, "each page's slots are +4 consecutive from its table entry and "
+     "its run ends before the next page's name string")
 
 # ============================== G3 Script ====================================
 print("\n-- G3  Script.txt sections: ordered labels --")
@@ -414,7 +426,8 @@ for p in PAGE_BUILD:
     row(p["sec"], len(p["rows"]), len(t), (t[0][:34] if t else "-"),
         (t[-1][:34] if t else "-"))
     ok3 &= len(t) > 0
-gate("G3a", ok3, "every page's section exists in the installed Script.txt with items")
+gate("G3a", ok3, "every page's section exists in the installed Script.txt with items "
+     "(counts %s)" % [len(SECS.get(p["sec"], [])) for p in PAGE_BUILD])
 same = [p["sec"] for p in PAGE_BUILD if len(SECS.get(p["sec"], [])) == len(p["rows"])]
 diff = {p["sec"]: (len(p["rows"]), len(SECS.get(p["sec"], [])))
         for p in PAGE_BUILD if len(SECS.get(p["sec"], [])) != len(p["rows"])}
@@ -449,8 +462,7 @@ rb = set(BY_ID)
 gate("G4b", ui <= rb, "every UI id is in the rebuild table (%d of %d)" % (len(ui & rb), len(ui)))
 extra = sorted(rb - ui)
 print("    ids in the rebuild table with no dialog row:", [hexa(x) for x in extra])
-gate("G4c", len(extra) == len(rb - ui),
-     "%d rebuild ids have no UI row (printed above)" % len(extra))
+print("    -> %d rebuild ids have no dialog row" % len(extra))
 
 # ============================== G5 apply =====================================
 print("\n-- G5  APPLY dataflow: dialog field -> cell --")
@@ -531,7 +543,7 @@ for cell in (CELL_A, CELL_B, CELL_C):
               (mark, b, r0["sec"][:10], r0["n"] + 1, r0["label"]))
     free = [b for b in range(32) if b not in used]
     print("    no dialog row writes these bits: %s" % free)
-gate("G6c", True, "both Laptop cells' set bits are named above (see the * rows)")
+print("  -> the * rows are the default-set bits of each cell")
 
 # ============================== G7 defaults ==================================
 print("\n-- G7  defaults vs the rows --")
@@ -546,25 +558,27 @@ for j in sorted(cleared, key=lambda x: (x["word"], x["bit"])):
           (hexa(j["word"]), j["bit"], j["sec"][:10], j["n"] + 1, j["label"], j["id"]))
 setb = [j for j in JOIN if j["lap"] == "set for Laptop"]
 gate("G7a", sorted((j["word"], j["bit"]) for j in cleared)
-     == [(CELL_A, 7), (CELL_A, 27), (CELL_A, 28), (CELL_B, 19)]
-     or set((j["word"], j["bit"]) for j in cleared)
-     <= {(CELL_A, 7), (CELL_A, 27), (CELL_A, 28), (CELL_B, 19)},
-     "the measured Laptop delta bits {A:7,27,28; B:19} land on dialog rows (listed above)")
-gate("G7b", not setb, "no row's bit is SET by the Laptop profile (delta adds nothing)")
+     == [(CELL_A, 7), (CELL_A, 27), (CELL_A, 28), (CELL_B, 19)] and not setb,
+     "the Laptop delta is exactly {A:7,27,28; B:19} on dialog rows and adds nothing")
 # M355's Difficulty<2 gate ORs bit 0x20 of the Preferences word: the label there
 tut = BITMAP.get((CELL_A, 5), [])
 gate("G7c", len(tut) == 1 and tut[0]["label"].lower().startswith("tutorial"),
      "Preferences bit 5 (the Difficulty<2 gate bit of M355 G3a) is the row %r" %
      (tut[0]["label"] if tut else None))
 lw = win(*LOADER_WIN)
-andimm, addimm = [], []
-for i in lw:
+andimm, addimm, derived = [], [], []
+for k, i in enumerate(lw):
     m = re.match(r"esi,0x([0-9a-f]+)$", i["arg"])
-    if m and i["op"] == "and":
+    if not m:
+        continue
+    if i["op"] == "and":
         andimm.append(int(m.group(1), 16))
-    if m and i["op"] == "add":
-        addimm.append(int(m.group(1), 16))
-derived = [(a + b) & 0xFFFFFFFF for a in andimm for b in addimm]
+        for j in range(k + 1, min(k + 8, len(lw))):
+            m2 = re.match(r"esi,0x([0-9a-f]+)$", lw[j]["arg"])
+            if lw[j]["op"] == "add" and m2:
+                addimm.append(int(m2.group(1), 16))
+                derived.append((int(m.group(1), 16) + int(m2.group(1), 16)) & 0xFFFFFFFF)
+                break
 gate("G7d", set(addimm) == {0xBBE1DD96, 0x3A7168}
      and {0xA3E1DD16, 0x327168} <= set(derived),
      "the two Laptop=0 defaults are immediates of the loader's `add` (%s) and the two "

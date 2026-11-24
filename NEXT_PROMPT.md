@@ -129,4 +129,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M352 (s328-c3): `ds:0x6710fc`=WritePrivateProfileStringA; 13 keys, 12 cell-backed+stamp; Laptop/Language read-only; `0x6926ec` literal; M350 OPEN closed. 7/7 `d553194a` 13/13.
 - M354 (s329-chain2): section A's item IS the 0x98ad88 unit-type/design row (name +0x00, weight +0x29, class +0x2a read off the item); A rows +, B rows -; M349/M351 leg NOUNS swapped. 11/11 `dd5e689e8d9af320`, harness 23/24.
 - M355 (s329-c3): `Laptop` = the DEFAULT bit-vectors of `Preferences` (0xbbe1dd96/0xa3e1dd16 -> 0x92befc) / `More Preferences` (0x3a7168/0x327168 -> 0x92bf00); Laptop!=0 clears {7,27,28}/{19}. 7/7 `c742bc13`, 24/24. NEXT: bit->option labels.
-- M357 (s330-c3): pref checkbox LABELS — 6 Script.txt sections -> 66 rows (id->cell bit, 1:1); Laptop delta = movies/interludes/SFX/monuments. 23/23 `095258c8b40d0e23`, harness 15/15.
+- M357 (s330-c3): pref checkbox LABELS — 6 Script.txt sections -> 66 rows (id->cell bit, 1:1); Laptop delta = movies/interludes/SFX/monuments. 18/18 `095258c8b40d0e23`, harness 23/23.

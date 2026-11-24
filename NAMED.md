@@ -1560,14 +1560,14 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## M357 (s330-c3, 23/23 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
+## M357 (s330-c3, 18/18 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
 | claim | ev | conf |
 |---|---|---|
-| six page builders read their `Script.txt` section by name (0x5ea431) and add each row as next-line (0x5ea448) -> strcpy into the page slot -> add_item(text,id) (0x604fd2); rows 8/12/14/8/17/7 = 66 | `:12-84` | V MU1,MU2,MU3,MU4 |
-| each page's slots are the table's consecutive dwords 0x68b678..0x68b7cc; A/V builds 8 rows from 11 offered lines | `:94-108` | V MU3,MU14,MU16 |
-| rebuild 0x492940: 70 ids -> exactly one (field,bit) from the encodings; all 66 UI ids present, 0x37/0x38/0x39/0x50 have no row | `:183-186` | V MU5,MU7,MU8,MU9,MU13 |
-| APPLY dataflow: 0x92befc <- {a20,a30,a38,a40,a4c,a54}; 0x92bf00 <- {a24,a34,a3c,a44,a50,a58}; 0x92bf04 <- a28\|a48 (WARNINGS, own key) | `:192-195` | V MU10,MU11,MU12 |
-| row->bit INJECTIVE per cell: 66 rows -> 66 distinct (cell,bit) pairs, 0 shared | `:266` | V MU7,MU13 |
-| Laptop!=0 clears A{7,27,28}/B{19} = "Secret Project movies."/"Interludes."/"Sound effects."/"Monuments." - the delta is entirely A/V rows | `:347-353` | V MU5,MU15 |
-| 0x92befc bit 5 = "Tutorial messages." = M355's Difficulty<2 gate bit | `:355` | V MU5,MU15 |
-| OPEN: ids 0x37/0x38/0x39/0x50; bits no row writes (A 4,6,10,11,13,26; B 1,14,25-31) | - | lead |
+| six builders push the VA of their OWN section-name string and read it (0x5ea431); every row = next line (0x5ea448) -> strcpy (0x64b9e0) into the page slot -> add_item(text,id) (0x604fd2); 8/12/14/8/17/7 = 66 | `:13-85` | V MU1(G2a),MU2(G1b),MU3(G2a),MU4(G0a),MU17(G1a),MU18b(G3a) |
+| slots are the table's consecutive dwords 0x68b678..0x68b7cc and end before the next name; 5 of 6 pages match Script.txt, A/V builds 8 of 11 | `:95-108` | V MU3(G2a),MU14(G3b),MU16(G3b) |
+| rebuild 0x492940: 70 ids -> one (field,bit) each, all 66 UI ids present | `:183-184` | V MU18(G4a),MU19(G4b),MU21(G6a) |
+| APPLY dataflow: 0x92befc <- {a20,a30,a38,a40,a4c,a54}; 0x92bf00 <- {a24,a34,a3c,a44,a50,a58}; 0x92bf04 <- a28\|a48 (WARNINGS, own key) | `:192-195` | V MU10(G5c),MU11(G5a),MU12(G5b),MU20(G5d) |
+| row->bit INJECTIVE per cell: 66 rows, 66 distinct (cell,bit), 0 shared | `:266` | V MU7,MU9,MU13(G6b) |
+| Laptop delta = exactly A{7,27,28}+B{19} = "Secret Project movies."/"Interludes."/"Sound effects."/"Monuments." (all A/V) and adds nothing | `:353` | V MU22(G7a) |
+| 0x92befc bit 5 = "Tutorial messages." = M355's Difficulty<2 gate bit; defaults re-appear as the loader's add/and immediates | `:354-355` | V MU5,MU15(G7c),MU23(G7d) |
+| OPEN: ids 0x37/0x38/0x39/0x50 have no row; bits no row writes (A 4,6,13,26; B 1,14,25-31) | - | lead |

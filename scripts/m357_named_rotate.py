@@ -64,8 +64,12 @@ def rotate():
     if "## M272 (STUB" in text and "## M273 (STUB" in text:
         print("both blocks already rotated (stubs present) - nothing rewritten")
         return verify()
-    parts, records = [], []
+    parts, records, done = [], [], []
     for head in sorted(TARGETS, key=lambda h: -text.index(h)):
+        if head + "(STUB" in text:
+            print("%-8s already rotated (stub present) - skipped" % head.strip())
+            done.append(head)
+            continue
         blk, i, j = block_of(text, head)
         body = blk.rstrip("\n") + "\n"
         h = sha(body)
@@ -80,6 +84,8 @@ def rotate():
     open(NAMED, "w").write(text)
     for name, body, h, n in records:
         print("rotated %-8s (%d B, %d bullets) sha1 %s" % (name, len(body), n, h))
+    if not records:
+        print("nothing to rotate")
     print("NAMED.md now %d B" % len(text))
     return verify()
 

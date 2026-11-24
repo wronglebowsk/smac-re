@@ -1,4 +1,4 @@
-baseline: PASS M357: 23/23 gates  red=[]
+baseline: PASS M357: 18/18 gates  red=[]
 MU1   KILLED  want=G2a red=['G2a', 'G3b', 'G7c']  the row boundary is the add_item call
 MU2   KILLED  want=G1b red=['G1b', 'G6b', 'G7c', 'G8']  BASIC row0 id == 5
 MU3   KILLED  want=G2a red=['G2a']  BASIC row0 slot == 0x68b678
@@ -8,13 +8,21 @@ MU6   NO-OP  (duplicate guard)
 MU7   KILLED  want=G6b red=['G6b', 'G8']  Autosave row -> bit 1 (bit 2 is taken)
 MU8   KILLED  want=G6b red=['G6b', 'G8']  id16 -> a38 bit 3 only
 MU9   KILLED  want=G6b red=['G6b', 'G8']  id11 -> a30 bit 15 (the ebx constant is measured)
-MU10  KILLED  want=G5c red=['G5a', 'G5c', 'G6a', 'G7c']  APPLY stores the A union into 0x92befc
-MU11  KILLED  want=G5a red=['G5a', 'G5c', 'G6a', 'G7c']  APPLY stores the B union into 0x92bf00
+MU10  KILLED  want=G5c red=['G5a', 'G5c', 'G6a', 'G7a']  APPLY stores the A union into 0x92befc
+MU11  KILLED  want=G5a red=['G5a', 'G5c', 'G6a', 'G7a']  APPLY stores the B union into 0x92bf00
 MU12  KILLED  want=G5a red=['G5a', 'G5b', 'G5c', 'G6a']  0x92befc does NOT include a48
 MU13  KILLED  want=G6b red=['G5a', 'G6b', 'G8']  Auto-prune id 64 -> a34 bit 20 (a40 bit 20 is taken)
+MU17  KILLED  want=G1a red=['G1a', 'G2a']  BASEWARNINGS row0 copies into table slot 0x68b764
+MU18  KILLED  want=G4a red=['G4a', 'G6a']  every id decodes to a field AND a bit (id 11's ebx form)
+MU19  KILLED  want=G4b red=['G4b', 'G6a']  id 0x26 is the rebuild's WARN row 1
+MU20  KILLED  want=G5d red=['G5a', 'G5c', 'G5d', 'G6a']  a28|a48 lands in 0x92bf04
+MU21  KILLED  want=G6a red=['G4a', 'G6a']  WARN row 0's store form is parseable
+MU22  KILLED  want=G7a red=['G7a']  the Laptop delta's A bit 7 is the movies row (bit 6 is unwritten)
+MU23  KILLED  want=G7d red=['G7d']  the More Preferences default word is 0x3a7168
 MU14  KILLED  want=G3b red=['G3b', 'G7c']  BASICPREFS offers 8 lines (row count == text count)
 MU15  KILLED  want=G7c red=['G7c']  Preferences bit 5 names the Tutorial row
+MU18b KILLED  want=G3a red=['G3a', 'G3b', 'G7c']  the BASIC page's section is named BASICPREFS
 MU16  KILLED  want=G3b red=['G3b']  BASEWARNINGS offers 17 labelled lines
 
-15/15 killed, 1 NO-OP, 0 survived/missed
+23/23 killed, 1 NO-OP, 0 survived/missed
 PASS M357-mutate

@@ -9,8 +9,9 @@ AUTOMATIONPREFS | 0x490a67 | 0x5ea431 | 14 | 17 | 0x68b6e8
 AUDIOVISUALPREFS | 0x490e70 | 0x5ea431 | 8 | 14 | 0x68b734
 BASEWARNINGS | 0x49112a | 0x5ea431 | 17 | 21 | 0x68b764
 MAPPREFS | 0x4916b8 | 0x5ea431 | 7 | 11 | 0x68b7b4
-[PASS] G0a all six section builds located by their `push <section-name>` + call 0x5ea431
-[PASS] G0b six distinct sections, six distinct builders (rows: [8, 12, 14, 8, 17, 7])
+    name strings: [('BASICPREFS', 'BASICPREFS'), ('ADVANCEDPREFS', 'ADVANCEDPREFS'), ('AUTOMATIONPREFS', 'AUTOMATIONPREFS'), ('AUDIOVISUALPREFS', 'AUDIOVISUALPREFS'), ('BASEWARNINGS', 'BASEWARNINGS'), ('MAPPREFS', 'MAPPREFS')]
+[PASS] G0a six distinct builders, each pushing the VA of its OWN section-name string (cstr == section) and calling 0x5ea431
+    rows per page: [8, 12, 14, 8, 17, 7]
 
 -- G1  row = (label slot, option id) --
 section | seq | slot | id | add_item @
@@ -80,7 +81,7 @@ MAPPREFS | 3 | 0x68b7c0 | 71 | 0x491845
 MAPPREFS | 4 | 0x68b7c4 | 72 | 0x491885
 MAPPREFS | 5 | 0x68b7c8 | 73 | 0x4918c6
 MAPPREFS | 6 | 0x68b7cc | 74 | 0x491907
-[PASS] G1a every row carries a slot VA and an id immediate (66 rows)
+[PASS] G1a every row carries a slot VA, an id immediate AND a strcpy (0x64b9e0) between its line read and its add_item (66/66 rows)
 [PASS] G1b the 66 option ids are distinct across the six pages
 
 -- G2  the row slots are the page table's consecutive dwords --
@@ -91,8 +92,7 @@ AUTOMATIONPREFS | 0x68b6e8 | 14 | consecutive | 0x68b720 = 'AUDIOVISUALPREFS'
 AUDIOVISUALPREFS | 0x68b734 | 8 | consecutive | 0x68b754 = 'BASEWARNINGS'
 BASEWARNINGS | 0x68b764 | 17 | consecutive | 0x68b7a8 = 'MAPPREFS'
 MAPPREFS | 0x68b7b4 | 7 | consecutive | 0x68b7d0 = 'Main Volume'
-[PASS] G2a each page's slots are +4 consecutive from its table entry
-[PASS] G2b each page's slot run ends before the next page's name string in the table
+[PASS] G2a each page's slots are +4 consecutive from its table entry and its run ends before the next page's name string
 
 -- G3  Script.txt sections: ordered labels --
 section | exe rows | txt items | first | last
@@ -102,7 +102,7 @@ AUTOMATIONPREFS | 14 | 14 | Air units return home when reach l | Always investig
 AUDIOVISUALPREFS | 8 | 11 | Background music. | Whole unit blinks.
 BASEWARNINGS | 17 | 17 | Stop for new facilities built. | Stop for random events.
 MAPPREFS | 7 | 7 | Show fog of war. | Show flattened terrain.
-[PASS] G3a every page's section exists in the installed Script.txt with items
+[PASS] G3a every page's section exists in the installed Script.txt with items (counts [8, 12, 14, 11, 17, 7])
     equal: ['BASICPREFS', 'ADVANCEDPREFS', 'AUTOMATIONPREFS', 'BASEWARNINGS', 'MAPPREFS']
     differ: {'AUDIOVISUALPREFS': (8, 11)}
 [PASS] G3b 5 of 6 pages: exe rows == txt items; A/V builds 8 rows from 11 offered lines (the 3 unused lines are printed above as the section tail)
@@ -183,7 +183,7 @@ id | field | bit | word | how | or @
 [PASS] G4a all 70 ids decode to a field and a bit from the encodings
 [PASS] G4b every UI id is in the rebuild table (66 of 66)
     ids in the rebuild table with no dialog row: ['0x37', '0x38', '0x39', '0x50']
-[PASS] G4c 4 rebuild ids have no UI row (printed above)
+    -> 4 rebuild ids have no dialog row
 
 -- G5  APPLY dataflow: dialog field -> cell --
     0x92befc <- ['a20', 'a30', 'a38', 'a40', 'a4c', 'a54']
@@ -338,7 +338,7 @@ MAPPREFS | 6 | Show flattened terrain. | 74 | a58 | 0x92bf00 | 16 | off/off
     * bit 15  BASEWARNIN  r15 Stop for mineral shortages.
     * bit 16  BASEWARNIN  r16 Stop for energy shortages.
     no dialog row writes these bits: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
-[PASS] G6c both Laptop cells' set bits are named above (see the * rows)
+  -> the * rows are the default-set bits of each cell
 
 -- G7  defaults vs the rows --
 cell | Laptop=0 | n bits | Laptop!=0 | n bits
@@ -350,10 +350,9 @@ cell | Laptop=0 | n bits | Laptop!=0 | n bits
     0x92befc bit 27 AUDIOVISUA  r6 "Interludes." (id 62)
     0x92befc bit 28 AUDIOVISUA  r2 "Sound effects." (id 59)
     0x92bf00 bit 19 AUDIOVISUA  r7 "Monuments." (id 69)
-[PASS] G7a the measured Laptop delta bits {A:7,27,28; B:19} land on dialog rows (listed above)
-[PASS] G7b no row's bit is SET by the Laptop profile (delta adds nothing)
+[PASS] G7a the Laptop delta is exactly {A:7,27,28; B:19} on dialog rows and adds nothing
 [PASS] G7c Preferences bit 5 (the Difficulty<2 gate bit of M355 G3a) is the row 'Tutorial messages.'
-[PASS] G7d the two Laptop=0 defaults are immediates of the loader's `add` (['0xbbe1dd96', '0x3a7168']) and the two Laptop!=0 words are DERIVED by its `and`+`add` (['0xa3e1dd16', '0xe83a70e8', '0xbbd9dd96', '0x327168'])
+[PASS] G7d the two Laptop=0 defaults are immediates of the loader's `add` (['0xbbe1dd96', '0x3a7168']) and the two Laptop!=0 words are DERIVED by its `and`+`add` (['0xa3e1dd16', '0x327168'])
 
 -- G8  rivals (each must FAIL on the printed numbers) --
   R bit index == option id                         holds=False mismatches 65/66
@@ -367,4 +366,4 @@ cell | Laptop=0 | n bits | Laptop!=0 | n bits
 [PASS] G8 8/8 rivals FALSIFIED by the printed numbers
 
 tables digest 095258c8b40d0e23  (66 rows, 66 bit rows)
-PASS M357: 23/23 gates
+PASS M357: 18/18 gates
