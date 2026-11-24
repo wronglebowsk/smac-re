@@ -40,6 +40,14 @@ MUTANTS = [
     ("MU8", "code", "0x52be38|je 0x52c423", "G6", "G6 entries into 52d840 changed"),
     ("MU10", "code", "0x52d849|cmp DWORD PTR [ebx+0x10],0x1", "G6",
      "G6 the block now filters +0x10"),
+    # -- the review round: liveness, entry conditions, msg width, read/write, straight-line, classifier
+    ("MU12", "code", "0x5355eb|call 0x584581", "G4", "G4 msg census != 49 literals"),
+    ("MU13", "code", "0x52be2d|cmp eax,0x1102", "G6", "G6 the entry conditions changed"),
+    ("MU14", "code", "0x52a752|movzx eax,WORD PTR [ebp+0x8]", "G1", "G1 frame != ret 0x1c"),
+    ("MU15", "code", "0x52a741|mov DWORD PTR [ebp+0x1c],ecx", "G1", "G1 frame != ret 0x1c"),
+    ("MU16", "code", "0x5262ec|je 0x5262ee", "G2", "G2 1 sites did not decode"),
+    ("MU17", "algo", "7", "G6", "G6 the block is not 18 instructions"),
+    ("MU18", "algo", "8", "G6", "G6 ebx lineage != single def"),
     # -- G8 the rival classifier
     ("MU11", "algo", "6", "G8", "G8 every rival survived"),
 ]

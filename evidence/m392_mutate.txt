@@ -14,6 +14,13 @@ MU6   code  G5    killed   'G5 joint != 0 closed'
 MU7   code  G6    killed   'G6 ebx lineage != single def'
 MU8   code  G6    killed   'G6 entries into 52d840 changed'
 MU10  code  G6    killed   'G6 the block now filters +0x10'
+MU12  code  G4    killed   'G4 msg census != 49 literals'
+MU13  code  G6    killed   'G6 the entry conditions changed'
+MU14  code  G1    killed   'G1 frame != ret 0x1c'
+MU15  code  G1    killed   'G1 frame != ret 0x1c'
+MU16  code  G2    killed   'G2 1 sites did not decode'
+MU17  algo  G6    killed   'G6 the block is not 18 instructions'
+MU18  algo  G6    killed   'G6 ebx lineage != single def'
 MU11  algo  G8    killed   'G8 every rival survived'
 
-SUMMARY M392: 15/15 killed
+SUMMARY M392: 22/22 killed

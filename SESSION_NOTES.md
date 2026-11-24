@@ -793,26 +793,28 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
 - **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).
 
-## Session 343-chain5 — M392: the UNINIT leg is LIVE — 1 of 65 callers passes the zero guard, with a record-sourced id
+## Session 343-chain5 — M392: the UNINIT leg is LIVE — 1 of 65 callers passes the zero guard, id record-sourced
 
-- **ACCEPT** `python3 -u scripts/m392_uninit_census.py` -> **`PASS M392: 10/10`** `561a7a59cbf081e4`
-  (`evidence/m392_caller_census.txt:143`), twice identical (`evidence/m392_twice.txt:3`); harness
-  **15/15** (`evidence/m392_mutate.txt:19`); static, zero box.
-- **POPULATION**: 65 direct calls (22 fns + unindexed wrapper 0x5844b6 = the 64/65 gap); ZERO dword pointers to 0x52a720 -> no indirect caller (`:2-8`).
+- **ACCEPT** `python3 -u scripts/m392_uninit_census.py` -> **`PASS M392: 10/10`** `3b27a4bd7c31181b`
+  (`evidence/m392_caller_census.txt:146`), twice identical (`evidence/m392_twice.txt:3`); 22/22
+  mutants (`evidence/m392_mutate.txt:26`); static, zero box.
+- **POPULATION**: 65 direct calls (22 fns + unindexed wrapper 0x5844b6 = the 64/65 gap); no stored
+  dword pointer to 0x52a720 -> no static indirect target (`:8`).
 - **SLOT LAW**: stdcall `ret 0x1c` x6 = 7 dwords. msg = movsx WORD [ebp+8]; the guard M387 calls
-  "arg7" is the SECOND push ([ebp+0x1c], 15 reads); the FIRST push ([ebp+0x20]) is 0x2101 at all
-  65 sites. The census keys on push position, so the label cannot shift it (`:11-21`).
+  "arg7" is the SECOND push ([ebp+0x1c], 15 reads, 0 writes); the FIRST push ([ebp+0x20]) is 0x2101
+  at all 65 sites; 65/65 decode as seven straight-line pushes (`:17`, `:86-99`).
 - **CENSUS**: 64 push guard=1 (PRESERVE); exactly ONE — 0x52d873 in FUN_0052bce0 — pushes 0.
-  49 distinct msg literals; 0x16 exactly once, 0x58459d (FUN_00584580, live: 1 caller 0x5355eb),
-  and that site pushes guard=1 (`:94-107`).
-- **VERDICT**: no caller closes the leg (guard 0 AND literal 0x16 = 0). The zero-guard site's id is
-  `mov ax,WORD PTR [ebx+0x10]`, ebx = [ebp+8] (single def 0x52bd33 over a 95-instr back-reach); the
-  block is entered only when the record word is 0x1101 (0x52be38) or 0x4101 (0x52d7b4); no
-  compare/test of +0x10 inside its 18 instructions -> **the leg is LIVE**, not dead, and unlike
-  M387's count==0 leg no arithmetic kills it (`:109-133`).
+  49 msg literals; 0x16 exactly once, 0x58459d (wrapper FUN_00584580, live: 1 caller 0x5355eb), and
+  that site pushes guard=1 (`:96-108`).
+- **VERDICT**: no caller closes the leg. The zero-guard site's id is `mov ax,WORD PTR [ebx+0x10]`,
+  ebx = [ebp+8] (single def 0x52bd33 over a CFG back-reach); the block is entered only on record word
+  0x1101/0x4101 and nothing there tests +0x10 -> **the leg is LIVE**, and 0 legs are arithmetic-dead
+  (`:110-136`).
+- **REVIEW ROUND (Strata, PR 427)**: hardened 5 claims into gates (dead-leg count, wrapper liveness +
+  caller, entry conditions + 18-instr block, movsx WORD, 15R/0W), added 7 mutants: 22/22 killed.
 - **STAYED OPEN**: the writer of the record's +0x10 word (does a 0x1101/0x4101 record carry 0x16?);
-  witness needs a box run (out of scope).
-- **PITFALLS**: (1) a linear back-scan for a register def leaks SEH epilogues (`pop ebx` @0x52c30e)
-  — walk explicit edges (95 instrs vs 4558). (2) a write to `ax` IS a write to eax. (3) `ret 0x1c`
-  makes M387's "arg7" the 6th stack dword — key on push position.
+  witness needs a box run.
+- **PITFALLS**: (1) a linear back-scan for a register def leaks SEH epilogues (`pop ebx` @0x52c30e) —
+  walk explicit edges. (2) a write to `ax` IS a write to eax. (3) `ret 0x1c` makes M387's "arg7" the
+  6th stack dword — key on push position.
 - **NEXT**: the record's +0x10 writer, then the 0x1101/0x4101 record class.

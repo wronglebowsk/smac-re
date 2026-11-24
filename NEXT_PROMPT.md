@@ -112,4 +112,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 
 - M384 (s342-c2): 0x400 has 7 setters - `0x5534ae`/`0x555a6b` inline, plus 5 callers of the pair-mask API FUN_00551a20/FUN_00551cf0 passing 0x400 (95/106 masks resolved); `PASS M384: 39/39` `evidence/m384_bit400_writer.txt:280`, 23 mutants. Next: the 7 runtime mask args (0x4dadxx family) or what `0x551a20`'s `and 0xfaeef378` blanket clear means for the 0xc00 cluster.
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
-- M392 (s343-c5): the UNINIT leg is LIVE - 64/65 callers push guard=1, 0x52d873 pushes 0 with its id from `mov ax,WORD PTR [ebx+0x10]` (no static filter; the only literal 0x16, 0x58459d, pushes 1). 10/10 `561a7a59cbf081e4`, 15/15 mutants. NEXT: the record's +0x10 writer.
+- M392 (s343-c5): the UNINIT leg is LIVE - 64/65 callers push guard=1, 0x52d873 pushes 0 with its id from `mov ax,WORD PTR [ebx+0x10]` (no static filter; the only literal 0x16, 0x58459d, pushes 1). 10/10 `3b27a4bd7c31181b`, 22/22 mutants. NEXT: the record's +0x10 writer.

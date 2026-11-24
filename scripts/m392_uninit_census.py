@@ -59,6 +59,7 @@ ENTRIES = {0x52BE38: 0x1101, 0x52D7B4: 0x4101}
 ORPHAN_CALL = 0x5844B6
 LIT16 = 0x584596                  # `push 0x16` in FUN_00584580
 BLOCK_HEAD = 0x52D849             # first argument-load of the open block
+ENTRY_CMP = 0x52BE2D              # `cmp eax,0x1101` guarding the first entry
 ALGO = int(os.environ.get("M392_ALGO", "0") or 0)
 
 OUT, FAILS = [], []
@@ -149,7 +150,20 @@ def func_range(a):
 JCC = ("je", "jne", "jz", "jnz", "jl", "jle", "jg", "jge", "jb", "jbe", "ja",
        "jae", "js", "jns", "jp", "jnp", "jo", "jno")
 WRITES = ("mov", "xor", "sub", "add", "and", "or", "lea", "pop", "inc", "dec",
-          "shl", "shr", "sar", "sal", "imul", "neg", "not", "xchg", "adc", "sbb")
+          "shl", "shr", "sar", "sal", "imul", "neg", "not", "xchg", "adc", "sbb",
+          "movsx", "movzx")
+FULLREGS = ("eax", "ebx", "ecx", "edx", "esi", "edi")
+
+
+def is_write(i, dst):
+    """Does instruction i write the destination string `dst`?"""
+    if i["mn"] in WRITES:
+        return True
+    if i["mn"].startswith(("cmov", "set")):
+        return True
+    if i["mn"] in ("pushad", "popad", "popal", "pushal"):
+        return dst in FULLREGS
+    return False
 
 
 def imm_val(s):
@@ -178,10 +192,9 @@ def last_write(reg, addr, lo):
     while j >= 0 and INS[j]["a"] >= lo:
         i = INS[j]
         ops = i["ops"].lower().strip()
-        if i["mn"] in WRITES:
-            dst = ops.split(",")[0].strip()
-            if dst in forms:
-                return i
+        dst = ops.split(",")[0].strip()
+        if is_write(i, dst) and dst in forms:
+            return i
         j -= 1
     return None
 
@@ -302,14 +315,17 @@ rets = [i for i in INS if FUNC <= i["a"] < FUNC + 5200 and i["mn"].startswith("r
 retops = sorted({i["ops"].strip() or "0x0" for i in rets})
 say(f"  ret sites: {[hex(i['a']) for i in rets]}")
 say(f"  ret operands: {retops}  -> {int(retops[0], 16) // 4} stack dwords cleaned by the callee")
-reads = {}
+reads, writes = {}, {}
 for a in (0x8, 0xC, 0x10, 0x14, 0x18, 0x1C, 0x20):
-    n = sum(1 for i in INS if FUNC <= i["a"] < FUNC + 4859
-            and f"[ebp+0x{a:x}]" in i["ops"].lower())
-    reads[a] = n
-say(f"  reads per stack slot: {[(hex(k), v) for k, v in reads.items()]}")
-say(f"  msg slot [ebp+8] read as: "
-    f"{fog([i['ops'] for i in INS if i['a'] == 0x52A752][0])}")
+    pat = f"[ebp+0x{a:x}]"
+    hits = [i for i in INS if FUNC <= i["a"] < FUNC + 4859 and pat in i["ops"].lower()]
+    writes[a] = sum(1 for i in hits if pat in i["ops"].lower().split(",")[0]
+                    and is_write(i, i["ops"].lower().split(",")[0].strip()))
+    reads[a] = len(hits) - writes[a]
+say(f"  reads per stack slot:  {[(hex(k), v) for k, v in reads.items()]}")
+say(f"  writes per stack slot: {[(hex(k), v) for k, v in writes.items()]}")
+msgin = [i for i in INS if i["a"] == 0x52A752][0]
+say(f"  msg slot [ebp+8] read as: {msgin['mn']} {fog(msgin['ops'])}")
 say(f"  guard [ebp+0x1c] first test: "
     f"{fog([i['ops'] for i in INS if i['a'] == 0x52A741][0])} @52a741, "
     f"{fog([i['ops'] for i in INS if i['a'] == 0x52A778][0])} @52a778")
@@ -317,10 +333,11 @@ if ALGO == 1:
     say("  ALGO=1: guard slot set to 0 (msg)")
     GUARD_SLOT = 0 if False else 0
 if retops != ["0x1c"] or int(retops[0], 16) // 4 != 7 or reads[0x8] != 7 or reads[0x1c] != 15 \
-        or reads[0x20] != 1 or any(r["a"] not in RET_SITES for r in rets):
-    bad(f"G1 frame != ret 0x1c x6 / 7 slots / reads {reads}")
+        or writes[0x1c] != 0 or reads[0x20] != 1 or any(r["a"] not in RET_SITES for r in rets) \
+        or msgin["mn"] != "movsx" or "word ptr [ebp+0x8]" not in msgin["ops"].lower():
+    bad(f"G1 frame != ret 0x1c x6 / 7 slots / reads {reads} / writes {writes} / msg {msgin['mn']}")
 else:
-    ok("G1", "stdcall ret 0x1c = 7 dwords; guard [ebp+0x1c] read 15x, arg8 [ebp+0x20] 1x")
+    ok("G1", "stdcall ret 0x1c = 7 dwords; msg = movsx WORD; guard [ebp+0x1c] 15R/0W; arg8 1R")
 
 # ---------------------------------------------------------------- G2 decode
 say("")
@@ -341,6 +358,8 @@ for a in SITE_ADDRS:
         elif i["mn"] == "call":
             complex_ = True
             break
+        elif i["mn"] in ("jmp",) + JCC:
+            complex_ = True
         elif i["mn"] in ("add", "sub") and ops.startswith("esp,"):
             complex_ = True
         elif i["mn"] == "mov" and ops.startswith("dword ptr [esp"):
@@ -421,8 +440,8 @@ say(f"  distinct literal ids: {len(consts)}")
 say("  literals: " + " ".join(f"0x{k:02x}x{len(v)}" for k, v in sorted(consts.items())))
 say(f"  expression-sourced ids: {len(exprs)} {[(hex(a), k, e, hex(s)) for a, k, e, s in exprs]}")
 sixteen = consts.get(0x16, [])
+callers16, live16 = [], "n/a"
 say(f"  literal 0x16 sites: {[hex(a) for a in sixteen]}")
-live16 = "n/a"
 if sixteen:
     o = owner(sixteen[0])
     callers16 = [i["a"] for i in INS if i["mn"] == "call"
@@ -432,9 +451,10 @@ if sixteen:
 say(f"  the 0x16 wrapper: {live16}")
 push16 = [i for i in INS if i["a"] == LIT16 and i["mn"] == "push"]
 if len(consts) != 49 or sixteen != [0x58459D] or len(exprs) != 1 \
-        or exprs[0][0] != 0x52D873 or not push16 or imm_val(push16[0]["ops"]) != 0x16:
+        or exprs[0][0] != 0x52D873 or not push16 or imm_val(push16[0]["ops"]) != 0x16 \
+        or callers16 != [0x5355EB]:
     bad(f"G4 msg census != 49 literals / 0x16 once at 58459d / 1 expression at 52d873 "
-        f"({len(consts)},{[hex(a) for a in sixteen]},{len(exprs)})")
+        f"({len(consts)},{[hex(a) for a in sixteen]},{len(exprs)},{[hex(a) for a in callers16]})")
 else:
     ok("G4", f"{len(consts)} literal ids; 0x16 exactly once (live wrapper); 1 expression id")
 
@@ -456,8 +476,12 @@ say("")
 say("G6  the open site: where its id word comes from, and what guards the block")
 lo, hi = func_range(0x52D873)
 reach = backward_reach(0x52D873, lo, hi)
+scope = reach
+if ALGO == 8:
+    scope = {i["a"] for i in INS if lo <= i["a"] < hi}
+    say("  ALGO=8: def scan widened to the whole function (linear, no CFG)")
 defs = [(i["a"], i["mn"], fog(i["ops"])) for i in INS
-        if i["a"] in reach and i["mn"] in WRITES
+        if i["a"] in scope and i["mn"] in WRITES
         and i["ops"].lower().strip().split(",")[0].strip() == "ebx"]
 w = defs[0] if len(defs) == 1 else None
 say(f"  enclosing function: {owner(0x52D873)[0]} [{lo:06x},{hi:06x}) size {hi - lo}")
@@ -474,11 +498,28 @@ entries = [(i["a"], i["mn"], fog(i["ops"])) for i in INS
            if lo <= i["a"] < hi and i["mn"] in ("call", "jmp") + JCC
            and i["ops"].strip().lower() == "0x52d840"]
 say(f"  jumps into the block 52d840: {[(hex(a), m, o) for a, m, o in entries]}")
+MSGHI = MSGSRC[1] + (4 if ALGO == 7 else 0)
+if ALGO == 7:
+    say("  ALGO=7: block window widened by 4 bytes")
 mid = [(i["a"], i["mn"], fog(i["ops"])) for i in INS
-       if MSGSRC[0] <= i["a"] < MSGSRC[1]]
+       if MSGSRC[0] <= i["a"] < MSGHI]
 head = [x for x in mid if x[0] == BLOCK_HEAD]
 say(f"  instructions in the block: {len(mid)}; head 0x{BLOCK_HEAD:06x} = "
     f"{head[0][1] + ' ' + head[0][2] if head else 'MISSING'}")
+cond = {}
+for a, _, _ in entries:
+    if a == 0x52BE38:
+        say(f"  entry guard pinned at 0x{ENTRY_CMP:06x}: "
+            f"{fog([i['ops'] for i in INS if i['a'] == ENTRY_CMP][0])}")
+    k = IDXBY[a]
+    for j in range(k - 1, max(0, k - 7), -1):
+        if INS[j]["mn"] == "cmp":
+            iv = [v for v in re.findall(r'0x([0-9a-f]+)', INS[j]["ops"].lower())]
+            if iv:
+                cond[a] = int(iv[0], 16)
+            break
+say(f"  record-word compares before each entry: "
+    f"{[(hex(a), hex(v)) for a, v in sorted(cond.items())]}")
 tests = [x for x in mid if x[1] in ("cmp", "test", "and", "or") and "+0x10]" in x[2].lower()]
 say(f"  instructions in the block that test/compare +0x10: {len(tests)} {tests}")
 if not w or w[0] != REC_EBX_DEF or w[1] != "mov" or "[ebp+0x8]" not in w[2].lower():
@@ -487,6 +528,10 @@ elif {e[0] for e in entries} != set(ENTRIES):
     bad(f"G6 entries into 52d840 changed: {[hex(e[0]) for e in entries]}")
 elif len(tests) != 0:
     bad(f"G6 the block now filters +0x10: {tests}")
+elif cond != ENTRIES or ENTRY_CMP not in {i["a"] for i in INS}:
+    bad(f"G6 the entry conditions changed: {[(hex(a), hex(v)) for a, v in cond.items()]}")
+elif len(mid) != 18:
+    bad(f"G6 the block is not 18 instructions: {len(mid)}")
 elif not head:
     bad("G6 the block head 52d849 is gone")
 else:
@@ -500,14 +545,15 @@ say(f"  guard!=0 (PRESERVE: the snapshot runs, the store copies the pair dword):
 say(f"  guard==0, literal id            : {len(both)}")
 say(f"  guard==0, expression id (UNINIT): {len(openl)}  <- reachable, id unconstrained")
 dead = [x for x in TABLE if x["slots"][0][0] != "CONST" and x["slots"][gs][1] != 0]
-say(f"  legs killed by arithmetic like M387's count==0: 0 for this axis")
+say(f"  legs killed by arithmetic like M387's count==0: {len(dead)} for this axis "
+    f"{[hex(x['a']) for x in dead]}")
 say("  So the UNINIT leg is LIVE: one callsite opens it, the id there is a 16-bit record")
 say("  field with no static filter, and 0x16 is a live id in this same dispatcher")
 say("  (0x58459d, one caller at 0x5355eb). A runtime witness needs a box run (out of scope).")
-if len(pres) != 64 or len(both) != 0 or len(openl) != 1:
-    bad(f"G7 verdict counts != 64/0/1 ({len(pres)},{len(both)},{len(openl)})")
+if len(pres) != 64 or len(both) != 0 or len(openl) != 1 or len(dead) != 0:
+    bad(f"G7 verdict counts != 64/0/1/0 ({len(pres)},{len(both)},{len(openl)},{len(dead)})")
 else:
-    ok("G7", "64 PRESERVE + 0 closed + 1 LIVE-UNINIT (52d873) = 65")
+    ok("G7", "64 PRESERVE + 0 closed + 1 LIVE-UNINIT (52d873) + 0 arithmetic-dead = 65")
 
 # ---------------------------------------------------------------- G8 rivals
 say("")
