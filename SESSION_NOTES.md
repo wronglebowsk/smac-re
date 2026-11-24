@@ -667,8 +667,8 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 ## Session 335-chain1 (2026-11-24) — B35: WHO calls the grant family — the founder + the new-game setup only, and the recorded births carry the FOUNDER's bit-1 signature
 
 - **ACCEPT** `python3 -u -m sim.grantcall` -> **`PASS B35: 11/11 gates` `fa541d0a2445cacf`**
-  (`evidence/b35_grantcall.txt:108`), re-run byte-identical; `scripts/b35_mutate.py` ->
-  **14/14 killed, NO-OP `[]`** (`evidence/b35_mutate.txt:16`). Zero box.
+  (`evidence/b35_grantcall.txt:113`), re-run byte-identical; `scripts/b35_mutate.py` ->
+  **18/18 killed, NO-OP `[]`** (`evidence/b35_mutate.txt:20`). Zero box.
 - **CALLERS (dump, 781,429 insns)**: `call 0x4e47d0` = 3 sites — `0x4ccbdd` FUN_004cca50,
   `0x59d894` FUN_0059ce10, `0x5a01f8` FUN_0059ec90; `call 0x59ce10` = 1 site `0x5a1579`
   FUN_005a0fa0. Hosts agree with the index's `n_callers` 3/1, 0 unattributed (`:5-14`).

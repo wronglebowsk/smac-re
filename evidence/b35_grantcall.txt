@@ -7,7 +7,8 @@ TABLE 1 - direct calls into the grant family
   call 0x59ce10  site 0x5a1579  host FUN_005a0fa0
   site-table digest 995a09b96d05da54
 ok   G1 3 sites into FUN_004e47d0 ['0x4ccbdd', '0x59d894', '0x5a01f8'] and 1 into FUN_0059ce10 ['0x5a1579'] (digest 995a09b96d05da54)
-ok   G2 hosts ['FUN_004cca50', 'FUN_0059ce10', 'FUN_0059ec90'] (index n_callers 3) / FUN_005a0fa0 (n_callers 1), 0 unattributed
+  sites 3, DISTINCT hosts 3; index n_callers 3 / 1
+ok   G2 hosts ['FUN_004cca50', 'FUN_0059ce10', 'FUN_0059ec90'] (index n_callers 3, site count == distinct host count) / FUN_005a0fa0 (n_callers 1), 0 unattributed
 
 TABLE 2 - FUN_0059ce10's grants (call 0x4e44f0), items in ADDRESS order
   site 0x59d015  push-order ['0x1', 'ecx', '0x6'] -> item 0x6, base ecx, set 0x1
@@ -23,7 +24,8 @@ TABLE 2 - FUN_0059ce10's grants (call 0x4e44f0), items in ADDRESS order
   site 0x59dc35  push-order ['0x1', 'edi', '0x1b'] -> item 0x1b, base edi, set 0x1
   item order [6, 3, 7, 27, 8, 4, 6, 3, 6, 3, 27], distinct [3, 4, 6, 7, 8, 27], digest f1c53db1f332d830
   ARG-ORDER ANOMALY at ['0x59d0a2']: the base is pushed FIRST and the set flag LAST - the item (last push) is unaffected
-ok   G3 11 API grants, items [6, 3, 7, 27, 8, 4, 6, 3, 6, 3, 27]; 10/11 (set 0x1, base register), 1 anomalous order at ['0x59d0a2']
+  push window 8: 0/11 sites truncated (<3 args decoded)
+ok   G3 11 API grants, items [6, 3, 7, 27, 8, 4, 6, 3, 6, 3, 27]; 10/11 (set 0x1, base register), 1 anomalous order at ['0x59d0a2'], 0 truncated
 
 TABLE 3 - FUN_004e47d0's grants (call 0x507410 mapper), items in ADDRESS order
   site 0x4e4a9b  push-order ['eax', 'ecx', '0x1'] -> item 0x1
@@ -36,7 +38,7 @@ TABLE 3 - FUN_004e47d0's grants (call 0x507410 mapper), items in ADDRESS order
   site 0x4e4c75  push-order ['eax', 'ecx', '0x1a'] -> item 0x1a
   site 0x4e4d13  push-order ['edx', 'ecx', 'eax'] -> item eax
   site 0x4e4d73  push-order ['ecx', 'edx', 'eax'] -> item eax
-ok   G4 10 mapper grants: 8 literal items [1, 3, 6, 7, 3, 6, 7, 26] (5 distinct) + 2 computed at ['0x4e4d13', '0x4e4d73']
+ok   G4 10 mapper grants: 8 literal items [1, 3, 6, 7, 3, 6, 7, 26] (5 distinct) + 2 computed operands ['eax', 'eax'] at ['0x4e4d13', '0x4e4d73'], 0 truncated
 
 TABLE 4 - the mapper FUN_00507410 (17 insns)
   0x507410 push  ebp
@@ -63,7 +65,8 @@ TABLE 4 - the mapper FUN_00507410 (17 insns)
   0x4e4521 lea   eax,[edx+eax*1+0x95da9c]
   0x4e453f lea   eax,[eax+ecx*1+0x95da9c]
   the API's two bitmap stores: ['0x4e4528 or', '0x4e4546 and']
-ok   G5 mapper = byte(item>>3) + mask(1<<(item&7)); API stride = (base*19)<<4 = base*0x130, OR at 0x4e4528 / AND at 0x4e4546
+  lea-to-bitmap sites ['0x4e4521', '0x4e453f'] feed the stores ['0x4e4528', '0x4e4546']
+ok   G5 mapper = byte(item>>3) + mask(1<<(item&7)); API stride = (base*19)<<4 = base*0x130; lea@0x4e4521 -> or@0x4e4528, lea@0x4e453f -> and@0x4e4546
 
 TABLE 5 - the founder's bitmap init (the birth signature)
   0x4e4a5d lea   eax,[esi+0x95da9c]
@@ -77,7 +80,7 @@ TABLE 6 - bases that first appear MID-RUN in trace_m56_build_20261026_145157.jso
   idx 19 'Training Camp'        born at sample  5 (r2) bits [1] head 321
   idx 20 'Terrible Swift Sword' born at sample  5 (r2) bits [] head 384
   idx 21 'Dreams of Green'      born at sample 19 (r9) bits [1, 3] head 2
-ok   G7 3 births, bits [[1], [], [1, 3]] (digest a814c53516649303)
+ok   G7 3 births with their SAMPLE and round, bits [[1], [], [1, 3]] (digest a814c53516649303)
 
 TABLE 7 - which entry explains the births
   founder  signature [1, 3, 6, 7, 26] -> 3/3 births (non-vacuous 2), hits [19, 20, 21]
@@ -92,8 +95,10 @@ TABLE 8 - every recorded bitmap change
   idx 14 'Virgin Soil'          r5  [27] -> [4]  REPLACE added [4] lost [27] head 133
   idx 13 'Morgan Processing'    r6  [] -> [3]  OR      added [3] lost [] head -2
   idx  7 'Morgan Energy Monopoly' r7  [2, 3, 7, 24] -> [2, 3, 6, 7, 24]  OR      added [6] lost [] head -8
-  shapes: 4 OR (2 of them add ONLY founder-signature bits, so bit identity alone cannot separate them from a birth), 2 REPLACE (loss-capable, B34's COPY family); 0 birth-shaped (zero-then-OR)
-ok   G9 6 changes = 4 OR (+2/+8/+3/+6) + 2 REPLACE ([1]->[4], [27]->[4]); no row carries the founder's ZERO, so none is a birth
+  shapes: 4 OR (prior bits preserved), 2 REPLACE (loss-capable, B34's COPY family)
+  BIT IDENTITY leaves 1 change(s) compatible with a founder grant ([13]) - so the bits alone cannot settle it
+  EXISTENCE settles it: every change row's base has a PREVIOUS sample record (6/6), so no row is a record creation; births and changes are DISJOINT (0 overlap)
+ok   G9 6 changes = 4 OR (+2/+8/+3/+6) + 2 REPLACE ([1]->[4], [27]->[4]); 1 row is bit-compatible with a founder grant, but 0/6 is a creation (all 6 bases pre-existed)
 
   second pass: sites 995a09b96d05da54 items f1c53db1f332d830 births a814c53516649303 deltas 5a5c124ccb32e35c
   run digest fa541d0a2445cacf (dump 781429 insns)
@@ -102,7 +107,7 @@ ok   G10 second pass over the dump and a fresh trace decode reproduce all four d
 RIVALS - each scored on the tables above
   R1 'the 11-item new-game path made these births'      -> 1/3 (needs bit 1)
   R2 'no grant writer runs at birth'                    -> 1/3 (only the empty row)
-  R3 'the recorded mid-round gains are births'          -> 0/6 (no ZERO anywhere)
+  R3 'the recorded mid-round gains are births'          -> 0/6 (every base pre-existed)
 ok   G11 R1 1/3, R2 1/3, R3 0/6 - the founder model is the only one the bytes do not refute
 
 PASS B35: 11/11 gates  digest fa541d0a2445cacf

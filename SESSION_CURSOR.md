@@ -1,1 +1,1 @@
-B35 | accept `python3 -u -m sim.grantcall` -> PASS 11/11 `fa541d0a2445cacf` (`evidence/b35_grantcall.txt:108`), harness 14/14 (`evidence/b35_mutate.txt:16`) | PR #396 (merge pending) | next: BUILD B36 (track_mode) / analyse (x6) pref-block writers
+B35 | accept `python3 -u -m sim.grantcall` -> PASS 11/11 `fa541d0a2445cacf` (`evidence/b35_grantcall.txt:113`), harness 18/18 (`evidence/b35_mutate.txt:20`) | PR #396 (merge pending) | next: BUILD B36 (track_mode) / analyse (x6) pref-block writers

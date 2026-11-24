@@ -1371,10 +1371,12 @@ the host lists AGREE with the export's own `n_callers` (3 and 1), with zero unat
 sites - `FUN_004cca50`, `FUN_0059ce10`, `FUN_0059ec90` into the founder and `FUN_005a0fa0`
 into the new-game setup; **G3** `FUN_0059ce10`'s body holds exactly ELEVEN `call 0x4e44f0`
 sites, each decoded from its last three pushes as (item, base-register, set-flag), items in
-address order `[6,3,7,27,8,4,6,3,6,3,27]`, every set-flag `0x1` (a GRANT, never a clear);
+address order `[6,3,7,27,8,4,6,3,6,3,27]`: TEN push set-flag `0x1` with a register base and
+ONE (`0x59d0a2`) pushes in the other order (base first, flag last - the item is still the last
+push), with zero sites truncated by the printed 8-instruction push window;
 **G4** the founder holds exactly TEN `call 0x507410` mapper sites, items in address order
-`[1,3,6,7,3,6,7,26]` for the eight literal ones plus two computed (`eax`), so BOTH entries
-route through one mapper; **G5** the mapper's own body proves item i = bit i (the `sar 3` /
+`[1,3,6,7,3,6,7,26]` for the eight literal ones plus two computed operands measured as `eax`
+(not "something non-literal"), so BOTH entries route through one mapper; **G5** the mapper's own body proves item i = bit i (the `sar 3` /
 `and 7` / `shl` trio over its 17 instructions) and the API's store is `[byte + base*0x130]`
 - the 304-byte record stride; **G6** the founder's bitmap init is a LEA-then-ZERO pair
 (`0x4e4a5d lea eax,[esi+0x95da9c]`, `0x4e4a63 xor ecx,ecx`, `0x4e4a65 mov DWORD PTR
@@ -1386,11 +1388,13 @@ exactly three bases first appear mid-run (idx 19 `[1]`, 20 `[]`, 21 `[1,3]`, at 
 differently on those births: the founder's literal signature `{1,3,6,7,26}` covers 3/3
 (2 non-vacuous: `[1]` and `[1,3]`, 1 vacuous-empty), the new-game set `{3,4,6,7,8,27}`
 covers 1/3 and leaves bit 1 unexplained on BOTH non-vacuous rows - so the founder is the
-entry that fired in this run; **G9** mid-round is NOT a birth: the six recorded bitmap
-changes split 4 OR-shaped (prior bits preserved, adding 2/8/3/6) and 2 replacement-shaped
-(`[1]->[4]`, `[27]->[4]` - a loss, the COPY family B34 named), and none of the six passes
-the founder's zero-then-OR signature - the separator is the ZERO, not the bit identity,
-because bits 3 and 6 are inside the founder signature too; **G10** every anchor is a
+entry that fired in this run; **G9** mid-round is NOT a birth, and the separator is measured as EXISTENCE
+rather than as a bit value: the six recorded bitmap changes split 4 OR-shaped (prior bits
+preserved adding 2/8/3/6) and 2 replacement-shaped (`[1]->[4]`, `[27]->[4]` - a loss, the COPY
+family B34 named); bit identity alone leaves ONE of them (Morgan Processing `[]->[3]`)
+compatible with a founder grant, so the tie is broken by the RECORD: all six bases carry a
+previous sample record (6/6), a founder birth is a record CREATION, and the birth table and
+the change table are DISJOINT (0 overlap); **G10** every anchor is a
 literal (site list, item tables, birth table, delta table, digests) and a SECOND pass over
 the dump and a SECOND fresh decode of the trace reproduce every digest, so a dump or
 decode drift reddens a gate instead of sliding by; **G11** the rivals FAIL on the printed
