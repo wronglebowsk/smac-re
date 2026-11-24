@@ -298,3 +298,13 @@ printers of measured values need the same None-guard as the gate.
 - PITFALL: `owner_bytes[-1]` is Python's LAST element, not "nothing selected" — a dropped sign skip silently reads the last base's owner instead of failing (now measured, MU6).
 - PITFALL: a printed-table digest that hashes the line printing its own anchor can never be re-pinned — the G8 line is excluded from the hashed region.
 - DOCS: NAMED rotation `scripts/b28_named_rotate.py` (M246+M247+M248/M249, 3,507 B → `docs/named-archive-b28-rows.md:10` §rotation-1, sha1 `fcd4989fdf15`, own terminator, `--verify` byte-exact); NAMED 246,245 → 245,488 B BEFORE the `## B28` add — still under the 5 KB trigger, rotate again next fire. NEXT_PROMPT 11,798/12,000 (added (x8) = the item-table row-order lead; paid by trimming the stale §trim-s269(b) pointer, the CLOSED-enumeration sentence and the BOX last-touch parenthetical).
+
+## Session 317 (s316-chain1, REVIEW ROUND on PR #351 / B28, zero box)
+
+- All 10 findings (3 P1 / 7 P2) answered IN THE GATES; no threshold weakened, none dismissed. P1(a)'s premise was half wrong (the full-price path never reads the carry) — the zero-carry baseline is now MEASURED by an all-ones carry-seed tie.
+- ACCEPT `python3 -u -m sim.selftest --b28` → **PASS B28: 8/8 gates**, digest(rows) `705a4520c08c4062`, print `99c52201f073499d` (pre-review `8c87e05ffa2b80cc`), container `38bba29ab857654b`, 2 runs byte-identical (`evidence/b28_feeder_exec.txt:9`); harness `python3 -u scripts/b28_mutate.py` → **HARNESS PASS 18/18** digest `3974d739da3af55f`, 8/8 gates, NO-OP `[]`, dead `[]` (`evidence/b28_mutate.txt:20-23`); `--selftest` 4/4; both evidence files re-captured, diffed byte-identical.
+- G4 ASSERTS the dword from container bytes (offset 244, value -1, offset < block A), not a derived path property; G3 asserts the inert window and runs the SAME scan as a CONTROL over `+0x8c..+0x8f` (nonzero 14/18); G7 asserts the no-list rival at exactly 7/8 with miss `[own_player=3]`; G6 measures exactness over the differing set and measures the HONEST run (touch set `[]`, bit5 unchanged).
+- RETRACTION in place: "the carry persists through the writer" is **FIXTURE-ONLY** (`NAMED ## B28` row + spine §B28 qualified); this save's run writes no carry.
+- New mutants ME5 (full-price reads the carry-in → G6,G8), ME6 (control window moved → G3,G8); MU6 grew to {G4,G6,G7,G8}. PITFALL: every prose edit re-pins the print digest (`434b…` then `99c5…`).
+- Merge: origin/main `c0f5e2a` (M334) merged; BOTH chains' sections kept; main did not touch `sim/feeder.py`, digests unchanged post-merge.
+- DOCS: NAMED **248,734 B** (1,266 under the fail line) — headroom UNDER 5 KB: next fire ROTATES M250-M254 before adding a block.

@@ -1,9 +1,10 @@
 # SESSION_CURSOR
 
-B28 (s316-chain1, BUILD, zero box) IN PROGRESS, branch `milestone/b28` from main 497d766.
-ACCEPT `python3 -u -m sim.selftest --b28` -> `PASS B28: 8/8 gates` (`evidence/b28_feeder_exec.txt:18`).
-Law `sim/feeder.py`, run+gates `sim/composedfeeder.py`, spine §B28.
-NAMED rotated: M246/M247/M248-M249 -> `docs/named-archive-b28-rows.md:10` (§rotation-1 sha1
-`fcd4989fdf15`), `scripts/b28_named_rotate.py --verify` PASS, NAMED 245,488 B.
-NEXT: `scripts/b28_mutate.py --measure` -> fill DECLARED -> HARNESS PASS; then close out.
+B28 (s316-chain1) REVIEW ROUND DONE, `milestone/b28` (main c0f5e2a merged).
+ACCEPT `python3 -u -m sim.selftest --b28` -> `PASS B28: 8/8 gates`, print `99c52201f073499d`
+(`evidence/b28_feeder_exec.txt:18`); harness 18/18 `3974d739da3af55f` (`:23`).
+10/10 pr351 findings answered IN THE GATES; writer claim now FIXTURE-ONLY.
+MERGED? not yet - `milestone.py merge 351` after CI green + one triage comment.
+NEXT: merge #351; then B29 (rung text in BUILD_SPINE.md FIRST); ROTATE NAMED (M250-M254) first -
+1,266 B headroom.
 `m294_gate_rows_raw.txt` = sim parity target, do NOT rm.
