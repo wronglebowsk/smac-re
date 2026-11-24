@@ -1333,11 +1333,12 @@ facility completions through `sim.facoracle`'s transaction WITH the stamp attach
 produces bytes that differ from the recorded ones at exactly the three discriminating
 completions (1 byte each: Korolev Center `[8]`->`[2,8]`, Virgin Soil s1/s9 `[27]`->`[2,27]`),
 so the rival is falsified on BYTES rather than on a count; **G9** the model's OWN coverage is printed as
-a defect - it explains 2/2 facility completions and 0/5 gains, and a model that scored
+a defect - it explains 6/6 facility completions and 0/5 gains, and a model that scored
 5/5 would be one that stamps where the game does not; **G10** every anchor is a literal
-(insn count, store counts, host sets, the two heads, the two before/after bitmaps, the
-replay's byte diff), two in-process passes give identical digests, and each gate has a
-named mutant in `scripts/b34_mutate.py`.
+(insn count, call count, the store-census digest, the run digest, the six completion heads
+`[1,1,1,2,2,2]`) and the recorded-run score is recomputed on a SECOND fresh decode of the
+trace, whose digest must equal the first, and each gate has a named mutant in
+`scripts/b34_mutate.py`.
 DECLARED UNMODELED: which of the grant/copy call sites actually fired in the recorded run
 (the trace records no call stack - the attribution is family-level, not site-level); the
 role of `FUN_0059ce10`'s 11 literal-item sites; whether a facility completion ever stamps

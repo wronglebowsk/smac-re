@@ -46,6 +46,8 @@ FAC_LO, FAC_HI = 1, 0x40
 SCREEN_NAME = "FUN_004ef6d0"  # the pop's only caller (M342 TABLE 4)
 
 ANCHOR = "5296fdad6d26caa3"  # pinned on the first real run (G1/G10)
+STORES_ANCHOR = "6e9336d6bc27b5c8"
+RUN_ANCHOR = "fd2750a58598b20f"
 FAIL = []
 
 
@@ -146,6 +148,30 @@ def body_of(ins, fns, start):
     return ins[i:j]
 
 
+def body_stores(body):
+    """Stores into the bitmap word inside ONE function body, resolving `lea`-form pointers.
+
+    This is deliberately independent of `census`: G3 must not move when the global census
+    filter is mutated (review #389 P2), so the screen's own body is walked here.
+    """
+    out = []
+    for i, (a, b) in enumerate(body):
+        m = STORE_ANY.match(b)
+        if m and mem_touches_bitmap(m.group(2)):
+            out.append((a, m.group(1)))
+        m = LEA_RE.match(b)
+        if m:
+            reg = m.group(1)
+            for a2, b2 in body[i + 1:i + 14]:
+                ms = STORE_ANY.match(b2)
+                if ms and re.search(r"\[%s(\*|\+|])" % reg, b2):
+                    out.append((a2, ms.group(1)))
+                    break
+                if re.match(r"^(mov|lea|pop|xor|add|sub|imul|call|and|or)\s+%s\b" % reg, b2):
+                    break
+    return out
+
+
 def family_of(site, mnem, host):
     if host[2] == "FUN_004e44f0":
         return "API"
@@ -213,7 +239,7 @@ def main(argv=None):
     print("  the screen calls the pop at %d site(s); the screen's own API calls=%d"
           % (scr_isa_caller, scr_api))
 
-    scr_stores = [(a, m) for a, m, _h in fams.get("SET", []) if a == 0x4f0ec0]
+    scr_stores = body_stores(scr_body)
     print("\nTABLE 4 - set arithmetic: the API's host set vs the pop's host set")
     api_hosts = set(hosts)
     pop_hosts = {SCREEN_NAME}  # the pop's only caller is the base screen (M342 TABLE 4)
@@ -304,14 +330,23 @@ def main(argv=None):
                   len(fams.get("COPY", [])), len(fams.get("CLEAR", [])),
                   sum(len(v) for v in fams.values()), d2))
     ok &= gate("G3", pop_refs == 0 and pop_api == 0 and scr_api == 0 and scr_isa_caller >= 1
-               and len(scr_stores) == 1 and len(pop_body) == 88,
+               and scr_stores == [(0x4f0ec0, "or")] and len(pop_body) == 88,
                "the pop (88 insns) is writer-free (refs=%d api=%d); the screen's API calls=%d and its ONLY "
-               "bitmap store is the unit-only OR at 0x%x; screen->pop=%d"
-               % (pop_refs, pop_api, scr_api, 0x4f0ec0, scr_isa_caller))
+               "bitmap store is the unit-only OR at 0x%x (%s); screen->pop=%d"
+               % (pop_refs, pop_api, scr_api, scr_stores[0][0] if scr_stores else 0,
+                  scr_stores[0][1] if scr_stores else "-", scr_isa_caller))
     ok &= gate("G4", not inter, "API hosts and the pop's host are disjoint (%s)" % (sorted(inter) or "{}"))
-    ok &= gate("G5", len(copies) >= 4 and any(h == "HOLE" for _a, _m, h in copies),
-               "the COPY family exists with the unnamed-region sites: %d copies, %d clears"
-               % (len(copies), len(clears)))
+    copy_hosts = {}
+    for a, _m, h in copies:
+        copy_hosts.setdefault(h, []).append(a)
+    copy_shape = copy_hosts.get("FUN_0041cf20", []), copy_hosts.get("HOLE", []), \
+        copy_hosts.get("FUN_004f47f0", [])
+    ok &= gate("G5", len(copies) == 6 and len(copy_shape[0]) == 2 and len(copy_shape[1]) == 3
+               and len(copy_shape[2]) == 1 and sorted(copy_shape[1]) == [0x4f38bb, 0x4f3ebc, 0x4f3f4c]
+               and len(clears) == 0,
+               "the COPY family is pinned site by site: 2 in FUN_0041cf20, 3 in the unnamed region "
+               "(%s), 1 in FUN_004f47f0, %d clears"
+               % (", ".join("%x" % a for a in sorted(copy_shape[1])), len(clears)))
     ok &= gate("G6", len(fac_done) == 6 and len(nonvac) == 3
                and all(not x[9] and not x[10] for x in fac_done),
                "facility completions %d (discriminating %d), every one stamped nothing; the head-stamp rival 0/%d"
@@ -325,8 +360,35 @@ def main(argv=None):
     ok &= gate("G9", cover_completion == len(fac_done) and len(gain_at_paid) == 5,
                "coverage printed: completions %d/%d, gains explained by a completion 0/5"
                % (cover_completion, len(fac_done)))
-    ok &= gate("G10", ANCHOR == d1 and len(fac_done) == 6,
-               "anchors pinned: dump %s stores %s run %s" % (d1, d2, d3))
+    # a second, INDEPENDENT pass over the recorded run (fresh decode, same rule, same row shape)
+    S2 = fo.load_trace()
+    p2, rows2, paid2, gains2 = {}, [], 0, []
+    for si, (ev, r, bases) in enumerate(S2):
+        for idx, name, rec in bases:
+            k = (idx, name)
+            if k in p2 and p2[k][0] == si - 1:
+                pr = p2[k][1]
+                stb, sta = fo.st_of(pr), fo.st_of(rec)
+                hb, ha = fo.head_of(pr), fo.head_of(rec)
+                g = sorted(fo.bits_of(rec) - fo.bits_of(pr))
+                l = sorted(fo.bits_of(pr) - fo.bits_of(rec))
+                vac = hb in fo.bits_of(pr)
+                row = (si, ev, r, idx, name, hb, ha, stb, sta, g, l, pr, rec, vac)
+                if stb + fo.ADD >= PRICE and sta < stb:
+                    paid2 += 1
+                    if FAC_LO <= hb < FAC_HI:
+                        rows2.append(row)
+                if g:
+                    gains2.append(row)
+            p2[k] = (si, rec)
+    d3b = sha([("fac", [(x[3], x[5], x[9], x[10], x[13]) for x in rows2]),
+               ("gains", [(x[3], x[5], x[9], x[10]) for x in gains2]), ("paid", paid2)])
+    heads = sorted(x[5] for x in fac_done)
+    print("  second pass (fresh trace decode): %d facility completions of %d paid, digest %s"
+          % (len(rows2), paid2, d3b))
+    ok &= gate("G10", ANCHOR == d1 and d2 == STORES_ANCHOR and d3 == RUN_ANCHOR and d3b == d3,
+               "anchors pinned: dump %s stores %s run %s; heads %s; fresh second pass %s == %s"
+               % (d1, d2, d3, heads, d3b, d3))
 
     print()
     if FAIL:

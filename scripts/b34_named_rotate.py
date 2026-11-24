@@ -64,13 +64,18 @@ def main(argv):
         if sha1(body) != m.group(1):
             raise SystemExit("FAIL: archived block sha1 != stub sha1 (%s vs %s)"
                              % (sha1(body), m.group(1)))
-        claims = [ln for ln in body.splitlines() if ln.startswith("| ") and "evidence/b22" in ln]
-        missing = [c[:40] for c in claims if ":8" not in stub and False]
-        if len(stub.splitlines()) < 8:
-            raise SystemExit("FAIL: stub has %d lines, claims are not one-per-line"
-                             % len(stub.splitlines()))
-        print("PASS b34_named_rotate --verify: sha1 %s, %d archived claim rows, stub %d lines"
-              % (m.group(1), len(claims) + 1, len(stub.splitlines())))
+        claims = [ln for ln in body.splitlines()
+                  if ln.startswith("| ") and not ln.startswith("|---") and "| claim |" not in ln]
+        bullets = [ln for ln in stub.splitlines() if ln.startswith("- ")]
+        if len(bullets) != len(claims):
+            raise SystemExit("FAIL: stub carries %d claim bullets for %d archived rows"
+                             % (len(bullets), len(claims)))
+        refs = sorted({r for c in claims for r in re.findall(r"`?:([0-9][0-9,\-]*)", c)})
+        missing = [r for r in refs if (":%s" % r) not in stub]
+        if missing:
+            raise SystemExit("FAIL: stub drops the archived line cites %s" % missing)
+        print("PASS b34_named_rotate --verify: sha1 %s, %d archived claim rows == %d stub bullets, "
+              "%d line cites carried" % (m.group(1), len(claims), len(bullets), len(refs)))
         return 0
 
     body = block(named, HEAD)

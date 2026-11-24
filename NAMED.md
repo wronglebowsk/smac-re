@@ -1419,7 +1419,7 @@ ROTATED VERBATIM to `docs/named-archive-m344-rows.md` (sha1 `e7b59fa35e2635c8`);
 | ACCEPT `scripts/m344_completion_caller.py` 8/8 `034bf0e1a1606d2c` x2; harness 10/10 `[]` | `:148`, `evidence/m344_mutate.txt:14` | V MU0 |
 ## M345 (s324-chain2, 12/12) — the dialog family `+0x64` commit slot has no .text dispatcher
 
-ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`); this stub governs: one line per claim; acceptance `m345_slot64_dispatch` -> **`PASS M345: 12/12`** `833faf38e189ad40` x2; harness 11/11 `[]`.
+ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`); this stub governs: one line per claim; acceptance `m345_slot64_dispatch` -> **`PASS M345: 12/12`** `833faf38e189ad40` x2; harness 13/13 `[]`.
 
 | claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
@@ -1429,7 +1429,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | universe = 19 `[r+0x64]` + 18 `[r+0x6c]` calls, 0 jmp, 0 in the dialog module | `:18-57,:86-89` | V MU6,MU10 |
 | arity {0:3,1:5,5:8,6:3}: 5 fit ret 4 = 3 MEMBER + 2 self, none a dialog | `:59-65,:100` | V MU8,MU9 |
 | module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64` | `:67-77,:102` | V MU7,MU10 |
-| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 `[]` | `:104`, `evidence/m345_mutate.txt:17` | V MU0 |
+| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 13/13 `[]` | `:104`, `evidence/m345_mutate.txt:17` | V MU0 |
 | OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped | - | lead |
 ## M346 (s325, ANALYSE, static; M348 qualified the 'alert' framing: the bank is the general text-variable bank; ACCEPT `scripts/m346_alert_raiser.py` -> **`PASS M346: 18/18`** `ab4f0ca8123245bb` x2 (`evidence/m346_alert_raiser.txt:110`); harness 22/22 `[]` (`evidence/m346_mutate.txt:25`)) — the build-finished ALERT = 2 posts into a 10-slot `$`-token table; `0x985b10` is NOT its channel.
 
@@ -1520,7 +1520,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
 | ~~OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b)~~ ANSWERED by `## M355`: the DEFAULT bit-vectors of `Preferences`/`More Preferences`; twins return 0x3a7168/0x327168 | `:97` | V (M355) |
 
-## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 11/11, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
+## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 13/13, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
 
 ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`** digest `367fdae1d78979e5`, two renders identical (`evidence/m353_numeric_band.txt:87`); harness `python3 -u scripts/m353_mutate.py` -> **`HARNESS PASS 14/14`** digest `fd143532b283b01b` (`evidence/m353_mutate.txt:17`). `:N` = a line of the ACCEPT evidence (`evidence/m353_numeric_band.txt:75-87`).
 
@@ -1630,12 +1630,12 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 ## B34 (s333, BUILD, zero box) — a FACILITY completion stamps `+0x8c` NOWHERE: the completion leg holds no writer, and the recorded bytes falsify the stamp at all 3 discriminating completions
 | claim | evidence | conf |
 |---|---|---|
-| the census is 20 stores, M342's 11+9 reproduced: API 2 (`4e4528` or / `4e4546` and), GRANT 11 (`FUN_004e47d0`), SET 1 (`4f0ec0`), COPY 6 (2 in `FUN_0041cf20`, 3 in the unnamed `4f38bb`/`4f3ebc`/`4f3f4c` region, 1 in `FUN_004f47f0`); COPY is the only LOSS-capable family | `evidence/b34_facstamp.txt:15,86` | V MU6,MU10 |
+| the census is 20 stores, M342's 11+9 reproduced: API 2 (`4e4528` or / `4e4546` and), GRANT 11 (`FUN_004e47d0`), SET 1 (`4f0ec0`), COPY 6 (2 in `FUN_0041cf20`, 3 in the unnamed `4f38bb`/`4f3ebc`/`4f3f4c` region, 1 in `FUN_004f47f0`); COPY is the only LOSS-capable family | `evidence/b34_facstamp.txt:15,86,89` | V MU6,MU10,MU11 |
 | the pop `FUN_004ef5d0` (88 insns) has 0 bitmap refs and 0 API calls; the base screen `FUN_004ef6d0` (the pop's ONLY caller, 3 sites) has 0 API calls and its only bitmap store is the unit-only OR | `:87` | V MU4 |
 | the API's 8 host functions and the pop's host are DISJOINT, so no function both pops and stamps | `:88` | V MU5 |
 | the recorded run holds 6 facility-head paid completions (Korolev r0, Virgin Soil s1/s9, New Jerusalem s1/s9, Training Camp s15); every bitmap is UNCHANGED 6/6; 3 already had the bit set (vacuous), 3 discriminate | `:54-59,90` | V MU1,MU2,MU7 |
 | at all 3 discriminating completions the stamp model differs from the recording by exactly 1 byte (`[8]`->`[2,8]`, `[27]`->`[2,27]`): the stamp rival is falsified ON BYTES | `:70-76,92` | V MU7 |
 | the 5 gains are NOT completions: every before-head is unit-encoded (321/-2/-8/-3/-6); Virgin Soil s11 (gain 4 + loss 27, no pay) is the COPY signature 1/1 | `:61-67,91` | V MU8,MU9 |
-| ACCEPT `python3 -u -m sim.facstamp` -> 10/10 `5296fdad6d26caa3` (x2 identical); harness 11/11 `d14c15ba21d1bec5`; `sim.selftest --b34` relays | `:96`, `evidence/b34_mutate.txt:14` | V MU3 |
+| ACCEPT `python3 -u -m sim.facstamp` -> 10/10 `5296fdad6d26caa3` (x2 identical); harness 13/13 `116d23081d6f51e4`; `sim.selftest --b34` relays | `:97`, `evidence/b34_mutate.txt:16` | V MU3 |
 | QUALIFIES `## B31`: its "one NEGATIVE at a facility-range head" is real but is 3 boundaries, and it did not flag the 3 vacuous rows | `:54-59` | V MU1,MU2,MU7 |
 | OPEN: which grant/copy call site fired in the run (no call stack in the trace); `FUN_0059ce10`'s 11 literal items (1 caller `FUN_005a0fa0`) | - | lead |

@@ -598,8 +598,8 @@ whether a facility completion stamps at all.
 
 ## Session 333-chain1 (2026-11-24) — B34: a FACILITY completion stamps NOTHING (no writer on the leg; the recorded bytes falsify the stamp at 3 discriminating completions)
 
-`python3 -u -m sim.facstamp` -> **`PASS B34: 10/10 gates  5296fdad6d26caa3`** (`evidence/b34_facstamp.txt:96`,
-re-run identical); harness 11/11, NO-OP `[]` (`evidence/b34_mutate.txt:14`). Answer to B33's gap: nowhere.
+`python3 -u -m sim.facstamp` -> **`PASS B34: 10/10 gates  5296fdad6d26caa3`** (`evidence/b34_facstamp.txt:97`,
+re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Answer to B33's gap: nowhere.
 - **20 stores, M342's 11+9 reproduced** (`:15,:86`): API 2 (`4e4528`/`4e4546`), GRANT 11 in `FUN_004e47d0`,
   SET 1 (`4f0ec0`), COPY 6 (2 in `FUN_0041cf20`, 3 in the unnamed `4f38bb`/`4f3ebc`/`4f3f4c` region, 1 in
   `FUN_004f47f0`). COPY is the only family that can express a LOSS.

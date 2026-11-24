@@ -84,13 +84,14 @@ TABLE 9 - the model's COVERAGE (a model that explained the gains would be wrong)
 DIGESTS dump=5296fdad6d26caa3 stores=6e9336d6bc27b5c8 run=fd2750a58598b20f
 ok   G1 dump censused: 790695 insns, 48881 calls, API sites 27 in 8 hosts, digest 5296fdad6d26caa3
 ok   G2 families: API=2 GRANT=11 SET=1 COPY=6 CLEAR=0 total=20 digest 6e9336d6bc27b5c8
-ok   G3 the pop (88 insns) is writer-free (refs=0 api=0); the screen's API calls=0 and its ONLY bitmap store is the unit-only OR at 0x4f0ec0; screen->pop=3
+ok   G3 the pop (88 insns) is writer-free (refs=0 api=0); the screen's API calls=0 and its ONLY bitmap store is the unit-only OR at 0x4f0ec0 (or); screen->pop=3
 ok   G4 API hosts and the pop's host are disjoint ({})
-ok   G5 the COPY family exists with the unnamed-region sites: 6 copies, 0 clears
+ok   G5 the COPY family is pinned site by site: 2 in FUN_0041cf20, 3 in the unnamed region (4f38bb, 4f3ebc, 4f3f4c), 1 in FUN_004f47f0, 0 clears
 ok   G6 facility completions 6 (discriminating 3), every one stamped nothing; the head-stamp rival 0/6
 ok   G7 gains at paid boundaries 5, all with an out-of-window head (5); copy signature 1
 ok   G8 the stamp rival is falsified ON BYTES at every discriminating completion: 3/6 differ; 3 vacuous (bit already set)
 ok   G9 coverage printed: completions 6/6, gains explained by a completion 0/5
-ok   G10 anchors pinned: dump 5296fdad6d26caa3 stores 6e9336d6bc27b5c8 run fd2750a58598b20f
+  second pass (fresh trace decode): 6 facility completions of 30 paid, digest fd2750a58598b20f
+ok   G10 anchors pinned: dump 5296fdad6d26caa3 stores 6e9336d6bc27b5c8 run fd2750a58598b20f; heads [1, 1, 1, 2, 2, 2]; fresh second pass fd2750a58598b20f == fd2750a58598b20f
 
 PASS B34: 10/10 gates  5296fdad6d26caa3
