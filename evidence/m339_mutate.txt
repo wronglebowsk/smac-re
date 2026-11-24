@@ -1,4 +1,4 @@
-NO-OP  PASS M339: 6/6 gates  digest=3162322afffbe406 gates=6 pass=6
+NO-OP  PASS M339: 7/7 gates  digest=d76a5e83770b77bb gates=7 pass=7
 MU1  SCORED   want=['G1'] red=['G1']  vtbl+0x170 -> +0x174 (the prepare slot)
 MU2  SCORED   want=['G1'] red=['G1']  jne after the prepare test -> je (the -1 path is skipped)
 MU3  SCORED   want=['G2', 'G3'] red=['G2', 'G3']  result cell obj+0xa40 -> obj+0xa44 (the seeded field)
@@ -7,7 +7,11 @@ MU5  SCORED   want=['G5'] red=['G5', 'G6']  the jge store target 0x985aec -> 0x9
 MU6  SCORED   want=['G5'] red=['G5']  faction stride 0x20bc -> 0x20b8 (bound arithmetic breaks)
 MU7  SCORED   want=['G6'] red=['G2', 'G3', 'G6']  plant ds:0x985aec inside the runner (0x698d0c -> 0x985aec)
 MU8  SCORED   want=['G5'] red=['G5']  seed slot obj+0xa44 -> obj+0xa40 (seed == result cell)
+MU9  SCORED   want=['G0'] red=['G0', 'G2', 'G6']  2-byte xor re-cut as a 5-byte mov (extent / overlap)
+MU10 SCORED   want=['G4'] red=['G4']  one call site retargeted (0x5f1394 -> 0x5f1395): census 93
+MU11 SCORED   want=['G5'] red=['G5']  the faction store's base ecx -> edx (store not gated by arithmetic)
+MU12 SCORED   want=['G5'] red=['G5']  the seeded object is no longer the call's receiver
 ALG_A1 SCORED   want=['G2'] red=['G2']  classifier mutant: ignore the fallthrough exit
 
-scored 9/9  MISMATCH 0 CRASH 0  digest=ff7d68a9a7e3151a
-HARNESS PASS: 9/9 scored
+scored 13/13  MISMATCH 0 CRASH 0  digest=927a1c66c322709e
+HARNESS PASS: 13/13 scored

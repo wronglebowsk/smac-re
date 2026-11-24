@@ -27,6 +27,10 @@ MUTANTS = [
     ("MU6", ["G5"], "faction stride 0x20bc -> 0x20b8 (bound arithmetic breaks)"),
     ("MU7", ["G6"], "plant ds:0x985aec inside the runner (0x698d0c -> 0x985aec)"),
     ("MU8", ["G5"], "seed slot obj+0xa44 -> obj+0xa40 (seed == result cell)"),
+    ("MU9", ["G0"], "2-byte xor re-cut as a 5-byte mov (extent / overlap)"),
+    ("MU10", ["G4"], "one call site retargeted (0x5f1394 -> 0x5f1395): census 93"),
+    ("MU11", ["G5"], "the faction store's base ecx -> edx (store not gated by arithmetic)"),
+    ("MU12", ["G5"], "the seeded object is no longer the call's receiver"),
     ("ALG_A1", ["G2"], "classifier mutant: ignore the fallthrough exit"),
 ]
 

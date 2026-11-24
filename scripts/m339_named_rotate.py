@@ -63,7 +63,7 @@ def main():
         return 1
     d = digest(body)
     stub = (START + ", STATIC, zero box; s269 review) — FULL rows VERBATIM at "
-            "`docs/named-archive-m339-rows.md:7` (§rotation-1 marker at `:6`, s320-chain2 "
+            "`docs/named-archive-m339-rows.md:8` (§rotation-1 marker at `:7`, s320-chain2 "
             "headroom rotation, sha1 `%s`; re-asserted by `scripts/m339_named_rotate.py "
             "--verify`); this stub governs. `0x4ddcf1`'s UNATTRIBUTED edge is CLOSED by "
             "`## M339`: nonzero `jge` = callee 0x5f1394's result cell `[obj+0xa40]`.\n\n" % d)

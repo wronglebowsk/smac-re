@@ -122,6 +122,15 @@ def apply_mut(ins):
     elif MUT == "MU8":   # seed slot obj+0xa44 -> obj+0xa40 (seed == result cell)
         P(ins, 0x4DDB4D, "89 85 b4 b6 ff ff", "89 85 b8 b6 ff ff",
           "DWORD PTR [ebp-0x494c],eax", "DWORD PTR [ebp-0x4948],eax")
+    elif MUT == "MU9":   # 2-byte xor re-cut as a 5-byte mov (extent/overlap)
+        P(ins, 0x5F15D3, "33 c0", "b8 00 00 00 00", "eax,eax", "eax,0x0", new_mn="mov")
+    elif MUT == "MU10":  # one call site retargeted: the census is 93
+        P(ins, 0x4DBDC5, "e8 ca 55 11 00", "e8 cb 55 11 00", "0x5f1394", "0x5f1395")
+    elif MUT == "MU11":  # the faction store's base register ecx -> edx
+        P(ins, 0x4DDCFB, "89 01", "89 02", "DWORD PTR [ecx],eax", "DWORD PTR [edx],eax")
+    elif MUT == "MU12":  # the seeded object is NOT the call's receiver any more
+        P(ins, 0x4DDB47, "8d 8d 70 ac ff ff", "8d 8d 74 ac ff ff",
+          "ecx,[ebp-0x5390]", "ecx,[ebp-0x538c]")
 
 
 def window(ins, lo, hi):
@@ -140,15 +149,33 @@ def imm(s):
     return int(m.group(1), 16) if m else None
 
 
-def func_bounds(ins):
+def func_bounds(ins, addr=RUNNER):
     rows = list(csv.DictReader(open(IDX)))
     for r in rows:
-        if int(r["addr"], 0) == RUNNER:
-            return RUNNER, RUNNER + int(r["size_bytes"])
+        if int(r["addr"], 0) == addr:
+            return int(r["addr"], 0), int(r["addr"], 0) + int(r["size_bytes"])
     raise KeyError("runner not in index")
 
 
+class Tee:
+    """Capture everything the gates print so the run hashes its own table."""
+
+    def __init__(self):
+        self.buf = []
+
+    def write(self, s):
+        sys.__stdout__.write(s)
+        self.buf.append(s)
+        return len(s)
+
+    def flush(self):
+        sys.__stdout__.flush()
+
+
 def main():
+    tee = Tee()
+    real = sys.stdout
+    sys.stdout = tee
     rows, fails = [], []
 
     def gate(gid, ok, detail):
@@ -159,8 +186,25 @@ def main():
     ins = load()
     apply_mut(ins)
     lo, hi = func_bounds(ins)
-    body = [i for i in ins if lo <= i["a"] <= hi]
+    body = [i for i in ins if lo <= i["a"] < hi]
     rets = [i for i in body if i["mn"] == "ret"]
+
+    # ---- G0 extent --------------------------------------------------------
+    gaps = {}
+    over = []
+    for k in range(len(body) - 1):
+        g = body[k + 1]["a"] - (body[k]["a"] + len(body[k]["bs"]))
+        gaps[g] = gaps.get(g, 0) + 1
+        if g < 0:
+            over.append(hex(body[k]["a"]))
+    span = body[-1]["a"] + len(body[-1]["bs"]) - lo
+    ok0 = (body[0]["a"] == lo and span == 11207 and len(body) == 2235
+           and not over and set(gaps) == {0, 3})
+    print("== G0 extent: %d B / %d insns ==" % (span, len(body)))
+    print("   0x%x..0x%x ; first %s ; last %s ; gap histogram %s ; overlaps %s"
+          % (lo, hi, body[0]["mn"], body[-1]["ops"], sorted(gaps.items()), over))
+    gate("G0", bool(ok0), "span=%d insns=%d gaps=%s overlaps=%s" %
+         (span, len(body), sorted(gaps.items()), over))
 
     # ---- G1 prologue ------------------------------------------------------
     pro = window(ins, RUNNER, 0x5F13D4)
@@ -193,8 +237,18 @@ def main():
           [hex(s) for s in slots]))
 
     # ---- G2 exits ---------------------------------------------------------
-    lbl = rets[0]["a"] if rets else 0x5F3F58
-    exits = [i for i in body if i["mn"] == "jmp" and abs(imm(i["ops"] or "0x0") - lbl) <= 0x20]
+    restore = [i for i in body if i["mn"] == "mov" and i["ops"] == "ecx,DWORD PTR [ebp-0xc]"]
+    lbl = restore[0]["a"] if restore else 0
+    exits = [i for i in body if i["mn"] == "jmp" and imm(i["ops"] or "0x0") == lbl]
+    # no jump may skip the SEH restore: nothing may target inside (lbl .. ret]
+    reta = rets[0]["a"] if rets else lbl + 0x10
+    stray = []
+    for i in body:
+        if i["mn"] != "jmp":
+            continue
+        t = imm(i["ops"] or "0x0")
+        if t is not None and lbl < t <= reta:
+            stray.append(i)
     # classify each exit by the closest preceding eax definition in its block
     def classify(ea):
         idx = [k for k, i in enumerate(ins) if i["a"] == ea][0]
@@ -210,7 +264,7 @@ def main():
                 if "ds:0x698d0c" in src:
                     return "GLOBAL_698d0c"
                 if re.search(r"\+0xa40\]$", src):
-                    return "PASSTHRU" if ALG == "A1" else "CELL_a40"
+                    return "CELL_a40"
                 if re.search(r"\[ebp-0x40\]$", src):
                     return "PASSTHRU"
                 return "OTHER:" + src
@@ -224,11 +278,21 @@ def main():
     kinds = sorted([k for _, k in cls] + (["CELL_a40"] if fall else []))
     want = ["CELL_a40", "GLOBAL_698d0c", "IMM_0", "IMM_NEG1", "IMM_NEG1",
             "PASSTHRU", "PASSTHRU"]
-    feeders = [at(ins, 0x5F15A0)["ops"], at(ins, 0x5F176B)["ops"]]
+    def feeder_of(ea):
+        """The CALL whose eax is stored into [ebp-0x40] for this PASSTHRU exit."""
+        k = [j for j, i in enumerate(ins) if i["a"] == ea][0]
+        for j in range(k - 1, max(k - 10, -1), -1):
+            if ins[j]["mn"] == "mov" and ins[j]["ops"] == "DWORD PTR [ebp-0x40],eax":
+                prev = ins[j - 1]
+                return (prev["mn"], prev["ops"])
+        return ("?", "?")
+
+    feeders = [feeder_of(int(a, 16)) for a, k in cls if k == "PASSTHRU"]
     ok2 = (len(rets) == 1 and rets[0]["ops"].split()[0] == "0x8"
            if rets and rets[0]["ops"] else False)
     ok2 = ok2 and len(exits) == 6 and kinds == want and len(fall) == 1
-    ok2 = ok2 and feeders == ["DWORD PTR [edx+0x15c]", "0x5e3ed9"]
+    ok2 = ok2 and len(restore) == 1 and not stray
+    ok2 = ok2 and feeders == [("call", "DWORD PTR [edx+0x15c]"), ("call", "0x5e3ed9")]
     print("== G2 exit census: %d jmp + 1 fallthrough, one ret ==" % len(exits))
     for a, k in cls:
         print("   jmp %s -> %s" % (a, k))
@@ -253,7 +317,7 @@ def main():
     # ---- G4 callers -------------------------------------------------------
     sites = [i for i in ins if i["mn"] == "call" and imm(i["ops"] or "0x0") == RUNNER
              and "[edx" not in i["ops"]]
-    stat, pushh = {}, {}
+    stat, pushh, globs = {}, {}, []
     for s in sites:
         idx = [k for k, i in enumerate(ins) if i["a"] == s["a"]][0]
         ecx, pushes = None, 0
@@ -276,26 +340,26 @@ def main():
                 key = "ptr_local:" + src
             elif re.fullmatch(r"0x[0-9a-f]+", src):
                 key = "global"
+                globs.append(src)
             else:
                 key = "reg"
         stat[key] = stat.get(key, 0) + 1
     # arg arity, read from the CALLEE: the only positive frame refs are its args
     args = sorted({re.search(r"\[ebp\+(0x[0-9a-f]+)\]", i["ops"]).group(1)
                    for i in body if re.search(r"\[ebp\+(0x[0-9a-f]+)\]", i["ops"])})
-    mode_slot = max((k for k in stat if k.startswith(("ptr_local", "lea_"))),
-                    key=lambda k: stat[k], default="none")
+    n_ptr = sum(v for k, v in stat.items() if k.startswith("ptr_local"))
     ok4 = (len(sites) == 94 and "none" not in stat
            and args == ["0x8", "0xc"] and rets and rets[0]["ops"].split()[0] == "0x8"
-           and stat.get("lea_local", 0) >= 50)
+           and stat.get("lea_local") == 76 and n_ptr == 14
+           and stat.get("reg") == 3 and globs == ["0x9210a8"])
     print("== G4 callers: %d direct thiscall sites, receiver object census ==" % len(sites))
     for k in sorted(stat, key=lambda k: -stat[k]):
         print("   %-24s : %d sites" % (k, stat[k]))
     print("   push-count histogram since the previous call: %s" % sorted(pushh.items()))
-    print("   callee's only positive frame refs %s ; ret %s ; mode receiver %s x%d" %
-          (args, rets[0]["ops"] if rets else None,
-           mode_slot.split(":")[-1], stat.get(mode_slot, 0)))
-    gate("G4", bool(ok4), "sites=%d lea_local=%d none=%d args=%s mode=%s" %
-         (len(sites), stat.get("lea_local", 0), stat.get("none", 0), args, mode_slot))
+    print("   callee's only positive frame refs %s ; ret %s ; global receiver(s) %s" %
+          (args, rets[0]["ops"] if rets else None, globs))
+    gate("G4", bool(ok4), "sites=%d lea_local=%s ptr=%d reg=%s globals=%s" %
+         (len(sites), stat.get("lea_local"), n_ptr, stat.get("reg"), globs))
 
     # ---- G5 the difficulty flow through the runner ------------------------
     seedw = window(ins, 0x4DDB3E, 0x4DDB5E)
@@ -319,6 +383,23 @@ def main():
     off = (frame - slot) if (frame and slot) else None
     # the caller never reads its own seed back: the value travels through the object
     loopback = [i for i in window(ins, 0x4DDB58, 0x4DDCF0) if "0x494c" in i["ops"]]
+    # (a) the seeded object IS the receiver of THIS call: nearest ecx def before it
+    kcall = [k for k, i in enumerate(ins) if i["a"] == 0x4DDB53][0]
+    recv, seed_adj = None, None
+    for k in range(kcall - 1, kcall - 10, -1):
+        j = ins[k]
+        if j["mn"] in ("mov", "lea") and j["ops"].startswith("ecx,"):
+            recv = (hex(j["a"]), j["ops"])
+            break
+        if j["mn"] == "call":
+            break
+    seed_adj = ins[kcall - 1]["ops"] == "DWORD PTR [ebp-0x494c],eax"
+    # (b) the store into the faction array and its back-edge, not just the arithmetic
+    storei = [i for i in store if i["mn"] == "mov" and i["ops"] == "DWORD PTR [ecx],eax"]
+    back = [i for i in store if i["mn"] == "jl"]
+    eax_w = [i for i in window(ins, 0x4DDCF1, 0x4DDD09)
+             if i["mn"] in ("mov", "xor", "add", "sub", "lea", "or", "and", "pop", "inc", "dec")
+             and i["ops"].startswith("eax,")]
     ok5 = (seq5[:3] == [("mov", "eax,ds:0x985aec"), ("push", "0x0"), ("push", "0x0")]
            and ("lea", "ecx,[ebp-0x5390]") in seq5
            and ("mov", "DWORD PTR [ebp-0x494c],eax") in seq5
@@ -328,7 +409,10 @@ def main():
            and g and g[0]["ops"] == "ds:0x985aec,eax"
            and iters == 8 and imm(add[0]["ops"].split(",")[1]) == FACTION_STRIDE
            and imm(base[0]["ops"].split(",")[1]) == FACTION_CELL
-           and off == 0xA44 and not loopback)
+           and off == 0xA44 and not loopback
+           and recv == ("0x4ddb47", "ecx,[ebp-0x5390]") and seed_adj
+           and len(storei) == 1 and back and imm(back[0]["ops"] or "0x0") == storei[0]["a"]
+           and not eax_w)
     print("== G5 the difficulty dialog: seed -> runner -> %s on %d factions ==" %
           (hex(DIFF_GLOBAL), iters or 0))
     print("   seed window %s" % seq5)
@@ -336,12 +420,18 @@ def main():
           % ([(i["mn"], i["ops"]) for i in store[:4]],
              base[0]["ops"] if base else None, add[0]["ops"] if add else None,
              bound[0]["ops"] if bound else None, iters, off or 0))
+    print("   receiver of the call %s ; seed store adjacent=%s ; faction store %s ; back-edge %s ;"
+          " eax writes after jge %d"
+          % (recv, seed_adj, [(hex(i["a"]), i["ops"]) for i in storei],
+             [(i["mn"], i["ops"]) for i in back], len(eax_w)))
     print("   caller re-reads its own seed after the call: %d refs" % len(loopback))
-    gate("G5", bool(ok5), "iters=%s seed_off=%s store=%s loopback=%d" %
-         (iters, hex(off) if off else None, g[0]["ops"] if g else None, len(loopback)))
+    gate("G5", bool(ok5), "iters=%s seed_off=%s store=%s recv=%s back=%s eaxw=%d" %
+         (iters, hex(off) if off else None, g[0]["ops"] if g else None, recv,
+          [(i["mn"], i["ops"]) for i in back], len(eax_w)))
 
     # ---- G6 rival ---------------------------------------------------------
-    caller = [i for i in ins if CALLER <= i["a"] < CALLER + 0x35F]
+    clo, chi = func_bounds(ins, CALLER)
+    caller = [i for i in ins if clo <= i["a"] < chi]
     cin = [i for i in caller if "0x94d2ac" in i["ops"] or "0x985aec" in i["ops"]]
     inside = len(tbl)
     pos_imms = [k for k in kinds if k not in want] or []
@@ -366,9 +456,15 @@ def main():
     print("digest=%s gates=%d pass=%d" % (digest, len(rows), len(rows) - len(fails)))
     if fails:
         print("FAIL M339: %d/%d gates (red: %s)" % (len(rows) - len(fails), len(rows), fails))
-        return 1
-    print("PASS M339: %d/%d gates" % (len(rows), len(rows)))
-    return 0
+        rc = 1
+    else:
+        print("PASS M339: %d/%d gates" % (len(rows), len(rows)))
+        rc = 0
+    # the run hashes its own table (everything printed above this line)
+    txt = "".join(tee.buf)
+    sys.stdout = real
+    print("text_sha256=%s over=%dB" % (hashlib.sha256(txt.encode()).hexdigest(), len(txt)))
+    return rc
 
 
 if __name__ == "__main__":
