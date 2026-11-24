@@ -1400,7 +1400,7 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | the printed digest is PINNED by G7 - the ACCEPT anchor cannot drift silently | `:200`,`:209` | V MU7 |
 | OPEN: which of the 27 API call sites is the production-completion call; 3 pointer writers (`0x4f38b0`, `0x4f3eb1`, `0x4f3f3e`) sit in regions the Ghidra index does NOT name (semantics unidentified); projects 39..71 unmeasured | - | lead |
 
-## M339 (s320-chain2, STATIC 7/7, review #359 hardened) — 0x5f1394 = the modal SCREEN RUNNER; its return is the screen OBJECT's `+0xa40` result cell, and the difficulty dialog writes that return into `ds:0x985aec` + all 8 faction blocks. FULL TABLE VERBATIM at `docs/named-archive-m339-rows.md` (`9a93e8acca0a99ac0779babaa63a94ae5afca934`); this stub governs, one line per claim
+## M339 (s320-chain2, STATIC 7/7, review #359 hardened) — 0x5f1394 = the modal SCREEN RUNNER; its return is the screen OBJECT's `+0xa40` result cell, and the difficulty dialog writes that return into `ds:0x985aec` + all 8 faction blocks. FULL TABLE VERBATIM at `docs/named-archive-m339-rows.md` (`9a93e8acca0a99ac0779babaa63a94ae5afca934`); this stub governs, one line per claim; every `:<line>` below is `evidence/m339_modal_runner.txt:<line>`
 
 | claim (one line) | evidence | conf |
 |---|---|---|
@@ -1450,11 +1450,11 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 
 | claim | evidence | conf |
 |---|---|---|
-| slot `0x5f58fa` = 5 data dwords, all a family vt+0x64; 0 `.text` operands (no call/thunk/lea) | `evidence/m345_slot64_dispatch.txt:3-10` | V MU1,MU2 |
-| ctor 0x405ef0: 0x67164c at +0, CPane 0x671644 at +0x444 -> its `+0x6c` IS the primary `+0x64` | `:16,:73` | V MU3,MU4 |
+| slot `0x5f58fa` = 5 data dwords, all a family vt+0x64; 0 `.text` operands (no call/thunk/lea) | `evidence/m345_slot64_dispatch.txt:3-10` | V MU1,MU3,MU2 |
+| ctor 0x405ef0: 0x67164c at +0, CPane 0x671644 at +0x444 -> its `+0x6c` IS the primary `+0x64` | `:16,:93` | V MU1,MU4 |
 | trio `+0x60`/`+0x64`/`+0x68` = 5f59bf ret8 / 5f58fa ret4 / 5f59e8 | `:12-15` | V MU5 |
-| universe = 19 `[r+0x64]` + 18 `[r+0x6c]` calls, 0 jmp, 0 in the dialog module | `:18-40,:66-72` | V MU6,MU10 |
-| arity {0:3,1:5,5:8,6:3}: 5 fit ret 4, each a MEMBER/child pointer, none a dialog | `:41-48` | V MU8,MU9 |
-| module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64` | `:49-56,:78` | V MU7 |
-| ACCEPT `m345_slot64_dispatch.py` -> `PASS M345: 12/12` `73e03a68d5e3fd23` x2; harness 11/11 | `:83` | V MU0 |
+| universe = 19 `[r+0x64]` + 18 `[r+0x6c]` calls, 0 jmp, 0 in the dialog module | `:18-57,:86-89` | V MU6,MU10 |
+| arity {0:3,1:5,5:8,6:3}: 5 fit ret 4 = 3 MEMBER + 2 self, none a dialog | `:59-65,:100` | V MU8,MU9 |
+| module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64` | `:67-77,:102` | V MU7,MU10 |
+| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 | `:104` | V MU0 |
 | OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped | - | lead |

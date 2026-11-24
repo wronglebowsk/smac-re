@@ -227,12 +227,21 @@ def recv_kind(src):
     return "VPTR-SELF"         # [obj] -> the object's own vtable
 
 
-rows = []
-for a, reg, disp, fn in S64:
+rows = []                       # all 37 sites (19 x +0x64 first, then 18 x +0x6c)
+for a, reg, disp, fn in S64 + S6C:
     win = basic_window(a)
     src = recv_src(win, reg)
     rows.append((a, reg, disp, fn, arity(win), recv_kind(src), src))
-ONE = [r for r in rows if r[4] == 1]
+ROWS64 = [r for r in rows if r[2] == "0x64"]
+ONE = [r for r in ROWS64 if r[4] == 1]
+
+# the module's field swap at 0x5f49ad/0x5f49b9, MEASURED (not prose)
+SWAP_PREV = [x for x in INS if x[0] == 0x5F49A1 and x[1] == "add" and x[2] == "edx,0x2240"]
+SWAP_RD = [x for x in INS if x[0] == 0x5F49AD and x[1] == "mov"
+           and x[2].replace(" ", "") == "ecx,DWORDPTR[eax+0x64]".replace(" ", "")]
+SWAP_WR = [x for x in INS if x[0] == 0x5F49B9 and x[1] == "mov"
+           and x[2].replace(" ", "").startswith("DWORDPTR[edx+0x64]")]
+SWAP_OK = bool(SWAP_PREV and SWAP_RD and SWAP_WR)
 
 # the dialog module's single [r+0x64] instruction: a field swap, not a call
 FSWAP = [(a, m, o) for a, m, o in INS
@@ -287,10 +296,11 @@ print("   #  addr      reg  fn             arity  kind        receiver source")
 for k, (a, reg, disp, fn, n, kind, src) in enumerate(rows, 1):
     s = "%x: %s %s" % src if isinstance(src, tuple) else src
     print("   %2d 0x%-7x %-4s %-14s %-6d %-11s %s" % (k, a, reg, fn, n, kind, s))
-print("   (#: 1-19 are `call [r+0x64]`; the 18 `call [r+0x6c]` sites follow)")
+print("   (#: 1-%d are `call [r+0x64]`; %d-%d are `call [r+0x6c]`)"
+      % (len(ROWS64), len(ROWS64) + 1, len(rows)))
 print()
-print("TABLE 4  arity histogram over the 19 +0x64 sites: %s"
-      % dict(sorted(Counter(r[4] for r in rows).items())))
+print("TABLE 4  arity histogram over the %d +0x64 sites: %s"
+      % (len(ROWS64), dict(sorted(Counter(r[4] for r in ROWS64).items()))))
 print("   slot arity is 1 (ret 4) -> arity-compatible sites: %d" % len(ONE))
 for a, reg, disp, fn, n, kind, src in ONE:
     print("     0x%-7x %-14s kind=%s" % (a, fn, kind))
@@ -300,8 +310,10 @@ print("   total %d ; call/jmp forms %d ; mov forms %d"
       % (len(FSWAP), len(FSWAP_CALLS), len(FSWAP_READS)))
 for a, m, o in FSWAP:
     print("     0x%x  %s %s   (%s)" % (a, m, o, fname(a)))
-print("   the 0x5f49ad/0x5f49b9 pair is a FIELD SWAP on [this+0x2240]+0x64:")
-print("     0x5f49a1 add edx,0x2240 ; 0x5f49ad read [eax+0x64] ; 0x5f49b9 store back")
+print("   the 0x5f49ad/0x5f49b9 pair is a FIELD SWAP on [this+0x2240]+0x64 (measured %s):"
+      % SWAP_OK)
+for x in (SWAP_PREV + SWAP_RD + SWAP_WR):
+    print("     0x%x  %s %s" % x)
 print("   runner 0x%x: slot-call sites %d" % (RUNNER, len(runner_slots)))
 print()
 print("RIVALS (each verdict computed from the numbers above)")
@@ -328,9 +340,11 @@ print()
 
 # ---------------------------------------------------------------- gates
 fails = []
+NGATES = [0]
 
 
 def gate(name, ok, detail):
+    NGATES[0] += 1
     print("%-4s %-52s %s" % ("PASS" if ok else "FAIL", name, detail))
     if not ok:
         fails.append(name)
@@ -355,6 +369,7 @@ gate("G3 trio dwords match; 0x671644+0x6c == 0x67164c+0x64",
 gate("G4 ctor installs 0x67164c at +0 and 0x671644 at +0x444",
      len(ctor_inst) == 2
      and ctor_inst[0][2].strip().endswith(",0x67164c")
+     and ctor_inst[0][2].strip().startswith("DWORD PTR [eax]")
      and ctor_inst[1][2].endswith(",0x671644")
      and "+0x444]" in ctor_inst[1][2],
      "%d stores" % len(ctor_inst))
@@ -364,25 +379,34 @@ gate("G6 census: 19 x +0x64, 18 x +0x6c, 0 jmp forms",
      and sum(1 for a, m, o in INS if m == "jmp"
              and re.match(r"^DWORD PTR \[\w+\+0x6[46]\]$", o)) == 0,
      "19/18/0")
-gate("G7 zero dispatch sites inside the dialog module",
+gate("G7 zero dispatch sites inside the dialog module (all %d sites)" % len(rows),
      not FSWAP_CALLS and all(not (0x5F0000 <= r[0] < 0x600000) for r in rows),
-     "%d call forms in module" % len(FSWAP_CALLS))
+     "%d of %d in module" % (sum(1 for r in rows if 0x5F0000 <= r[0] < 0x600000),
+                             len(rows)))
 gate("G8 module's [r+0x64] forms are 4 movs, 0 calls, swap pinned at 0x5f49ad",
      len(FSWAP) == 4 and len(FSWAP_CALLS) == 0 and len(FSWAP_READS) == 4
      and sorted(x[0] for x in FSWAP_READS) == [0x5F49AD, 0x5F49B9, 0x5FC6FC, 0x5FCC34],
      "%d mov / %d call" % (len(FSWAP_READS), len(FSWAP_CALLS)))
 gate("G9 zero dispatch evasions (cached-slot, lea+call)", not CACHED and not LEAC,
      "%d/%d" % (len(CACHED), len(LEAC)))
-gate("G10 arity-compatible sites == 5, each on a MEMBER/child pointer",
-     len(ONE) == 5 and all(r[5] in ("MEMBER", "VPTR-SELF") for r in ONE),
-     "%d one-arg" % len(ONE))
+gate("G10 one-arg sites == 5 with the pinned kind set {MEMBER:3, VPTR-SELF:2}",
+     len(ONE) == 5
+     and dict(Counter(r[5] for r in ONE)) == {"MEMBER": 3, "VPTR-SELF": 2},
+     "%d one-arg %s" % (len(ONE), dict(Counter(r[5] for r in ONE))))
 gate("G11 runner 0x5f1394 dispatches no slot", len(runner_slots) == 0,
      "%d" % len(runner_slots))
+gate("G12 the module swap is measured (add 0x2240 + read + store-back)", SWAP_OK,
+     "%d/%d/%d insns" % (len(SWAP_PREV), len(SWAP_RD), len(SWAP_WR)))
 
 print()
 if fails:
-    print("FAIL M345: %d/%d gates" % (12 - len(fails), 12))
+    print("FAIL M345: %d/%d gates" % (NGATES[0] - len(fails), NGATES[0]))
     sys.exit(1)
-h = hashlib.sha1(repr([(r[0], r[4], r[5]) for r in rows]
-                      + trio_rows + [(x[0],) for x in FSWAP]).encode()).hexdigest()
-print("PASS M345: 12/12 gates   digest=%s" % h[:16])
+RECORD = ([(r[0], r[2], r[4], r[5]) for r in rows]          # every site + arity + kind
+          + [tuple(t) for t in trio_rows]
+          + [(x[0], x[1], x[2]) for x in FSWAP]             # module [r+0x64] forms
+          + [(len(CACHED),), (len(LEAC),), (sorted(data_occ),), (len(text_refs),)]
+          + [(len(FSWAP_CALLS),), (len(runner_slots),), (SWAP_OK,)]
+          + [(dw(vt + 0x64),) for vt in FAMILY_VT] + [(dw(PANE_VT + 0x6C),)])
+h = hashlib.sha1(repr(RECORD).encode()).hexdigest()
+print("PASS M345: %d/%d gates   digest=%s" % (NGATES[0], NGATES[0], h[:16]))

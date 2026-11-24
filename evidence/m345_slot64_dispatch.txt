@@ -36,7 +36,25 @@ TABLE 3  every indirect call with displacement 0x64/0x6c, receiver walked back
    17 0x63640c  eax  FUN_00636371   6      VPTR-SELF   636403: mov eax,DWORD PTR [edx]
    18 0x638e49  edx  FUN_00638ddd   6      VPTR-SELF   638e46: mov edx,DWORD PTR [eax]
    19 0x63d05b  ecx  FUN_0063d004   5      VPTR-SELF   63d058: mov ecx,DWORD PTR [edx]
-   (#: 1-19 are `call [r+0x64]`; the 18 `call [r+0x6c]` sites follow)
+   20 0x4b8497  eax  FUN_004b8470   1      VPTR-SELF   4b8495: mov eax,DWORD PTR [edx]
+   21 0x4ba8dd  eax  FUN_004ba830   1      VPTR-SELF   4ba8db: mov eax,DWORD PTR [edx]
+   22 0x4baa16  edx  FUN_004ba9c0   1      VPTR-SELF   4baa14: mov edx,DWORD PTR [eax]
+   23 0x4baab8  eax  FUN_004baa30   1      VPTR-SELF   4baab6: mov eax,DWORD PTR [edx]
+   24 0x4baba1  edx  FUN_004baae0   1      VPTR-SELF   4bab9f: mov edx,DWORD PTR [eax]
+   25 0x4bacd0  eax  FUN_004bac30   1      VPTR-SELF   4bacce: mov eax,DWORD PTR [edx]
+   26 0x4baede  edx  FUN_004bae50   1      VPTR-SELF   4baedc: mov edx,DWORD PTR [eax]
+   27 0x5b52e1  ecx  FUN_005b5240   1      VPTR-SELF   5b52df: mov ecx,DWORD PTR [eax]
+   28 0x5b54e2  edx  FUN_005b5240   1      VPTR-SELF   5b54df: mov edx,DWORD PTR [edi]
+   29 0x5b5720  ecx  FUN_005b5660   1      VPTR-SELF   5b571e: mov ecx,DWORD PTR [eax]
+   30 0x5b67db  ecx  FUN_005b64c0   1      VPTR-SELF   5b67d9: mov ecx,DWORD PTR [eax]
+   31 0x5b680d  ecx  FUN_005b64c0   1      VPTR-SELF   5b680b: mov ecx,DWORD PTR [eax]
+   32 0x5b6836  ecx  FUN_005b64c0   1      VPTR-SELF   5b6834: mov ecx,DWORD PTR [eax]
+   33 0x5b686d  ecx  FUN_005b64c0   1      VPTR-SELF   5b686b: mov ecx,DWORD PTR [eax]
+   34 0x5cebf0  eax  FUN_005ceb7a   2      VPTR-SELF   5cebeb: mov eax,DWORD PTR [edx]
+   35 0x603b9b  eax  FUN_00603b62   4      ?           603b97: mov eax,DWORD PTR [edx+eax*1-0x48]
+   36 0x647aa3  edx  FUN_00647740   6      MEMBER      647a9c: mov edx,DWORD PTR [esp+0x70]
+   37 0x647d87  ecx  FUN_00647740   6      MEMBER      647d7f: mov ecx,DWORD PTR [esp+0x6c]
+   (#: 1-19 are `call [r+0x64]`; 20-37 are `call [r+0x6c]`)
 
 TABLE 4  arity histogram over the 19 +0x64 sites: {0: 3, 1: 5, 5: 8, 6: 3}
    slot arity is 1 (ret 4) -> arity-compatible sites: 5
@@ -52,13 +70,15 @@ TABLE 5  the dialog module 0x5f0000-0x600000: [r+0x64] instructions
      0x5f49b9  mov DWORD PTR [edx+0x64],eax   (FUN_005f3f5b)
      0x5fc6fc  mov DWORD PTR [edx+0x64],0x0   (FUN_005fc500)
      0x5fcc34  mov DWORD PTR [eax+0x64],0x0   (FUN_005fca14)
-   the 0x5f49ad/0x5f49b9 pair is a FIELD SWAP on [this+0x2240]+0x64:
-     0x5f49a1 add edx,0x2240 ; 0x5f49ad read [eax+0x64] ; 0x5f49b9 store back
+   the 0x5f49ad/0x5f49b9 pair is a FIELD SWAP on [this+0x2240]+0x64 (measured True):
+     0x5f49a1  add edx,0x2240
+     0x5f49ad  mov ecx,DWORD PTR [eax+0x64]
+     0x5f49b9  mov DWORD PTR [edx+0x64],eax
    runner 0x5f1394: slot-call sites 0
 
 RIVALS (each verdict computed from the numbers above)
    R1 runner dispatches its own commit slot     -> FAILS (0 site calls)
-   R2 one of the 19 sites reaches a dialog        -> FAILS (0 sites in module, 5 one-arg sites)
+   R2 one of the 37 sites reaches a dialog        -> FAILS (0 sites in module, 5 one-arg sites)
    R3 the commit is called directly             -> FAILS (0 text refs)
    R4 the slot is cached then `call reg`        -> FAILS (0 pairs)
    R5 any [r+0x64] in the module is a dispatch  -> FAILS (0 call/jmp forms, 4 mov forms)
@@ -74,10 +94,11 @@ PASS G3 trio dwords match; 0x671644+0x6c == 0x67164c+0x64 pane alias
 PASS G4 ctor installs 0x67164c at +0 and 0x671644 at +0x444 2 stores
 PASS G5 slot arity is 1 (ret 4)                           0x4
 PASS G6 census: 19 x +0x64, 18 x +0x6c, 0 jmp forms       19/18/0
-PASS G7 zero dispatch sites inside the dialog module      0 call forms in module
+PASS G7 zero dispatch sites inside the dialog module (all 37 sites) 0 of 37 in module
 PASS G8 module's [r+0x64] forms are 4 movs, 0 calls, swap pinned at 0x5f49ad 4 mov / 0 call
 PASS G9 zero dispatch evasions (cached-slot, lea+call)    0/0
-PASS G10 arity-compatible sites == 5, each on a MEMBER/child pointer 5 one-arg
+PASS G10 one-arg sites == 5 with the pinned kind set {MEMBER:3, VPTR-SELF:2} 5 one-arg {'MEMBER': 3, 'VPTR-SELF': 2}
 PASS G11 runner 0x5f1394 dispatches no slot               0
+PASS G12 the module swap is measured (add 0x2240 + read + store-back) 1/1/1 insns
 
-PASS M345: 12/12 gates   digest=73e03a68d5e3fd23
+PASS M345: 12/12 gates   digest=833faf38e189ad40

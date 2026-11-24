@@ -22,7 +22,7 @@ MUTANTS = [
      {"M345_PATCH_IMG": "6716b0=404ed0"}, {"G1"}),
     ("MU2", "no .text operand names the slot",
      {"M345_PATCH_INS": "5f3f45=0x5f58fa"}, {"G2"}),
-    ("MU3", "0x671644+0x6c aliases 0x67164c+0x64",
+    ("MU3", "all five family vtables carry the slot (5th dword patched)",
      {"M345_PATCH_IMG": "671830=404ed0"}, {"G3"}),
     ("MU4", "ctor installs the CPane vptr at +0x444",
      {"M345_PATCH_INS": "405f3a=DWORD PTR [ecx+0x448],0x671644"}, {"G4"}),
