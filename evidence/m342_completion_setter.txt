@@ -187,6 +187,8 @@ RIVALS - each must FAIL on the numbers printed above
   RIV3 'the mask is the byte index': mask-as-index stays inside the 5-byte window for 15/40 ids vs 40/40 for item>>3 -> FALSIFIED
   RIV4 'FUN_4e47d0 is the only writer': direct +0x8c stores 11 == grant 7 + copies 3 + screen copy 1 -> FALSIFIED
 
+TABLE DIGEST 2b88df5da5aeafe1 (the 11 +0x8c stores + the 7 grant ORs, canonical order)
+
 GATES
 ok   G1 array base 0x95da10 + stride 0x130 puts the bitmap constant 0x95da9c at +0x8c (rival +0x88)
 ok   G2 direct byte stores into +0x8c: 11, in exactly ['FUN_0041cf20', 'FUN_004e47d0'] (screen copy 1 + grant 10)

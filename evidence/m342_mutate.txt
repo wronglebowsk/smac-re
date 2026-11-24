@@ -7,4 +7,4 @@ baseline green: 6/6 gates, no BAD
   MU5   PASS   reddens G5       the pop's body span widened into the base screen: the screen's copy counted as a pop write
   MU6   PASS   reddens G6       the mask-slot provenance check disabled: OR stores no longer tied to the mapper
   NOOP  PASS   reddens []       identity tree - must redden nothing
-PASS HARNESS M342: 7/7 mutants redden exactly their declared sets, NO-OP [] , script 6e5edf6b99667a4c
+PASS HARNESS M342: 7/7 mutants redden exactly their declared sets, NO-OP [] , script d8949a4cfa978ee4

@@ -20,6 +20,7 @@ scripts/m342_mutate.py; zero box, zero /proc, zero gdb.
 """
 import argparse
 import bisect
+import hashlib
 import csv
 import os
 import re
@@ -241,6 +242,10 @@ def main(argv=None):
           % (GRANT, len(fac), len(g_or), len(g_mov), "FALSIFIED" if r4 else "holds"))
 
     # ---------------------------------------------------------------- gates
+    dig_src = "\n".join("%x:%s" % (x, t) for x, t, _o, _op in sorted(fac) + sorted((x, t) + ("", "") for x, t in g_or))
+    print("\nTABLE DIGEST %s (the %d +0x8c stores + the %d grant ORs, canonical order)"
+          % (hashlib.sha256(dig_src.encode()).hexdigest()[:16], len(fac), len(g_or)))
+
     print("\nGATES")
     gate("G1", 0x95da9c - REC_BASE == FAC_OFF and len(stride_sites) > 0 and len(owner_reads) > 1
          and "0x95da9c" in charge_read,

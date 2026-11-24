@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 10/10 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B30 + M54A-M340 (`NAMED ## B30`, `## M340`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
+# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 10/10 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B30 + M54A-M342 (`NAMED ## B30`, `## M340`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -28,7 +28,7 @@ box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B
 **B30 = the COMPLETION leg** (`## B30`). **Next build B31**: the spine ends at B30 - author its rung
 text in `BUILD_SPINE.md` BEFORE probing.
 
-  **DOC CAP (`wc -c` s321): `NAMED.md` 246,098/250,000 = 3,902 B - under the 5 KB trigger: the next fire ROTATES first (M310 VERBATIM to `docs/named-archive-b30-rows.md:5`, sha1 `ca3caf3785c9d6e9`, `scripts/b30_named_rotate.py --verify`). NEXT_PROMPT <=12,000.**
+  **DOC CAP (`wc -c` s322): `NAMED.md` 243,094/250,000 = 6,906 B; M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5` (sha1 `ccee72a56f16b4b4`, `scripts/m342_named_rotate.py --verify`) - rotate again BEFORE adding once <5 KB. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
@@ -50,10 +50,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md`; faction fields =
   `docs/field-atlas-faction.md` (read §M297 first - the 0x94d104 phrasing is WRONG).
-- **ISOLATION (s254)**: successor ALWAYS "in 12m"; at fire start check `ps`
-  for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
-  worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
-  there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
+- **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M340 + B1-B30 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220..M308, what each settled, incl. the M308 SITE-list shapes) VERBATIM at
   `docs/pick-archive.md` §trim-s270.
@@ -66,7 +63,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   (base+0x8c bit), bit5 of block+0 = a CARRIED HALF-UNIT exclusive to FUN_004f47f0;
   (x5) the 'multi' label only (`92bdf8` = pref `Top Menu`);
   (x6) ANSWERED by M335/M336/M340, M339 closed the callee; OPEN: other writers of the
-  0x92bde8..0x92bf14 pref block; (x9) the completion SETTER routine (B30's ASSUMED inverse); (x7) ANSWERED by M334 — the REMOVAL path is the difficulty-gated AUTO-SELL
+  0x92bde8..0x92bf14 pref block; (x9) ANSWERED by M342: the setter is FUN_004e44f0 (`or` @`0x4e4528`, AND @`0x4e4546`, 27 sites/8 fns); OPEN = which caller completes production; (x7) ANSWERED by M334 — the REMOVAL path is the difficulty-gated AUTO-SELL
   (ENERGY ASSIGNED, not refunded; `ds:0x985ba0`'s WRITER outside .text is still OPEN);
   (x8) ANSWERED by M337 — the item table IS the +0x10 field of the 72-record array at `0x984d38`,
   row order = alpha `#FACILITIES` file order; B28's +300 parity covers ids 1..38 by construction.
@@ -121,11 +118,7 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar note:
 `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`, `--verify`); the per-id
 `NAMED ## <id>` blocks GOVERN.
-M334 (s316-chain2, MERGED fc2569d #350): 0x4f47f0 upkeep-FAILURE = difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded; block+0x8 = effective difficulty) — 7/7 5b5ece39af02baba, harness 45/45 a5a5091e533f7883. NAMED ## M334.
-M337 (s318-chain1, x8): item row order = alpha `#FACILITIES` file order (rec i = alpha i-1) — 8/8 `39d82f0771690e15`, 13/13; M53i's +0x20/+0x28 labels superseded. NAMED ## M337.
-M335 (s317-chain2): ladder = alpha #DIFF 6 rows @0x94d2ac, indexed by ds:0x985aec; 4=Thinker 5=Transcend; only clamp FUN_00423af0(0,6) is INCLUSIVE. 7/7 fb58bdc3307d6258; 20/20 6e0e05a8ffb388d8. NAMED ## M335.
-M336 (s318-chain2): ds:0x8f0090 = DIFFICULTY byte of PLAYER RECORD 1 (8 recs, stride 0x176, frame 0x8eff18); ONE unclamped reader 0x486788 (idx 0x176*(k+1)) so index 6 reads 0x94d2c4 (one past); 6 writers in 3 address forms. 7/7 f4ca00c55c833539; 14/14 3ec4dd172c69e165. NAMED ## M336.
-M338 (s319-chain2): last two #DIFF readers — 0x57c606 = loop counter 0..5; 0x44a1c8 = BYTE[HoF rec +0x20] = faction block +8 (effective difficulty); UNCLAMPED. 8/8 1ae1563d47d0039e x2; 16/16 56455db0eadbedd7. NAMED ## M338 (M326 rotated, sha1 a882ee40851d).
-M340 (s320-chain1): FUN_0058e7f0 ADMITS a `Difficulty` pref >=6 — no numeric bound in read->parse->store (constants {0,1,0x2b,0x2c,0x2d,0x30,0x31,0x36}); Language IS bounded (cmp 4/ja) = positive control. 7/7 1cc44d0146a8b419; 12/12 a2a1726721114b4d. NAMED ## M340.
+- M334-M340 (s316-s320, all MERGED): M334 = the 0x4f47f0 upkeep-FAILURE is a difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded) 7/7 5b5ece39af02baba, 45/45; M335 ladder = alpha #DIFF 6 rows @0x94d2ac, idx = ds:0x985aec 7/7 fb58bdc3307d6258, 20/20; M336 ds:0x8f0090 = PLAYER RECORD 1's difficulty byte, ONE unclamped reader 7/7 f4ca00c55c833539, 14/14; M337 item row order = alpha #FACILITIES (rec i = alpha i-1) 8/8 39d82f0771690e15, 13/13; M338 the last two #DIFF readers (loop counter / HoF rec +0x20) 8/8 1ae1563d47d0039e, 16/16; M339 0x5f1394 = the modal SCREEN RUNNER 7/7 d76a5e83770b77bb, 13/13; M340 a `Difficulty` pref >=6 is ADMITTED 7/7 1cc44d0146a8b419, 12/12. Per-id `NAMED ## <id>` GOVERN.
+M342 (s322-chain1, x9, MERGED): the +0x8c bit is SET by FUN_004e44f0 - `or BYTE PTR [304*base+idx+0x95da9c],mask` @0x4e4528 (AND @0x4e4546), 27 sites/8 fns; pop FUN_004ef5d0 = NON-writer. 6/6 2b88df5da5aeafe1, 7/7. NAMED ## M342.
 - M339 (s320-chain2) MERGED: 0x5f1394 = the modal SCREEN RUNNER; return = the screen object's +0xa40 cell (read once, written 0x), and FUN_004ddaa0 writes it to ds:0x985aec + all 8 faction blocks. 7/7 d76a5e83770b77bb x2, harness 13/13 927a1c66c322709e; (x6) callee CLOSED.
 - M341 (s321-chain2) PR #361 OPEN (review round done, 10/10 findings fixed; NOT merged — GitHub scheduled 0 workflow runs after 03:40Z, so no CI PASS at head): HoF record window = 5*n-5+s at THREE sites (0x449793 page+slot, 0x44af9b player+slot, 0x44b5a7 insert-shift); 35 records = 7 blocks x 5 rows, index 35 = terminator 0x984d34; 0x59f4 has NO named writer. 11/11 1cfdea39295dadce x2, harness 19/19 e1c003e81552f53f. NAMED ## M341 (M338 rotated, sha1 b82cddad74c8).
