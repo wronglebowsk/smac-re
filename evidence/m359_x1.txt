@@ -1,0 +1,112 @@
+== M359 design-record field census (row 0x98ad88, stride 0x34)
+ off     refs  first sites
+ +0x00    131  40ad92 40ea86 40fceb 4164dd 4188f9 418932
+ +0x08     12  40ec2b 4d2427 4d27b9 4d2db7 4d2e81 4ef0c6
+ +0x0c      2  57a6c8 595916
+ +0x10      1  52b76d
+ +0x14      1  59599c
+ +0x1f      1  5741e9
+ +0x20    197  40e337 40ebd7 4355df 438d8f 438fe0 439bde
+ +0x24    417  40cfcd 40ef98 40f06c 40f0f0 40f160 40f19f
+ +0x25    238  40fbc0 422904 423206 42e65a 42e6a0 42e6cb
+ +0x26     94  42292a 4231da 42e838 42e863 4355a6 437cef
+ +0x27    135  40f420 40f494 40f514 40f543 40f593 423b6f
+ +0x28     12  42e940 42e97b 4f6d1f 571097 571128 572b6f
+ +0x29     30  42eacb 4957e7 4a1f0e 4beff6 4d3dff 4e49f4
+ +0x2a    369  40e3ba 40e56f 40ec81 40ec98 40f40e 40f482
+ +0x2b     48  40b33b 40b6e5 4358fe 435912 4359bf 4359d3
+ +0x2c     67  40b6f8 40b70d 435823 4358d4 437e62 438ba9
+ +0x2d      6  507283 50728e 5072a6 5072af 595fba 595fe0
+ +0x2e      6  4336f1 43702d 43708d 54f9ed 595fc0 595fe6
+ +0x30    168  418ba6 42c33e 435803 4358a6 4373e7 43747c
+ +0x31      4  4ef398 4f05bd 5a7d00 5a7f67
+ +0x32     34  42eb18 437c93 438b7a 43df61 43e62e 44c589
+PASS G1 ref census +0x27=135 +0x28=12         +0x27=135 +0x28=12 (M356's independent census: 135/12)
+
+== builder 0x595b10: row stores and their source (computed)
+ addr     field  src        instruction
+ 595cc3 +0x27  arg 0x1c   mov BYTE PTR [esi+0x98adaf],bl
+ 595cc9 +0x24  arg 0xc    mov BYTE PTR [esi+0x98adac],dl
+ 595ccf +0x25  arg 0x10   mov BYTE PTR [esi+0x98adad],cl
+ 595cd5 +0x26  arg 0x14   mov BYTE PTR [esi+0x98adae],al
+ 595cdc +0x20  arg 0x18   mov DWORD PTR [esi+0x98ada8],edi
+ 595ce7 +0x29  call 0x595820 mov BYTE PTR [esi+0x98adb1],al
+ 595d1c +0x28  const 0x0  mov BYTE PTR [esi+0x98adb0],al
+PASS G2 five component bytes from ONE arg vector map {'0x20': 'arg 0x18', '0x24': 'arg 0xc', '0x25': 'arg 0x10', '0x26': 'arg 0x14', '0x27': 'arg 0x1c', '0x29': 'call 0x595820'}
+ +0x28 value path: call 0x570860 at ['0x595d0a'], zero at ['0x595d17']
+
+== #UNITS loader 0x579f40: stack args in call order
+ arg0 (ebp+0x8): push edi               @57a020
+ arg1 (ebp+0xc): push edi               @57a01c
+ arg2 (ebp+0x10): push eax               @57a01b
+ arg3 (ebp+0x14): push edx               @57a01a
+ arg4 (ebp+0x18): push eax               @57a016
+ arg5 (ebp+0x1c): push 0x1               @57a014
+PASS G3 5th design field is the CONSTANT 1    stack args ['push edi', 'push edi', 'push eax', 'push edx', 'push eax', 'push 0x1']
+
+== loader post-call field stores (base literal + stride)
+ base [(5742493, 'mov esi,0x98adba')] ; stride [(5742670, 'add esi,0x34')]
+  +0x28 @57a041 mov BYTE PTR [esi-0xa],al
+  +0x29 @57a037 mov BYTE PTR [esi-0x9],al
+  +0x2a @57a02d mov BYTE PTR [esi-0x8],bl
+  +0x2e @57a04a mov BYTE PTR [esi-0x4],cl
+PASS G4 loader writes Plan+0x2a Cost+0x29 Carry+0x28 Icon+0x2e fields ['0x28', '0x29', '0x2a', '0x2e'] from base 'mov esi,0x98adba' stride 'add esi,0x34'
+ conditional (Plan<0 / cost==0 / carry==0 skip): {40: True, 41: True, 42: True}
+
+ +0x28 writers: literal-form ['0x595d1c'] ; register-form 57a041
+PASS G5 +0x28 has TWO writers (M356 said one) literal ['0x595d1c'] + register-relative 0x57a041 ([esi-0xa], esi=0x98adba+0x34*i)
+
+ carry auto-value gate: ['shl eax,0x4', 'mov edi,eax', 'add esp,0x14', 'cmp BYTE PTR [edi+0x92b952],0x7', 'jne 0x595d14']
+PASS G6 auto-carry gated on weapon Mode 7     weapon row (idx<<4) +0x02 == 7 == Transport (alpha #WEAPONS Mode)
+
+== carrier formula 0x570860
+  570860 push ebp
+  570861 mov ebp,esp
+  570863 mov eax,DWORD PTR [ebp+0x8]
+  570866 lea ecx,[eax+eax*8]
+  570869 xor eax,eax
+  57086b shl ecx,0x4
+  57086e mov dl,BYTE PTR [ecx+0x92ae81]
+  570874 mov al,BYTE PTR [ecx+0x92ae83]
+  57087a cmp dl,0x1
+  57087d jne 0x570883
+  57087f imul eax,DWORD PTR [ebp+0x10]
+  570883 mov ecx,DWORD PTR [ebp+0xc]
+  570886 test ecx,0x800000
+  57088c je 0x570893
+  57088e cdq
+  57088f sub eax,edx
+  570891 sar eax,1
+  570893 test ecx,0x80000
+  570899 je 0x5708a4
+  57089b lea eax,[eax+eax*2+0x1]
+  57089f cdq
+  5708a0 sub eax,edx
+  5708a2 sar eax,1
+  5708a4 pop ebp
+  5708a5 ret
+PASS G7 carry = chassis base * arg (reactor), ability-scaled reads chassis +0x01/+0x03, multiplies by arg0x10 when +0x01==1
+
+ +0x27 loads 127; compare immediates seen on the loaded reg: {1: 53, 3: 54}; 1-and-3 clamp sites 52
+PASS G8 +0x27 band is exactly {1,3}           immediates {1: 53, 3: 54} over 52 clamp sites
+
+ HP-thirds chain: lea ecx,[eax+eax*4] | shl ecx,1 | mov eax,0x55555556 | imul ecx
+PASS G9 clamp(v)*10/3 chain (HP thirds)       lea *5, shl 1 (=*10), magic /3 0x55555556, imul ecx
+
+ Planet-Buster branch: cmp BYTE PTR [edi+0x92b950],0x63 -> mov BYTE PTR [esi+0x98adb2],0x5
+PASS G10 weapon 99 (Planet Buster) hard-sets +0x2a=5 cmp wep+0x00,99 -> +0x2a <- 5 (alpha Plan 5 = Planet Buster)
+ +0x2a == 12 compares: 43 sites, first ['0x40f40e', '0x40f482', '0x4d02de', '0x502405', '0x502981', '0x503036']
+PASS G11 +0x2a bounded at 12 (max Plan)       43 sites compare the plan byte with 12 (pinned)
+
+ R1 '+0x27 is the alpha.txt Plan column': loader Plan token -> +0x2a (mov BYTE PTR [esi-0x8],bl), builder +0x27 <- constant (push 0x1) -> rival FAILS
+PASS R1 rival fails on measurement            plan lives at +0x2a, +0x27 gets a literal 1
+ R2 '+0x28 has one writer' (M356 G14): literal census finds 1, the register-relative store at 0x57a041 is a SECOND -> rival FAILS
+PASS R2 M356 single-writer retracted          2 writers, 0x595d1c + 0x57a041
+
+ CORROBORATE alpha.txt: '; Name, Chassis, Weapon, Armor, Plan, Cost, Carry, Preq, Icon, Abil'
+   ';           Noncombat: 7=Transport 8=Colonist' ; ';           5  = Planet Buster' ; #REACTORS rows=4
+ table-index diagnostic (+0x27 used as an index into a global): {'0x933282': 4, '0x933288': 10, '0x92a378': 1, '0x92fd18': 1, '0x93327c': 1, '0x92ae80': 2, '0x94dc70': 1, '0x92ae81': 1, '0x92bff6': 1, '0x92bff7': 1, '0x92b950': 2, '0x92ae82': 2, '0x92091c': 1, '0x93329d': 1, '0x92b952': 1}
+
+ DIGEST 7d4a2d1356c9ff41
+
+PASS M359: 13/13 gates

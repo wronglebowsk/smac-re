@@ -722,3 +722,29 @@ whether a facility completion stamps at all.
 - **DOC CAP**: `scripts/m356_named_rotate.py` rotated `## M298` VERBATIM ->
   `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
 - OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.
+
+## Session 332-chain2 (2026-11-24) — M359: +0x28 = CARRY CAPACITY (V), +0x27 = reactor level (INFERRED); M356's single-writer row RETRACTED
+
+- **ACCEPT** `python3 -u scripts/m359_design_record.py` -> **`PASS M359: 13/13 gates`**,
+  digest `7d4a2d1356c9ff41`, x2 identical (`evidence/m359_x1.txt:112`, `:110`);
+  `m359_mutate.py` -> **13/13 RED, NO-OP none** (`evidence/m359_mutate.txt`).
+- **WRITER** 0x595b10 = the design-record builder. Arg->field map computed from the
+  stores (`:26-37`): +0x24<-arg0xc, +0x25<-arg0x10, +0x26<-arg0x14, +0x27<-arg0x1c,
+  +0x20<-arg0x18, +0x29<-ret(0x595820), +0x28<-ret(0x570860) or 0.
+- **LOADER** 0x579f40 = #UNITS parser. Six stack args parsed (`:38-46`):
+  (row band, chassis, weapon, armor, ability bits, **constant 1**); then it writes the
+  alpha columns Plan/Cost/Carry/Icon at +0x2a/+0x29/+0x28/+0x2e, each skipping when the
+  column is 0 or negative (`:47-55`).
+- **+0x28 = CARRY CAPACITY** (V): the auto-value is gated `cmp byte [wep+0x02],0x7`
+  (`:59`; alpha #WEAPONS Mode 7 = Transport); 0x570860 = chassis +0x03 * arg(reactor),
+  halved / 3:2 by ability bits 0x800000/0x80000 (`:62-77`); the loader's own Carry
+  column lands in the same byte.
+- **+0x27 = REACTOR LEVEL** (INFERRED, strong): constant 1 for every basic unit; 127
+  loads, the only compare band is **{1:53, 3:54} over 52 clamp sites** (`:90`); the UI
+  health path scales `clamp(v,1,3)*10/3` (`:93`) and carries/multiplies by the same arg.
+- **RETRACTION** (M356 G14): "+0x28 has ONE writer" is FALSE — two writers, 0x595d1c
+  (literal) and 0x57a041 (`[esi-0xa]`, esi=0x98adba+0x34*i) (`:56,103`). A literal-form
+  grep cannot see the second. +0x2a is the PLAN (M354 called it "class"): the loader's
+  Plan token lands there and the Planet-Buster branch hard-sets +0x2a=5 = alpha Plan 5.
+- **OPEN**: alpha #REACTORS has 4 rows but the health readers clamp to 1..3 (pre-SMAX
+  path or display bucket?); the +0x27 noun still rests on elimination + the constant 1.

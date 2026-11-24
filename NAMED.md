@@ -1594,3 +1594,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | **RETRACTIONS:** (M354) +0x24 is the CHASSIS ORDINAL, not "domain", and (this draft) "one-way latch" is FALSE — 0x4396e6 `xor dx,0x4` toggles bit 2 | `:50,66` | V MU11,22,25 |
 | ACCEPT `python3 -u scripts/m356_prototype_stamp.py` -> 17/17 `c1a2beb794cec9f8`; harness 27/27, NO-OP MU29, all 17 gates covered | `:103`, `evidence/m356_mutate.txt:32` | V MU0 |
 | OPEN: nouns of +0x27/+0x28; bit2's UI reading (prototype) INFERRED; alpha.txt 21/10/9 corroboration printed only | `:99` | lead |
+
+## M359 (s332-chain2, STATIC 13/13) — +0x28 = CARRY CAPACITY (V), +0x27 = REACTOR LEVEL (INFERRED); M356's "+0x28 single writer" RETRACTED (2 writers). `:N` = line of `evidence/m359_x1.txt:1-112`
+
+| claim | ev | conf/mutant |
+|---|---|---|
+| builder 0x595b10 arg->field map: +0x24<-arg0xc, +0x25<-arg0x10, +0x26<-arg0x14, +0x27<-arg0x1c, +0x20<-arg0x18; +0x29<-ret(0x595820) | `:26-37` | V MU2,13 |
+| #UNITS loader 0x579f40 pushes 6 args and its 5th design field is the CONSTANT 1; Plan/Cost/Carry/Icon land at +0x2a/+0x29/+0x28/+0x2e, skipped when 0/negative | `:38-55` | V MU3,4,5 |
+| +0x28 = CARRY CAPACITY: auto-value gated `cmp byte [wep+0x02],0x7` (alpha Mode 7 = Transport); 0x570860 = chassis+0x03 x reactor, ability-scaled | `:59,62-77` | V MU6,7 |
+| +0x28 has TWO writers: 0x595d1c (literal) + 0x57a041 (`[esi-0xa]`, esi=0x98adba+0x34*i) — M356 G14 row RETRACTED | `:56,103` | V MU5,12 |
+| +0x27 = reactor level INFERRED: constant 1 for basic units; 127 loads, compare band {1:53,3:54} over 52 clamp sites; UI health scale clamp(v,1,3)*10/3 | `:90,93` | I (MU8,9 pin the band+chain) |
+| +0x2a = PLAN (M354 called it "class"): loader Plan token -> +0x2a; Planet-Buster branch hard-sets +0x2a=5 (alpha Plan 5); 43 sites compare it with 12 | `:96,98` | V MU10,11 |
+| RIVALS: "+0x27 is the Plan column" FAILS (plan is +0x2a, +0x27 gets a literal); "+0x28 one writer" FAILS | `:101,103` | V |
+| OPEN: #REACTORS has 4 rows but the health readers clamp 1..3; +0x27's noun rests on elimination + the constant 1 | `:90` | lead |
