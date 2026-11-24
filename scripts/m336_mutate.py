@@ -23,17 +23,20 @@ GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7"]
 # Mutant -> gate set, declared BEFORE the sweep. Each row exists because a specific
 # claim in the script would be false under the perturbation.
 DECLARED = {
-    "MU1": ("drop_reader",       {"G3", "G7"}),   # the only load from the field+2 band vanishes
-    "MU2": ("stride_175",        {"G2"}),          # field+0 imul immediate 0x176 -> 0x175
-    "MU3": ("stride_175b",       {"G3"}),          # the consumer's own imul immediate
-    "MU4": ("direct_moved",      {"G1"}),          # the one direct store retargeted
-    "MU5": ("count7",            {"G2"}),          # walk count 8 -> 7 breaks FRAME+count*STRIDE
-    "MU6": ("clamp_hi5",         {"G6"}),          # clamp hi 6 -> 5 no longer reaches TABLE_END
-    "MU7": ("clamp_exclusive",   {"G6"}),          # FUN_00423af0 jle -> jl, hi becomes exclusive
-    "MU8": ("value_src",         {"G4", "G6"}),    # a field+2 store reads 0x8f0c12 -> the
-                                                  # G4 source pairing AND the G6 ref census
-    "MU9": ("naive_alias",       {"G3", "G4", "G7"}),  # ALGORITHM: direct ds: forms only
-    "MU10": ("table_end_moved",  {"G5"}),         # loader end 0x94d2c4 -> 0x94d2c0
+    "MU1": ("drop_reader",       {"G1", "G3", "G7"}),  # the only load disappears: census, chain, rival
+    "MU2": ("stride_175",        {"G2"}),               # field+0 imul immediate 0x176 -> 0x175
+    "MU3": ("stride_175b",       {"G1", "G3", "G7"}),         # the consumer's imul: no longer a stride multiple
+    "MU4": ("direct_moved",      {"G1"}),               # the one direct store retargeted
+    "MU5": ("count7",            {"G2"}),               # walk count 8 -> 7 breaks FRAME+count*STRIDE
+    "MU6": ("clamp_hi5",         {"G6"}),               # clamp hi 6 -> 5 no longer reaches the end cell
+    "MU7": ("clamp_exclusive",   {"G6"}),               # FUN_00423af0 jle -> jl: hi becomes exclusive
+    "MU8": ("value_src",         {"G4", "G6"}),         # a field+2 store reads 0x8f0c12
+    "MU9": ("naive_alias",       {"G1", "G4", "G7"}),         # ALGORITHM: direct-displacement form only
+    "MU10": ("table_end_moved",  {"G5"}),               # loader end 0x94d2c4 -> 0x94d2c0
+    "MU11": ("walk_stride",      {"G1", "G4"}),         # walk step 0x176 -> 0x170
+    "MU12": ("table_base_moved", {"G5"}),               # loader base 0x94d2ac -> 0x94d2a8
+    "MU13": ("chain_src",        {"G3"}),               # the chain reloads a different stack slot
+    "MU14": ("alias_inserted",   {"G1"}),               # a SECOND resolvable load is added
 }
 MUTANTS = list(DECLARED)
 

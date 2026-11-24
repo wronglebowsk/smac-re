@@ -1355,13 +1355,13 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | "39" = consumers' bound (`cmp esi,0x27` @0x4f4a35), array ends rec 72; projects are this loop's (`jl` 0x57a866 skips 5 trailing stores) | G2/G7 `:82,:87` MU11,12 | V |
 | OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x57c606 (0x48678f ANSWERED by ## M336) | - | lead |
 
-## M336 (s318-chain2, (x6), STATIC 7/7) — `0x8f0090` = the DIFFICULTY byte of PLAYER RECORD 1 (8 recs, stride 0x176, frame `0x8eff18`); read only by UNCLAMPED `#DIFF` lookup 0x486788, so index 6 -> `0x94d2c4` — `evidence/m336_cell090_consumer.txt:1`
+## M336 (s318-chain2, STATIC 7/7) — `0x8f0090` = the DIFFICULTY byte of RECORD 1 (stride 0x176, frame `0x8eff18`); one UNCLAMPED `#DIFF` reader 0x486788; index 6 -> `0x94d2c4` — `evidence/m336_cell090_consumer.txt:1`
 
 | claim | line | kind |
 |---|---|---|
-| TARGET=FRAME+0x176+2; 8 records (end `0x8f0ac8`=FRAME+8*0x176); rec-1 ptr 0x8f008e @0x525c42 | `:5-13` | V MU2,MU5 |
-| direct census: 1 ref, a STORE (0x48884d), 0 loads | `:1-3` | V MU4 |
-| only load [reg+0x8eff1a] = 0x486788, idx 0x176*(k+1), k=0 row 0 => addr=TARGET; feeds `[b*4+0x94d2ac]` | `:14-31` | V MU1,MU3,MU9 |
-| 6 write sites, 3 forms: direct + 4 indexed (src 0x8f0c11 x3, lit 0) + walk 0x4e249c iter 1 | `:32-48` | V MU8,MU9 |
-| table `0x94d2ac`..`0x94d2c4` = 6 rows (0x57ac74/88); 6W/6R, only clamp 0x486f30 `FUN_00423af0(diff,0,6)` INCLUSIVE => 6 -> `0x94d2c4`; consumer unclamped | `:50-82` | V MU6,MU7,MU10 |
-| OPEN: does FUN_0058e7f0 (INI reader) admit >=6; `[reg+0x8f008d]` forms (0x48441e) unresolved | - | lead |
+| ADDRESS census (3 forms; residue): loads at +2 = {0x486788} only, 6 stores, residue EMPTY, no address materialisation | `:1-14` | V MU1,MU4,MU9,MU14 |
+| TARGET=FRAME+0x176+2; end `0x8f0ac8`; rec-1 ptr `0x8f008e` @0x525c42 | `:16-23` | V MU2,MU5 |
+| chain: k=[ebp-0x8] (0x4865dc/5f5/77c) -> +1 -> imul 0x176 -> `[ecx+0x8eff1a]` -> `[edx*4+0x94d2ac]`, 0 gap | `:25-39` | V MU3,MU13 |
+| walk stride `add eax,0x176` (0x4e24ab), 8 iters, iter 1 = TARGET; field+2 store sources = each register's own load (0x8f0c11 x3, lit 0) | `:41-56` | V MU8,MU11 |
+| base/end READ 0x57ac74/0x57ac88 = 6 rows; only clamp 0x486f30 `FUN_00423af0(diff,0,6)` INCLUSIVE => 6 -> `0x94d2c4` | `:58-90` | V MU6,MU7,MU10,MU12 |
+| OPEN: FUN_0058e7f0 >=6?; record indices assumed 0..7 | - | lead |
