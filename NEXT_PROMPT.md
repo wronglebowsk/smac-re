@@ -63,7 +63,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   (base+0x8c bit), bit5 of block+0 = a CARRIED HALF-UNIT exclusive to FUN_004f47f0;
   (x5) the 'multi' label only (`92bdf8` = pref `Top Menu`);
   (x6) ANSWERED by M335/M336/M340, M339 closed the callee; OPEN: other writers of the
-  0x92bde8..0x92bf14 pref block; (x9) ANSWERED by M342: the setter is FUN_004e44f0 (`or` @`0x4e4528`, AND @`0x4e4546`, 27 sites/8 fns); OPEN = which caller completes production; (x7) ANSWERED by M334 — the REMOVAL path is the difficulty-gated AUTO-SELL
+  0x92bde8..0x92bf14 pref block; (x9) ANSWERED by M342 (SET `or` x11, CLEAR `and` x3, API @`0x4e4528` 27 sites/8 fns); OPEN = which caller completes production; (x7) ANSWERED by M334 — the REMOVAL path is the difficulty-gated AUTO-SELL
   (ENERGY ASSIGNED, not refunded; `ds:0x985ba0`'s WRITER outside .text is still OPEN);
   (x8) ANSWERED by M337 — the item table IS the +0x10 field of the 72-record array at `0x984d38`,
   row order = alpha `#FACILITIES` file order; B28's +300 parity covers ids 1..38 by construction.
@@ -119,6 +119,6 @@ Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar not
 `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`, `--verify`); the per-id
 `NAMED ## <id>` blocks GOVERN.
 - M334-M340 (s316-s320, all MERGED): M334 = the 0x4f47f0 upkeep-FAILURE is a difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded) 7/7 5b5ece39af02baba, 45/45; M335 ladder = alpha #DIFF 6 rows @0x94d2ac, idx = ds:0x985aec 7/7 fb58bdc3307d6258, 20/20; M336 ds:0x8f0090 = PLAYER RECORD 1's difficulty byte, ONE unclamped reader 7/7 f4ca00c55c833539, 14/14; M337 item row order = alpha #FACILITIES (rec i = alpha i-1) 8/8 39d82f0771690e15, 13/13; M338 the last two #DIFF readers (loop counter / HoF rec +0x20) 8/8 1ae1563d47d0039e, 16/16; M339 0x5f1394 = the modal SCREEN RUNNER 7/7 d76a5e83770b77bb, 13/13; M340 a `Difficulty` pref >=6 is ADMITTED 7/7 1cc44d0146a8b419, 12/12. Per-id `NAMED ## <id>` GOVERN.
-M342 (s322-chain1, x9, MERGED): the +0x8c bit is SET by FUN_004e44f0 - `or BYTE PTR [304*base+idx+0x95da9c],mask` @0x4e4528 (AND @0x4e4546), 27 sites/8 fns; pop FUN_004ef5d0 = NON-writer. 6/6 2b88df5da5aeafe1, 7/7. NAMED ## M342.
+M342 (s322-chain1, x9, MERGED): +0x8c SET by `or`+mapper mask at 11 addrs (API FUN_004e44f0 @0x4e4528, 27 sites/8 fns; base screen; 2 un-indexed regions; FUN_004e47d0 x7), CLEAR 3 `and`; pop = NON-writer. 7/7 2b88df5da5aeafe1, 9/9. NAMED ## M342.
 - M339 (s320-chain2) MERGED: 0x5f1394 = the modal SCREEN RUNNER; return = the screen object's +0xa40 cell (read once, written 0x), and FUN_004ddaa0 writes it to ds:0x985aec + all 8 faction blocks. 7/7 d76a5e83770b77bb x2, harness 13/13 927a1c66c322709e; (x6) callee CLOSED.
 - M341 (s321-chain2) PR #361 OPEN (review round done, 10/10 findings fixed; NOT merged — GitHub scheduled 0 workflow runs after 03:40Z, so no CI PASS at head): HoF record window = 5*n-5+s at THREE sites (0x449793 page+slot, 0x44af9b player+slot, 0x44b5a7 insert-shift); 35 records = 7 blocks x 5 rows, index 35 = terminator 0x984d34; 0x59f4 has NO named writer. 11/11 1cfdea39295dadce x2, harness 19/19 e1c003e81552f53f. NAMED ## M341 (M338 rotated, sha1 b82cddad74c8).

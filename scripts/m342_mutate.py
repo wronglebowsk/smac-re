@@ -28,7 +28,7 @@ GATE_RE = re.compile(r"^(ok|BAD)\s+(G\d+)\b")
 MUTANTS = [
     ("MU1", "REC_BASE = 0x95da10", "REC_BASE = 0x95da14", ["G1"],
      "the field arithmetic taken from the WRONG anchor (array base = the +4 byte) -> +0x88"),
-    ("MU2", "in direct if o == 0x95da9c]", "in direct if o != 0x95da9c]", ["G2"],
+    ("MU2", "in direct if o == 0x95da9c]", "in direct if o != 0x95da9c]", ["G2", "G7"],
      "the bitmap constant inverted: the census counts every OTHER byte of the record"),
     ("MU3", 'api_lines.get(0x4e451b, "")', 'api_lines.get(0x4e4518, "")', ["G3"],
      "the mask slot read from the INDEX reload site (out1/out2 provenance swapped)"),
@@ -36,8 +36,12 @@ MUTANTS = [
      "the argument scan truncated at two pushes: the set flag is never parsed"),
     ("MU5", "pop_body = body(ins, pop_fn[0], pop_fn[1])", "pop_body = body(ins, pop_fn[0], pop_fn[1] + 3000)", ["G5"],
      "the pop's body span widened into the base screen: the screen's copy counted as a pop write"),
-    ("MU6", 'if any(re.search(r"call +0x%x$" % MAPPER, w) for w in win):', "if False:", ["G6"],
-     "the mask-slot provenance check disabled: OR stores no longer tied to the mapper"),
+    ("MU6", 'if re.match(r"mov +%s,BYTE PTR \\[ebp[+-]" % reg.group(1), w):', "if False:", ["G6"],
+     "the mask-register provenance check disabled: OR masks no longer tied to the mapper's out slot"),
+    ("MU7", 'DIGEST_EXPECT = "2b88df5da5aeafe1"', 'DIGEST_EXPECT = "0000000000000000"', ["G7"],
+     "the ACCEPT digest anchor unpinned (any table drift would go unnoticed)"),
+    ("MU8", 'if op == "mov":                       # the RMW happens in a register: or/and <reg>,...', "if False:", ["G2"],
+     "the pointer-form RMW classification disabled: every lea writer counted as a plain copy"),
     ("NOOP", "REC_BASE = 0x95da10", "REC_BASE = 0x95da10", [],
      "identity tree - must redden nothing"),
 ]
@@ -71,11 +75,11 @@ def main(argv=None):
     print("M342 mutant harness: %d mutants against %s" % (len(MUTANTS), os.path.basename(SRC)))
     # GUARD 0: the unmutated script must be green, or "a mutant reddens G<n>" measures nothing
     rc, red, oks, out = run(SRC)
-    if rc != 0 or red or len(oks) != 6:
+    if rc != 0 or red or len(oks) != 7:
         print("FAIL: baseline is not green (rc=%d red=%s ok=%s)" % (rc, sorted(red), sorted(oks)))
         print(out[-2000:])
         return 2
-    print("baseline green: %d/6 gates, no BAD" % len(oks))
+    print("baseline green: %d/7 gates, no BAD" % len(oks))
 
     tmp = tempfile.mkdtemp(prefix="m342m_")
     bad_rows = []

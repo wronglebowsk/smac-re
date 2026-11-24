@@ -1386,17 +1386,19 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | ACCEPT `python3 -u scripts/m340_pref_admission.py` -> `PASS M340: 7/7 gates`, rows `1cc44d0146a8b419`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2 runs byte-identical; `scripts/m340_mutate.py` -> `PASS HARNESS M340: 12/12`, 7/7 gates covered, NO-OP `[]`, `a2a1726721114b4d` | `evidence/m340_mutate.txt:16` | V |
 | OPEN: what the runtime dword AT 0x94d2c4 holds (a box read); whether any other writer of the 0x92bde8/0x985aec pair (0x57c7b0 writes both in one breath, source untraced) supplies a bounded value | - | lead |
 
-## M342 (s322-chain1, ANALYSE, static, zero box; ACCEPT `python3 -u scripts/m342_completion_setter.py` -> **`PASS M342: 6/6 gates`**, table digest `2b88df5da5aeafe1`, 2 runs identical (`evidence/m342_completion_setter.txt:190,:207`); harness `scripts/m342_mutate.py` -> **7/7**, NO-OP `[]`, baseline green (`evidence/m342_mutate.txt:10`)) — pick (x9) ANSWERED: the `base+0x8c` bit is SET by `FUN_004e44f0(item, base, set)`, and the queue-pop is a NON-writer. (M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5`, sha1 `ccee72a56f16b4b4`.)
+## M342 (s322-chain1, ANALYSE, static, zero box; ACCEPT `python3 -u scripts/m342_completion_setter.py` -> **`PASS M342: 7/7 gates`**, table digest `2b88df5da5aeafe1` (PINNED, G7), 2 runs identical (`evidence/m342_completion_setter.txt:200,:218`); harness `scripts/m342_mutate.py` -> **9/9**, NO-OP `[]`, baseline green (`evidence/m342_mutate.txt:2,:12`)) — pick (x9) ANSWERED: the `base+0x8c` bit is SET by `or` through the mapper's mask at **11 addresses**, the API `FUN_004e44f0` first; the queue-pop is a NON-writer. (M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5`, sha1 `ccee72a56f16b4b4`.)
 
 | claim | evidence | conf |
 |---|---|---|
-| the record array base is `0x95da10` + `0x130*idx`: the `0x95da14` byte IS the +4 owner (`imul edx,edx,0x130` then a byte read), so the bitmap constant `0x95da9c` = record+0x8c and equals the charge routine's own read at `0x4f4837` | `evidence/m342_completion_setter.txt:8-12`,`:132-134` | V MU1 |
-| exactly 11 direct byte stores into +0x8c, in exactly 2 functions: `FUN_0041cf20` (1 whole-byte copy, screen) and `FUN_004e47d0` (7 `or` + 3 copies); no other function writes that byte | `:120-130` | V MU2 |
-| the API `FUN_004e44f0` (92 B) writes it twice: `or BYTE PTR [304*base+idx+0x95da9c],mask` @`0x4e4528` sets (flag!=0) and the `and` @`0x4e4546` clears; index = mapper out1 slot `[ebp+0x8]`, mask = out2 slot `[ebp-0x4]` | `:30-40` | V MU3 |
-| 27 call sites in 8 functions: 16 push set=1, 7 push set=0, 4 variable | `:161`,`:190` | V MU4 |
-| the queue-pop `FUN_004ef5d0` (244 B, 3 callers all inside `FUN_004ef6d0`) has 0 references to `0x95da9c` and 0 API calls: the pop does not stamp | `:167-175` | V MU5 |
-| inline family `FUN_004e47d0`: 7 ORs + 3 copies, all 7 masks from the mapper within 12 insns | `:178-188` | V MU6 |
-| OPEN: which of the 27 API callers is the production-completion call (founder/tech-grant/AI paths pass constants); projects 39..71 unmeasured | - | lead |
+| the record array base is DERIVED as `0x95da10` from the owner site `0x440dbc` (`imul r,r,0x130` then a BYTE read of `0x95da14` = field +4), so `0x95da9c` = record+0x8c and is byte-identical to the charge routine's own read at `0x4f4837` (rival `+0x88` fails) | `evidence/m342_completion_setter.txt:4-8` | V MU1 |
+| the field has exactly 2 writer idioms: **11 direct constant-form stores** in exactly 2 Ghidra functions (`FUN_0041cf20` 1 whole-byte copy, `FUN_004e47d0` 7 `or` + 3 copies) and **9 pointer-form `lea` sites, 9/9 resolved to a store through that register** (2 copy / 4 `or` / 3 `and`) | `:9-72`,`:86`,`:204` | V MU2/MU8 |
+| SET = 11 `or` addresses (`4e4528 4e4b5a 4e4b87 4e4bec 4e4c16 4e4c3d 4e4c83 4e4d81 4f0ec0 4f3ebc 4f3f4c`); CLEAR = 3 `and` (`4e4546 4f38bb 4f49e1`, the last inside the charge routine `FUN_004f47f0`) | `:210-216` | V MU2/MU8 |
+| the API `FUN_004e44f0` (92 B) is the first SET address: `or BYTE PTR [eax],cl` @`0x4e4528` after the 304-fold (`0x4e4512-0x4e451e`), index = mapper out1 slot `[ebp+0x8]`, mask = out2 slot `[ebp-0x4]`; its AND twin @`0x4e4546` clears | `:99-113`,`:205` | V MU3 |
+| 27 call sites in 8 functions: 16 push set=1, 7 push set=0, 4 variable | `:129-158`,`:206` | V MU4 |
+| the queue-pop `FUN_004ef5d0` (244 B, 3 direct callers all inside `FUN_004ef6d0`) has 0 references to `0x95da9c` and 0 API calls: the pop does not stamp | `:160-177`,`:207` | V MU5 |
+| inline grant `FUN_004e47d0`: 7 ORs + 3 copies, 7/7 OR masks loaded from a stack slot the mapper filled | `:180-191`,`:208` | V MU6 |
+| the printed digest is PINNED by G7 - the ACCEPT anchor cannot drift silently | `:200`,`:209` | V MU7 |
+| OPEN: which of the 27 API call sites is the production-completion call; 3 pointer writers (`0x4f38b0`, `0x4f3eb1`, `0x4f3f3e`) sit in regions the Ghidra index does NOT name (semantics unidentified); projects 39..71 unmeasured | - | lead |
 
 ## M339 (s320-chain2, pick (x6) "callee 0x5f1394", STATIC 7/7, review #359 hardened) — 0x5f1394 = the modal SCREEN RUNNER; its return is the screen OBJECT's `+0xa40` result cell, and the difficulty dialog writes that return into `ds:0x985aec` + all 8 faction blocks — `evidence/m339_modal_runner.txt:1`
 

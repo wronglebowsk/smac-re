@@ -4,7 +4,7 @@ dump text.txt: 790695 instructions; 10284 functions indexed
 TABLE 0 - field arithmetic (derived)
   stride sites (imul reg,reg,0x130): 220  first 0x440dbc
   owner-byte reads at 0x95da14: 410 (field +4 of the same array)
-  array base = 0x95da14-4 = 0x95da10 ; bitmap constant 0x95da9c -> record+0x8c
+  derived from the owner site @0x440dbc: base = 0x95da14-4 = 0x95da10 ; bitmap 0x95da9c -> record+0x8c
 
 TABLE 1 - direct byte stores into the record-array window (0x95d800..0x961000): 73
   41d34a mov    BYTE PTR [esi+edx*1+0x95da9c],cl                    mov+0x8c
@@ -83,6 +83,16 @@ TABLE 1 - direct byte stores into the record-array window (0x95d800..0x961000): 
   -> into +0x8c (0x95da9c): 11 instructions in 2 function(s)
      FUN_0041cf20     1  41d34a:mov
      FUN_004e47d0     10  4e4ab2:mov 4e4b31:mov 4e4b5a:or 4e4b87:or 4e4bec:or 4e4c16:or 4e4c3d:or 4e4c83:or 4e4d2a:mov 4e4d81:or
+  lea-to-bitmap sites (pointer form): 9; resolved to a byte store through that register before redefinition: 9 (kinds {'mov': 2, 'or': 4, 'and': 3})
+     41d2f0 lea    esi,[edx+0x95da9c]                FUN_0041cf20     store=mov@41d317(+10)
+     4e4521 lea    eax,[edx+eax*1+0x95da9c]          FUN_004e44f0     store=or@4e4528(+1)
+     4e453f lea    eax,[eax+ecx*1+0x95da9c]          FUN_004e44f0     store=and@4e4546(+1)
+     4e4a5d lea    eax,[esi+0x95da9c]                FUN_004e47d0     store=mov@4e4a67(+3)
+     4f0eb6 lea    eax,[ecx+edx*1+0x95da9c]          FUN_004ef6d0     store=or@4f0ec0(+2)
+     4f38b0 lea    eax,[eax+ecx*1+0x95da9c]          HOLE             store=mov@4f38bb(+3)
+     4f3eb1 lea    eax,[eax+ecx*1+0x95da9c]          HOLE             store=mov@4f3ebc(+3)
+     4f3f3e lea    eax,[ecx+edx*1+0x95da9c]          HOLE             store=mov@4f3f4c(+4)
+     4f49d1 lea    eax,[eax+ecx*1+0x95da9c]          FUN_004f47f0     store=mov@4f49e1(+5)
   references to 0x95da9c in the whole dump: 194 (11 writes above, 183 reads/leas)
   the charge routine's bit test FUN_004f47f0 @0x4f4837: 'mov    al,BYTE PTR [ecx+edx*1+0x95da9c]'
 
@@ -178,7 +188,7 @@ TABLE 5 - the inline family FUN_4e47d0 (1600 B): or-stores 7, mov-copies 3, mapp
   4e4ab2 mov    BYTE PTR [esi+eax*1+0x95da9c],cl
   4e4b31 mov    BYTE PTR [esi+eax*1+0x95da9c],cl
   4e4d2a mov    BYTE PTR [eax+esi*1+0x95da9c],cl
-  or-stores whose mask slot was filled by the mapper within 12 insns: 7/7
+  or-stores whose MASK REGISTER is loaded from a stack slot after the mapper call: 7/7
 
 RIVALS - each must FAIL on the numbers printed above
   RIV1 'the field is +0x88 (array base 0x95da14)': computed offset +0x88; the charge routine's
@@ -190,18 +200,19 @@ RIVALS - each must FAIL on the numbers printed above
 TABLE DIGEST 2b88df5da5aeafe1 (the 11 +0x8c stores + the 7 grant ORs, canonical order)
 
 GATES
-ok   G1 array base 0x95da10 + stride 0x130 puts the bitmap constant 0x95da9c at +0x8c (rival +0x88)
-ok   G2 direct byte stores into +0x8c: 11, in exactly ['FUN_0041cf20', 'FUN_004e47d0'] (screen copy 1 + grant 10)
+ok   G1 derived array base 0x95da10 (owner site 0x440dbc, stride 0x130) puts 0x95da9c at +0x8c = the charge read (rival +0x88)
+ok   G2 direct byte stores into +0x8c: 11 in exactly ['FUN_0041cf20', 'FUN_004e47d0']; pointer-form 9/9 resolved to a store, split {'mov': 2, 'or': 4, 'and': 3} -> every writer of the field in .text is classified
 ok   G3 API FUN_4e44f0 writes the field twice (or@0x4e4528 sets, and@0x4e4546 clears); index slot [ebp+0x8], mask slot [ebp-0x4]
-ok   G4 API call sites 27 in 8 functions; literal set=1 16, set=0 7 (both paths reachable)
-ok   G5 queue-pop FUN_4ef5d0: 0 bitmap refs, 0 API calls, 4 calls out, callers ['FUN_004ef6d0'] -> the pop is a NON-writer
-ok   G6 inline grant FUN_4e47d0: 7 or-stores + 3 copies, all 7 or masks from the mapper, 10 mapper calls
+ok   G4 API call sites 27 in 8 functions; literal set=1 16, set=0 7, variable 4
+ok   G5 queue-pop FUN_4ef5d0: 0 bitmap refs, 0 API calls, 4 calls out, 3 direct callers in ['FUN_004ef6d0'] -> NON-writer
+ok   G6 inline grant FUN_4e47d0: 7 or-stores + 3 copies, 7/7 masks load from the mapper's out slot, 10 mapper calls
+ok   G7 the printed table digest 2b88df5da5aeafe1 is PINNED (expected 2b88df5da5aeafe1) - the ACCEPT anchor cannot drift
 
-ANSWER: the base+0x8c bit is SET by FUN_4e44f0(item, base, set=1) - mapper FUN_507410's out1 is the
-  byte index, out2 the mask, and the store is ONE `or BYTE PTR [304*base+idx+0x95da9c], mask` at
-  0x4e4528; its AND twin at 0x4e4546 clears.  A second, inline writer family FUN_4e47d0 ORs the same field
-  at 10 sites (7 or + 3 copy).  The queue-pop FUN_4ef5d0 - B30's completion piece - never touches
-  the field: the bit is stamped by whoever calls the API, not by the pop.  OPEN next: which of the
-  27 call sites is the production-completion call (the pop's own caller is the base screen).
+ANSWER: the base+0x8c bit is SET by `or` through the mapper's mask at exactly 11 addresses:
+  4e4528 4e4b5a 4e4b87 4e4bec 4e4c16 4e4c3d 4e4c83 4e4d81 4f0ec0 4f3ebc 4f3f4c - the first of them is the API FUN_4e44f0(item, base, set) (27 call sites in 8 functions),
+  the rest are inline (base screen FUN_004ef6d0, two regions the Ghidra index does not name, and
+  FUN_4e47d0's 7).  CLEAR = `and` at 4e4546 4f38bb 4f49e1.  The queue-pop FUN_4ef5d0 - B30's completion piece -
+  never touches the field: the stamp belongs to whoever calls the API.  OPEN next: which of the 27
+  API call sites is the production-completion call (the pop's own caller is the base screen).
 
-PASS M342: 6/6 gates
+PASS M342: 7/7 gates

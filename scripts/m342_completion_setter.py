@@ -39,6 +39,7 @@ API = 0x4e44f0               # FUN_004e44f0: (item, base, set)  <- the set/clear
 POP = 0x4ef5d0               # FUN_004ef5d0: pop the queue head (completion leg)
 GRANT = 0x4e47d0             # FUN_004e47d0: inline OR family
 
+DIGEST_EXPECT = "2b88df5da5aeafe1"
 FAIL = []
 
 
@@ -69,7 +70,7 @@ def load(text=TEXT, index=INDEX):
 
 def container(fns, a):
     i = bisect.bisect_right([f[0] for f in fns], a) - 1
-    for j in range(i, max(0, i - 40), -1):
+    for j in range(i, max(-1, i - 40), -1):
         if fns[j][0] <= a < fns[j][0] + fns[j][1]:
             return fns[j]
     return (a, 0, "HOLE")
@@ -102,10 +103,22 @@ def main(argv=None):
     # the owner compare is two instructions apart; resolve structurally instead of by lookahead text
     stride_sites = [(x, t) for x, t in ins if re.search(r"imul +[a-z]+,[a-z]+,0x130$", t)]
     owner_reads = [(x, t) for x, t in ins if "0x95da14]" in t]
+    # DERIVE the array base: the owner byte is field +4, so the imul-0x130 site that is followed
+    # within 3 instructions by a BYTE read of 0x95da14 pins both the stride and the +4 anchor.
+    pos_of = {x: k for k, (x, _t) in enumerate(ins)}
+    owner_site = None
+    for k, (x, t) in enumerate(ins):
+        if re.search(r"imul +[a-z]+,[a-z]+,0x130$", t):
+            win = [ins[j][1] for j in range(k + 1, min(k + 4, len(ins)))]
+            if any("0x95da14]" in w and "BYTE PTR" in w for w in win):
+                owner_site = x
+                break
+    derived_base = 0x95da14 - 4
     print("\nTABLE 0 - field arithmetic (derived)")
     print("  stride sites (imul reg,reg,0x130): %d  first %s" % (len(stride_sites), hex(stride_sites[0][0]) if stride_sites else "-"))
     print("  owner-byte reads at 0x95da14: %d (field +4 of the same array)" % len(owner_reads))
-    print("  array base = 0x95da14-4 = 0x%x ; bitmap constant 0x95da9c -> record+0x%x" % (REC_BASE, 0x95da9c - REC_BASE))
+    print("  derived from the owner site @0x%s: base = 0x95da14-4 = 0x%x ; bitmap 0x95da9c -> record+0x%x"
+          % ("%x" % owner_site if owner_site else "?", derived_base, 0x95da9c - derived_base))
 
     # ---------------------------------------------------------------- census 1: direct byte stores
     store_re = re.compile(r"^(mov|or|and|xor|add|sub) +(BYTE PTR )?\[[^\]]*0x([0-9a-f]+)\](,|$)")
@@ -131,6 +144,41 @@ def main(argv=None):
     # the READER side that makes this the right field: the charge routine's bit test (FUN_004f47f0)
     refs = [x for x, t in ins if "0x95da9c" in t]
     charge_read = by_addr.get(0x4f4837, "")
+    lea_sites = [(x, t) for x, t in ins if re.match(r"lea +", t) and "0x95da9c" in t]
+    lea_rows = []
+    for x, t in lea_sites:
+        reg = re.match(r"lea +([a-z]+),", t).group(1)
+        k = pos_of[x]
+        store = None
+        far = 0
+        for j in range(k + 1, min(k + 41, len(ins))):
+            w = ins[j][1]
+            m = re.match(r"(mov|or|and) +BYTE PTR \[%s[^\]]*\](,|$)" % reg, w)
+            if m:
+                store = (ins[j][0], m.group(1), j - k)
+                break
+            if re.match(r"(mov|lea|add|sub|xor|pop|call|ret)\b +?" , w) and re.match(r"(mov|lea|add|sub|xor|pop) +%s,|call|ret" % reg, w):
+                break
+        lea_rows.append((x, t, container(fns, x)[2], store))
+    lea_res = sum(1 for r in lea_rows if r[3])
+    kinds = {}
+    lea_kind = []
+    for _x, _t, _f, st in lea_rows:
+        if not st:
+            continue
+        op, j = st[1], st[2] + pos_of[_x]
+        if op == "mov":                       # the RMW happens in a register: or/and <reg>,...
+            back = [ins[k][1] for k in range(max(0, j - 4), j)]
+            if any(re.match(r"or +[a-z]{2},", w) for w in back):
+                op = "or"
+            elif any(re.match(r"and +[a-z]{2},", w) for w in back):
+                op = "and"
+        kinds[op] = kinds.get(op, 0) + 1
+        lea_kind.append((st[0], op))
+    print("  lea-to-bitmap sites (pointer form): %d; resolved to a byte store through that register"
+          " before redefinition: %d (kinds %s)" % (len(lea_sites), lea_res, kinds))
+    for x, t, f, st in lea_rows:
+        print("     %x %-40s %-16s store=%s" % (x, t, f, "%s@%x(+%d)" % (st[1], st[0], st[2]) if st else "-"))
     print("  references to 0x95da9c in the whole dump: %d (%d writes above, %d reads/leas)"
           % (len(refs), len(fac), len(refs) - len(fac)))
     print("  the charge routine's bit test FUN_004f47f0 @0x4f4837: %r" % charge_read)
@@ -215,15 +263,20 @@ def main(argv=None):
     # each OR's mask operand must come from a slot the mapper filled within 12 instructions
     near = 0
     for x, t in g_or:
-        pos = [i for i, (y, _) in enumerate(ins) if y == x][0]
-        win = [ins[j][1] for j in range(max(0, pos - 12), pos)]
-        if any(re.search(r"call +0x%x$" % MAPPER, w) for w in win):
-            near += 1
+        pos = pos_of[x]
+        win = [(ins[j][0], ins[j][1]) for j in range(max(0, pos - 14), pos)]
+        isz = [k for k, (xa, w) in enumerate(win) if re.search(r"call +0x%x$" % MAPPER, w)]
+        reg = re.match(r"or +BYTE PTR \[[^\]]*\],([a-z]+)$", t)
+        if isz and reg:
+            for _xa, w in win[isz[-1] + 1:]:
+                if re.match(r"mov +%s,BYTE PTR \[ebp[+-]" % reg.group(1), w):
+                    near += 1
+                    break
     print("\nTABLE 5 - the inline family FUN_%x (%d B): or-stores %d, mov-copies %d, mapper calls %d"
           % (GRANT, g_fn[1], len(g_or), len(g_mov), len(g_map)))
     for x, t in g_or + g_mov:
         print("  %x %s" % (x, t))
-    print("  or-stores whose mask slot was filled by the mapper within 12 insns: %d/%d" % (near, len(g_or)))
+    print("  or-stores whose MASK REGISTER is loaded from a stack slot after the mapper call: %d/%d" % (near, len(g_or)))
 
     # ---------------------------------------------------------------- rivals
     print("\nRIVALS - each must FAIL on the numbers printed above")
@@ -243,44 +296,58 @@ def main(argv=None):
 
     # ---------------------------------------------------------------- gates
     dig_src = "\n".join("%x:%s" % (x, t) for x, t, _o, _op in sorted(fac) + sorted((x, t) + ("", "") for x, t in g_or))
+    dig = hashlib.sha256(dig_src.encode()).hexdigest()[:16]
     print("\nTABLE DIGEST %s (the %d +0x8c stores + the %d grant ORs, canonical order)"
-          % (hashlib.sha256(dig_src.encode()).hexdigest()[:16], len(fac), len(g_or)))
+          % (dig, len(fac), len(g_or)))
 
     print("\nGATES")
-    gate("G1", 0x95da9c - REC_BASE == FAC_OFF and len(stride_sites) > 0 and len(owner_reads) > 1
+    gate("G1", owner_site is not None and derived_base == REC_BASE and 0x95da9c - derived_base == FAC_OFF
          and "0x95da9c" in charge_read,
-         "array base 0x%x + stride 0x%x puts the bitmap constant 0x95da9c at +0x%x (rival +0x%x)"
-         % (REC_BASE, REC_STRIDE, 0x95da9c - REC_BASE, 0x95da9c - 0x95da14))
-    gate("G2", len(fac) == 11 and sorted(fam) == ["FUN_0041cf20", "FUN_004e47d0"],
-         "direct byte stores into +0x8c: %d, in exactly %s (screen copy 1 + grant %d)"
-         % (len(fac), sorted(fam), len(fam.get("FUN_004e47d0", []))))
-    gate("G3", len(set_or) == 1 and len(set_and) == 1 and swap_in < inside
+         "derived array base 0x%x (owner site 0x%s, stride 0x%x) puts 0x95da9c at +0x%x = the charge read (rival +0x%x)"
+         % (derived_base, "%x" % owner_site if owner_site else "?", REC_STRIDE,
+            0x95da9c - derived_base, 0x95da9c - 0x95da14))
+    gate("G2", len(fac) == 11 and sorted(fam) == ["FUN_0041cf20", "FUN_004e47d0"]
+         and len(lea_sites) == 9 and lea_res == 9 and kinds == {"mov": 2, "or": 4, "and": 3},
+         "direct byte stores into +0x8c: %d in exactly %s; pointer-form %d/%d resolved to a store, split %s "
+         "-> every writer of the field in .text is classified" % (len(fac), sorted(fam), lea_res, len(lea_sites), kinds))
+    fold_txt = [api_lines.get(a, "") for a in (0x4e4512, 0x4e4515, 0x4e451e)]
+    fold_ok = fold_txt == ["lea    ecx,[eax+eax*8]", "lea    edx,[eax+ecx*2]", "shl    edx,0x4"]
+    or_txt = api_lines.get(set_or[0], "") if set_or else ""
+    gate("G3", len(set_or) == 1 and len(set_and) == 1 and swap_in < inside and fold_ok
+         and or_txt == "or     BYTE PTR [eax],cl"
          and (idx_slot.group(1) == "8" if idx_slot else False)
          and (mask_slot.group(1) == "4" if mask_slot else False),
          "API FUN_%x writes the field twice (or@0x%x sets, and@0x%x clears); index slot [ebp+0x%s], mask slot [ebp-0x%s]"
          % (API, set_or[0] if set_or else 0, set_and[0] if set_and else 0,
             idx_slot.group(1) if idx_slot else "?", mask_slot.group(1) if mask_slot else "?"))
-    gate("G4", len(calls) == 27 and len(callers) == 8 and lit1 >= 1 and lit0 >= 1,
-         "API call sites %d in %d functions; literal set=1 %d, set=0 %d (both paths reachable)"
-         % (len(calls), len(callers), lit1, lit0))
-    gate("G5", len(pop_fac) == 0 and len(pop_api) == 0 and len(pop_calls) >= 3 and pop_callers == {"FUN_004ef6d0"},
-         "queue-pop FUN_%x: %d bitmap refs, %d API calls, %d calls out, callers %s -> the pop is a NON-writer"
-         % (POP, len(pop_fac), len(pop_api), len(pop_calls), sorted(pop_callers)))
+    gate("G4", len(calls) == 27 and len(callers) == 8 and lit1 == 16 and lit0 == 7
+         and len(rows) - lit1 - lit0 == 4,
+         "API call sites %d in %d functions; literal set=1 %d, set=0 %d, variable %d"
+         % (len(calls), len(callers), lit1, lit0, len(rows) - lit1 - lit0))
+    gate("G5", len(pop_fac) == 0 and len(pop_api) == 0 and len(pop_calls) == 4
+         and len(pop_sites) == 3 and pop_callers == {"FUN_004ef6d0"},
+         "queue-pop FUN_%x: %d bitmap refs, %d API calls, %d calls out, %d direct callers in %s -> NON-writer"
+         % (POP, len(pop_fac), len(pop_api), len(pop_calls), len(pop_sites), sorted(pop_callers)))
     gate("G6", len(g_or) == 7 and len(g_mov) == 3 and near == len(g_or) and len(g_map) >= 5,
-         "inline grant FUN_%x: %d or-stores + %d copies, all %d or masks from the mapper, %d mapper calls"
-         % (GRANT, len(g_or), len(g_mov), near, len(g_map)))
+         "inline grant FUN_%x: %d or-stores + %d copies, %d/%d masks load from the mapper's out slot, %d mapper calls"
+         % (GRANT, len(g_or), len(g_mov), near, len(g_or), len(g_map)))
+    gate("G7", dig == DIGEST_EXPECT,
+         "the printed table digest %s is PINNED (expected %s) - the ACCEPT anchor cannot drift" % (dig, DIGEST_EXPECT))
 
-    print("\nANSWER: the base+0x8c bit is SET by FUN_%x(item, base, set=1) - mapper FUN_%x's out1 is the"
-          % (API, MAPPER))
-    print("  byte index, out2 the mask, and the store is ONE `or BYTE PTR [304*base+idx+0x95da9c], mask` at")
-    print("  0x%x; its AND twin at 0x%x clears.  A second, inline writer family FUN_%x ORs the same field"
-          % (set_or[0] if set_or else 0, set_and[0] if set_and else 0, GRANT))
-    print("  at %d sites (%d or + %d copy).  The queue-pop FUN_%x - B30's completion piece - never touches"
-          % (len(g_or) + len(g_mov), len(g_or), len(g_mov), POP))
-    print("  the field: the bit is stamped by whoever calls the API, not by the pop.  OPEN next: which of the")
-    print("  %d call sites is the production-completion call (the pop's own caller is the base screen)." % len(calls))
+    or_addrs = [a for a, op in lea_kind if op == "or"] + [x for x, _t in g_or]
+    and_addrs = [a for a, op in lea_kind if op == "and"]
+    print("\nANSWER: the base+0x8c bit is SET by `or` through the mapper's mask at exactly %d addresses:"
+          % len(or_addrs))
+    print("  %s - the first of them is the API FUN_%x(item, base, set) (%d call sites in %d functions),"
+          % (" ".join("%x" % a for a in sorted(or_addrs)), API, len(calls), len(callers)))
+    print("  the rest are inline (base screen FUN_004ef6d0, two regions the Ghidra index does not name, and")
+    print("  FUN_%x's 7).  CLEAR = `and` at %s.  The queue-pop FUN_%x - B30's completion piece -"
+          % (GRANT, " ".join("%x" % a for a in sorted(and_addrs)), POP))
+    print("  never touches the field: the stamp belongs to whoever calls the API.  OPEN next: which of the %d"
+          % len(calls))
+    print("  API call sites is the production-completion call (the pop's own caller is the base screen).")
 
-    print("\n%s M342: %d/%d gates" % ("PASS" if not FAIL else "FAIL", 6 - len(FAIL), 6))
+    print("\n%s M342: %d/%d gates" % ("PASS" if not FAIL else "FAIL", 7 - len(FAIL), 7))
     return 1 if FAIL else 0
 
 

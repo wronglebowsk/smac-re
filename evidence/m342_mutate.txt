@@ -1,10 +1,12 @@
-M342 mutant harness: 7 mutants against m342_completion_setter.py
-baseline green: 6/6 gates, no BAD
+M342 mutant harness: 9 mutants against m342_completion_setter.py
+baseline green: 7/7 gates, no BAD
   MU1   PASS   reddens G1       the field arithmetic taken from the WRONG anchor (array base = the +4 byte) -> +0x88
-  MU2   PASS   reddens G2       the bitmap constant inverted: the census counts every OTHER byte of the record
+  MU2   PASS   reddens G2,G7    the bitmap constant inverted: the census counts every OTHER byte of the record
   MU3   PASS   reddens G3       the mask slot read from the INDEX reload site (out1/out2 provenance swapped)
   MU4   PASS   reddens G4       the argument scan truncated at two pushes: the set flag is never parsed
   MU5   PASS   reddens G5       the pop's body span widened into the base screen: the screen's copy counted as a pop write
-  MU6   PASS   reddens G6       the mask-slot provenance check disabled: OR stores no longer tied to the mapper
+  MU6   PASS   reddens G6       the mask-register provenance check disabled: OR masks no longer tied to the mapper's out slot
+  MU7   PASS   reddens G7       the ACCEPT digest anchor unpinned (any table drift would go unnoticed)
+  MU8   PASS   reddens G2       the pointer-form RMW classification disabled: every lea writer counted as a plain copy
   NOOP  PASS   reddens []       identity tree - must redden nothing
-PASS HARNESS M342: 7/7 mutants redden exactly their declared sets, NO-OP [] , script d8949a4cfa978ee4
+PASS HARNESS M342: 9/9 mutants redden exactly their declared sets, NO-OP [] , script 7a8768b287f15f43
