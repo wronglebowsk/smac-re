@@ -35,7 +35,7 @@
 | 4 censuses / 64,494 stores: 3 ctor, 2 at rec+0, 33 folded operands / 0 stores, 39 seeds none on the pair | `:23-34,68,109` | V MU11-13 MU19 |
 | commit 0x4b2570: `[eax+ecx*4+0x94d658]` <- `[esi+edx*4+0xcf8]`, eax=f*0x20bc; 1 grid dword, 1 at +0x20, 0 in the block; handlers 0x4b5530/0x4b55d0 | `:139` | V MU8-10 MU16 MU17 |
 | choice = rand%3+1 (1..3); 9 +0x58c loads: 5 0-tested, 3 name-pushed, 1 vs +0x590 => slot0 (0,0) = no agenda | `:148-149` | V MU6 MU7 |
-| OPEN: slot 0's owner; the 0x2ce0 block is pushed to the save/load helpers (4x) | `:110` | OPEN |
+| OPEN: slot 0's owner; 0x2ce0 is pushed to the save/load helpers (4x) | `:110` | OPEN |
 ## Not yet named (candidates, ranked by `COVERAGE.md`)
 - `0x5f6de9` — 305 callers, 550 B, 118 insns, no string literals
 - `0x483470` — 292 callers, 556 B, 141 insns, no string literals
