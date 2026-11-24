@@ -1,0 +1,13 @@
+NO-OP      red=[]  (all 7 gates green)
+MU1   red=['G1']         want=['G1']       OK
+MU2   red=['G2']         want=['G2']       OK
+MU3   red=['G3']         want=['G3']       OK
+MU4   red=['G4', 'G5']   want=['G4', 'G5'] OK
+MU5   red=['G5']         want=['G5']       OK
+MU6   red=['G7']         want=['G7']       OK
+MU7   red=['G1', 'G2']   want=['G1', 'G2'] OK
+MU8   red=['G6']         want=['G6']       OK
+ALG1  red=['G4', 'G5']   want=['G4', 'G5'] OK
+coverage: gates reddened at least once = 7/7 
+digest mutants b25e0bc3a09693f5
+PASS HARNESS M340: 9/9 mutants, all 7 gates covered, NO-OP []
