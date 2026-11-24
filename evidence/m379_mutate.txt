@@ -1,0 +1,27 @@
+baseline: rc=0 PASS 31 gates
+id    expect    killed  mutant
+----------------------------------------------------------------------------------------------------
+MU1   G3        yes     seed pointer 0x9280b8
+MU2   G3        yes     bound 8 -> 9: 8 bodies, store span past the end
+MU3   G3        yes     start 1 -> 0: 8 bodies
+MU4   G3        yes     step inc -> dec (the loop law)
+MU5   G3        yes     record stride 0x59c
+MU6   G3        yes     the post-increment jl
+MU7   G2        yes     reader A field displacement
+MU8   G2        yes     reader B field displacement
+MU9   G1        yes     reader A stride chain
+MU10  G1        yes     reader B stride chain
+MU11  G1        yes     reader A weight-chain 0x82f
+MU12  G2        yes     reader A becomes a STORE
+MU13  G4        yes     save block size 0x2ce0 = 8*0x59c
+MU14  G4        yes     save block base 0x927590
+MU15  G2        yes     the 0x997b20 malloc array evidence
+MU16  G4        yes     walk bound 0x92a270
+MU17  G2        yes     effect index bound 0xb = 11 keywords
+MU18  G3        yes     '0x92a7fc never occurs as an immediate'
+MU19  G3        yes     ALGORITHM: the interpreter's jl condition is inverted
+MU21  G3        yes     ALGORITHM: the bound is treated as inclusive
+MU22  G2        yes     an RMW store to the field
+MU20  G4        yes     second independent walk bound
+----------------------------------------------------------------------------------------------------
+PASS M379 harness: 22/22 killed
