@@ -1016,13 +1016,13 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - RIVAL KILLED: 0x92bde8 is BOTH the end of the 4x0xd4 array at 0x92ba98 AND a scalar pref cell - V (`:108` + G9.6 `:98-100`)
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
-## M370 (s336-c3, x6, STATIC 17/17). ACCEPT `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 17/17`** `2295f90aa47bb981` (`evidence/m370_pref_writers.txt:193`); harness 23/23 (`evidence/m370_mutate.txt:28`).
+## M370 (s336-c3, x6, STATIC 19/19). ACCEPT `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 19/19`** `2fa7ea3c1bf74394` (`evidence/m370_pref_writers.txt:197`); harness 25/25 (`evidence/m370_mutate.txt:30`).
 | claim | ev | conf |
 |---|---|---|
-| 85 refs = 43 STORE/39 READ/3 BOUND; (site,cell) text==bytes (rel32 filtered); loader 11 stores/cell, BY CALL SHAPE, backward the only injection | `:7,16,86-102` | V MU1 MU2 MU8 |
-| 11 cells named BOTH sides (diff VAs): Difficulty Faction Map-Type Top-Menu Preferences More-Preferences Announce Rules Semaphore Time-Controls Customize | `:104-127` | V MU3 MU4 MU5 |
-| 32 non-loader stores, 13 fns: 12 copy 0x985a** bitmaps, 4 `&0x1800000`, 4 flip a mirror bit, 2 CARRIED | `:130-148` | V MU9 MU14 MU15 |
-| RIVALS: 11 cells, 32 extra writers, 0x92bde8=2; 0x92bdfc CMP-ONLY; sweep 0x92bf18..0x92bf30 | `:151-160` | V MU7 MU10 MU16 |
+| 85 refs = 43 STORE/39 READ/3 BOUND; (site,cell) text==bytes (rel32 filtered); loader 11 stores/cell, BY CALL SHAPE, backward the only injection | `:7,16,87-103` | V MU1 MU2 MU8 |
+| 11 cells named BOTH sides (diff VAs): Difficulty Faction Map-Type Top-Menu Preferences More-Preferences Announce Rules Semaphore Time-Controls Customize | `:105-130` | V MU3 MU4 MU5 |
+| 32 non-loader stores, 13 fns: 12 copy 0x985a** bitmaps, 5 flip one mirror bit, 4 `&0x1800000`, 5 call-return, 2 CARRIED | `:131-150` | V MU9 MU14 MU15 MU18 |
+| RIVALS: 11 cells, 32 extra writers, 0x92bde8=2; 0x92bdfc CMP-ONLY; sweep 0x92bf18..0x92bf30 | `:152-164` | V MU7 MU10 MU16 |
 | INF: 0x92bf0c serialises as `Semaphore` but is always `x&0x1800000`; 0x5f1394 chain-2 | - | INF |
 
 ## M331 (s310-chain2, STATIC 14/14, review #345 hardened) - block+2fc/+308 = upkeep INCOME siblings

@@ -678,24 +678,24 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 ## Session 336-chain3 (2026-11-24) — M370: the pref block's writers — 11 cells, 43 stores, 14 fns
 
-- **ACCEPT** `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 17/17`** digest
-  `2295f90aa47bb981` (`evidence/m370_pref_writers.txt:193`);
-  `scripts/m370_mutate.py` **23/23 killed, NO-OP 0, coverage 17/17**
-  (`evidence/m370_mutate.txt:28`).
+- **ACCEPT** `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 19/19`** digest
+  `2fa7ea3c1bf74394` (`evidence/m370_pref_writers.txt:197`);
+  `scripts/m370_mutate.py` **25/25 killed, NO-OP 0, coverage 19/19**
+  (`evidence/m370_mutate.txt:30`).
 - **CENSUS** (`:7,:16-20`): 85 refs over 76 dwords = 43 STORE / 39 READ / 3 BOUND. Text ==
   bytes only as (site,cell) PAIRS with a rel32 filter (a call's rel32 false-matches 0x92befc
   at 0x52732e). 5 materialisations, all cmp (2 on 0x92bde8 = M332's array end, 3 on 0x92bdfc
   = never a ds: operand).
-- **NAMES, two-sided** (`:104-127`): 11 cells carry an INI key on BOTH the loader
+- **NAMES, two-sided** (`:105-130`): 11 cells carry an INI key on BOTH the loader
   FUN_0058e7f0 and the writeback FUN_0058f0d0, same TEXT at DIFFERENT VAs: Difficulty,
   Faction, Map Type, Top Menu, Preferences, More Preferences, Announce, Rules, Semaphore,
   Time Controls, Customize.
-- **PAIRING BY CALL SHAPE** (`:86-102`): 10x 6-push GetPrivateProfileString (key at call-2)
+- **PAIRING BY CALL SHAPE** (`:87-103`): 10x 6-push GetPrivateProfileString (key at call-2)
   + helper 0x58e760; backward the only injective direction (forward 2/11). The naive
   nearest-push law names `Laptop` at 0x92befc — killed (G4c).
-- **THE OTHER WRITERS** (`:130-148`): 32 non-loader stores in 13 fns — 12 copy a 0x985a**
-  bitmap (b8 x6, bc x3, c0, c4 x2), 4 write `x&0x1800000`, 4 flip ONE mirror bit then
-  snapshot, 2 CARRIED. The cell always takes a WHOLE-BITSET mirror; 0x58f0d0 flushes it.
+- **THE OTHER WRITERS** (`:131-150`): 32 non-loader stores in 13 fns — 12 copy a 0x985a**
+  bitmap (b8 x6, bc x3, c0, c4 x2), 5 flip ONE mirror bit, 4 write `x&0x1800000`, 5 are
+  call returns, 4 computed, 2 CARRIED. The cell always takes a WHOLE-BITSET mirror; 0x58f0d0 flushes it.
 - **NARROWED** M332: 0x92bde8 has TWO stores (0x57c7b0 in FUN_0057c550, also writes
   0x985aec), not one.
 - **BOUNDARY** (`:156-160`): 0x92bf18..0x92bf30 is a separate 7-dword `Custom World` group

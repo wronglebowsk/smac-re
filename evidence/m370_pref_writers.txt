@@ -30,10 +30,11 @@ G1b   ok   all 5 materialisations are cmp loop bounds (no store uses the base)
   0x92bf0c stores= 5  0x4dc77c 0x4dc8c3 0x57cb1e 0x57cc66 0x58ecc9
   0x92bf10 stores= 2  0x57d276 0x58eff8
   0x92bf14 stores= 2  0x57c914 0x58ed2a
-G2a   ok   partition closed; all 11 named cells have a store
-  stores with a BYTE/WORD destination: 0 []
-G2b   ok   every store is a full-dword store of a span cell
+G2a   ok   partition closed; the stored-to set IS the 11 named cells
+  stores whose TEXT width != OPCODE width, or != 4: 0 []
+G2b   ok   every store is a full dword in BOTH the text and the opcode
   ds: references to 0x92bdfc (the bound address): 0 []
+G2d   ok   the census literals hold: 85 refs = 43 STORE / 39 READ / 3 BOUND (got 85/43/39/3)
 G2c   ok   0x92bdfc is never addressed as memory (only compared as an immediate)
 == G3 per-store reachability / owner ==
   0x48f564  0x92bf04 mov  FALL-IN  mov    DWORD PTR ds:0x92bf04,ecx fn=FUN_0048f100 targets=[]
@@ -100,7 +101,7 @@ G3b   ok   the 0x5108e0 handlers are named through the Ghidra span gap
   RIVAL 'nearest string push': wrong on 1/11 cells: [('0x92befc', 'Laptop', 'Preferences')]
 G4a   ok   read side: one distinct key per cell (11/11)
 G4b   ok   the direction is forced: fwd pairing is not injective
-G4c   ok   the naive nearest-push law is killed on 1 cell(s)
+G4c   ok   the naive nearest-push law is killed ON 0x92befc (says Laptop, is Preferences)
 == G5 WRITE side: writeback load -> the key of the nearest FOLLOWING call ==
   load  0x58f11d  cell 0x92bde8 -> 0x6927fc   'Difficulty'       dist=18
   load  0x58f161  cell 0x92bdf4 -> 0x692808   'Map Type'         dist=18
@@ -128,36 +129,39 @@ G4c   ok   the naive nearest-push law is killed on 1 cell(s)
     0x92bf14 Customize         read 0x69278c API-6PUSH  write 0x692868
 G5a   ok   two-sided: every cell's key TEXT agrees, no VA is shared
 == G6 writer families (every store, source by a backward def-use walk) ==
-  CALLRET                   2  0x4dc776 0x57cb0c
+  CALLRET                   5  0x4dc776 0x57cb0c 0x57cdaa 0x57e93d 0x57f9f7
   CARRIED                   2  0x57c7b0 0x57d276
   COPY(0x985ab8)            6  0x5109a8 0x5109f8 0x515c9a 0x515d97 0x5173c4 0x51740c
   COPY(0x985abc)            3  0x51095a 0x515e03 0x517377
   COPY(0x985ac0)            1  0x48f564
   COPY(0x985ac4)            2  0x4dc8bd 0x57cc60
-  DEF(cmp)                  1  0x57f9f7
-  DEF(mov)                  2  0x49246f 0x49247a
+  DEF(mov)                  3  0x49246f 0x49247a 0x57c914
   DEF(or)                   1  0x492464
-  DEF(test)                 3  0x57c914 0x57cdaa 0x57e93d
   INI-LOADER               11  0x58e8c6 0x58e922 0x58e98e 0x58e9ec 0x58eb11 0x58ec20 0x58ecc9 0x58ed2a 0x58ee16 0x58ef00 0x58eff8
-  MASKED(and    al,0xdf)    1  0x5a1006
-  MASKED(and    eax,0x1800000)  1  0x4dc77c
-  MASKED(and    ecx,0x1800000)  3  0x4dc8c3 0x57cb1e 0x57cc66
-  MASKED(or     ah,0x20)    3  0x510901 0x515c4e 0x517470
-  MASKED(or     al,0x20)    1  0x5a0ff2
+  MASKED(and al,0xdf)       1  0x5a1006
+  MASKED(and eax,0x1800000)  1  0x4dc77c
+  MASKED(and ecx,0x1800000)  3  0x4dc8c3 0x57cb1e 0x57cc66
+  MASKED(or ah,0x20)        3  0x510901 0x515c4e 0x517470
+  MASKED(or al,0x20)        1  0x5a0ff2
   non-loader stores=32 in 13 functions
   COPY families name the SOURCE CELL: ['COPY(0x985ab8)', 'COPY(0x985abc)', 'COPY(0x985ac0)', 'COPY(0x985ac4)']
 G6a   ok   every non-loader source is classified
+  family counts: [('CALLRET', 5), ('CARRIED', 2), ('COPY(0x985ab8)', 6), ('COPY(0x985abc)', 3), ('COPY(0x985ac0)', 1), ('COPY(0x985ac4)', 2), ('DEF(mov)', 3), ('DEF(or)', 1), ('INI-LOADER', 11), ('MASKED(and al,0xdf)', 1), ('MASKED(and eax,0x1800000)', 1), ('MASKED(and ecx,0x1800000)', 3), ('MASKED(or ah,0x20)', 3), ('MASKED(or al,0x20)', 1)]
+G6c   ok   the writer families equal the pinned distribution (14 families)
 G6b   ok   the loader stores exactly once per cell (11)
 == G7 rivals ==
   R1 'only the 3 UI cells are writable' -> 11 cells carry stores (predicted 3) KILLED
   R2 'the INI loader is the only writer' -> 32 non-loader stores (predicted 0) KILLED
   R3 '0x92bde8 has ONE store' -> 2 KILLED
-G7a   ok   all three rivals killed on the measured numbers
+  pins: cells-with-stores=11  non-loader=32  fns=13  stores@0x92bde8=2
+G7a   ok   all three rivals killed and the literals hold 11/32/13/2
 == G8 boundary: the 7-dword `Custom World` sweep ==
   loader: ['esi,0x92bf18'] ... ['esi,0x92bf34']
   writeback mirrors it: ['0x58f352', '0x58f388']
   span END 0x92bf14 < sweep start 0x92bf18
-G8a   ok   the block ends at 0x92bf14; the sweep is a separate 7-dword group
+  sweep: store-through-[esi]=True add esi,4=True loopback=True  dwords=7
+  keys: loader 0x6927c4='Custom World'  writeback 0x692874='Custom World'  census stores in sweep=0
+G8a   ok   a 7-dword `Custom World` sweep on BOTH sides, outside the census
 == G9 mutation-pin coverage (every mutated site is read by this run) ==
   0x48aea9  0x92bdfc bound cmp                       exercised
   0x492464  APPLY Preferences store                  exercised
@@ -179,15 +183,15 @@ G9a   ok   15/15 mutated sites are exercised by the census
   cells=11 stores=43 reads=39 bounds=3 loader=11 writeback=11 non-loader=32 fns=13
   per cell (stores / writers):
     0x92bde8 Difficulty         2  0x57c7b0:CARRIED 0x58e8c6:INI-LOADER
-    0x92bdec Faction            2  0x57cdaa:DEF(test) 0x58e9ec:INI-LOADER
-    0x92bdf4 Map Type           2  0x57e93d:DEF(test) 0x58e922:INI-LOADER
-    0x92bdf8 Top Menu           2  0x57f9f7:DEF(cmp) 0x58e98e:INI-LOADER
-    0x92befc Preferences       10  0x492464:DEF(or) 0x5109a8:COPY(0x985ab8) 0x5109f8:COPY(0x985ab8) 0x515c9a:COPY(0x985ab8) 0x515d97:COPY(0x985ab8) 0x5173c4:COPY(0x985ab8) 0x51740c:COPY(0x985ab8) 0x58eb11:INI-LOADER 0x5a0ff2:MASKED(or     al,0x20) 0x5a1006:MASKED(and    al,0xdf)
-    0x92bf00 More Preferences   8  0x49246f:DEF(mov) 0x510901:MASKED(or     ah,0x20) 0x51095a:COPY(0x985abc) 0x515c4e:MASKED(or     ah,0x20) 0x515e03:COPY(0x985abc) 0x517377:COPY(0x985abc) 0x517470:MASKED(or     ah,0x20) 0x58ec20:INI-LOADER
+    0x92bdec Faction            2  0x57cdaa:CALLRET 0x58e9ec:INI-LOADER
+    0x92bdf4 Map Type           2  0x57e93d:CALLRET 0x58e922:INI-LOADER
+    0x92bdf8 Top Menu           2  0x57f9f7:CALLRET 0x58e98e:INI-LOADER
+    0x92befc Preferences       10  0x492464:DEF(or) 0x5109a8:COPY(0x985ab8) 0x5109f8:COPY(0x985ab8) 0x515c9a:COPY(0x985ab8) 0x515d97:COPY(0x985ab8) 0x5173c4:COPY(0x985ab8) 0x51740c:COPY(0x985ab8) 0x58eb11:INI-LOADER 0x5a0ff2:MASKED(or al,0x20) 0x5a1006:MASKED(and al,0xdf)
+    0x92bf00 More Preferences   8  0x49246f:DEF(mov) 0x510901:MASKED(or ah,0x20) 0x51095a:COPY(0x985abc) 0x515c4e:MASKED(or ah,0x20) 0x515e03:COPY(0x985abc) 0x517377:COPY(0x985abc) 0x517470:MASKED(or ah,0x20) 0x58ec20:INI-LOADER
     0x92bf04 Announce           3  0x48f564:COPY(0x985ac0) 0x49247a:DEF(mov) 0x58ef00:INI-LOADER
     0x92bf08 Rules              5  0x4dc776:CALLRET 0x4dc8bd:COPY(0x985ac4) 0x57cb0c:CALLRET 0x57cc60:COPY(0x985ac4) 0x58ee16:INI-LOADER
-    0x92bf0c Semaphore          5  0x4dc77c:MASKED(and    eax,0x1800000) 0x4dc8c3:MASKED(and    ecx,0x1800000) 0x57cb1e:MASKED(and    ecx,0x1800000) 0x57cc66:MASKED(and    ecx,0x1800000) 0x58ecc9:INI-LOADER
+    0x92bf0c Semaphore          5  0x4dc77c:MASKED(and eax,0x1800000) 0x4dc8c3:MASKED(and ecx,0x1800000) 0x57cb1e:MASKED(and ecx,0x1800000) 0x57cc66:MASKED(and ecx,0x1800000) 0x58ecc9:INI-LOADER
     0x92bf10 Time Controls      2  0x57d276:CARRIED 0x58eff8:INI-LOADER
-    0x92bf14 Customize          2  0x57c914:DEF(test) 0x58ed2a:INI-LOADER
-  digest 2295f90aa47bb981
-PASS M370: 17/17 gates
+    0x92bf14 Customize          2  0x57c914:DEF(mov) 0x58ed2a:INI-LOADER
+  digest 2fa7ea3c1bf74394
+PASS M370: 19/19 gates

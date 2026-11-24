@@ -56,6 +56,10 @@ TEXT_MUT = [
      "the block's cells are written as full dwords (a byte store is a different field)"),
     ("MU16", 0x58EFC4, "mov    esi,0x92bf18", "mov    esi,0x92bf14", "G8a",
      "the loader's sweep starts at 0x92bf18, past the span end"),
+    ("MU17", 0x58EC20, "mov    ds:0x92bf00,eax", "mov    eax,ds:0x92bf00", "G2d",
+     "the same store->load mutation moves the census off 85/43/39/3 (the literals are gated)"),
+    ("MU18", 0x57C914, "mov    ds:0x92bf14,eax", "mov    ds:0x92bf14,es", "G6c",
+     "the same unclassifiable source moves the family distribution off its pin"),
 ]
 # (name, algo value, gate, claim)
 ALGO_MUT = [

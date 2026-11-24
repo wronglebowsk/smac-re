@@ -69,6 +69,15 @@ CENSUS = CELLS + [BOUND_ONLY]
 # Every site a TEXT mutant patches.  G9a asserts each of them is EXERCISED by this
 # run (a store/read site, a key push, a materialisation, or within +-2 insns of one),
 # so the mutation harness cannot pass by patching an address the census never reads.
+# The measured writer-family distribution (F2/G6c).  Re-pinned after the def-use
+# fix: cmp/test are not definitions and a call only DEFINES eax.
+FAM_PINS = {
+    "CALLRET": 5, "CARRIED": 2, "DEF(mov)": 3, "DEF(or)": 1, "INI-LOADER": 11,
+    "COPY(0x985ab8)": 6, "COPY(0x985abc)": 3, "COPY(0x985ac0)": 1, "COPY(0x985ac4)": 2,
+    "MASKED(and eax,0x1800000)": 1, "MASKED(and ecx,0x1800000)": 3,
+    "MASKED(and al,0xdf)": 1, "MASKED(or ah,0x20)": 3, "MASKED(or al,0x20)": 1,
+}
+
 PINS = {
     0x58E8C6: "loader Difficulty store", 0x58EC20: "loader More-Preferences store",
     0x58E8A1: "read key `Difficulty` push", 0x58F159: "write key `Difficulty` push",
@@ -255,11 +264,11 @@ def main():
         print("%-5s %-4s %s" % (name, "ok" if ok else "FAIL", msg))
 
     def owner(a):
-        """function name; a Ghidra span GAP is resolved to the nearest preceding
-        pad-delimited sub-function start (ret/nop then a real insn)."""
+        """(name, is_gap, start); a Ghidra span GAP resolves to the nearest preceding
+        pad-delimited sub-function start (ret/jmp then a run of nops)."""
         nm, fa, sz, ok = fnof(a)
         if ok:
-            return nm, False
+            return nm, False, fa
         i = idx[a]
         for k in range(i - 1, max(-1, i - 14), -1):
             b2, t2, mn2, o2 = by[order[k]]
@@ -267,8 +276,8 @@ def main():
                 j = k + 1
                 while j < i and by[order[j]][2] == "nop":
                     j += 1
-                return "SUB_%x" % order[j], True
-        return nm + "?", True
+                return "SUB_%x" % order[j], True, order[j]
+        return nm + "?", True, fa
 
     # ---------------- G0 ----------------
     keytext = {}
@@ -307,8 +316,8 @@ def main():
                 pre = t[max(0, pos - 4):pos]
                 if not pre.endswith("ds:"):
                     matrefs.append((a, t, v))
-        if JMPC.match(mn) and ALGO != "4":
-            continue          # a rel32 operand is not an address reference
+        if JMPC.match(mn) and ALGO != "4" and IMM.match((ops or "").strip()):
+            continue          # a DIRECT rel32 operand is not an address reference
         for c in CENSUS:
             le = [c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF, (c >> 24) & 0xFF]
             k = " ".join("%02x" % x for x in (le[::-1] if ALGO == "3" else le))
@@ -372,18 +381,34 @@ def main():
     for c in CELLS:
         print("  0x%06x stores=%2d  %s" % (c, len(per.get(c, [])),
                                            " ".join(hex(a) for a in sorted(per.get(c, [])))))
-    gate("G2a", len(per) == len(CELLS) and len(stores) + len(reads) + len(bounds) == len(refs)
-         and not other, "partition closed; all 11 named cells have a store")
-    narrow = [(a, t) for a, c, k, t in stores
-              if re.match(r"^(BYTE|WORD) PTR ", t.split(",")[0].split(" ", 1)[-1].strip())
-              or t.split(",")[0].startswith(("BYTE", "WORD"))]
-    print("  stores with a BYTE/WORD destination: %d %s" % (len(narrow), [hex(a) for a, _ in narrow]))
+    gate("G2a", set(per) == set(CELLS) and len(stores) + len(reads) + len(bounds) == len(refs)
+         and not other, "partition closed; the stored-to set IS the 11 named cells")
+    def width_of(a):
+        """(text says bytes, opcode says bytes) for a store instruction."""
+        b = by[a][0]
+        i = 0
+        while i < len(b) and b[i] in ("66", "67", "f2", "f3"):
+            i += 1
+        op = b[i] if i < len(b) else ""
+        enc = {"a3": 4, "89": 4, "c7": 4, "a2": 1, "88": 1, "c6": 1}.get(op, 0)
+        if i and b[0] == "66":
+            enc = 2
+        dstt = by[a][3].split(",")[0]
+        txt = 1 if "BYTE PTR" in dstt else (2 if re.search(r"\bWORD PTR", dstt) else 4)
+        return txt, enc
+    narrow = [(a, width_of(a)) for a, c, k, t in stores
+              if width_of(a)[0] != 4 or width_of(a)[1] != 4 or width_of(a)[0] != width_of(a)[1]]
+    print("  stores whose TEXT width != OPCODE width, or != 4: %d %s"
+          % (len(narrow), [(hex(a), w) for a, w in narrow]))
     gate("G2b", all(span(c) for c in per) and not narrow,
-         "every store is a full-dword store of a span cell")
+         "every store is a full dword in BOTH the text and the opcode")
     dsbound = [a for a in refs if mem_of(split_ops(by[a][3])[0]) == BOUND_ONLY
                or mem_of(split_ops(by[a][3])[1]) == BOUND_ONLY]
     print("  ds: references to 0x%x (the bound address): %d %s"
           % (BOUND_ONLY, len(dsbound), [hex(a) for a in dsbound]))
+    gate("G2d", (len(refs), len(stores), len(reads), len(bounds)) == (85, 43, 39, 3),
+         "the census literals hold: 85 refs = 43 STORE / 39 READ / 3 BOUND "
+         "(got %d/%d/%d/%d)" % (len(refs), len(stores), len(reads), len(bounds)))
     gate("G2c", len(dsbound) == 0,
          "0x%x is never addressed as memory (only compared as an immediate)" % BOUND_ONLY)
 
@@ -403,7 +428,7 @@ def main():
         pmn = by[prev][2] if prev is not None else "?"
         st = "FALL-IN" if pmn not in ("ret", "jmp", "hlt") else "CARRIED"
         fallin[a] = (st, br.get(a, []))
-        nm, gap = owner(a)
+        nm, gap, _ = owner(a)
         gapsite += 1 if gap else 0
         print("  %-9s 0x%06x %-4s %-8s %-30s fn=%s%s targets=%s" % (
             hex(a), c, k, st, t, nm, "(GAP-RESOLVED)" if gap else "",
@@ -412,7 +437,7 @@ def main():
     print("  span-gap sites resolved to a pad-delimited sub-function: %d" % gapsite)
     gate("G3a", all(st == "FALL-IN" or tg for st, tg in fallin.values()),
          "every store is reachable (fall-in or branch target)")
-    gate("G3b", gapsite == 4 and "?" not in " ".join(o for o, _ in (owner(a) for a, _, _, _ in stores)),
+    gate("G3b", gapsite == 4 and "?" not in " ".join(owner(a)[0] for a, _, _, _ in stores),
          "the 0x5108e0 handlers are named through the Ghidra span gap")
 
     # ---------------- call-shape key extraction ----------------
@@ -421,8 +446,10 @@ def main():
         a = order[ci]
         mn, ops = by[a][2], (by[a][3] or "").strip()
         if ALGO != "5":
-            win = [order[k] for k in range(max(0, ci - 14), ci)]
-            if any(by[x][2] == "push" and (by[x][3] or "").strip() == "0x100" for x in win):
+            win = [order[k] for k in range(max(0, ci - 7), ci)]
+            npush = [x for x in win if by[x][2] == "push"]
+            if (ops == "edi" and len(npush) == 6
+                    and any((by[x][3] or "").strip() == "0x100" for x in npush)):
                 k = order[ci - 2]
                 m = IMM.match((by[k][3] or "").strip())
                 if by[k][2] == "push" and m and int(m.group(1), 16) in keytext:
@@ -437,7 +464,7 @@ def main():
             # 4-push writer form: file, buf, key, app, call -> key at call-2
             n4 = [order[k] for k in range(max(0, ci - 6), ci)]
             npush = [x for x in n4 if by[x][2] == "push"]
-            if len(npush) == 4:
+            if ops == "edi" and len(npush) == 4:
                 k = order[ci - 2]
                 m = IMM.match((by[k][3] or "").strip())
                 if by[k][2] == "push" and m and int(m.group(1), 16) in keytext:
@@ -521,7 +548,9 @@ def main():
     gate("G4a", len(rmap) == len(CELLS) and len(set(rtext)) == len(rmap) and None not in rtext,
          "read side: one distinct key per cell (%d/11)" % len(set(rtext)))
     gate("G4b", len(atext) < len(amap), "the direction is forced: %s pairing is not injective" % alt)
-    gate("G4c", len(bad) >= 1, "the naive nearest-push law is killed on %d cell(s)" % len(bad))
+    gate("G4c", bad == [0x92BEFC] and naive.get(0x92BEFC) == "Laptop"
+         and rmap[0x92BEFC][1] == "Preferences",
+         "the naive nearest-push law is killed ON 0x92befc (says Laptop, is Preferences)")
 
     # ---------------- G5 write side ----------------
     wb_loads = [(a, mem_of(split_ops(ops)[1])) for (a, b, t, mn, ops) in ins
@@ -552,9 +581,11 @@ def main():
     # ---------------- G6 writer families ----------------
     def defof(reg, site, lim=30):
         """Backward def-use with ONE extra hop through a register-to-register
-        mov/or/and: -> (kind, insn text, source cell or None)."""
+        mov/or/and: -> (kind, insn text, source cell or None).  cmp/test are NOT
+        definitions (flags only); a call defines eax but only CLOBBERS ecx/edx;
+        the walk stops at the GAP-RESOLVED function start, not the Ghidra span."""
         i = idx[site]
-        fa = fnof(site)[1]
+        fa = owner(site)[2]
         hop = 0
         chain = []
         while hop < 2:
@@ -566,18 +597,23 @@ def main():
                 b, t, mn, ops = by[a]
                 dst, src = split_ops(ops)
                 if mn == "call":
-                    if reg in ("eax", "ecx", "edx"):
+                    if reg == "eax":
                         found = ("CALLRET", t, a, None)
                         break
+                    if reg in ("ecx", "edx"):
+                        found = ("CLOBBER", t, a, None)
+                        break
                     continue
+                if mn in ("cmp", "test"):
+                    continue          # flags only: not a register definition
                 if dst is not None and SUBREG.get(dst) == reg:
                     found = ("DEF", t, a, src)
                     break
             if found is None:
                 return ("UNRESOLVED", " ".join(chain), None)
             kind, t, a, src = found
-            if kind == "CALLRET":
-                return ("CALLRET", " ".join(chain), None)
+            if kind in ("CALLRET", "CLOBBER"):
+                return (kind, " ".join(chain), None)
             scell = mem_of(src)
             if scell is not None:
                 return ("COPY", t, scell)
@@ -609,12 +645,12 @@ def main():
                     dt, dtext, dcell = defof(reg, a)
                     if dt == "UNRESOLVED":
                         sh = "UNRESOLVED"
-                    elif dt == "CALLRET":
-                        sh = "CALLRET"
+                    elif dt in ("CALLRET", "CLOBBER"):
+                        sh = dt
                     elif dt == "COPY":
                         sh = "COPY(0x%x)" % dcell
                     elif re.match(r"^(and|or|xor)\s+\w+,0x[0-9a-f]+$", dtext):
-                        sh = "MASKED(%s)" % dtext
+                        sh = "MASKED(%s)" % re.sub(r"\s+", " ", dtext)
                     else:
                         sh = "DEF(%s)" % dtext.split()[0]
         fam.setdefault(sh, []).append(a)
@@ -626,6 +662,10 @@ def main():
     print("  COPY families name the SOURCE CELL: %s" % sorted({k for k in fam if k.startswith("COPY")}))
     gate("G6a", not any(k.startswith(("UNRESOLVED", "OTHER")) for k in fam),
          "every non-loader source is classified")
+    fam_n = {k: len(v) for k, v in fam.items()}
+    print("  family counts: %s" % sorted(fam_n.items()))
+    gate("G6c", fam_n == FAM_PINS,
+         "the writer families equal the pinned distribution (%d families)" % len(FAM_PINS))
     gate("G6b", len(fam.get("INI-LOADER", [])) == len(CELLS),
          "the loader stores exactly once per cell (%d)" % len(fam.get("INI-LOADER", [])))
 
@@ -642,7 +682,10 @@ def main():
     n_e8 = len(per.get(0x92BDE8, []))
     r3 = n_e8 != 1
     print("  R3 '0x92bde8 has ONE store' -> %d %s" % (n_e8, "KILLED" if r3 else "survives"))
-    gate("G7a", r1 and r2 and r3, "all three rivals killed on the measured numbers")
+    print("  pins: cells-with-stores=%d  non-loader=%d  fns=%d  stores@0x92bde8=%d"
+          % (len(live), len(nl), len({owner(a)[0] for a in nl}), n_e8))
+    gate("G7a", r1 and r2 and r3 and (len(live), len(nl), len({owner(a)[0] for a in nl}), n_e8)
+         == (11, 32, 13, 2), "all three rivals killed and the literals hold 11/32/13/2")
 
     # ---------------- G8 boundary ----------------
     sweep = [a for a in order if 0x58EFC0 <= a <= 0x58EFE6]
@@ -654,8 +697,21 @@ def main():
     print("  loader: %s ... %s" % (esi0, bound))
     print("  writeback mirrors it: %s" % [hex(a) for a in wbsweep])
     print("  span END 0x%x < sweep start 0x92bf18" % HI)
-    gate("G8a", len(esi0) == 1 and len(bound) == 1 and len(wbsweep) >= 2 and HI < 0x92BF18,
-         "the block ends at 0x92bf14; the sweep is a separate 7-dword group")
+    sweep_body = [by[a] for a in order if 0x58EFC4 <= a <= 0x58EFE0]
+    has_store = any(mn == "mov" and "[esi]" in (ops or "") and not ops.startswith("esi") for _, _, mn, ops in sweep_body)
+    has_inc = any(mn == "add" and (ops or "").replace(" ", "").startswith("esi,0x4") for _, _, mn, ops in sweep_body)
+    has_jl = any(mn.startswith("j") for _, _, mn, _ in sweep_body)
+    key_lo = keytext.get(0x6927C4)
+    key_wb = keytext.get(0x692874)
+    in_sweep = [a for a, c, k, t in stores if 0x92BF18 <= c < 0x92BF34]
+    print("  sweep: store-through-[esi]=%s add esi,4=%s loopback=%s  dwords=%d"
+          % (has_store, has_inc, has_jl, (0x92BF34 - 0x92BF18) // 4))
+    print("  keys: loader 0x6927c4=%r  writeback 0x692874=%r  census stores in sweep=%d"
+          % (key_lo, key_wb, len(in_sweep)))
+    gate("G8a", len(esi0) == 1 and len(bound) == 1 and (0x92BF34 - 0x92BF18) == 7 * 4
+         and has_store and has_inc and has_jl and len(wbsweep) >= 2 and HI < 0x92BF18
+         and key_lo == key_wb == "Custom World" and not in_sweep,
+         "a 7-dword `Custom World` sweep on BOTH sides, outside the census")
 
     # ---------------- G9 mutation-pin coverage ----------------
     kpush = {a for a in order if by[a][2] == "push" and by[a][3]

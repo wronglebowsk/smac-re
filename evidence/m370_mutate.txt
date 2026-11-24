@@ -1,4 +1,4 @@
-base run: rc=0 gates=17 PASS
+base run: rc=0 gates=19 PASS
   MU1   TEXT 0x58e8c6 G2a  red      the loader's Difficulty store is the only one to 0x92bde8's cell; moved to the pad d
   MU2   TEXT 0x58ec20 G6b  red      the loader STORES More Preferences (a load would leave the cell unwritten)
   MU3   TEXT 0x58e8a1 G5a  red      the read-side key VA is a DIFFERENT copy from the write-side one (same text)
@@ -14,6 +14,8 @@ base run: rc=0 gates=17 PASS
   MU14  TEXT 0x57c914 G6a  red      every non-loader store's source is classified (a segment register is not)
   MU15  TEXT 0x58e922 G2b  red      the block's cells are written as full dwords (a byte store is a different field)
   MU16  TEXT 0x58efc4 G8a  red      the loader's sweep starts at 0x92bf18, past the span end
+  MU17  TEXT 0x58ec20 G2d  red      the same store->load mutation moves the census off 85/43/39/3 (the literals are gate
+  MU18  TEXT 0x57c914 G6c  red      the same unclassifiable source moves the family distribution off its pin
   MA1   ALGO 1     G4b  red      the read-side pairing is BACKWARD; forward is not injective
   MA2   ALGO 2     G2a  red      `mov mem,reg` is a STORE (the store/load split)
   MA3   ALGO 3     G1a  red      the byte scan reads the disp32 little-endian
@@ -23,6 +25,6 @@ base run: rc=0 gates=17 PASS
   MG0   INPUT empty cache                   ok
   MU0   NOOP  identical patch               detected
 
-KILLED 23/23   NO-OP 0
-gate coverage: 17/17 gates have a mutant whose run reached it; unnamed: -
-PASS M370-MUT: 23/23 killed, NO-OP 0, coverage 17/17
+KILLED 25/25   NO-OP 0
+gate coverage: 19/19 gates have a mutant whose run reached it; unnamed: -
+PASS M370-MUT: 25/25 killed, NO-OP 0, coverage 19/19
