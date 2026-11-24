@@ -713,3 +713,27 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **PITFALL**: a displacement can appear TWICE in one fn (4da2c0's two loops) — one-edit mutants
   leave the family intact; MU8/MU19 need two.
 - NAMED 247,217 -> 243,805 B: M299/M300 rotated VERBATIM (sha1 5bde05a3/c74e41cb).
+
+## Session 335-chain3 (2026-11-24) — M367: the 13 relations labels ARE labels.txt lines (element = off/4, line = 10+element)
+- **ACCEPT** `python3 -u scripts/m367_label_index.py` -> **`PASS M367: 24/24 gates` `a5632abc2d87583e`**
+  (`evidence/m367_label_index.txt:99`, re-run identical); `m367_mutate.py` -> **25/25 killed,
+  NO-OP 0, cov 24/24** (`evidence/m367_mutate.txt:31`).
+- **THE INDEX (not a string table in the image)**: the loader `FUN_00614681` zeroes, fopens
+  `labels`+`.txt` (mode `rt`, 0x5ea673), reads ONE line, `atoi` (via 0x5eaa53) -> `0x997b24` = 1089,
+  allocates `count*4` and fills `arr[i] = 0x5ea457()` (read line + arena strdup 0x6147ec/0x997b28).
+  Each row loads ONE dword element through the VALIDATOR 0x61482f (24 insns, the argument compared
+  3x and never combined arithmetically -> the element is a build-time constant).
+- **THE MAPPING**: element i = labels.txt **line 10+i** (`#LABELS` line 8; line 9 = `1089` = the 1089
+  label lines that follow; element 0 = `Mission Year`; 3 trailing lines never load).
+- **THE TABLE** (id == bit; 11 plain / 2 high dword): 0x1 `Pact`, 0x2 `Treaty`,
+  0x4 `Truce`, 0x8 `Commlink`, 0x10 `Vendetta`, 0x20 `I want revenge`, 0x400 `I shall betray`,
+  0x1000 `I have infiltrator`, 0x2000 `I want to talk`, 0x40000 `I am atrocity victim`,
+  0x2000000 `I have surrendered`; high 0x80000008 `Fight to the death`, 0x80002000 `Fix current
+  status as permanent` (`:71-83`). Title elem 866 = `Diplomacy for`; statics `Clear`/`Atrocity`/`OK`.
+- **ANCHOR (independent of file order)**: the status dam at `0x4120c4` tests bit 0x1 of the SAME
+  0x82f-indexed record -> element 0xa14 (`Pact`) if set, else 0xa10 (`Treaty`).
+- **QUALIFIED (M364)**: bit 0x8's label reads **Commlink**, not "at war" (M364 read AT WAR off the
+  vendetta case keys). Both hold only if 0x8 gates contact (INF) -> a QUALIFICATION, not a
+  retraction: the label is a separate fact.
+- **PITFALL**: 18 clamp sites, not 13 — split rows from statics on BOTH the trailing call
+  (0x604fd2) AND the `ds:0x997b20` base.
