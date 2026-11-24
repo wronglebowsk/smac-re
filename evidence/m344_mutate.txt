@@ -1,0 +1,14 @@
+M344 mutant harness: 10 mutants against m344_completion_caller.py
+baseline 8/8 green (digest 7586ab28a3974104)
+ok   MU1 expected ['G1'] got ['G1']  (M342's shipped split (16/7/4) trusted instead of re-derived -> the 0x4)
+ok   MU2 expected ['G1'] got ['G1']  (the M342-window divergence check disabled: the retraction would go unn)
+ok   MU3 expected ['G2'] got ['G2']  (a legitimate item source (function parameter) declared unknown -> the )
+ok   MU4 expected ['G3'] got ['G3']  (queue-provenance confused with 'the function touches the queue' -> the)
+ok   MU5 expected ['G4'] got ['G4']  (one register-item grant dropped from the pinned set: G4 would pass on )
+ok   MU6 expected ['G5'] got ['G5']  (the stamp pinned as a plain store instead of the OR: the set semantic )
+ok   MU7 expected ['G6'] got ['G6']  (the item-table row offset shifted by one dword: the consume site is no)
+ok   MU8 expected ['G7'] got ['G7']  (the stamp->pop distance loosened: any nearby or-pop pair would pass)
+ok   MU9 expected ['G8'] got ['G8']  (the ACCEPT digest anchor unpinned (table drift would go unnoticed))
+ok   NOOP expected [] got []  (identity tree - must redden nothing)
+
+PASS HARNESS M344: 10/10 mutants redden exactly their set; NO-OP [] ; gates covered ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8']

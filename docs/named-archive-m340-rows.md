@@ -16,3 +16,20 @@ run `--verify` after any edit; NAMED.md's stub keeps one line per claim)
 | ACCEPT digest(table) `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110`) with `PASS M332: 9/9 gates` (`:111`), stdout re-measured at this head diff-identical to the committed evidence; harness 20 scored + 1 NO-OP inert, 0 MISMATCH, 0 CRASH, digest(rows) `a9a944201849d026` (`evidence/m332_mutate.txt:23-25`); `--selftest` 6/6 | `evidence/m332_mutate.txt:25` | V |
 | OPEN: which difficulty INDEX means which label (the cmps top out at 4 while `## M330`'s k-table needs k=2 at >=5); who else writes the 0x92bde8..0x92bf14 pref block; 0x5f1394's semantics; the consumer of the byte cell 0x8f0090; `sim/composedenergy.py:432` still PRINTS the old "noun INFERRED" because B27's evidence digests pin that string — corrected when B28 authors its spine text | - | lead |
 
+
+<!-- m344-rotation: M340 verbatim -->
+## M340 VERBATIM (moved by `scripts/m344_named_rotate.py`, sha1 `dceab1fc162b3b519d1abce76800c81bb5bb4bd4`)
+
+## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, review #358 hardened) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder — `evidence/m340_pref_admission.txt:79-90`
+
+| claim | evidence | conf |
+|---|---|---|
+| 18 `call edi` sites, each with a 6-push window holding exactly one `push 0x100` (argc-6); exactly ONE key 0x692718 = PE `"Difficulty"` (0x58e8a1) whose lpDefault push IS 0x997120, the itoa(0) buffer seeded at 0x58e865; its store `ds:0x92bde8` @0x58e8c6 is the ONLY store to that cell in the function | `:3-8` | V MU1,MU10,MU11 |
+| 0x58e8a9..0x58e8c6 is 10 straight-line insns (0 jcc/jmp/ret) with the two stores `ds:0x996be8,eax` (cursor) and `ds:0x92bde8,eax` | `:6-18` | V MU2,MU7 |
+| the stored eax IS 0x6287e2's return: 0x58e8b9 calls 0x5ea484 -> 0x5eaa53 -> {0x5ea985, 0x6287e2}; both wrappers are branch-free, write no eax after their call and end pop ebp/ret; 0 eax writes between the call and the store | `:19-21` | V MU2,MU3,MU9 |
+| the parse chain (atoi 0x64c360/0x64c460, tokeniser 0x5ea985, radix 0x6287e2/0x628720/0x62876b) compares CHARACTER CLASSES only: constants {0x0,0x1,0x2b,0x2c,0x2d,0x30,0x31,0x36}; intersection with {2,3,4,5,6} EMPTY | `:22-42` | V MU4,ALG1 |
+| POSITIVE CONTROL, same function: `Language`'s consumer 0x628130 puts the argument in [ebp-0x4], `cmp [ebp-0x4],0x4`, `ja 0x6281a8`, then indexes `[edx*4+0x6281ac]` — bound 4 there, NONE on the Difficulty path | `:44-58` | V MU5 |
+| endpoints MEASURED from the ladder loader 0x57ac74/0x57ac88 (base 0x94d2ac, end 0x94d2c4) and 6 rows from 0x57c6cb `cmp esi,0x6`; k=5 -> 0x94d2c0 last legal, k=6 -> 0x94d2c4 | `:61-65` | V MU8 |
+| the three pref-fed readers 0x48678f / 0x44a1c8 / 0x599405 load TABLE at scale 4 from a memory-loaded index whose def-use gap (0/0/2 insns) holds no branch, call, compare or rewrite | `:67-76` | V MU6 |
+| ACCEPT `python3 -u scripts/m340_pref_admission.py` -> `PASS M340: 7/7 gates`, rows `1cc44d0146a8b419`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2 runs byte-identical; `scripts/m340_mutate.py` -> `PASS HARNESS M340: 12/12`, 7/7 gates covered, NO-OP `[]`, `a2a1726721114b4d` | `evidence/m340_mutate.txt:16` | V |
+| OPEN: what the runtime dword AT 0x94d2c4 holds (a box read); whether any other writer of the 0x92bde8/0x985aec pair (0x57c7b0 writes both in one breath, source untraced) supplies a bounded value | - | lead |
