@@ -1353,4 +1353,15 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | DOMAIN (geometry READ from the bytes, not from the script): base 0x94d2ac, bound 0x94d2c4 and clamp hi=6 with `hi*4 == end-base`, so the INCLUSIVE hi is the array LENGTH = one past the last row; of 169 `call 0x423af0` sites exactly 1 (`0x486f38`) is fed by an `0x8f0c11` load; cmp immediates on `0x985aec` = {1,2,3,4}+ebx (M332 reproduced); refund 3/jle + 4/jne => k=1 at 4, k=2 at >=5 = TRANSCEND (M330 refined) | `:7` | V MU8,9,16,17 |
 | RIVAL killed: "0x94d2ac is not the difficulty names" — section string + row count + iteration count agree | `:8` | V MU3,4,5,13 |
 | ACCEPT `7/7` digest `fb58bdc3307d6258` x2 (`:9-10`,`_rerun.txt`); harness `20/20` `6e0e05a8ffb388d8` incl. an ALGORITHM mutant (`--selftest` 3/3, `evidence/m335_mutate_selftest.txt:4`) | `evidence/m335_mutate.txt:22-23` | V |
-| OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x48678f / 0x57c606 | - | lead |
+| OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x57c606 (0x48678f ANSWERED by ## M336) | - | lead |
+
+## M336 (s318-chain2, (x6), STATIC 7/7) — `0x8f0090` = the DIFFICULTY byte of PLAYER RECORD 1 (8 recs, stride 0x176, frame `0x8eff18`); read only by UNCLAMPED `#DIFF` lookup 0x486788, so index 6 -> `0x94d2c4` — `evidence/m336_cell090_consumer.txt:1`
+
+| claim | line | kind |
+|---|---|---|
+| TARGET=FRAME+0x176+2; 8 records (end `0x8f0ac8`=FRAME+8*0x176); rec-1 ptr 0x8f008e @0x525c42 | `:5-13` | V MU2,MU5 |
+| direct census: 1 ref, a STORE (0x48884d), 0 loads | `:1-3` | V MU4 |
+| only load [reg+0x8eff1a] = 0x486788, idx 0x176*(k+1), k=0 row 0 => addr=TARGET; feeds `[b*4+0x94d2ac]` | `:14-31` | V MU1,MU3,MU9 |
+| 6 write sites, 3 forms: direct + 4 indexed (src 0x8f0c11 x3, lit 0) + walk 0x4e249c iter 1 | `:32-48` | V MU8,MU9 |
+| table `0x94d2ac`..`0x94d2c4` = 6 rows (0x57ac74/88); 6W/6R, only clamp 0x486f30 `FUN_00423af0(diff,0,6)` INCLUSIVE => 6 -> `0x94d2c4`; consumer unclamped | `:50-82` | V MU6,MU7,MU10 |
+| OPEN: does FUN_0058e7f0 (INI reader) admit >=6; `[reg+0x8f008d]` forms (0x48441e) unresolved | - | lead |
