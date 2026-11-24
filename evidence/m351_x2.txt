@@ -1,0 +1,7 @@
+M351 - x2 determinism record (python3 -u scripts/m351_type_producer.py, two runs)
+run1 sha1 39c60a4855e3a4f021ffd4b1ee145b70636dcc7b  119 lines
+run2 sha1 39c60a4855e3a4f021ffd4b1ee145b70636dcc7b  119 lines
+diff run1 run2: EMPTY (byte-identical)
+digest line (both runs): DIGEST c23a0d70f80d757e  universe=15 gates=15
+PASS line (both runs): PASS M351: 15/15 gates
+listing sha1 (both runs): 02d578095222031e (scratch/m574/text.txt, 781429 insns)

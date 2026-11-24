@@ -127,3 +127,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M347 (s324-chain2): HoF page writer = the +0x5970 child selector, ids 1..7 (page bound 7); 12/12 `3fadfd6e6d26e64c`, 20/20
 - M349 (s326-chain2) MERGED: M68/M69 `NEG_TYPE` ANSWERED — a negative queue head is the NEGATED UNIT TYPE (`neg` @0x4ef89f; `>=0` = facility id, `-38` = sentinel, id<0x40 stamps, `>=0x40` gated by 0x98adb8 bit2, one 0x95da9c+304*p bitmap); 13/13 `4d3c2e4ded19d620`, harness 18/18
 - M350 (s327-chain3): pref block END = 0x92bf34; loader = sole profile-backed init. (0/11 local); co-writes = commits. 6/6 `23794d22` x2, 15/15.
+- M351 (s328-chain2): the negative head's producer = the chooser row ITEM, negated when flags&0x20==0; unit rows' item = the TYPE ORDINAL (0x984d38+0x30*i) stored to base+0x50 @0x418b57. 15/15 `c23a0d70f80d757e`, harness 20/20.

@@ -1,0 +1,119 @@
+M351 - the chooser-side producer of the negative queue head (static)
+listing: scratch/m574/text.txt
+listing sha1 02d578095222031e  insns 781429
+
+TABLE 1  the pinned windows
+  modal sign law  FUN_00496ad0           29 insns 0x497704..0x497780
+    0x497704  mov eax,DWORD PTR [ebp-0x10]
+    0x497707  mov ecx,DWORD PTR [eax+0xa774]
+    0x49770d  push ecx
+      ..  
+  second site     0x494e61               15 insns 0x494e61..0x494e92
+    0x494e61  add ecx,0xa780
+    0x494e67  call 0x401940
+    0x494e6c  mov DWORD PTR [ebp-0x24],eax
+      ..  
+  unit row loop   0x495b27 (head)        81 insns 0x495b27..0x495c37
+    0x495b27  mov DWORD PTR [ebp-0x24],0x1
+    0x495b2e  jmp 0x495b39
+    0x495b30  mov eax,DWORD PTR [ebp-0x24]
+      ..  
+  unit row loop   0x495df0 (append)      16 insns 0x495df3..0x495e1e
+    0x495df3  mov edx,DWORD PTR [ebp-0x24]
+    0x495df6  push edx
+    0x495df7  mov ecx,DWORD PTR [ebp-0x4]
+      ..  
+  facility row loop 0x4956c6 (head)      6 insns 0x4956c6..0x4956e0
+    0x4956c6  cmp DWORD PTR [ebp-0x28],0x80
+    0x4956cd  jge 0x495b27
+    0x4956d3  mov ecx,DWORD PTR [ebp-0x28]
+      ..  
+  facility row loop 0x495a81 (append)    19 insns 0x495a81..0x495ab6
+    0x495a81  mov ecx,DWORD PTR [ebp-0x2c]
+    0x495a84  push ecx
+    0x495a85  mov ecx,DWORD PTR [ebp-0x4]
+      ..  
+  item getter / flags getter             21 insns 0x401940..0x401968
+    0x401940  push ebp
+    0x401941  mov ebp,esp
+    0x401943  sub esp,0x44
+      ..  
+  append: node+4 = item                  5 insns 0x40120e..0x40121a
+    0x40120e  mov ecx,DWORD PTR [ebp-0x10]
+    0x401211  mov edx,DWORD PTR [ecx+0x8]
+    0x401214  mov eax,DWORD PTR [ebp+0x8]
+      ..  
+  store: chooser -> base+0x50            6 insns 0x41860a..0x41861a
+    0x41860a  call 0x496ad0
+    0x41860f  mov edi,eax
+    0x418611  mov eax,DWORD PTR [ebp+0x8]
+      ..  
+  store: the write                       5 insns 0x418b46..0x418b58
+    0x418b46  test esi,esi
+    0x418b48  jne 0x418c39
+    0x418b4e  mov edx,DWORD PTR ds:0x8f0d60
+      ..  
+
+TABLE 2  measured literals
+  unit loop init         0x1
+  unit loop bound        0x48
+  facility loop bound    0x80
+  unit stride (imul)     0x30
+  unit name base         0x984d38
+  unit cost base         0x984d44
+  candidate table        0x9267e4
+  queue store offset     0x50
+  neg in store path      0
+  neg in modal resolve   1
+  call 0x401940 in modal 2
+
+TABLE 0  the row list the modal resolves is TWO sections, appended in this order
+  A  0x4956c6..0x495b24  idx<0x80  item = cand[idx] @0x9267e4 (k<0x40 -> k, k>=0x40 -> owner*0x40|(k&0x3f))
+      flags = 0x496050(item) | 0x20  ->  (flags & 0x20) != 0  ->  return +item
+  B  0x495b27..0x495e91  i = 1..0x47  item = i (TYPE ordinal: 0x984d38 + 0x30*i, cost at +0xc)
+      flags = 0x4960f0(i) | 0x10, 0x4960f0 in [0, 1, 2, 3]  ->  bit 0x20 ALWAYS clear  ->  return -i
+  then 0x418b5x stores that return into ds:0x8f0d60 + 0x50 (the base record's queue slot 0)
+
+TABLE 3  the sign law, computed over the whole flag space
+  0x4960f0 return immediates: [0, 1, 2, 3]  (from 5 sites)
+  flags 0x20 set?  item  ->  returned
+    0x10  no       3  ->  -3
+    0x10  no       6  ->  -6
+    0x11  no       3  ->  -3
+    0x11  no       6  ->  -6
+    0x12  no       3  ->  -3
+    0x12  no       6  ->  -6
+    0x13  no       3  ->  -3
+    0x13  no       6  ->  -6
+    0x20  yes      3  ->  +3
+    0x20  yes      6  ->  +6
+    0xa0  yes      3  ->  +3
+    0xa0  yes      6  ->  +6
+  unit flags (0x10|0..3) negative: 16/16 items
+
+TABLE 4  rivals against the recorded heads
+  recorded B31 heads: [321, -2, -8, 2, -3, -6]
+  R1 'return is always -item'        -> recorded [321, -2, -8, 2, -3, -6] holds positives: dead=True
+  R2 'negative is -(design id - 192)' -> predicts 195->-3, 196->-4 ; recorded 195/196 -> -3/-6 : False
+  R3 'the store site negates'        -> neg count in the store path = 0 : True
+
+GATES
+ok     G1 the modal resolves the cell, tests flags&0x20, and negates on the clear branch  flags 0x20 set -> +item @0x497766 ; clear -> neg @0x49777c
+ok     G2 an independent second site applies the same item/flags/0x20/neg law  0x494e61..0x494e8f
+ok     G3 the unit row loop appends item = the loop counter i (1..71), flags = f(i)|0x10  i=1..0x48 stride=0x30
+ok     G4 0x4960f0 returns only {0,1,2,3}, so a unit row's flags never carry 0x20  [0, 1, 2, 3]
+ok     G5 the facility loop appends item = cand[idx] with 0x20 ORed in (the +item branch)  idx<0x80, cand@0x9267e4
+ok     G6 the append stores its item argument at node+4, and 0x401940 returns node+4
+ok     G7 the flags getter reads the row payload's +8, not the item at +4
+ok     G8 the chooser's return reaches base+0x50 only when the insert position is 0  0x41860a -> edi -> [ebp-0x10] -> [base+0x50]
+ok     G9 no negation between the chooser call and the store (0 negs); one in the modal  381-insn store path
+ok     G10 the row builder indexes the SAME type array M349's cost read uses  M349 cost base=0x984d44 stride=48 ; here base=0x984d44 stride=48
+ok     G11 every reachable unit flag value yields -item; a facility flag yields +item  unit flags [0, 1, 2, 3] -> all negative
+ok     G12 R1/R2/R3 fail on the printed numbers  facility +2 ; 196 predicts -4 ; 0 negs at the store
+ok     G13 the selection cell is the ROW counter and rows are filtered, so cell != item  trace's own note present: True
+ok     G14 the two sections compare the base queue slot against +item and against -i  [ebp-0x30] = ds:0x8f0d60 slot [sub+0xb68] @0x495566
+ok     G15 cand[k] = k for k<0x40 else owner*0x40|(k&0x3f): the >=64 entries are faction items  cand_n @0x9267e0, table @0x9267e4
+
+15/15 gates
+DIGEST c23a0d70f80d757e  universe=15 gates=15
+PASS M351: 15/15 gates

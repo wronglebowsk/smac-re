@@ -1533,3 +1533,11 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | before OR mask == the recorded after window at 4/4 unit boundaries; only the mapper byte moves | `:35-39`, `:47` | V MU6,MU13 |
 | facility side: 321 -> byte 40 (off the 8-byte map, 1 refusal); facility 2 at Virgin Soil predicts `04 00 00 08 00` vs recorded `10 00 00 00 00` | `:34`, `:37`, `:48` | V MU10 |
 | 2 losses, both on the 2 non-unit rows; each unit row's gain set is exactly its bit | `:49` | V MU9 |
+## M351 (s328-chain2, 15/15) — the CHOOSER producer: a unit row's item IS the negated TYPE ORDINAL
+| modal 0x496ad0: `and eax,0x20` @0x49772a, `neg eax` @0x49777c; item = row+4 (0x401940), flags = row+8 (0x495480) | `evidence/m351_type_producer.txt:70-76,101` | V MU1,MU2,MU10,MU11 |
+| rows: A idx<0x80 item=cand[idx]@0x9267e4, \|0x20 -> +item; B i=1..0x47 item=i flags=0x4960f0(i)\|0x10 -> -i; 0x4960f0 in {0,1,2,3} so 0x20 never set | `:70-75,78,110` | V MU5,MU8,MU9,MU17 |
+| i is the TYPE ORDINAL: 0x984d38+0x30*i name / 0x984d44 cost (= M349's) | `:73,113` | V MU4,MU5 |
+| chooser uses -i: afford 0x495c2f, queue-slot cmp 0x495e5c @0x495566; A cmps +item @0x495aef | `:114` | V MU15,MU19 |
+| 0x418b57 stores it to ds:0x8f0d60+0x50 on pos==0; 0 negs in 381 insns | `:108` | V MU12,MU13 |
+| RETRACTED: M68's "195 -> -3" is a STALE cell read (trace: "re-sorted between the read and the click"); cell = row counter @0x495b00 | `:115` | V MU14 |
+| ACCEPT 15/15 `c23a0d70f80d757e` x2; harness 20/20 | `:118-119` | V MU0 |
