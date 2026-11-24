@@ -692,9 +692,12 @@ whether a facility completion stamps at all.
 
 ## Session 333-chain2 (2026-11-24) — M361: the A/V radio flags — 4 rows' pending state, 4 reader functions, relabel terminal = GENERIC set-label 0x5fa1e8
 
-- **ACCEPT** `python3 -u scripts/m361_radio_flags.py` -> **`PASS  M361: 36/36 gates`
-  `3f372964c2179782`** (`evidence/m361_radio_flags.txt:160`), rerun byte-identical;
-  `scripts/m361_mutate.py` -> **27/27 RED, NO-OP none** (`evidence/m361_mutate.txt:67`).
+- **ACCEPT** `python3 -u scripts/m361_radio_flags.py` -> **`PASS  M361: 38/38 gates`
+  `b92f1a61c041ae87`** (`evidence/m361_radio_flags.txt:165`), rerun byte-identical;
+  `scripts/m361_mutate.py` -> **30/30 RED, NO-OP none** (`evidence/m361_mutate.txt:66`).
+  Review #391 (10 findings, 3 P1) reworked the instrument: function-extent windows from
+  index.csv, the commit scan is GLOBAL, "both ways" is now measured, census covers every
+  addressing form, read mnemonics are broadened, mutant gate names are exact.
 - **GEOMETRY**: flags = `widget+0xa18`, widgets `0x12cbc + k*0xb4c` (table 0x493fe0:
   0x4b->0x493f9d 0x136d4/0x12cbc, 0x4c->0x493f1c 0x14220/0x13808, 0x4d->0x493edc
   0x14d6c/0x14354, 0x4e->0x493f5d 0x158b8/0x14ea0). Ctor 0x48fed0 zeroes all four (`:75-85`);
@@ -707,8 +710,9 @@ whether a facility completion stamps at all.
 - **COMMIT** 0x492940: 0x14d6c -> `[+0xa50] |= 0x4000`; 0x14220 -> `[+0xa4c] |= 0x400` (ebx
   by def-use); 0x158b8 -> `[+0xa4c] |= 0x800`. Master 0x136d4 is never committed — 0x492030
   recomputes it as OR of the children (store 0, then 1 per cmp!=0).
-- **TOGGLE** 0x493ff0: master-off clears all four + `and ch,0xf3`/`and ah,0xbf` on
-  0x985ab8/0x985abc (0x400|0x800 / 0x4000 = the commit bits); child ON -> master. **SEED**
+- **TOGGLE** 0x493ff0: master-off clears all four + `and ch,0xf3`/`and ah,0xbf` (load from and
+  store back to 0x985ab8/0x985abc; 0x400|0x800 / 0x4000 = the commit bits). Propagation runs
+  BOTH ways: child ON -> master, and the master toggle -> all three children. **SEED**
   0x4930e0 reads `[+0xa50]` bits, writes each child flag + its relabel cmd.
 - **RETRACTED**: none — M360's 0x4e/0x4c/0x4d reading holds; cmd 0x4b is the master row.
 - **OPEN**: each row's noun (label text is runtime; 0x997b20's table is not in the file);
