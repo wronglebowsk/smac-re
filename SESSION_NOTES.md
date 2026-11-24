@@ -689,3 +689,27 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
   Four mutants added (MU17/G3, MU18/G9c, MU19/G13b, MU21/G12) — 20/20 RED, `[]`; the rival
   gate R is reddened by MU1. Digest moved `00277b42` -> `66b923f0` (measurement changed, answer
   unchanged).
+## Session 334-chain3 (2026-11-24) — M365: 0x94d5dc = the relations record's third slot (block+0x1ac): zeroed by the writer, ticked on contact, consumed as a DEADLINE
+
+- **ACCEPT** `python3 -u scripts/m365_pair_slot.py` -> **`PASS M365: 22/22 gates` `d1d567339ee8c5b2`**
+  (`evidence/m365_pair_slot.txt:142`), re-run identical; `m365_mutate.py` -> **26/26 killed, NO-OP 0,
+  cov 22/22** (`evidence/m365_mutate.txt:33`). Review #395 (10 findings) reworked the gate set:
+  G2b now counts STORES only (11), G3c names fac/tgt (+0xa1c stride, +0xa20 unit), G4a pins the
+  carried register and the 2x(signed byte) delta, G6c stops at a clobber/branch, R4 reads the two
+  instructions it cites, the rotate verifier checks the NAMED stub, MU8 split MU8a/8.
+- **CENSUS 23**: 8 W / 15 R, 7 fns; 4 abs + 19 base+disp; 0 unclassified (`:3-33`).
+- **GEOMETRY**: slot = block 0x94d430 + **0x1ac** = mask 0x94d448 + 0x194 (101 dw). FUN_004da2c0's
+  11 stores name six displacements: 0x94d554 (M165's "pair head", 8 B before) + five slots 0x20
+  apart (0x94d55c..0x94d5dc); this slot is the LAST.
+- **INDEX**: 12 folded = 4*(fac*0x82f+tgt) B ({0x20bc,4} = {0x82f,1}); 11 pointer sites.
+- **WRITERS**: only constant = **0** (2 sites, bit-0x10 arm of FUN_00551a20, BOTH directions);
+  2 carry ebx (4da604/4da6de); 3 `++`; 1 `+= 2*signed byte` (507fa4, before the 5518f0 clear).
+- **PAIR / CONSUMERS**: 0x94d5bc (block+0x18c) same delta class + same base 5/5; deadlines =
+  `value + round/50 + 1` (magic 0x51eb851f sar 4 = /50 proved on 0..5000; sibling /25 + 2);
+  4 distinct cross-direction cmp; 4 add/lea terms.
+- **CORRECTED (M165)**: "8-byte pair (5 pairs)" = ONE head dw + five 0x20 slots. **OPEN**: the
+  NOUN (AGE is INFERRED); the key at 0x54a373 is the 4-byte string `"a"` in .data's diplomacy
+  action-name table, not a label.
+- **PITFALL**: a displacement can appear TWICE in one fn (4da2c0's two loops) — one-edit mutants
+  leave the family intact; MU8/MU19 need two.
+- NAMED 247,217 -> 243,805 B: M299/M300 rotated VERBATIM (sha1 5bde05a3/c74e41cb).
