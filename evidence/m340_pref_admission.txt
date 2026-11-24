@@ -1,0 +1,90 @@
+== M340 gate table (computed, printed before assertion) ==
+FN_0058e7f0 extent 0x58e7f0..0x58f002  insns=579
+G1  `call edi` sites=18  six-push (argc-6) windows=18  Difficulty=1 (Difficulty)  Language=1
+    Difficulty call 0x58e8a7 key-push 0x58e8a1  PE='Difficulty'  push window=['ecx', '0x100', 'edx', '0x997120', '0x692718', 'eax']
+    stores to ds:0x92bde8 in the function = ['0x58e8c6']
+G2  window 0x58e8a9..0x58e8c6: 10 insns, branches=0
+      58e8a9  mov eax,ds:0x996bf0
+      58e8ae  push eax
+      58e8af  mov ds:0x996be8,eax
+      58e8b4  call 0x64c460
+      58e8b9  call 0x5ea484
+      58e8be  lea ecx,[ebp-0x54]
+      58e8c1  push 0xa
+      58e8c3  push ecx
+      58e8c4  push 0x0
+      58e8c6  mov ds:0x92bde8,eax
+    stores in window = ['ds:0x996be8,eax', 'ds:0x92bde8,eax']
+    default seed: push 0x0 at ['0x58e865'] -> itoa(0)/strcpy into 0x997120, then pushed as the lpDefault argument (True)
+G3  0x5ea484: insns=6 jcc=0 eax-writes-after-call=0 call->['0x5eaa53'] epilogue=[('call', '0x5eaa53'), ('pop', 'ebp'), ('ret', '')]
+G3  0x5eaa53: insns=12 jcc=0 eax-writes-after-call=0 call->['0x5ea985', '0x6287e2'] epilogue=[('mov', 'esp,ebp'), ('pop', 'ebp'), ('ret', '')]
+G3  0x58e8be..0x58e8c6 between call and store: 4 insns, eax writes=0 [('lea', 'ecx,[ebp-0x54]'), ('push', '0xa'), ('push', 'ecx'), ('push', '0x0')]
+G4  atoi-wrapper  0x64c460..0x64c471 insns=  8 ends=ret
+G4  atoi          0x64c360..0x64c45f insns= 88 ends=ret
+G4  obj-get       0x5ea484..0x5ea493 insns=  6 ends=ret
+G4  obj-get2      0x5eaa53..0x5eaa6f insns= 12 ends=ret
+G4  tokeniser     0x5ea985..0x5eaa53 insns= 65 ends=ret
+G4  radix-parser  0x6287e2..0x62885f insns= 44 ends=ret
+G4  bin-parser    0x628720..0x62876b insns= 28 ends=ret
+G4  hex-parser    0x62876b..0x6287e2 insns= 43 ends=ret
+G4  compared constants (chain) = ['0x0', '0x1', '0x2b', '0x2c', '0x2d', '0x30', '0x31', '0x36']
+G4  declared = ['0x0', '0x1', '0x2b', '0x2c', '0x2d', '0x30', '0x31', '0x36']  intersection with {2..6} = []
+      64c366  cmp   atoi          0x1   DWORD PTR ds:0x6a7918,0x1
+      64c39f  cmp   atoi          0x0   DWORD PTR [ebp-0x10],0x0
+      64c3c9  cmp   atoi          0x2d  DWORD PTR [ebp-0x4],0x2d
+      64c3cf  cmp   atoi          0x2b  DWORD PTR [ebp-0x4],0x2b
+      64c3ef  cmp   atoi          0x1   DWORD PTR ds:0x6a7918,0x1
+      64c420  cmp   atoi          0x0   DWORD PTR [ebp-0x14],0x0
+      64c44b  cmp   atoi          0x2d  DWORD PTR [ebp-0xc],0x2d
+      5ea9b6  cmp   tokeniser     0x2c  ecx,0x2c
+      6287ec  cmp   radix-parser  0x30  ecx,0x30
+      62880c  cmp   radix-parser  0x36  DWORD PTR [ebp-0x4],0x36
+      628731  cmp   bin-parser    0x30  ecx,0x30
+      62873c  cmp   bin-parser    0x31  eax,0x31
+G5  Language@0x628130 instruction shape (40 of 11 expected):
+       0 push  ebp                              OK
+       1 mov   ebp,esp                          OK
+       2 push  ecx                              OK
+       3 mov   eax,DWORD PTR [ebp+0x8]          OK
+       4 mov   ds:0x99aa98,eax                  OK
+       5 mov   ecx,DWORD PTR ds:0x99aa98        OK
+       6 mov   DWORD PTR [ebp-0x4],ecx          OK
+       7 cmp   DWORD PTR [ebp-0x4],0x4          OK
+       8 ja    0x6281a8                         OK
+       9 mov   edx,DWORD PTR [ebp-0x4]          OK
+      10 jmp   DWORD PTR [edx*4+0x6281ac]       OK
+    compared slot is the argument: cmp operand 'DWORD PTR [ebp-0x4],0x4' == jump index source (edx <- [ebp-0x4])
+    Language bound=[4]  Difficulty bound=[]
+    R1 'Difficulty clamps to the 6-row ladder'  -> bound found? [] (must be empty)
+    R2 'a bounded default caps it'              -> default is the string '0', comps before store=0
+    R3 'Language's bounded switch is Difficulty's consumer' -> the switch is at 0x628130 reached from 0x58e85a, difficulty store followed by 0x58e8be (next field setup)
+G6  loader endpoints measured: 0x57ac74 `mov esi,0x94d2ac` -> base=0x94d2ac ; 0x57ac88 `cmp esi,0x94d2c4` -> end=0x94d2c4
+G6  loop bound 0x57c6cb `cmp esi,0x6` -> rows_measured=6
+G6  rows=(0x94d2c4-0x94d2ac)/4=6 rem=0  k=5 -> 0x94d2c0  k=6 -> 0x94d2c4
+G7  0x44a1c8 hof-byte                   unclamped   base=0x94d2ac scale=4 idx=edx def=44a1c5 mov dl,BYTE PTR [eax+0x20] gap=0 bad=0
+G7  0x484cc9 hof-view                   unclamped   base=0x94d2ac scale=4 idx=edx def=484cc3 mov edx,DWORD PTR [ebp-0x62d8] gap=0 bad=0
+G7  0x485426 hof-view2                  unclamped   base=0x94d2ac scale=4 idx=edx def=485420 mov edx,DWORD PTR [ebp-0x62dc] gap=0 bad=0
+G7  0x48678f 0x8f0090-difficulty-byte   unclamped   base=0x94d2ac scale=4 idx=edx def=486788 movsx edx,BYTE PTR [ecx+0x8eff1a] gap=0 bad=0
+G7  0x486f40 FUN_00423af0(0,6)          inclusive-6 base=0x94d2ac scale=4 idx=eax def=486f30 movsx eax,BYTE PTR ds:0x8f0c11 gap=3 bad=1
+        gap 486f37 push eax
+        gap 486f38 call 0x423af0
+        gap 486f3d add esp,0xc
+G7  0x57c606 loop-counter-0..5          bounded-5   base=0x94d2ac scale=4 idx=esi def=57c604 xor esi,esi gap=0 bad=0
+G7  0x599405 ds:0x985aec                unclamped   base=0x94d2ac scale=4 idx=ecx def=5993fb mov ecx,DWORD PTR ds:0x985aec gap=2 bad=0
+        gap 599401 push 0xffffffff
+        gap 599403 push 0xffffffff
+G7  pref-fed sites ['0x48678f', '0x44a1c8', '0x599405']: base==TABLE, scale==4, memory-loaded index, and a gap window with 0 branches/calls/compares/rewrites: True
+
+== gate rows ==
+G1  PASS 18 argc-6 push windows (one push 0x100 each); 1 Difficulty key (PE 'Difficulty'); lpDefault = 0x997120 seeded by itoa(0); store 0x92bde8 at ['0x58e8c6']
+G2  PASS 10 insns, 0 branches, stores ['ds:0x996be8,eax', 'ds:0x92bde8,eax'], pref store src eax
+G3  PASS call chain 0x58e8b9 -> 0x5ea484 -> 0x5eaa53 -> {0x5ea985, 0x6287e2}: both wrappers branch-free, no eax write after their call, pop ebp/ret epilogue; 0 eax writes between the wrapper and the store
+G4  PASS cmp constants == declared set, intersection with {2..6} empty
+G5  PASS Language: the compared slot IS the argument ([ebp-0x4] <- [0x99aa98] <- [ebp+0x8]), branch ja, table [edx*4+0x6281ac]; bound=[4]; Difficulty bound=[]
+G6  PASS endpoints MEASURED from 0x57ac74/0x57ac88 (base 0x94d2ac, end 0x94d2c4), 6 rows, k=5 last legal 0x94d2c0, k=6 == 0x94d2c4 one dword past
+G7  PASS each pref-fed reader: base==0x94d2ac, scale==4, index from a memory load, and a def-use gap with 0 branches/calls/compares/rewrites -> k=6 lands on 0x94d2c4
+
+digest rows  1cc44d0146a8b419
+digest census a7bb50fde374ddca
+digest window 1ff9a31080ec2e22
+PASS M340: 7/7 gates

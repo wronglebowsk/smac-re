@@ -1,22 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-307-307.md` (1 sessions: Session 307). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 304-chain2.
-
-## Session 304-chain2 (2026-11-19, M328 CLOSED, STATIC: the two HURRY globals named)
-
-- milestone/m328 (main b362948). A=0x91c64c = TURN-START ENERGY SNAPSHOT of the upkeep faction: 520540@52065d A:=ENERGY[8380*arg] after debt pay, before interest; HURRY mirrors cost (41a551/41a563); INFRASTRUCTURE warn 51fe90 (11E-10A<0 && E<100, DERIVED) deadness INFERRED: post-snapshot stores 520743/770/7d9/7ff+4f5c8c all additions, clobber-aware (deeper callees OPEN). B=0x920434 = 'MULTI' SESSION FLAG (noun INFERRED, lifecycle V): 634 refs 15W/133T/486R, {0x14,1x1} all mov; sole 1=57ed04 first stmt 57ecf0 via menu case4@580070/auto-start 5229b7; SP 57c550+load never set; blob [91f750,+ce0) ends B-4 (A/B uncarried); opener opts 0x10c0 iff filename!='multi' && B==0; B!=0 -> diplo sync 584010 (546800:40); clear=Retire/REALLYQUIT/YOULOSE2/MULTIDEBUG/opening/SAVEFAILED/RESET. M326 deferral = multi-only.
-- `python3 -u scripts/m328_hurry_globals_census.py` -> **14/14** **030a6fc12e4a7cd7** x2 identical (`evidence/m328_hurry_globals.txt:85-86`,`_rerun.txt:85-86`; pre-review 79deb5e6c5c501ff, review-round fc6b8c0db4ef4cef). Resolver=M326 import + sole-def fallback (512b40 pair 0: sole xor@512b63) + seed scan (0 indirect).
-- Sweep found 2 REAL gate defects, fixed: G2 hardcoded eax (MU3 invisible) -> actual src; G5 stray A-count (MU24) -> removed. `python3 -u scripts/m328_mutate.py` -> **38/38 (37 scored+MU26 NO-OP)** **36259eee0736d9c1** (`evidence/m328_mutate.txt:41-43`; pre-review 27/27 50f6aa12d28d4b2f, review-round d3d1e9b563f55dd7); `--selftest` **5/5** (`_selftest.txt:7`).
-- NAMED rotation VERBATIM sha1-asserted: B10 rows 1,988 B d298981e8ece0d6e -> docs/named-archive-b10-rows.md; founding table 8,112 B 5e1635282e3cf2c9 (19 names kept) -> docs/named-archive-founding-table.md; 248,242 -> 242,777 B. M326 one-liner -> pick-archive §trim-s304-chain2 (a) f6691830bcd4c739.
-- Env: git 2.53 ignores worktree info/exclude -> extensions.worktreeConfig + worktree core.excludesFile (symlinks ignored; start unblocked).
-- OPEN: B menu label (script-driven; MULTIMENU 692018 no push); 92bdf8 mode; +300 upkeep refund 1/3 (diff4) 2/3 (diff5+) 520714-78f (M325 lead); facprofile+4ec interest.
-
-## Session 305-chain2 (2026-11-19, M328 mechanical landing + L2b pin round; STATIC, zero box)
-
-- Confirmation run #3 of the review-round census (post int(x,0) shl-parse fix): 14/14 fc6b8c0db4ef4cef, stdout BYTE-IDENTICAL to the then-worktree evidence (diff rc=0).
-- Gate/lint then caught what the reviews missed: review_lint L2b — 5 review-round mutants (MU29/31/32/37/38) patch sites the instrument reads only via computed walks (prologue, add-def backscan, fread push-window, lifecycle enumeration, opener gap), so the patch addresses were not LITERAL-read. FIX = strengthen, not weaken: 5 exact-address pins (prologue tuples 57ecf0..57ed03 incl 57ecf3; G4 def sites 520741/52076e/5207d7/5207fe+4f5c85; G9 fread branch pair 596aed/596af2/596af3/596af5/596afc; G7 the 9 lifecycle sites incl 51f267; gap tuples 5981dc/5981e2/5981ec). Skill drift from chain 1: rsynced LIVE -> skill/ (legal content sync).
-- Re-measured suite: `python3 -u scripts/m328_hurry_globals_census.py` **14/14** **030a6fc12e4a7cd7** x2 byte-identical (`evidence/m328_hurry_globals.txt:85-86`,`_rerun.txt:85-86`); harness **37/37 scored + 1/1 NO-OP, 0 MISMATCH/CRASH** **36259eee0736d9c1** (`evidence/m328_mutate.txt:41-43`) — MU29={G5,G6,R2} MU31={G4} MU32={G9,R3} MU37={G6,G7} MU38={G9} all redden EXACTLY declared; `--selftest` **5/5** (`_selftest.txt:7`). Supersedes fc6b8c0db4ef4cef/d3d1e9b563f55dd7 (review-round) and 79deb5e6c5c501ff/50f6aa12d28d4b2f (pre-review). NAMED ACCEPT + s304 + NEXT_PROMPT M328 line carry the final numbers; s304 DEAD->INFERRED downgrade kept.
-- Reviews: run 1 (`evidence/ai_review/pr336_20261119_233753.md`) TRUNCATED at 16384 (7 findings) -> re-run at 32768 (`pr336_20261119_234443.md`, 10 = 4 P1 + 6 P2) = completion, not second opinion. All 10 accepted + fixed (s304 round); run 1's 7 map onto the same fixes. ONE triage reply on #336 covers both + the L2b round; 4 sidecars folded.
+Older sessions: `docs/sessions/sessions-304-305.md` (2 sessions: Session 304-chain2, Session 305-chain2). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 308.
 
 ## Session 308 (2026-11-19, hygiene + landing of M329, zero box) — cap trim, stale-number fix, evidence WARN adjudicated
 
@@ -301,6 +285,7 @@ printers of measured values need the same None-guard as the gate.
   MU12 table base, MU13 chain slot, MU14 SECOND alias load INSERTED; the digest hashes PASS bits.
 - PITFALL: displacement-keyed censuses miss strength-reduced forms; an O(n) replay per site needs
   a bisect index (180 s).
+
 ## Session 319-chain2 (2026-11-24) — M338: the last two #DIFF readers' index provenance
 
 - **ANSWER (pick (x6), final clause):** the seven scaled loads of `0x94d2ac` are now all
@@ -370,6 +355,41 @@ printers of measured values need the same None-guard as the gate.
 - PITFALL: a value-only rival does NOT discriminate on the five pinned rows (upkeeps 0,0,1,1,1);
   the NAME is the discriminator and G4 prints the rival's 3/5 so the gap is measured, not hidden.
 
+## Session 320-chain1 (2026-11-24) — M340: FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6
+
+- **ANSWER:** the Difficulty path in FUN_0058e7f0 clamps NOTHING. Of its 18 six-arg profile
+  reads exactly one carries key 0x692718 = PE `"Difficulty"` (0x58e8a1), default = the itoa(0)
+  buffer (push 0x0 @0x58e865), value stored `ds:0x92bde8,eax` @0x58e8c6 — the only store to
+  that cell in the function. Insns 0x58e8a9..0x58e8c6 are straight line and eax there IS
+  0x6287e2's return (wrappers 0x5ea484/0x5eaa53: 0 jcc, 0 eax write after their call).
+- **The chain compares CHARACTER CLASSES only** (atoi 0x64c360, tokeniser 0x5ea985, radix
+  0x6287e2/0x628720/0x62876b): constants {0x0,0x1,0x2b,0x2c,0x2d,0x30,0x31,0x36}, and the
+  intersection with the value space {2..6} is EMPTY (G4).
+- **POSITIVE CONTROL:** the SAME function's `Language` consumer 0x628130 IS bounded —
+  `cmp [ebp-0x4],0x4` + `ja` + jump table. Same classifier: bound 4 there, none here (G5).
+- **CONSEQUENCE:** 6 rows measured from the ladder's loop bound (0x57c6cb `cmp esi,0x6`);
+  k=5 -> 0x94d2c0 last legal, k=6 -> 0x94d2c4 == TABLE_END; the three pref-fed readers
+  0x48678f / 0x44a1c8 / 0x599405 index TABLE at scale 4 from MEMORY loads, no clamp (G7).
+- ACCEPT `python3 -u scripts/m340_pref_admission.py` -> **PASS M340: 7/7**, rows
+  `1cc44d0146a8b419`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2nd run
+  diff-identical (`evidence/m340_pref_admission.txt:79-90`); `scripts/m340_mutate.py` ->
+  **PASS HARNESS M340: 12/12**, 7/7 gates covered, NO-OP `[]` `a2a1726721114b4d`
+  (`evidence/m340_mutate.txt:16`), `--selftest` OK.
+- **REVIEW #358 (local Strata, 10 findings: 3 P1 / 7 P2), ALL fixed in the gates:** G1 now
+  measures the argc-6 push window + the 0x997120 lpDefault (MU10/MU11); G2 pins the cursor
+  store cell; G3 proves the call chain 0x58e8b9 -> 0x5ea484 -> 0x5eaa53 -> {0x5ea985,
+  0x6287e2} (MU9); G5 reads the whole Language switch shape (argument -> slot -> cmp 4 -> ja
+  -> table), not just a stray cmp; G6 MEASURES both endpoints from 0x57ac74/0x57ac88; G7
+  proves a def-use gap with no branch/call/compare/rewrite; `m340_named_rotate.py --verify`
+  also asserts the full block is gone from NAMED; the M332 stub cites both evidence files and
+  says 9/9; the sessions-304-305 archive pointer is repaired.
+- **ID:** `milestone/m339` is chain 2's worktree branch (~/reverse/wt-chain2), so this fire
+  took M340. NAMED headroom: M332 rotated VERBATIM to `docs/named-archive-m340-rows.md:5`
+  (sha1 `3ef265e11aca`, `scripts/m340_named_rotate.py --verify`); M335/M338 OPEN rows
+  patched IN PLACE.
+- PITFALL: a sub-register write (`mov dl,BYTE PTR [eax+0x20]`) is not "a write to edx" to a
+  first-operand test — widen to the register family or the def-use gate finds the earlier
+  `xor edx,edx` and reads a bounded index as unclamped for the wrong reason.
 ## Session 320-chain2 (2026-11-24) — pick (x6): `0x5f1394` = the modal SCREEN RUNNER
 
 - **ANSWER:** `FUN_005f1394` (11,207 B / 2,235 insns, `ret 0x8`, args = only
