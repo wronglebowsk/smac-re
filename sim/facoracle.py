@@ -108,18 +108,44 @@ def deltas(samples):
     appears mid-run has no predecessor and contributes no delta (counted, not hidden)."""
     rows = []
     prev = {}
+    skipped = [0]
     for si, (ev, r, bases) in enumerate(samples):
         for idx, name, rec in bases:
             key = (idx, name)
             cur = bits_of(rec)
-            if key in prev:
-                p, ph = prev[key]
+            if key in prev and prev[key][2] == si - 1:      # ADJACENT sample only
+                p, ph = prev[key][0], prev[key][1]
                 gained, lost = sorted(cur - p), sorted(p - cur)
                 if gained or lost:
                     rows.append((si, ev, r, idx, name, sorted(p), sorted(cur),
                                  gained, lost, head_of(rec), pend_of(rec), st_of(rec), ph))
-            prev[key] = (cur, head_of(rec))
+            elif key in prev:
+                skipped[0] += 1                             # disappeared then reappeared
+            prev[key] = (cur, head_of(rec), si)
+    deltas.skipped = skipped[0]
     return rows
+
+
+def byte_accounting(samples):
+    """The changed bits counted from the RAW XOR of the four bitmap bytes.
+
+    This is the independent path: `deltas` compares decoded sets, this compares bytes, so a
+    decoder that drops or duplicates an id breaks the agreement (G2's teeth)."""
+    out = []
+    prev = {}
+    for si, (ev, r, bases) in enumerate(samples):
+        for idx, name, rec in bases:
+            key = (idx, name)
+            cur = rec[FAC_OFF:FAC_OFF + FAC_BYTES]
+            if key in prev and prev[key][1] == si - 1:
+                pr = prev[key][0]
+                diff = [(by, pr[by] ^ cur[by]) for by in range(FAC_BYTES)]
+                nd = sum(bin(v).count("1") for _by, v in diff if v)
+                offs = [FAC_OFF + by for by, v in diff if v]
+                if nd:
+                    out.append((si, idx, nd, offs))
+            prev[key] = (cur, si)
+    return out
 
 
 # --- the transaction leg (B23's parity-verified arithmetic, with the stamp attached) --------
@@ -247,16 +273,21 @@ def main(argv=None):
           % (si, ev, r, idx, name[:22], hd, pd, st, gained, lost))
     d_dig = _sha(rows)
     p("  gains=%d losses=%d rows=%d digest=%s" % (len(gains), len(losses), len(rows), d_dig))
-    # every changed sample's symmetric difference is fully accounted by the two lists
-    acct = all(len(gained) + len(lost) ==
-               len(set(cur) ^ set(prev)) for _s, _e, _r, _i, _n, prev, cur, gained, lost,
-               _h, _p, _st, _ph in rows)
+    # the DECODED delta must equal the RAW XOR popcount, sample by sample (independent paths)
+    acc = byte_accounting(samples)
+    acc_by = {(si, idx): nd for si, idx, nd, _o in acc}
+    dec_by = {(r_[0], r_[3]): len(r_[7]) + len(r_[8]) for r_ in rows}
+    acct = acc_by == dec_by and all(v > 0 for v in acc_by.values())
+    p("  byte accounting: %d changed samples by raw XOR, %d by decoded sets, agreement=%s"
+      % (len(acc_by), len(dec_by), acct))
     g("G2 the recorded bitmaps are NOT monotonic: %d gains and %d losses at %d changed samples, "
-      "every symmetric difference fully accounted" % (len(gains), len(losses), len(rows)),
+      "and the decoded delta equals the RAW XOR popcount at every changed sample"
+      % (len(gains), len(losses), len(rows)),
       len(gains) >= 1 and len(losses) >= 1 and len(rows) >= 2 and acct,
-      "digest=%s" % d_dig)
-    every_id_in_window = all(0 <= i < FAC_BYTES * 8 for _r, i in gains + losses)
-    g("G2b every changed id lies inside the four-byte window", every_id_in_window)
+      "digest=%s skipped_nonadjacent=%d" % (d_dig, getattr(deltas, "skipped", 0)))
+    in_window = all(all(FAC_OFF <= off < FAC_OFF + FAC_BYTES for off in offs) for _s, _i, _n, offs in acc)
+    g("G2b every changed BYTE lies inside +0x8c..+0x8f (%d changed samples, %d offsets)"
+      % (len(acc), sum(len(o) for _s, _i, _n, o in acc)), in_window and len(acc) > 0)
 
     # ---- G3: the head-stamps-the-bit rule SCORED against the recorded run ---------------
     score = []
@@ -333,6 +364,9 @@ def main(argv=None):
     p("  2-deep fixture (pending=2, slots [2,6,..], declared): order-first %s -> %s ; pop-first "
       "%s -> %s" % (d_log, sorted(bits_of(d_ok) - bits_of(bytes(deep))),
                     d_log_r, sorted(bits_of(d_rv) - bits_of(bytes(deep)))))
+    g("G4f the anchor IS the r0 sample: r==0, st 8, head 2, pending 1, price 9, add 1",
+      k_r == 0 and k_st0 == 8 and k_head == 2 and k_pend == 1 and PRICE == 9 and ADD == 1,
+      "r=%d st=%d head=%d pend=%d price=%d add=%d" % (k_r, k_st0, k_head, k_pend, PRICE, ADD))
     g("G4e the NO-STAMP replay leaves the recorded bitmap UNCHANGED (the recorded negative)",
       bits_of(k_new) == bits_of(k_rec) and st_of(k_new) == 0)
     g("G4d pop-first stamps the NEXT item (6) and misses the head (2)",
@@ -362,9 +396,14 @@ def main(argv=None):
          idn_blob == sv.data))
     img_sha = hashlib.sha256(blob).hexdigest()[:16]
     p("  written sha256[:16]=%s bytes=%d" % (img_sha, len(blob)))
+    orig_bits = sorted(bits_of(raw))
+    n_other = len([o for o in sv.bases if o["i"] != 0])
+    p("  original bits=%s (a LOSS of 8 is expressible only as a byte write), other records=%d"
+      % (orig_bits, n_other))
     g("G5 the writer carries an ARBITRARY bitmap (a LOSS included, which the OR-only setter "
       "cannot express) and the reload reads it back",
-      sorted(bits_of(rrec)) == [1, 4] and others_same and idn_blob == sv.data
+      sorted(bits_of(rrec)) == [1, 4] and orig_bits == [1, 8] and 8 not in bits_of(rrec)
+      and others_same and n_other == 17 and idn_blob == sv.data
       and all(FAC_OFF <= x < FAC_OFF + FAC_BYTES for x in diff) and len(writes) == 2)
 
     # ---- G6: rivals fail on the printed numbers + determinism --------------------------

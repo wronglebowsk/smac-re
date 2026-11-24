@@ -28,10 +28,10 @@ STUB_ROWS = (
     ("THE QUEUE LEG CAN VISIT A BASE THE FOUNDER LEG WROTE IN THE SAME RUN: m289's 7 FOUND + 2 "
      "DESTROY applied to the base array IN THE IMAGE; the visited record is founded at t22, its 8 "
      "visits run t22-t29, 3 completions, image `n_units` 67->70",
-     "`evidence/b24_selftest.txt` G2/G3/G6; `evidence/m289_gdb_raw.log:327,471,568,590,929,1001,1194,1251,1651`", "V"),
+     "`evidence/b24_selftest.txt` G2/G3/G6; `evidence/m289_gdb_raw.log:327,471,568,590,929,1001,1194,1251,1651`", "V (composition) / OPEN (that the GAME founds the (27,29) record - the seed span is a declared fixture)"),
     ("ADDRESSING LAW: the fold reaches that record by LEDGER POSITION 22 (`[22]*8`), never by tile - "
      "tile-addressing is IMPOSSIBLE once the container's tile bytes for that slot are rewritten, and "
-     "`mode=locate` cannot be settled on the uncorrupted leg", "`evidence/b24_selftest.txt` G8", "V"),
+     "`mode=locate` cannot be settled on the uncorrupted leg", "`evidence/b24_mutate.txt` MU8 (the tile law) + `evidence/b24_selftest.txt` G8 (retirement only)", "V"),
     ("FALSIFIER bites: tile/owner corrupted IN THE IMAGE from visit 6 -> the THIRD arrival carries "
      "(1447,1448)/owner 0x5a while the image's first two unit records stay clean; the model-fed fold is blind",
      "`evidence/b24_selftest.txt` G7", "V"),
@@ -80,7 +80,7 @@ def rotate():
     stub = ["## B24 (s287, BUILD 9/9, zero box; mutation-tested 9/9 + 1 declared NO-OP) - the composed LIVE "
             "run: the QUEUE/visit leg operates on a record the FOUNDER leg wrote into the container in the "
             "SAME run, addressed BY LEDGER POSITION, and destroys run in the image (`sim/composedlive.py`). "
-            "FULL ROWS VERBATIM at `docs/named-archive-b31-rows.md:4` (moved by `scripts/b31_named_rotate.py`, "
+            "FULL ROWS VERBATIM at `docs/named-archive-b31-rows.md:5` (moved by `scripts/b31_named_rotate.py`, "
             "sha1 `" + sh + "`); this stub governs, one line per claim, same cites.", "",
             "| claim | evidence | conf |", "|---|---|---|"]
     for claim, ev, conf in STUB_ROWS:

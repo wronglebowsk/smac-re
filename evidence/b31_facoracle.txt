@@ -11,8 +11,9 @@ G2 BIT CHANGES IN THE RECORDED RUN (gain = completion can explain, loss = it can
   sample 13 round_after  r6 base 13 Morgan Processing      head=-2    pend=0 st=1   gained=[3]      lost=[]
   sample 15 round_after  r7 base  7 Morgan Energy Monopoly head=-8    pend=0 st=1   gained=[6]      lost=[]
   gains=6 losses=2 rows=6 digest=ce7688c0cb3b5f9d
-ok   G2 the recorded bitmaps are NOT monotonic: 6 gains and 2 losses at 6 changed samples, every symmetric difference fully accounted  digest=ce7688c0cb3b5f9d
-ok   G2b every changed id lies inside the four-byte window
+  byte accounting: 6 changed samples by raw XOR, 6 by decoded sets, agreement=True
+ok   G2 the recorded bitmaps are NOT monotonic: 6 gains and 2 losses at 6 changed samples, and the decoded delta equals the RAW XOR popcount at every changed sample  digest=ce7688c0cb3b5f9d skipped_nonadjacent=0
+ok   G2b every changed BYTE lies inside +0x8c..+0x8f (6 changed samples, 7 offsets)
 
 G3 THE RULE 'the queue head id is the bit that appeared' SCORED
   sample  3 base  4 Sparta Command         head=321   gained_bit=4   match=False head_outside_window=True
@@ -34,12 +35,14 @@ ok   G4a the spend is B23's parity-verified arithmetic: st 8 + 1 - 9 = 0 == the 
 ok   G4b the head 2 is INSIDE the facility window, so the negative is not vacuous
 ok   G4c the recorded bitmap does NOT move at this boundary (bits stay [8]), so a stamp here FAILS the recorded bytes
   2-deep fixture (pending=2, slots [2,6,..], declared): order-first [('spend', 0), ('stamp', 2), ('pop', 2)] -> [2] ; pop-first [('pop', 2), ('stamp', 6), ('spend', 0)] -> [6]
+ok   G4f the anchor IS the r0 sample: r==0, st 8, head 2, pending 1, price 9, add 1  r=0 st=8 head=2 pend=1 price=9 add=1
 ok   G4e the NO-STAMP replay leaves the recorded bitmap UNCHANGED (the recorded negative)
 ok   G4d pop-first stamps the NEXT item (6) and misses the head (2)
 
 G5 ORACLE BITMAP CARRIED THROUGH THE WRITER (University Base {1,8} -> target {1,4})
   writes=2 diff_offsets=['0x8c', '0x8d'] reload_bits=[1, 4] other_records_identical=True identity_build=True
   written sha256[:16]=fb0bc0caa186b766 bytes=242539
+  original bits=[1, 8] (a LOSS of 8 is expressible only as a byte write), other records=17
 ok   G5 the writer carries an ARBITRARY bitmap (a LOSS included, which the OR-only setter cannot express) and the reload reads it back
 
 G6 RIVALS + DETERMINISM
@@ -57,5 +60,5 @@ G7 ANCHORS PINNED (rows, oracle, score, written image)
 ok   G7 the run reproduces every pinned anchor
 
 B31 TABLE digest=ce7688c0cb3b5f9d oracle=7afda4dd49566fb4 score=9a4f2c466f3d18b7
-PASS B31: 15/15 gates
+PASS B31: 16/16 gates
 ANCHORS rows=ce7688c0cb3b5f9d oracle=7afda4dd49566fb4 score=9a4f2c466f3d18b7 img=fb0bc0caa186b766

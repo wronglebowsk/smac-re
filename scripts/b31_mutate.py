@@ -21,7 +21,8 @@ sys.path.insert(0, ROOT)
 
 # The lint's id table: sim/facoracle's gates are covered by exactly these mutants (the
 # descriptive keys in mutate() map 1:1, in order). The harness asserts the counts agree.
-MU_IDS = ("MU1", "MU2", "MU3", "MU4", "MU5", "MU6", "MU7", "MU8", "MU9", "MU10")
+MU_IDS = ("MU1", "MU2", "MU3", "MU4", "MU5", "MU6", "MU7", "MU8", "MU9", "MU10", "MU11",
+          "MU12")
 
 GATE = re.compile(r"^(ok  |FAIL) (G\d+[a-z]?) (.*)$")
 
@@ -91,6 +92,21 @@ def mutate(name):
             return orig(rows)[:-2] + "%02x" % (state["n"] & 0xff)
         m._sha = wobble
         declared = {"G6d", "G7"}
+    elif name == "MU11_drop_gain":        # the decoder silently loses one gained id
+        orig = m.deltas
+
+        def lossy(samples):
+            rs = orig(samples)
+            for k, r in enumerate(rs):
+                if r[7]:
+                    rs[k] = r[:7] + (r[7][1:],) + r[8:]
+                    break
+            return rs
+        m.deltas = lossy
+        declared = {"G2", "G7"}
+    elif name == "MU12_price_const":      # the pinned PRICE constant drifts to 10
+        m.PRICE = 10
+        declared = {"G4f"}
     elif name == "MU10_noop":             # the control: nothing is broken
         declared = set()
     else:
@@ -105,7 +121,8 @@ def main():
         print("FAIL HARNESS B31: the baseline does not pass")
         return 1
     names = ["MU1_bitmap_off", "MU2_head_off", "MU3_price10", "MU4_noadd", "MU5_stamp_always",
-             "MU6_pop_first", "MU7_monotonic", "MU8_write_shift", "MU9_nondet", "MU10_noop"]
+             "MU6_pop_first", "MU7_monotonic", "MU8_write_shift", "MU9_nondet", "MU11_drop_gain",
+             "MU12_price_const", "MU10_noop"]
     assert len(MU_IDS) == len(names), "the lint id table drifted from the mutant list"
     rows, bad = [], []
     for nm in names:

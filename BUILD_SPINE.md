@@ -1166,14 +1166,15 @@ carries the FULL 304-B base record hex at every `round_before`/`round_after` sam
 the queue head `+0x50`, the pending count `+0x4c` and the accumulator `+0x40` can be decoded from the
 RECORDED BYTES at each of the 20 samples - the game's own run, not a model of it.
 
-`python3 -u -m sim.facoracle` must print `PASS B31: 15/15 gates` (and `python3 -u -m sim.selftest
+`python3 -u -m sim.facoracle` must print `PASS B31: 16/16 gates` (and `python3 -u -m sim.selftest
 --b31` only relays, so the two entry points cannot print different text) with: **G1** the oracle is
 READ - 10 before + 10 after samples, 407 base-records, every bitmap decoded from its own four bytes,
 the sample/record counts and the oracle digest printed and PINNED; **G2** every bit change is
 enumerated per base per boundary with the queue head, pending and accumulator beside it, and the
 symmetric difference of every changed sample is fully accounted by the gain/loss lists - the recorded
 bitmap is NOT monotonic (6 gains, 2 losses), which a completion can never explain; **G2b** every
-changed id lies inside the four-byte window; **G3** the rule "the head id is the bit that appeared" is
+changed BYTE lies inside `+0x8c..+0x8f` and the decoded delta equals the RAW XOR popcount at every
+changed sample; **G3** the rule "the head id is the bit that appeared" is
 SCORED over all 6 gains: 0 matches, 5 heads are unit-encoded (negative or far outside 0..31) and the
 one in-window head did not stamp - so the rule fails on printed numbers, not on commentary; **G4** the
 recorded transaction is replayed with the stamp attached: G4a the spend is B23's parity-verified
@@ -1181,10 +1182,10 @@ arithmetic (`st 8 + add 1 - price 9 = 0` == the recorded after), G4b the head 2 
 window (the negative is not vacuous), G4c the recorded bitmap does not move at that boundary while a
 stamp would move it, G4d a DECLARED 2-deep fixture (pending 2, slots `[2,6,..]`) shows the pop-first
 rival stamping the NEXT item (6) and missing the head (2), G4e the no-stamp replay leaves the recorded
-bitmap unchanged; **G5** the oracle drives the WRITER: an ARBITRARY target bitmap (a LOSS included,
+bitmap unchanged, G4f the anchor IS the r0 sample (`r==0`, st 8, head 2, pending 1, price 9, add 1); **G5** the oracle drives the WRITER: an ARBITRARY target bitmap (a LOSS included,
 which the OR-only setter cannot express) goes into the save's own record through `base_writes`, the
 reload reads it back, the diff is exactly the two bitmap bytes, the identity build is byte-identical
-and the other 17 records are untouched; **G6** the rivals are scored on the printed numbers and two
+and the LOSS of id 8 is asserted and the other 17 records are untouched; **G6** the rivals are scored on the printed numbers and two
 passes give identical digests; **G7** every anchor (rows, oracle, score, written image) is pinned to a
 literal, so a trace, decode or arithmetic drift reddens a gate instead of sliding by.
 DECLARED UNMODELED: the unit-id decoding that would map a queue head onto a bitmap id (M68/M69's

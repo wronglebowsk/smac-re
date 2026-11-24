@@ -454,12 +454,13 @@ printers of measured values need the same None-guard as the gate.
 
 ## Session 324 — B31 BUILD (round 5/10): the recorded run as the completion ORACLE
 
-Command: `python3 -u -m sim.facoracle` -> `PASS B31: 15/15 gates` (`evidence/b31_facoracle.txt:60`),
+Command: `python3 -u -m sim.facoracle` -> `PASS B31: 16/16 gates` (`evidence/b31_facoracle.txt:63`),
 rows `ce7688c0cb3b5f9d` / oracle `7afda4dd49566fb4` / score `9a4f2c466f3d18b7` / img `fb0bc0caa186b766`,
 re-run byte-identical. `python3 -u -m sim.selftest --b31` relays the same text. Harness
-`python3 -u scripts/b31_mutate.py` -> `PASS HARNESS B31: 10/10`, digest `a8bb479abbe42272`
-(`evidence/b31_mutate.txt:12`); NO-OP `[]`, every gate G1-G7 covered, MU5 forced a NEW gate (G4e) when
-it reddened nothing.
+`python3 -u scripts/b31_mutate.py` -> `PASS HARNESS B31: 12/12`, digest `087e1d0228debbe9`
+(`evidence/b31_mutate.txt:14`); NO-OP `[]`, every gate G1-G7 covered, MU5 forced a NEW gate (G4e) when
+it reddened nothing; review #367 then forced G2's accounting (decoded delta vs RAW XOR popcount,
+MU11) and the r0 anchor pin (G4f, MU12) - both had been printed, not gated.
 
 What B31 measured (from `evidence/trace_m56_build_20261026_145157.jsonl`, the full 304-B record hex at
 20 samples): 6 facility-bit gains and 2 losses — the recorded bitmap is NOT monotonic, so a completion

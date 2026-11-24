@@ -27,11 +27,11 @@ box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B
 §CHAIN-BUILDS, `## B25`-`## B30` govern; B26's ACCEPT+LAW at `docs/pick-archive.md` §trim-s308-chain1 (a)).
 **B30 = the COMPLETION leg** (`## B30`). **B31 MERGED = the recorded-run ORACLE** (`## B31`: 6 gains/2
 losses, head->bit 0/6, Korolev r0 spend 8+1-9=0 with NO stamp - so B30's setter is UNVERIFIED against
-the game's own run; 15/15 `ce7688c0cb3b5f9d`, harness 10/10 `a8bb479abbe42272`). **Next build B32**:
+the game's own run; 16/16 `ce7688c0cb3b5f9d`, harness 12/12 `087e1d0228debbe9`). **Next build B32**:
 author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
 decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (`wc -c` s323): `NAMED.md` 244,995/250,000 = 5,005 B (M340 rotated to `docs/named-archive-m340-rows.md`, `scripts/m344_named_rotate.py --verify`); M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5` (sha1 `ccee72a56f16b4b4`, `scripts/m342_named_rotate.py --verify`) - rotate again BEFORE adding once <5 KB. NEXT_PROMPT <=12,000.**
+  **DOC CAP (`wc -c` s324, post-B31): `NAMED.md` 247,113/250,000 = 2,887 B (B24 rotated VERBATIM to `docs/named-archive-b31-rows.md:5`, sha1 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `scripts/b31_named_rotate.py --verify`; M340/M329 archives stand) - ROTATE BEFORE adding: headroom is under the 5 KB trigger. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
