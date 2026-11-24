@@ -1,0 +1,8 @@
+  PASS archive sha1 == recorded
+  PASS archive bytes == recorded
+  PASS sha1 recorded in NAMED
+  PASS verbatim block gone from NAMED
+  PASS one stub row per archived claim
+  PASS every stub cite cell == its archived twin
+  PASS every stub row keeps a number of its twin
+PASS m353_named_rotate: 7/7 checks sha1 dd4991b77b2528c9d3bf011d226165c14277c19d

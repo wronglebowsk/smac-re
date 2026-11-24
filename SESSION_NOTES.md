@@ -649,3 +649,17 @@ whether a facility completion stamps at all.
   reads ints with NO gate.
 - **OPEN**: what `Laptop` selects (its atoi feeds masks @0x58ea12/0x58eb2b); the twins'
   0x3a7168/0x327168 return; whether any completion path re-persists.
+
+## Session 329-chain1 (2026-11-24) — M353: the `0x999fa4` numeric band — its ONE indexed filler and four `$` consumers (milestone/m353)
+
+- RUN `python3 -u scripts/m353_numeric_band.py` -> **PASS M353: 11/11 gates** digest `86a07168fa9aa476` (`evidence/m353_numeric_band.txt:87`), two renders byte-identical, stdout == committed evidence; harness `scripts/m353_mutate.py` -> **HARNESS PASS 11/11** `3bf05a54ea23037b` (`evidence/m353_mutate.txt:14`).
+- GEOMETRY (V): numeric `0x999fa4` / owner `0x999fcc` / payload `0x999ff4` are 0x28 apart (10 dwords each); text `0x99a01c` stride 0x100 x10 -> `0x99aa1c` (`:77`).
+- REFS (V): 16 = 11 absolute + 5 `[reg*4+0x999fa4]`; stores exactly 3 — `0x626597` SCALED (FUN_00626581), `0x442642` abs (cheat clamp, FUN_00442320), `0x626fd7` abs (FUN_00626f19 stores `0x64c460(0x99a01c)`'s return) (`:75-76`).
+- FILLER (V): `FUN_00626581`, 33 B: `cmp [ebp+8],9; jle` else `mov eax,3`; store `[eax*4+0x999fa4]`; `xor eax,eax`; ret. 260 call sites, 242 with a literal k in 0..6, NONE above 9 (`:38-39,:78-79`).
+- RETRACTION (V): M325/M324's `g999fa4 W={442642,626fd7}` was an ABSOLUTE-address census — the scaled store was invisible to it. Both rows patched in place in `NAMED.md`.
+- CONSUMERS (V): in FUN_00625b20 — `$NUMBER`@625c2c, `$NUM`@625cec, `$HEX`@625e4b, each `__itoa(v,buf,10)`; arg3 of `0x64f980` IS the radix (`cmp [ebp+0x10],0xa`, then forwards it), so **`$HEX` prints DECIMAL** (`:80-81`).
+- The 4th read `0x626091` is the `$#k` PREDICATE: k = char-0x30, `cmp numeric[k],1`, `setne`; that path has NO k bound while `$k` does (`cmp k,0xa`) (`:82`). Arithmetic: k=10 -> owner[0], 20 -> payload[0], 30 -> text[0] (`:83,:70`).
+- OPEN: what the `$#` flag gates; numeric[0] is DUAL-USE (cheat clamp `0x442642` vs ENERGY read `0x4e032c`/`0x4e0336`); `0x64c460`'s semantic.
+- CAP: NAMED headroom was 4,204 B (<5 KB trigger) -> `## B25` rotated VERBATIM to `docs/named-archive-m353-rows.md`, sha1 `dd4991b77b2528c9d3bf011d226165c14277c19d`, verify 7/7 (`evidence/m353_named_rotate.txt:9`).
+- PITFALLS: (a) a rotation stub gate written as `... or True` is vacuous — replaced with a real set-intersection check; (b) a PE section walk must read ImageBase at `pe+24+28`, not at the section-table base.
+
