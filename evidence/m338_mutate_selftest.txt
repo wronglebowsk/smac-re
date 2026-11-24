@@ -1,0 +1,4 @@
+ST1 instruction stream parsed: 781429 insns -> True
+ST2 a patch at a non-code address raises -> True
+ST3 all seven declared table loads are 7-byte encodings -> True
+SELFTEST 3/3

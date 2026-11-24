@@ -1094,18 +1094,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | ACCEPT 13/13 digest 470d844054b1b101 x2 (`:67-68`,`_rerun.txt:67-68`); 31/31+1 digest cf85092dea6baa93 (`evidence/m330_mutate.txt:36-38`); ST 5/5 (`evidence/m330_mutate_selftest.txt:6`) | cite | V |
 | OPEN: slot; ~~985aec~~ ANSWERED M332 (runtime mirror of the INI pref "Difficulty", master 0x92bde8); ~~+2fc/+308~~ ANSWERED M331 (income siblings); profile+300 | - | lead |
 
-## M326 (s301-chain2, STATIC 10/10, review #332 hardened) - block+224 = per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt); settled at upkeep
-
-| claim | evidence | conf |
-|---|---|---|
-| 13 hits 3W/10R dw; W roles {41a543 add,520b22 zero,59f0c1 reset} pinned; 0 seeds224; 27 accesses, 0 sibling-into-224; 13/13 STRIDE (subreg-fix both dirs; ALGO7=old); leaf=byte[rec+4] via sole slot stores 419d94/41690d (noun INFERRED) | G1-G3 `evidence/m326_block224_census.txt:35-37` | V MU3,MU4,MU9,MU12-MU15,MU17,MU19,MU20,MU23,MU26,MU27 |
-| HURRY: 419c30 alone pushes HURRY/HURRYOPTIONS/HURRYPAYMENT (689990/a4/c0); defer iff 920434&91c62c!=0 (phase flags around turnfn/upkeep calls) else pay ENERGY+91c64c now | G5 `:39` | V MU4,MU5,MU6,MU22 |
-| settle 520b0e-30: ENERGY-=224; 224:=0 (esi=0 xor@520ada, 0 defs); floor0; x8380 fold derived | G4 `:38` | V MU1,MU2,MU3,MU19 |
-| 10 readers=220-224 AVAILABLE (STRUCTURAL same-base directed sub); itoa 64f980 pinned at 1 site; cheat-cap MIN(g999fa4,avail)@41a4e0-f9 = 1 g999fa4 consumer (M325 OPEN) | G6 `:40` | V MU1,MU7,MU18,MU25,MU26 |
-| reset 59f0bf/c1; turnfn 16st/0blk; save [0]*8, foffs=550+k*20bc formula pinned, raw block carry (596a91 105e0/94d430); gap@328=own-player 3; no DEBT str; LOAN owners disjoint | G7-G9 `:41-43` | V MU8,MU9,MU10,MU11 |
-| M325 QUALIFIED: 29 labels BLKCONST->STRIDE +4 UNPROVEN det; totals/seeds/pins unchanged; M325 own 8 gates RE-RUN under fix = 8/8 | G10 `:44`; `evidence/m326_m325_seedcheck.txt:4,9` | V MU24 (MU17 mechanism) |
-| ACCEPT 10/10 digest f0f31c3daa26b601 x2 (`evidence/m326_block224_census.txt:45-46`,`_rerun.txt:45-46`); harness 27/27 (25+2 NO-OP) digest 07326ba5d23a2dbe (`evidence/m326_mutate.txt:30-32`); ST 5/5 (`_selftest.txt:7`) | as cited | V |
-| OPEN: ~~920434/91c64c nouns~~ ANSWERED M328 (A=turn-start ENERGY snapshot V; B='multi' session flag, noun INFERRED); 419c30 callers; branch caveat 419de9/419e1f | - | lead |
+## M326 (s301-chain2, STATIC 10/10, review #332 hardened) — FULL rows VERBATIM at `docs/named-archive-m338-rows.md:7` (§rotation-1 marker at `:6`, s319-chain2 headroom rotation, sha1 `a882ee40851d` — the region is bounded by its own terminator line and its digest is re-asserted by `scripts/m338_named_rotate.py --verify`); this stub governs. block+224 = the per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt), settled at upkeep; hurry defer-vs-pay flag chain 920434&91c62c, readers = AVAILABLE (220-224), reset 59f0bf/c1, save carry [0]*8.
 
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
@@ -1365,3 +1354,18 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | walk stride `add eax,0x176` (0x4e24ab), 8 iters, iter 1 = TARGET; field+2 store sources = each register's own load (0x8f0c11 x3, lit 0) | `:41-56` | V MU8,MU11 |
 | base/end READ 0x57ac74/0x57ac88 = 6 rows; only clamp 0x486f30 `FUN_00423af0(diff,0,6)` INCLUSIVE => 6 -> `0x94d2c4` | `:58-90` | V MU6,MU7,MU10,MU12 |
 | OPEN: FUN_0058e7f0 >=6?; record indices assumed 0..7 | - | lead |
+
+## M338 (s319-chain2, STATIC 8/8) — the LAST two `#DIFF` readers: `0x57c606` is the literal loop counter 0..5; `0x44a1c8` indexes with a hall-of-fame record byte (+0x20) that is the faction's EFFECTIVE DIFFICULTY — `evidence/m338_diff_readers.txt:1`
+
+| claim | line | kind |
+|---|---|---|
+| table census: `.text` refs to 0x94d2ac = 2 base loads + 7 scaled readers {0x44a1c8,0x484cc9,0x485426,0x48678f,0x486f40,0x57c606,0x599405}, 0 stores; declared==measured both ways | `:1-10` | V MU2,MU11,MU12,ALG1 |
+| `0x57c606`: `xor esi,esi` (0x57c604) immediately precedes; the body writes esi only at `inc` 0x57c6ca; `cmp esi,6`/`jl 0x57c606` => index 0..5 = the loader's 6 rows (UI list builder) | `:11-15` | V MU1 |
+| `0x44a1c8`: `eax=[ebp-0x1c]`; `xor edx,edx`; `dl=BYTE[eax+0x20]`; `[edx*4+0x94d2ac]`; 0 insns between the byte load and the index, 0 calls | `:16-23` | V MU3 |
+| `[ebp-0x1c]` = record of the 35x0x8c buffer 0x983a10 (3 stores only, no bracket-crossing jump; `(8-1)*(1+4)*4 = 0x8c`) | `:24-31` | V MU4,MU5 |
+| buffer = `hallfame.jhh`: PE strings `rb`@0x689f3c + name@0x689f40, read 0x1324 = 35x0x8c to 0x984d34, zero-init 5x0x8c per 0x2bc | `:32-35` | V MU6,MU7 |
+| field +0x20 has exactly 2 writers: 0x44b15b from `BYTE[0x94d438+8380*faction]` (fold decoded = 0x20bc, cell = faction base 0x94d430+8), 0x44b612 a struct copy | `:36-40` | V MU8,MU9 |
+| 0x94d438 = the faction's EFFECTIVE DIFFICULTY: create 0x59eed6 (`ds:0x985aec` unless `ds:0x985b10` bit -> imm 3), save-load 0x57ef57 (same 8380 fold) | `:41-43` | V MU10 |
+| rivals dead: index is NOT `ds:0x985aec` (0 refs in the chain); 0x983a10 is NOT the faction array (0x8c vs 0x20bc); 0x57c606's index is NOT stored | `:44-58` | V |
+| ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8`, digest `1ae1563d47d0039e`, 2 runs diff-identical (sha256 70f90b79); harness 13/13 `a0b1fb4d4b427324` (`evidence/m338_mutate.txt:16`), ST 3/3 | `:59-60` | V |
+| OPEN: the +0x20 index is UNCLAMPED — a HoF record byte >=6 reads past `0x94d2c4`; whether FUN_0058e7f0 admits a pref >=6 is still open (M336); whether 0x44a1c8's window is the HoF screen or another list | - | lead |

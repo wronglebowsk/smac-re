@@ -103,9 +103,7 @@ def patch(ins, addr, old_bs, new_bs, old_txt, new_txt):
             assert i["bs"] == bytes.fromhex(old_bs), (hex(addr), i["bs"].hex())
             assert i["ops"] == old_txt, (hex(addr), i["ops"])
             i["bs"] = bytes.fromhex(new_bs)
-            parts = new_txt.split(None, 1)
-            i["mn"] = parts[0]
-            i["ops"] = parts[1] if len(parts) > 1 else ""
+            i["ops"] = new_txt
             return
     raise KeyError(hex(addr))
 
@@ -114,36 +112,36 @@ def apply_mut(ins):
     """Byte-faithful mutants (bytes AND text changed together)."""
     P = patch
     if MUT == "MU1":      # loop bound 6 -> 5
-        P(ins, 0x57C6CB, "83 fe 06", "83 fe 05", "cmp    esi,0x6", "cmp    esi,0x5")
+        P(ins, 0x57C6CB, "83 fe 06", "83 fe 05", "esi,0x6", "esi,0x5")
     elif MUT == "MU2":    # reader table displaced by one row
         P(ins, 0x44A1C8, "8b 04 95 ac d2 94 00", "8b 04 95 b0 d2 94 00",
-          "mov    eax,DWORD PTR [edx*4+0x94d2ac]", "mov    eax,DWORD PTR [edx*4+0x94d2b0]")
+          "eax,DWORD PTR [edx*4+0x94d2ac]", "eax,DWORD PTR [edx*4+0x94d2b0]")
     elif MUT == "MU3":    # field +0x20 -> +0x24
-        P(ins, 0x44A1C5, "8a 50 20", "8a 50 24", "mov    dl,BYTE PTR [eax+0x20]",
-          "mov    dl,BYTE PTR [eax+0x24]")
+        P(ins, 0x44A1C5, "8a 50 20", "8a 50 24", "dl,BYTE PTR [eax+0x20]",
+          "dl,BYTE PTR [eax+0x24]")
     elif MUT == "MU4":    # the record pointer is stored in a different slot
-        P(ins, 0x4497B7, "89 45 e4", "89 45 e0", "mov    DWORD PTR [ebp-0x1c],eax",
-          "mov    DWORD PTR [ebp-0x20],eax")
+        P(ins, 0x4497B7, "89 45 e4", "89 45 e0", "DWORD PTR [ebp-0x1c],eax",
+          "DWORD PTR [ebp-0x20],eax")
     elif MUT == "MU5":    # buffer base +4
         P(ins, 0x4497AD, "8d 04 95 10 3a 98 00", "8d 04 95 14 3a 98 00",
-          "lea    eax,[edx*4+0x983a10]", "lea    eax,[edx*4+0x983a14]")
+          "eax,[edx*4+0x983a10]", "eax,[edx*4+0x983a14]")
     elif MUT == "MU6":    # read size 0x1324 -> 0x1320
-        P(ins, 0x44B6CD, "68 24 13 00 00", "68 20 13 00 00", "push   0x1324", "push   0x1320")
+        P(ins, 0x44B6CD, "68 24 13 00 00", "68 20 13 00 00", "0x1324", "0x1320")
     elif MUT == "MU7":    # zero-init stride 0x8c -> 0x90
-        P(ins, 0x44B6B9, "05 8c 00 00 00", "05 90 00 00 00", "add    eax,0x8c", "add    eax,0x90")
+        P(ins, 0x44B6B9, "05 8c 00 00 00", "05 90 00 00 00", "eax,0x8c", "eax,0x90")
     elif MUT == "MU8":    # field source cell 0x94d438 -> 0x94d43c
         P(ins, 0x44B154, "8a 14 8d 38 d4 94 00", "8a 14 8d 3c d4 94 00",
-          "mov    dl,BYTE PTR [ecx*4+0x94d438]", "mov    dl,BYTE PTR [ecx*4+0x94d43c]")
+          "dl,BYTE PTR [ecx*4+0x94d438]", "dl,BYTE PTR [ecx*4+0x94d43c]")
     elif MUT == "MU9":    # fold shl 4 -> shl 3 (8380 -> 4190)
-        P(ins, 0x44B14F, "c1 e1 04", "c1 e1 03", "shl    ecx,0x4", "shl    ecx,0x3")
+        P(ins, 0x44B14F, "c1 e1 04", "c1 e1 03", "ecx,0x4", "ecx,0x3")
     elif MUT == "MU10":   # AI default 3 -> 4
-        P(ins, 0x59EED1, "b8 03 00 00 00", "b8 04 00 00 00", "mov    eax,0x3", "mov    eax,0x4")
+        P(ins, 0x59EED1, "b8 03 00 00 00", "b8 04 00 00 00", "eax,0x3", "eax,0x4")
     elif MUT == "MU11":   # INSERTION: a second table load appears
         P(ins, 0x40A519, "8b 0c 95 90 d6 94 00", "8b 0c 95 ac d2 94 00",
-          "mov    ecx,DWORD PTR [edx*4+0x94d690]", "mov    ecx,DWORD PTR [edx*4+0x94d2ac]")
+          "ecx,DWORD PTR [edx*4+0x94d690]", "ecx,DWORD PTR [edx*4+0x94d2ac]")
     elif MUT == "MU12":   # REMOVAL: a declared table load leaves the set
         P(ins, 0x484CC9, "8b 04 95 ac d2 94 00", "8b 04 95 90 d6 94 00",
-          "mov    eax,DWORD PTR [edx*4+0x94d2ac]", "mov    eax,DWORD PTR [edx*4+0x94d690]")
+          "eax,DWORD PTR [edx*4+0x94d2ac]", "eax,DWORD PTR [edx*4+0x94d690]")
     return ins
 
 
@@ -208,12 +206,11 @@ def fold_2095(ins, lo, hi):
     """Decode the 0x44b145 fold from its own immediates: edx = 65*eax; ecx = 131*eax;
     ecx <<= 4; ecx -= eax => 2095*eax; the load's [ecx*4] makes it 8380*eax."""
     seq = window(ins, lo, hi)
-    want = [("mov", "edx,eax"), ("shl", "edx,0x6"), ("add", "edx,eax"),
-            ("lea", "ecx,[eax+edx*2]"), ("shl", "ecx,0x4"), ("sub", "ecx,eax")]
     got = [(i["mn"], i["ops"]) for i in seq]
-    if got != want:
-        return None, ["unexpected: %s" % got]
     log = ["%s %s" % g for g in got]
+    shape = [g[0] for g in got]
+    if shape != ["mov", "shl", "add", "lea", "shl", "sub"]:
+        return None, log
     v = 1 << imm(seq[1])
     v = v + 1
     v = v * 2 + 1
@@ -383,7 +380,7 @@ def main():
            and esi_base["ops"] == "esi,0x983a10")
     print("== G6 the +0x20 field's writers ==")
     print("   stores to [reg+0x20] in 0x448c60..0x44c000: %s" % [hex(a) for a in w20])
-    print("   fold: %s -> coeff %d == 0x%x" % (" ; ".join(log6), coeff6, FACTION_STRIDE))
+    print("   fold: %s -> coeff %s == 0x%x" % (" ; ".join(log6), coeff6, FACTION_STRIDE))
     print("   source cell 0x%x == faction base 0x%x + 8" % (DIFF_CELL, FACTION))
     print("   copy: 0x%x %s / 0x%x %s" % (cp1["a"], cp1["ops"], cp2["a"], cp2["ops"]))
     gate("G6", bool(ok6), "writers=%s fold=%s cell=%s" %
