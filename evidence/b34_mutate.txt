@@ -1,0 +1,14 @@
+B34 mutant harness: 11 mutants against facstamp.py
+baseline green: 10/10 gates, no BAD
+  MU1  PASS   reddens G10,G6,G8 the recorded PAY test drops the per-round addition: Korolev/Virgin Soil completions vanish
+  MU2  PASS   reddens G10,G6    head 0 (an EMPTY queue) counted as a facility completion
+  MU3  PASS   reddens G1,G10    the dump digest anchor unpinned: any census drift would go unnoticed
+  MU4  PASS   reddens G3        the pop's body never read: writer-free passes on an UNMEASURED state
+  MU5  PASS   reddens G4        the pop's host set widened to the API's hosts: disjointness becomes vacuous
+  MU6  PASS   reddens G2,G5     whole-word copies folded into the grant family: the LOSS-capable writer disappears
+  MU7  PASS   reddens G6,G8     every completion called DISCRIMINATING: the byte diff no longer matches the vacuous rows
+  MU8  PASS   reddens G7        the facility window's LOWER bound dropped: a unit-encoded negative head reads as in-window
+  MU9  PASS   reddens G7,G9     every gain counted as a paid boundary: the no-pay copy signature is scored as a completion
+  MU10 PASS   reddens G2,G3     the bitmap filter dropped: every BYTE store in .text counted as a bitmap writer
+  NOOP PASS   reddens []        identity tree - must redden nothing
+PASS HARNESS B34: 11/11 mutants redden exactly their declared sets, NO-OP [], script d14c15ba21d1bec5

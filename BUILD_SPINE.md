@@ -1317,18 +1317,22 @@ and the 12 `and`-clears/`or`-sets/copies listed (the three families, not a prose
 caller - has 0 API call sites too, so the two pieces the game runs on a completion contain
 no stamp; **G4** the API's host set and the pop's host set are DISJOINT (set arithmetic on
 the printed tables), so no function both pops and stamps; **G5** the COPY family (a `mov`
-of the bitmap word, the only writer that can express a LOSS) is exactly the sites in
-`FUN_0041cf20` and the unnamed `0x4f3xxx` region plus the charge routine's `and`;
+of the bitmap word, the only writer that can express a LOSS) is exactly six sites: two in
+`FUN_0041cf20`, three in the unnamed `0x4f3xxx` region (`4f38bb`/`4f3ebc`/`4f3f4c`) and one
+in the charge routine `FUN_004f47f0`;
 **G6** on the recorded run, the paid boundaries with a FACILITY head (0 < head < 0x40)
 are printed with their before/after bitmaps - every one is UNCHANGED, so the completion
-model (delta `{}`) scores 2/2 and the "head stamps its bit" rival 0/2; **G7** the five
+model (delta `{}`) scores 6/6 and the "head stamps its bit" rival 0/6, and the run is
+scored for VACUITY too: 3 of the 6 already had the completed bit set (the stamp would be
+unobservable there), 3 are DISCRIMINATING; **G7** the five
 gains at PAID boundaries all have a unit-encoded before-head (outside the facility
 window), so no completion can explain them - they are attributed to G2/G5's grant/copy
 families, and the one no-pay boundary with both a gain and a loss (Virgin Soil) is the
-COPY signature 1/1; **G8** the negative control is LIVE, not vacuous: replaying the two
+COPY signature 1/1; **G8** the negative control is LIVE, not vacuous: replaying the six
 facility completions through `sim.facoracle`'s transaction WITH the stamp attached
-produces bytes that differ from the recorded ones at every completion, so the rival is
-falsified on bytes rather than on a count; **G9** the model's OWN coverage is printed as
+produces bytes that differ from the recorded ones at exactly the three discriminating
+completions (1 byte each: Korolev Center `[8]`->`[2,8]`, Virgin Soil s1/s9 `[27]`->`[2,27]`),
+so the rival is falsified on BYTES rather than on a count; **G9** the model's OWN coverage is printed as
 a defect - it explains 2/2 facility completions and 0/5 gains, and a model that scored
 5/5 would be one that stamps where the game does not; **G10** every anchor is a literal
 (insn count, store counts, host sets, the two heads, the two before/after bitmaps, the

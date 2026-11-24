@@ -1626,3 +1626,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | RETRACT "64-byte row"/"0x98adb8+0x34*i": +0x08..+0x14 = 16 cmp-only sentinels of 0x1c scans (backward jl, 24 iters), NOT fields | `:36-56,86-87` | V MU5,6 |
 | CROSS-REF `## M359` (same row): +0x27 = reactor level (INF), +0x28 = carry capacity (V), +0x2a = plan (M354's "class"); the labels printed at `:2-18` are pre-M359 placeholders | `## M359` | ref |
 | A: 0x80 slots -> cand[idx] -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34; ACCEPT 10/10 `1af1dcb6fcd4a4b6` x2 | `:57-66,98` | V MU10 |
+
+## B34 (s333, BUILD, zero box) — a FACILITY completion stamps `+0x8c` NOWHERE: the completion leg holds no writer, and the recorded bytes falsify the stamp at all 3 discriminating completions
+| claim | evidence | conf |
+|---|---|---|
+| the census is 20 stores, M342's 11+9 reproduced: API 2 (`4e4528` or / `4e4546` and), GRANT 11 (`FUN_004e47d0`), SET 1 (`4f0ec0`), COPY 6 (2 in `FUN_0041cf20`, 3 in the unnamed `4f38bb`/`4f3ebc`/`4f3f4c` region, 1 in `FUN_004f47f0`); COPY is the only LOSS-capable family | `evidence/b34_facstamp.txt:15,86` | V MU6,MU10 |
+| the pop `FUN_004ef5d0` (88 insns) has 0 bitmap refs and 0 API calls; the base screen `FUN_004ef6d0` (the pop's ONLY caller, 3 sites) has 0 API calls and its only bitmap store is the unit-only OR | `:87` | V MU4 |
+| the API's 8 host functions and the pop's host are DISJOINT, so no function both pops and stamps | `:88` | V MU5 |
+| the recorded run holds 6 facility-head paid completions (Korolev r0, Virgin Soil s1/s9, New Jerusalem s1/s9, Training Camp s15); every bitmap is UNCHANGED 6/6; 3 already had the bit set (vacuous), 3 discriminate | `:54-59,90` | V MU1,MU2,MU7 |
+| at all 3 discriminating completions the stamp model differs from the recording by exactly 1 byte (`[8]`->`[2,8]`, `[27]`->`[2,27]`): the stamp rival is falsified ON BYTES | `:70-76,92` | V MU7 |
+| the 5 gains are NOT completions: every before-head is unit-encoded (321/-2/-8/-3/-6); Virgin Soil s11 (gain 4 + loss 27, no pay) is the COPY signature 1/1 | `:61-67,91` | V MU8,MU9 |
+| ACCEPT `python3 -u -m sim.facstamp` -> 10/10 `5296fdad6d26caa3` (x2 identical); harness 11/11 `d14c15ba21d1bec5`; `sim.selftest --b34` relays | `:96`, `evidence/b34_mutate.txt:14` | V |
+| QUALIFIES `## B31`: its "one NEGATIVE at a facility-range head" is real but is 3 boundaries, and it did not flag the 3 vacuous rows | `:54-59` | V |
+| OPEN: which grant/copy call site fired in the run (no call stack in the trace); `FUN_0059ce10`'s 11 literal items (1 caller `FUN_005a0fa0`) | - | lead |

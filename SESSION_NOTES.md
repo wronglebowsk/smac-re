@@ -689,3 +689,23 @@ whether a facility completion stamps at all.
 - OPEN: +0x2b/+0x2d/+0x2e nouns; the 24-record 0x1c table's identity
   (it ends at 0x98ad90..0x98ad9c); bit8 noun. NEXT: (x6) pref-block writers;
   B34 = facility +0x8c.
+
+## Session 333-chain1 (2026-11-24) — B34: a FACILITY completion stamps NOTHING (no writer on the leg; the recorded bytes falsify the stamp at 3 discriminating completions)
+
+`python3 -u -m sim.facstamp` -> **`PASS B34: 10/10 gates  5296fdad6d26caa3`** (`evidence/b34_facstamp.txt:96`,
+re-run identical); harness 11/11, NO-OP `[]` (`evidence/b34_mutate.txt:14`). Answer to B33's gap: nowhere.
+- **20 stores, M342's 11+9 reproduced** (`:15,:86`): API 2 (`4e4528`/`4e4546`), GRANT 11 in `FUN_004e47d0`,
+  SET 1 (`4f0ec0`), COPY 6 (2 in `FUN_0041cf20`, 3 in the unnamed `4f38bb`/`4f3ebc`/`4f3f4c` region, 1 in
+  `FUN_004f47f0`). COPY is the only family that can express a LOSS.
+- **Leg is writer-free, measured**: pop `FUN_004ef5d0` 88 insns, 0 bitmap refs, 0 API calls; the base screen
+  (its only caller) 0 API calls, its only bitmap store the unit-only OR. API hosts ∩ pop hosts = ∅ (`:87-88`).
+- **6 facility completions in the recorded run** (`:54-59`), not B31's 1: Korolev r0, Virgin Soil s1/s9 (head 2),
+  New Jerusalem s1/s9 + Training Camp s15 (head 1). PAY = `st+1 >= 9` — testing `st >= price` misses Korolev.
+- **3 discriminate, 3 are vacuous (bit already set)**; all 3 discriminating falsify the stamp ON BYTES
+  (`:70-76,:92`): model `[8]`→`[2,8]` (Korolev), `[27]`→`[2,27]` (Virgin Soil) vs the recording's no-bit-2.
+- **The 5 gains are not completions** (`:61-67`): before-heads 321/-2/-8/-3/-6 (unit-encoded); Virgin Soil s11
+  (gain 4 + LOSS 27, no pay) is the COPY signature.
+- **B31 QUALIFIED**: its single negative is real but is 3 boundaries, and it did not flag the vacuous rows.
+- **Pitfalls**: `lea`-form writers need register-follow (`mov BYTE PTR [eax],cl` has no bitmap constant — a
+  constant-only grep finds 11 of 20); `4f49e1` is a `mov` here (M342 said `and`); head 0 = empty queue, not item 0.
+- NAMED 247,680 → 245,677 B by rotating `## B22` verbatim (`scripts/b34_named_rotate.py`, sha1 `524f63de`).

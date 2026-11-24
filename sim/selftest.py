@@ -1728,6 +1728,14 @@ def run_b33(sav_path, results):
     return sfl.main([])
 
 
+def run_b34(sav_path, results):
+    """Rung B34: WHERE a facility completion stamps +0x8c - sim/facstamp.py authors every claim
+    (the store census, the completion leg's writer-free walk, the recorded-run score), so --b34
+    and `python3 -m sim.facstamp` cannot print different text."""
+    from . import facstamp as sfs
+    return sfs.main([])
+
+
 def run_b30(sav_path, results):
     """Rung B30: the COMPLETION leg - a paid queue item becomes a facility the base HAS; the
     reader's inverse writes ONE bitmap byte through the writer, the RELOAD reads it back, and
@@ -1941,6 +1949,9 @@ def main(argv=None):
     ap.add_argument("--b33", nargs="*", metavar="ARG",
                     help="rung B33: the FACILITY leg's branch to the shared OR - census + CFG "
                          "reachability + the recorded score (no input needed)")
+    ap.add_argument("--b34", nargs="*", metavar="ARG",
+                    help="rung B34: where a facility completion stamps +0x8c - the store census + "
+                         "the recorded-run score (no input needed)")
     ap.add_argument("--b30", nargs="*", metavar="ARG",
                     help="rung B30: the COMPLETION leg - the queue item stamped into the "
                          "base's +0x8c bitmap, carried through the writer (defaults: <SAV>)")
@@ -2045,6 +2056,8 @@ def main(argv=None):
         return run_b32(None, results)
     if args.b33 is not None:
         return run_b33(None, results)
+    if args.b34 is not None:
+        return run_b34(None, results)
     if args.b30 is not None:
         sav = args.b30[0] if args.b30 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b30(sav, results)

@@ -1,0 +1,96 @@
+B34 - WHERE A FACILITY COMPLETION STAMPS +0x8c (campaign: base record +0x8c)
+
+TABLE 1 - the dump and the API's call graph
+  instructions=790695  call-instructions=48881  functions=10284  bitmap=0x95da9c
+  API 0x4e44f0 call sites=27 in 8 functions: FUN_0040d7a0:2, FUN_0041c4d0:2, FUN_0041d480:1, FUN_00507ef0:8, FUN_005823c0:1, FUN_00585720:1, FUN_0058fa40:1, FUN_0059ce10:11
+    FUN_0040d7a0     size=1584   sites=2  
+    FUN_0041c4d0     size=983    sites=2  
+    FUN_0041d480     size=3237   sites=1  
+    FUN_00507ef0     size=5306   sites=8  
+    FUN_005823c0     size=1609   sites=1  
+    FUN_00585720     size=22283  sites=1  
+    FUN_0058fa40     size=23925  sites=1  
+    FUN_0059ce10     size=5292   sites=11 
+
+TABLE 2 - every store into the bitmap word, by family
+  API    2 sites
+    004e4528 or   FUN_004e44f0
+    004e4546 and  FUN_004e44f0
+  COPY   6 sites
+    0041d317 mov  FUN_0041cf20
+    0041d34a mov  FUN_0041cf20
+    004f38bb mov  HOLE
+    004f3ebc mov  HOLE
+    004f3f4c mov  HOLE
+    004f49e1 mov  FUN_004f47f0
+  GRANT  11 sites
+    004e4a67 mov  FUN_004e47d0
+    004e4ab2 mov  FUN_004e47d0
+    004e4b31 mov  FUN_004e47d0
+    004e4b5a or   FUN_004e47d0
+    004e4b87 or   FUN_004e47d0
+    004e4bec or   FUN_004e47d0
+    004e4c16 or   FUN_004e47d0
+    004e4c3d or   FUN_004e47d0
+    004e4c83 or   FUN_004e47d0
+    004e4d2a mov  FUN_004e47d0
+    004e4d81 or   FUN_004e47d0
+  SET    1 sites
+    004f0ec0 or   FUN_004ef6d0
+
+TABLE 3 - the COMPLETION LEG's own two pieces
+  pop   FUN_4ef5d0 insns=88   bitmap-refs=0 api-calls=0
+  screen FUN_4ef6d0 insns=3282 bitmap-refs=3 api-calls=0
+  the screen calls the pop at 3 site(s); the screen's own API calls=0
+
+TABLE 4 - set arithmetic: the API's host set vs the pop's host set
+  |API hosts|=8  |pop hosts|=1  intersection={}
+
+TABLE 5 - the COPY family (the only writer that can express a LOSS)
+  6 copy sites: 0041d317/FUN_0041cf20, 0041d34a/FUN_0041cf20, 004f38bb/HOLE, 004f3ebc/HOLE, 004f3f4c/HOLE, 004f49e1/FUN_004f47f0
+  0 clear sites: 
+
+TABLE 6 - the recorded run's PAID boundaries with a FACILITY head (0 < head < 0x40)
+  s1  round_after New Jerusalem      head 1->1  st 17+1->4  before=[1,3,6,27] after=[1,3,6,27]  delta=[]  head_bit_already_set=True
+  s1  round_after Virgin Soil        head 2->65  st 8+1->1  before=[27] after=[27]  delta=[]  head_bit_already_set=False
+  s1  round_after Korolev Center     head 2->2  st 8+1->0  before=[8] after=[8]  delta=[]  head_bit_already_set=False
+  s9  round_after New Jerusalem      head 1->-8  st 16+1->2  before=[1,3,6,27] after=[1,3,6,27]  delta=[]  head_bit_already_set=True
+  s9  round_after Virgin Soil        head 2->2  st 8+1->2  before=[27] after=[27]  delta=[]  head_bit_already_set=False
+  s15 round_after Training Camp      head 1->325  st 22+1->8  before=[1] after=[1]  delta=[]  head_bit_already_set=True
+  paid boundaries total=30 ; facility-head paid=6 ; with a delta=0 ; DISCRIMINATING (head bit absent)=3
+
+TABLE 7 - the GAINS, and the head that was at the base when they happened
+  s3  Sparta Command     head_before=321   in_facility_window=False PAY    gained=[4] lost=[1]
+  s5  Morgan Energy Mono head_before=-2    in_facility_window=False PAY    gained=[2] lost=[]
+  s11 Morgan Industries  head_before=-8    in_facility_window=False PAY    gained=[8] lost=[]
+  s11 Virgin Soil        head_before=2     in_facility_window=True  NO-PAY gained=[4] lost=[27]
+  s13 Morgan Processing  head_before=-3    in_facility_window=False PAY    gained=[3] lost=[]
+  s15 Morgan Energy Mono head_before=-6    in_facility_window=False PAY    gained=[6] lost=[]
+
+TABLE 8 - the stamp model replayed on the facility completions (bytes)
+  s1  New Jerusalem      model=[1,3,6,27] recorded=[1,3,6,27] differing bytes=0 (discriminating=False) log=[('spend', 9), ('stamp', 1), ('pop', 1)]
+  s1  Virgin Soil        model=[2,27] recorded=[27] differing bytes=1 (discriminating=True) log=[('spend', 0), ('stamp', 2), ('pop', 2)]
+  s1  Korolev Center     model=[2,8] recorded=[8] differing bytes=1 (discriminating=True) log=[('spend', 0), ('stamp', 2), ('pop', 2)]
+  s9  New Jerusalem      model=[1,3,6,27] recorded=[1,3,6,27] differing bytes=0 (discriminating=False) log=[('spend', 8), ('stamp', 1), ('pop', 1)]
+  s9  Virgin Soil        model=[2,27] recorded=[27] differing bytes=1 (discriminating=True) log=[('spend', 0), ('stamp', 2), ('pop', 2)]
+  s15 Training Camp      model=[1] recorded=[1] differing bytes=0 (discriminating=False) log=[('spend', 14), ('stamp', 1), ('pop', 1)]
+
+TABLE 9 - the model's COVERAGE (a model that explained the gains would be wrong)
+  facility completions explained (delta {}) : 6/6
+  of those DISCRIMINATING (head bit absent) : 3/6
+  gains at paid boundaries explained by a completion: 0/5 (heads outside the window: 5)
+  copy-signature boundaries (no pay, gain+loss): 1/1
+
+DIGESTS dump=5296fdad6d26caa3 stores=6e9336d6bc27b5c8 run=fd2750a58598b20f
+ok   G1 dump censused: 790695 insns, 48881 calls, API sites 27 in 8 hosts, digest 5296fdad6d26caa3
+ok   G2 families: API=2 GRANT=11 SET=1 COPY=6 CLEAR=0 total=20 digest 6e9336d6bc27b5c8
+ok   G3 the pop (88 insns) is writer-free (refs=0 api=0); the screen's API calls=0 and its ONLY bitmap store is the unit-only OR at 0x4f0ec0; screen->pop=3
+ok   G4 API hosts and the pop's host are disjoint ({})
+ok   G5 the COPY family exists with the unnamed-region sites: 6 copies, 0 clears
+ok   G6 facility completions 6 (discriminating 3), every one stamped nothing; the head-stamp rival 0/6
+ok   G7 gains at paid boundaries 5, all with an out-of-window head (5); copy signature 1
+ok   G8 the stamp rival is falsified ON BYTES at every discriminating completion: 3/6 differ; 3 vacuous (bit already set)
+ok   G9 coverage printed: completions 6/6, gains explained by a completion 0/5
+ok   G10 anchors pinned: dump 5296fdad6d26caa3 stores 6e9336d6bc27b5c8 run fd2750a58598b20f
+
+PASS B34: 10/10 gates  5296fdad6d26caa3
