@@ -1,0 +1,16 @@
+baseline: rc=0 PASS M375: 8/8 gates  digest 34bcef7ab64b9272
+  ok   MU1   G0 red   the 0x552ce6 store is the count the census pins
+  ok   MU2   G1 red   the only bit-23 reader
+  ok   MU3   G1 red   0x8000 is read only at byte +1; move the literal to +0 and the reader is lost
+  ok   MU4   G2 red   0x8000's only mask (0x8010) loses the bit
+  ok   MU5   G3 red   the 50-tick arm on the 0x40 path
+  ok   MU6   G3 red   the expiry clear of 0x40
+  ok   MU7   G4 red   the bit-23 clear in the 0x17 block (one direction)
+  ok   MU8   G5 red   one 'Sending TREATY ON' anchor becomes TREATY OFF
+  ok   MU9   G2 red   0x100000's only SET mask
+  ok   MU10  G4 red   ALGO 1: treat 0x80000018 as if it carried bit 23 (the lookalike bug)
+  ok   MU11  G1 red   ALGO 2: tracer law - return offset 0 for every 0x94d4xx literal
+  ok   MU12  G3 red   ALGO 3: classifier law - count `and` as a bit setter
+  ok   MU13  G6 red   rewrite one diplomacy label line: the M367 anchor self-check can no longer align
+
+M375 mutants: 13/13 killed, 0 hole(s)

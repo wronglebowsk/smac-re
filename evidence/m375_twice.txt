@@ -1,0 +1,4 @@
+M375 twice-run check: acceptance re-run byte-compared
+aef3c85337bb3fe0c6faae768a83c0b403d27be2  evidence/m375_relation_bits.txt
+aef3c85337bb3fe0c6faae768a83c0b403d27be2  scratch/m375_rerun.txt
+IDENTICAL at 2026-11-24T11:02:25Z

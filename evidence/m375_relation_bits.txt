@@ -1,0 +1,88 @@
+M375 - the five unnamed bits of the relations dword 0x94d448
+
+G0  census of the +0 dword
+  refs 658  TEST 378  LOAD 253  STORE 27 (27 disp + 0 lea)
+  byte-offset literals: [0, 1]; DWORD tests at +0: 45  -> the dword is read whole (bits 16..31 included) and byte-wise at +0/+1
+  store sites: 0052b9c7 0052b9d0 00551b1d 00551d22 00552cca 00552cd8 00552ce6 00552d6f 00552d7d 005530c3 0055487f 00554d42 005552d3 00555394 005553f3 0055540a 00555430 005556eb 00555758 005557d9 0055580f 005558f5 00555a45 00555a60 00555a6e 00555f39 00555f4b
+ok  G0 658 refs / 27 stores; byte literals only at +0/+1, DWORD tests at +0 carry bits 16-31
+
+G1  per-bit access table (direct test at the bit's byte offset, or load-then-test-reg)
+  0x800000  direct  1  load->test  0  set-writer  0   sites: 0053f863
+  0x40      direct  3  load->test  2  set-writer  3   sites: 00508ebd 00508ef9 00547fd0
+  0x8000    direct  1  load->test  0  set-writer  0   sites: 0053bbed
+  0x10000   direct  1  load->test  2  set-writer  0   sites: 00547367
+  0x100000  direct  0  load->test  2  set-writer  0   sites: 
+    0x800000: readers ['0053f863'] lift [] writers []
+    0x40: readers ['00508ebd', '00508ef9', '00547fd0'] lift [('005351a2', '005351a9'), ('0056a11c', '0056a123')] writers ['00552ce6', '005553f3', '005556eb']
+    0x8000: readers ['0053bbed'] lift [] writers []
+    0x10000: readers ['00547367'] lift [('00532fa7', '00532fb1'), ('005468c1', '005468cb')] writers []
+    0x100000: readers [] lift [('00559cfd', '00559d0b'), ('0058ba79', '0058ba80')] writers []
+ok  G1 all five bits have at least one exact reader; 0x8000 is read ONLY as a byte at +1 (0x94d449, 0x80)
+
+G2  set vocabulary - masks pushed into the two setters
+  harvested by push-run 76 + via-jcc 18 = 94 of 94 (94 sites seen)
+  0x551a20: 64 sites (24 masks, 3-arg)
+  0x551cf0: 30 sites (16 masks, 25 set / 3 clear / 2 flag-not-immediate)
+  0x800000  carried by 4 call(s): 0x800000@00547b92(A) 0x800000@00547f59(A) 0x800000@00548521(A) 0xdd9bc3c0@004da404(B)
+  0x40      carried by 10 call(s): 0x43@00523e5d(A) 0x50@00523f3c(A) 0x58@00595363(A) 0xdd9bc3c0@004da404(B) 0x40@0050765e(B,f=1) 0x40@00507caf(B,f=1) 0x40@0053bb47(B,f=1) 0x40@0053dff8(B,f=1) 0x40@00542c8c(B,f=0) 0x40@00552d83(B,f=1)
+  0x8000    carried by 2 call(s): 0x8010@00507d21(A) 0xdd9bc3c0@004da404(B)
+  0x10000   carried by 2 call(s): 0x10004@005526ba(A) 0xdd9bc3c0@004da404(B)
+  0x100000  carried by 2 call(s): 0xdd9bc3c0@004da404(B) 0x100000@0053fcc4(B,f=1)
+ok  G2 every one of the five is a bit some caller SETS (3-arg call, or flag=1); each bit's co-bits are read off the carrier list above
+
+G3  the 0x40 timer law - who arms the +0x80 cell (0x94d4c8) and who clears 0x40
+  refs to 0x94d4c8: 11  -> 0052b00d:mov 0052b01c:mov 0052b9eb:mov 0052b9f6:mov 00551d2a:mov 00552cec:mov 005552b6:mov 005552c3:mov 005553f9:mov 005556f1:mov 0059f08f:lea
+  arms of 0x32: 00551d2a 00552cec 005553f9 005556f1
+  stores leaving 0x40 set: 00551d22 00552ce6 005553f3 005556eb
+    set@00551d22 -> arm ['00551d2a']
+    set@00552ce6 -> arm ['00552cec']
+    set@005553f3 -> arm ['005553f9']
+    set@005556eb -> arm ['005556f1']
+  expiry clear of 0x40 on the dword (and al,0xbf with a load/store of 0x94d448): 005552d1
+  status masks that clear 0x40: 00551a88:0xffee7faf 00551aaf:0xffee7faf 00551b17:0xfaeef378 00551b42:0xfaeef378
+ok  G3 4/4 stores that leave 0x40 set arm 0x94d4c8 to 0x32 (50); the upkeep at 0x5552b6 decrements it and clears 0x40 exactly at 0; the peace mask never touches the cell
+
+G4  bit 23 (0x800000): what sets it, what clears it, and the 0x80000018 lookalike
+  window 0x551a20..0x551c32: `test bl,0x17` ['00551b74'], `or ebx,0x80000108` ['00551b11'], `and edx,0xff7fffff` ['00551b98', '00551bbf'], `or edx,ebx` ['00551be6', '00551c09']
+  requests carrying bit 23: 4 -> ['0x800000@00547b92', '0x800000@00547f59', '0x800000@00548521', '0xdd9bc3c0@004da404']; carrying a 0x17 bit too: 0
+  lookalike: mask 0x80000018 & 0x800000 = 0x00000000  (it carries bit 31 0x80000000, not bit 23)
+    pre 0x00800008 mask 0x00800000 -> 0x00800008  bit23=True
+    pre 0x00800008 mask 0x00000010 -> 0x80000118  bit23=False
+    pre 0x00800008 mask 0x80000018 -> 0x80000118  bit23=False
+    pre 0x00800008 mask 0x00000007 -> 0x0000000f  bit23=False
+ok  G4 bit 23 survives ONLY a request that carries no 0x17 bit (0x800000 alone, the 'TREATY ON' term); every status write clears it at 0x551b98 and the tail OR cannot restore it; 0x80000018 is bit 31 + war, not bit 23
+
+G5  protocol anchors - the string pushed beside the mask, and the 0x100000 writer
+  mask 0x800000   @00547b63 -> string 'Sending TREATY ON' @00547b6e
+  mask 0x800000   @00547f2c -> string 'Sending TREATY ON' @00547f37
+  mask 0x800000   @005484f2 -> string 'Sending TREATY ON' @005484fd
+  mask 0x1000000  @00547b9f -> string 'Sending TREATY OFF' @00547baa
+  mask 0x1000000  @00547f66 -> string 'Sending TREATY OFF' @00547f71
+  mask 0x1000000  @0054852e -> string 'Sending TREATY OFF' @00548539
+  mask 0x40       @0053bb0d -> string 'Sending SET TREATY' @0053bb11
+  mask 0x40       @0053dfcd -> string 'Sending SET TREATY' @0053dfd1
+  mask 0x40       @00542c61 -> string 'Sending SET TREATY' @00542c65
+  anchors found: 9/3
+  mask 0x100000 set once, at ['0053fcc4']; its caller walks the unit array
+  unit-array stride add esi,0x34 inside FUN_0053f9f0..: ['0053fc90']
+ok  G5 three mask->string anchors reproduce (TREATY ON / TREATY OFF / SET TREATY) and the 0x100000 write follows the unit sweep that expels b's units from a's tiles
+
+G6  the 13 diplomacy label ids (M367) contain none of the five
+  #LABELS header line 9; count line 1089; element 0 = 'Mission Year'
+  alignment delta vs M367 anchors: 0
+  0x8='Commlink' | 0x10='Vendetta' | 0x4='Truce' | 0x2='Treaty' | 0x1='Pact' | 0x1000='I have infiltrator' | 0x2000='I want to talk' | 0x20='I want revenge' | 0x2000000='I have surrendered' | 0x400='I shall betray' | 0x40000='I am atrocity victim' | 0x80000008='Fight to the death' | 0x80002000='Fix current status as permanent'
+ok  G6 none of the five is a checkbox id - the diplomacy page does not name them
+
+G7  rivals
+  or-immediates that precede a 0x40 store: ['0x40', '0x840']
+  R1 'the five are ONE class of peace-cleared companions' - bits with an armed counter: ['0x40'] of 5  -> differs on 4/5
+  status masks measured in the setter: peace 0xffee7faf, war 0xfaeef378
+  R2 'the five are cleared only by PEACE' - the war mask 0xfaeef378 also clears ['0x10000', '0x100000']  -> differs on 2/5
+  R3 'bit 23 always arrives with a status bit' - bit23 requests carrying a 0x17 bit: 0 of 4  -> differs on 4/4
+  R4 'bit 23 survives a status write' - masks whose SET result keeps bit 23: 1 of 4  -> differs on 3/4
+ok  G7 all four rivals differ on the printed rows (1/5 armed, war clears 2 more, bit 23 never rides a status bit, and only 1 of 4 requests lets it survive)
+
+  row digest 34bcef7ab64b9272 (re-decode 34bcef7ab64b9272)
+ok  G8 row digest reproduced on a second pass
+
+PASS M375: 8/8 gates  digest 34bcef7ab64b9272
