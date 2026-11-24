@@ -1,7 +1,8 @@
 == G0 inputs ==
   .text cache insns=781429  PE sections=8  fn index=10284
   cell=0x92bf0c  gap=0x92bdf0  span=[0x92bde8,0x92bf14] (76 dwords)  bitsets=0x985ac4/0x985ae8
-G0   ok   cache/index/PE resolve; 9/9 anchors in the stream
+  rotation docs/named-archive-m372-rows.md: 3851 B sha1 e4c1833079918bcc (stub e4c1833079918bcc/3851) match=True
+G0   ok   cache/index/PE resolve; 9/9 anchors in the stream; NAMED rotation sha1+size verified
   ini=Alpha Centauri.Ini present=True
 
 == G1 census, cell 0x92bf0c ==
@@ -54,22 +55,27 @@ G3   ok   0x628720 is base-2 (5 of 11 cells use it, 6 use base-16 0x62876b); rou
 G4   ok   all 4 in-game stores mask exactly 0x1800000 with NO shift (2 write a provably-zero value, 2 carry live bits; 2 carriers are the bitsets themselves); restore clears ~0x1800000 then ORs the whole cell -> the cell is a bit-shadow of 0x985ae8 bits 23/24, not a packed field
 
 == G5 the name ==
-  image occurrences of "Semaphore": 2 at ['0x692780', '0x692848']
-   pushed at 58eca8 in FUN_0058e7f0
-   pushed at 58f306 in FUN_0058f0d0
-G5   ok   2 occurrences, all pushed as the INI KEY by the loader and the writeback; no dialog uses it
+  image-wide C-string occurrences of "Semaphore": 2 at ['0x692780', '0x692848']
+   referenced at 58eca8 (push) in FUN_0058e7f0
+   referenced at 58f306 (push) in FUN_0058f0d0
+  address-dword occurrences: .text imm32=2 (the two pushes) ; data/table=0
+G5   ok   2 image-wide string occurrences, each referenced exactly ONCE (a push) by the loader and the writeback; 0 data/table pointer entries -> no other consumer
 
 == G6 who reads bits 23/24 of 0x985ae8 ==
-   bit 0x800000   readers: ['0x59ef11', '0x5a1446']
-   bit 0x1000000  readers: ['0x5a1150']
-   bit23 @0x59ef11 -> test eax,0x800000 | mov DWORD PTR [esi+0x94d82c],0xfffffc19 | je 0x59ef92 | call 0x64c6f0 | cdq | mov ecx,0x3 | idiv ecx | dec edx
-G6   ok   bit 23 read at 0x59ef11, 0x5a1446, bit 24 at 0x5a1150 - every site is in a game-start / new-game function
+   bit 0x800000   readers: ['0x59ef11(reg-test)', '0x5a1446(direct-test)']
+   bit 0x1000000  readers: ['0x5a1150(direct-test)']
+   bit 0x800000   owner fns: ['FUN_0059ec90', 'FUN_005a0fa0']
+   bit 0x1000000  owner fns: ['FUN_005a0fa0']
+   bit23 @0x59ef11 -> test eax,0x800000 | mov DWORD PTR [esi+0x94d82c],0xfffffc19 | je 0x59ef92 | call 0x64c6f0 | cdq | mov ecx,0x3 | idiv ecx
+   bit24 @0x5a1150 -> test DWORD PTR ds:0x985ae8,0x1000000 | je 0x5a121e | mov ecx,0xc | xor eax,eax
+G6   ok   bit 23 read at 0x59ef11, 0x5a1446, bit 24 at 0x5a1150 (owners FUN_0059ec90/FUN_005a0fa0 / FUN_005a0fa0); every reader sits in the game-start initialiser or the new-game faction setup
 
 == G7 the gap 0x92bdf0 ==
   text references to 0x92bdf0: 0
-  address-dword occurrences in the whole image: 0  (positive controls: 0x92bf0c=8, 0x92bde8=11)
+  address-dword occurrences, MOST PERMISSIVE scan (every byte offset, every section, one-byte alignment): 0 ; outside .text: 0 ; 4-aligned outside .text: 0
+  positive controls on the same scan: 0x92bf0c=8, 0x92bde8=11 (their .text hits are the instruction operands G1 already censuses)
   base-pointer sweep at 58efc4: [0x92bf18, 0x92bf34) step 0x4 -> 7 dwords, covers 0x92bdf0 ? False
-G7   ok   0x92bdf0: 0 text refs, 0 address dwords anywhere in the image; the only sweep in the region starts at 0x92bf18 and stops at 0x92bf34, above it
+G7   ok   0x92bdf0: 0 text refs and 0 address dwords under the most permissive scan (every offset, every section) - so no aligned pointer table can hide one; the only sweep in the region starts at 0x92bf18 and stops at 0x92bf34, above it
 
 == VERDICT ==
   The cell is a BIT STRING slot, not a packed field: its bits keep their
@@ -80,5 +86,5 @@ G7   ok   0x92bdf0: 0 text refs, 0 address dwords anywhere in the image; the onl
   (2 readers) and 24 (1 reader) of 0x985ae8; every read sits in the
   game-start / new-game path (G6).
 
-PASS M372: 8/8 gates digest c5400743557a9f3b
+PASS M372: 8/8 gates digest b699a30c05573575
   evidence: evidence/m372_semaphore_cell.txt

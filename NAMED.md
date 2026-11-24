@@ -1006,16 +1006,16 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - RIVAL KILLED: 0x92bde8 is BOTH the end of the 4x0xd4 array at 0x92ba98 AND a scalar pref cell - V (`:108` + G9.6 `:98-100`)
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
-## M372 (s337-c3, SEMAPHORE, 8/8). ACCEPT `scripts/m372_semaphore_cell.py` -> **`PASS M372: 8/8`** `c5400743557a9f3b` (`evidence/m372_semaphore_cell.txt:83`); harness **19/19, cov 8/8** (`evidence/m372_mutate.txt:33`).
+## M372 (s337-c3 SEMAPHORE 8/8). ACCEPT `scripts/m372_semaphore_cell.py` -> **`PASS M372: 8/8`** `b699a30c05573575` (`evidence/m372_semaphore_cell.txt:89`); harness **20/20, cov 8/8** (`evidence/m372_mutate.txt:34`).
 | claim | ev | conf |
 |---|---|---|
-| 8 refs text==byte; 5 STORE/3 READ; 4 stores `x&0x1800000`, 0 shifts | `:7-18` | V MU7 MU11 A1 A2 |
-| BINARY string: 0x58f030 flag=1 loops 31..0 min 8; emulation == INI `Semaphore=00000000` | `:20-27` | V MU1 MU2 A3 |
-| parse: 5 base-2 / 6 base-16 (0x628720/0x62876b); round-trip exact | `:29-45` | V MU3 A4 |
-| NOT packed: restore clears ~0x1800000 then ORs the cell; bits stay 23/24 => shadow | `:47-54` | V MU4 MU5 MU6 A5 |
-| "Semaphore" = 2 image strings, both the INI KEY; never a UI label | `:56-60` | V MU12 |
-| bit23 0x59ef11+0x5a1446, bit24 0x5a1150 read; all new-game | `:62-66` | V MU8 MU9 |
-| 0x92bdf0: 0 refs, 0 address dwords image-wide; sweep starts 0x92bf18 | `:68-72` | V MU10 A6 |
+| 8 refs text==byte; 5 STORE/3 READ; 4 stores `x&0x1800000`, 0 shifts | `:19,:55` | V MU7 A1 A2 |
+| BINARY string: 0x58f030 flag=1 loops 31..0 min 8; emulation == INI `Semaphore=00000000` | `:28` | V MU1 MU2 A3 |
+| parse: 5 base-2 / 6 base-16 (0x628720/0x62876b); counts GATED; round-trip | `:46` | V MU3 MU13 A4 |
+| NOT packed: restore clears ~0x1800000 then ORs the cell; bits stay 23/24 | `:55` | V MU4 MU5 MU6 MU11 A5 |
+| "Semaphore": 2 image-wide strings, referenced once (push); 0 data pointers | `:62` | V MU2 MU12 |
+| bit23 0x59ef11+0x5a1446, bit24 0x5a1150; owners 59ec90/5a0fa0 GATED | `:71` | V MU4 MU8 MU9 |
+| 0x92bdf0: 0 refs; 0 address dwords unaligned or aligned | `:78` | V MU10 A6 |
 | OPEN: the bits' NOUNS; 4dc77c/57cb1e=zero | - | INF |
 
 ## M370 (s336-c3, x6, STATIC 19/19). ACCEPT `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 19/19`** `2fa7ea3c1bf74394` (`evidence/m370_pref_writers.txt:197`); harness 25/25 (`evidence/m370_mutate.txt:30`).

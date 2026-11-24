@@ -12,6 +12,7 @@
   MU10 TEXT 0x58efc4|mov esi,0x92bdf0    want=G7 red=G7 rc=1 KILLED
   MU11 TEXT 0x4dc77c|mov ds:0x92bf0c,edx want=G4 red=G4 rc=1 KILLED
   MU12 TEXT 0x58eca8|push 0x69278c       want=G5 red=G5 rc=1 KILLED
+  MU13 TEXT 0x58ee0f|call 0x5ea484       want=G3 red=G3 rc=1 KILLED
   A1   ALGO 1                            want=G1 red=G1 rc=1 KILLED
   A2   ALGO 2                            want=G1 red=G1 rc=1 KILLED
   A3   ALGO 3                            want=G2 red=G2 rc=1 KILLED
@@ -22,12 +23,12 @@
 
   coverage (gate -> mutants that redden it):
    G0 A7
-   G1 MU7,A1,A2
+   G1 MU7,A1,A2,A7
    G2 MU1,MU2,A3
-   G3 MU3,A4
+   G3 MU3,MU7,MU13,A4,A7
    G4 MU4,MU5,MU6,MU11,A5
-   G5 MU12
-   G6 MU8,MU9
-   G7 MU10,A6
+   G5 MU2,MU12,A7
+   G6 MU4,MU8,MU9
+   G7 MU10,A6,A7
 
-PASS M372 harness: 19/19 killed, 0 survivors, coverage 8/8
+PASS M372 harness: 20/20 killed, 0 survivors, coverage 8/8

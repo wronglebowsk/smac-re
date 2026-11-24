@@ -71,6 +71,7 @@ PINS = {
     "struct_read": 0x48882E,
     "torch_sites": (0x4DC77C, 0x4DC8C3, 0x57CB1E, 0x57CC66),
     "bit23_readers": (0x59EF11, 0x5A1446), "bit24_readers": (0x5A1150,),
+    "bit23_owners": ("FUN_0059ec90", "FUN_005a0fa0"), "bit24_owners": ("FUN_005a0fa0",),
     "shapes": {0x4DC77C: "ZERO-BY-CLEAR", 0x57CB1E: "ZERO-BY-CLEAR",
                0x4DC8C3: "LIVE-BITS", 0x57CC66: "LIVE-BITS"},
     "gap_refs": 0, "gap_dwords": 0, "sweeps": 1, "sweep_base": 0x92BF18,
@@ -178,6 +179,23 @@ def pe():
     return d, base, secs
 
 
+def pe_names():
+    """(image_base+VA, vsize, name) per PE section - used to tell an instruction operand
+    (inside .text) from a data pointer candidate (outside it)."""
+    d = open(EXE, "rb").read()
+    p = struct.unpack_from("<I", d, 0x3C)[0]
+    opt = p + 24
+    base = struct.unpack_from("<I", d, opt + 28)[0]
+    q = opt + struct.unpack_from("<H", d, p + 20)[0]
+    out = []
+    for _ in range(struct.unpack_from("<H", d, p + 6)[0]):
+        name = d[q:q + 8].rstrip(b"\x00").decode("latin1")
+        vs, va = struct.unpack_from("<II", d, q + 8)
+        out.append((base + va, vs, name))
+        q += 40
+    return out
+
+
 def off_of(secs, va):
     for v, vs, ra, rs in secs:
         if v <= va < v + vs:
@@ -264,9 +282,26 @@ def main():
              "/".join("0x%x" % b for b in BITSETS)))
     anchors = [EMIT, PARSE_BIN, PARSE_HEX, LOADER[0], WRITEBACK[0], 0x5EA493, 0x5EA484,
                0x58ECC9, 0x58F2FE]
+    # the NAMED rotation this unit performed: the stub's sha1/size are re-computed HERE,
+    # so "VERBATIM" is a measured claim and not a decorative one.
+    named = open(os.path.join(ROOT, "NAMED.md"), encoding="utf-8").read()
+    rot = re.search(r"## M303 .*?`(docs/named-archive-[a-z0-9-]+\.md)` \(sha1 ([0-9a-f]{16}), "
+                    r"(\d+) B\)", named)
+    rot_ok = False
+    if rot:
+        arch_txt = open(os.path.join(ROOT, rot.group(1)), encoding="utf-8").read()
+        body = arch_txt.split("\n\n", 1)[1]
+        rot_ok = (hashlib.sha1(body.encode()).hexdigest()[:16] == rot.group(2)
+                  and len(body.encode()) == int(rot.group(3)))
+        print("  rotation %s: %d B sha1 %s (stub %s/%s) match=%s"
+              % (rot.group(1), len(body.encode()),
+                 hashlib.sha1(body.encode()).hexdigest()[:16], rot.group(2), rot.group(3), rot_ok))
+    else:
+        print("  rotation stub NOT FOUND in NAMED.md")
     gate("G0", len(ins) > 200000 and len(rows) > 5000 and len(secs) >= 4
-         and all(a in by for a in anchors),
-         "cache/index/PE resolve; %d/%d anchors in the stream" % (sum(a in by for a in anchors), len(anchors)))
+         and all(a in by for a in anchors) and rot_ok,
+         "cache/index/PE resolve; %d/%d anchors in the stream; NAMED rotation sha1+size verified"
+         % (sum(a in by for a in anchors), len(anchors)))
     print("  ini=%s present=%s" % (os.path.basename(INI), os.path.exists(INI)))
 
     # ---------------- G1 census ----------------
@@ -491,6 +526,7 @@ def main():
           % (sem_helper == [0x5EA493], set(digits) == {"0", "1"}, shift == 1, hshift == 4,
              kinds.get(0x5EA484, 0) >= 1, rt == {v: v for v in rt}))
     gate("G3", sem_helper == [0x5EA493] and set(digits) == {"0", "1"} and shift == 1
+         and kinds.get(0x5EA493) == 5 and kinds.get(0x5EA484) == 6 and len(table) == 11
          and hshift == 4 and kinds.get(0x5EA484, 0) >= 1 and rt == {v: v for v in rt}
          and parse("00000000", base) == 0 and parse("1101000001110", base) == 0b1101000001110,
          "0x%x is base-2 (%d of %d cells use it, %d use base-16 0x%x); round-trip exact; "
@@ -630,57 +666,94 @@ def main():
 
     # ---------------- G5 the name ----------------
     print("\n== G5 the name ==")
-    hits = []
-    for va in range(0x690000, 0x6A0000):
-        o = off_of(secs, va)
-        if o is None or exe[o - 1] != 0:
-            continue
-        t = cstr(exe, secs, va, 32)
-        if t == "Semaphore":
+    # EVERY occurrence of the C string in the WHOLE image (file bytes, then mapped):
+    hits, pos = [], exe.find(b"Semaphore\x00")
+    while pos >= 0:
+        va = va_of(secs, pos)
+        if va is not None and (pos == 0 or exe[pos - 1] == 0):
             hits.append(va)
-    uses = []
+        pos = exe.find(b"Semaphore\x00", pos + 1)
+    # EVERY reference to those addresses: any mnemonic (push/mov/lea/cmp), not just push,
+    # plus any 4-byte dword anywhere in the image (a dialog/table pointer would show).
+    uses, dwords, textdw = [], 0, 0
+    names = pe_names()
     for va in hits:
-        for a, _, txt, mn, ops in ins:
-            if mn == "push" and ops.strip() == "0x%x" % va:
-                uses.append((va, a, owner(a)))
-    print("  image occurrences of \"Semaphore\": %d at %s" % (len(hits), [hex(h) for h in hits]))
-    for va, a, ow in uses:
-        print("   pushed at %x in %s" % (a, ow))
-    gate("G5", len(hits) == PINS["semaphore_strings"] and len(uses) == len(hits)
+        pat = struct.pack("<I", va)
+        q = exe.find(pat)
+        while q >= 0:
+            dva = va_of(secs, q)
+            sec = next((nm for v0, vs0, nm in names if v0 <= (dva or 0) < v0 + vs0), "?")
+            if sec.startswith(".text"):
+                textdw += 1          # an instruction's own imm32 (the push we already count)
+            else:
+                dwords += 1          # a data pointer / table entry - would be a second consumer
+            q = exe.find(pat, q + 1)
+        for a2, _, txt2, mn2, ops2 in ins:
+            if ("0x%x" % va) in ops2:
+                uses.append((va, a2, owner(a2), mn2))
+    print("  image-wide C-string occurrences of \"Semaphore\": %d at %s"
+          % (len(hits), [hex(h) for h in hits]))
+    for va, a2, ow, mn2 in uses:
+        print("   referenced at %x (%s) in %s" % (a2, mn2, ow))
+    print("  address-dword occurrences: .text imm32=%d (the two pushes) ; data/table=%d" % (textdw, dwords))
+    gate("G5", len(hits) == PINS["semaphore_strings"] and len(uses) == len(hits) and dwords == 0
          and {u[2] for u in uses} == {owner(0x58ECC9), owner(0x58F2FE)}
-         and not any(u[2].startswith("FUN_0048") for u in uses),
-         "%d occurrences, all pushed as the INI KEY by the loader and the writeback; no dialog uses it"
-         % len(hits))
+         and {u[3] for u in uses} == {"push"} and textdw == len(hits),
+         "%d image-wide string occurrences, each referenced exactly ONCE (a push) by the loader and "
+         "the writeback; 0 data/table pointer entries -> no other consumer" % len(hits))
 
     # ---------------- G6 the occupants ----------------
     print("\n== G6 who reads bits 23/24 of 0x985ae8 ==")
-    found = {0x800000: [], 0x1000000: []}
-    for i, (a, byts, txt, mn, ops) in enumerate(ins):
-        for b in found:
-            if mn in ("test", "and") and re.search(r"0x%x\b" % b, ops):
-                m = re.search(r"ds:0x985ae8", ops)
-                if m:
-                    found[b].append(a)
-                    continue
-                # same-register idiom: reg loaded from the bitset within 4 insns
-                p = ops.split(",")
-                reg = p[0].strip()
-                if reg in REGS:
-                    for k in range(i - 1, max(-1, i - 30), -1):
-                        mm2 = re.match(r"^\w+\s+(%s)\b," % reg, ins[k][2])
-                        if mm2:
-                            if re.match(r"mov\s+%s,\s*(?:DWORD PTR )?ds:0x985ae8" % reg,
-                                        ins[k][2]):
-                                found[b].append(a)
-                            break
+    # Four idioms are recognised, so the census is not an artefact of one encoding:
+    #   (a) test/and/bt/cmp against the bit imm with a DIRECT ds:0x985ae8 operand
+    #   (b) the same, carrying the bitset in a register loaded within the block
+    #   (c) `shr reg,23|24` (or bt reg,23|24) after such a load, then a mask of 1
+    #   (d) an immediate test on a register whose last def is that load
+    SHIFTS = {0x800000: 23, 0x1000000: 24}
+
+    def readers_for(bit):
+        out = []
+        for i, (a2, _, txt2, mn2, ops2) in enumerate(ins):
+            if mn2 in ("test", "and", "bt", "cmp") and re.search(r"0x%x\b" % bit, ops2) \
+                    and "ds:0x985ae8" in ops2:
+                out.append((a2, "direct-" + mn2))
+                continue
+            if "ds:0x985ae8" not in txt2:
+                continue
+            m = re.match(r"mov\s+(\w+),\s*(?:DWORD PTR )?ds:0x985ae8", txt2)
+            if not m:
+                continue
+            reg = m.group(1)
+            for k in range(i + 1, min(len(ins), i + 12)):
+                t3, mn3, ops3 = ins[k][2], ins[k][3], ins[k][4]
+                if mn3 in ("test", "and", "bt", "cmp") and re.search(r"0x%x\b" % bit, ops3) \
+                        and re.search(r"\b%s\b" % reg, ops3):
+                    out.append((ins[k][0], "reg-" + mn3))
+                    break
+                if mn3 in ("shr", "sar", "bt") and ops3.strip() == "%s,0x%x" % (reg, SHIFTS[bit]):
+                    out.append((ins[k][0], "shift-" + mn3))
+                    break
+                mb = re.match(r"^(\w+)\s+%s\b," % reg, t3)   # the carrier is redefined?
+                if mb and mb.group(1) in DEFOPS:
+                    break
+        return sorted(set(out))
+
+    found = {b: readers_for(b) for b in SHIFTS}
     for b in found:
-        print("   bit 0x%-8x readers: %s" % (b, [hex(s) for s in found[b]]))
-    print("   bit23 @0x59ef11 -> %s" % " | ".join(by[a][1] for a in order[idx[0x59EF11]:idx[0x59EF11] + 8]))
-    gate("G6", tuple(found[0x800000]) == PINS["bit23_readers"]
-         and tuple(found[0x1000000]) == PINS["bit24_readers"],
-         "bit 23 read at %s, bit 24 at %s - every site is in a game-start / new-game function"
-         % (", ".join("0x%x" % x for x in found[0x800000]),
-            ", ".join("0x%x" % x for x in found[0x1000000])))
+        print("   bit 0x%-8x readers: %s" % (b, ["0x%x(%s)" % (x, idiom) for x, idiom in found[b]]))
+    own = {b: tuple(owner(x) for x, _ in found[b]) for b in found}
+    for b in found:
+        print("   bit 0x%-8x owner fns: %s" % (b, list(own[b])))
+    print("   bit23 @0x59ef11 -> %s" % " | ".join(by[a2][1] for a2 in order[idx[0x59EF11]:idx[0x59EF11] + 7]))
+    print("   bit24 @0x5a1150 -> %s" % " | ".join(by[a2][1] for a2 in order[idx[0x5A1150]:idx[0x5A1150] + 4]))
+    gate("G6", tuple(x for x, _ in found[0x800000]) == PINS["bit23_readers"]
+         and tuple(x for x, _ in found[0x1000000]) == PINS["bit24_readers"]
+         and own[0x800000] == PINS["bit23_owners"] and own[0x1000000] == PINS["bit24_owners"],
+         "bit 23 read at %s, bit 24 at %s (owners %s / %s); every reader sits in the "
+         "game-start initialiser or the new-game faction setup"
+         % (", ".join("0x%x" % x for x, _ in found[0x800000]),
+            ", ".join("0x%x" % x for x, _ in found[0x1000000]),
+            "/".join(own[0x800000]), "/".join(own[0x1000000])))
 
     # ---------------- G7 the gap ----------------
     print("\n== G7 the gap 0x%x ==" % GAP)
@@ -688,10 +761,17 @@ def main():
                 if "0x%x" % GAP in ops]
     endian = ">" if ALGO == "6" else "<"   # A6: the dword scan byte-swapped
     pat = struct.pack(endian + "I", GAP)
-    gap_dw = []
+    gap_dw, gap_data, gap_aligned = [], [], []
+    secnames = pe_names()
     pos = exe.find(pat)
     while pos >= 0:
-        gap_dw.append(va_of(secs, pos) or pos)
+        dv = va_of(secs, pos)
+        gap_dw.append(dv or pos)
+        sec = next((nm for v0, vs0, nm in secnames if v0 <= (dv or 0) < v0 + vs0), "?")
+        if not sec.startswith(".text"):
+            gap_data.append((pos, dv, sec))
+            if dv is not None and dv % 4 == 0:
+                gap_aligned.append((pos, dv, sec))
         pos = exe.find(pat, pos + 1)
     ctl = {}
     for name, tgt in (("cell", CELL), ("neighbour", 0x92BDE8)):
@@ -723,17 +803,23 @@ def main():
         if step and bound:
             sweeps.append((a, v, step, bound, (bound - v) // step))
     print("  text references to 0x%x: %d" % (GAP, len(gap_text)))
-    print("  address-dword occurrences in the whole image: %d  (positive controls: 0x%x=%d, 0x%x=%d)"
-          % (len(gap_dw), CELL, ctl["cell"], 0x92BDE8, ctl["neighbour"]))
+    print("  address-dword occurrences, MOST PERMISSIVE scan (every byte offset, every section,"
+          " one-byte alignment): %d ; outside .text: %d ; 4-aligned outside .text: %d"
+          % (len(gap_dw), len(gap_data), len(gap_aligned)))
+    print("  positive controls on the same scan: 0x%x=%d, 0x%x=%d (their .text hits are the"
+          " instruction operands G1 already censuses)" % (CELL, ctl["cell"], 0x92BDE8, ctl["neighbour"]))
     for a, v, step, bound, n in sweeps:
         print("  base-pointer sweep at %x: [0x%x, 0x%x) step 0x%x -> %d dwords, covers 0x%x ? %s"
               % (a, v, bound, step, n, GAP, v <= GAP < bound))
-    gate("G7", not gap_text and 0 == len(gap_dw) and ctl["cell"] == PINS["refs"]
+    gate("G7", not gap_text and not gap_dw and not gap_data and not gap_aligned
+         and ctl["cell"] == PINS["refs"]
          and ctl["neighbour"] == 11 and len(sweeps) == PINS["sweeps"]
          and sweeps[0][1] == PINS["sweep_base"] and sweeps[0][3] == PINS["sweep_bound"]
          and not any(s[1] <= GAP < s[3] for s in sweeps),
-         "0x%x: 0 text refs, 0 address dwords anywhere in the image; the only sweep in the region "
-         "starts at 0x%x and stops at 0x%x, above it" % (GAP, PINS["sweep_base"], PINS["sweep_bound"]))
+         "0x%x: 0 text refs and 0 address dwords under the most permissive scan (every offset, "
+         "every section) - so no aligned pointer table can hide one; the only sweep in the region "
+         "starts at 0x%x and stops at 0x%x, above it"
+         % (GAP, PINS["sweep_base"], PINS["sweep_bound"]))
 
     # ---------------- verdict ----------------
     print("\n== VERDICT ==")

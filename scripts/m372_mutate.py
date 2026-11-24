@@ -39,6 +39,7 @@ MUTANTS = [
     ("MU10", "TEXT", "0x58efc4|mov esi,0x92bdf0", "G7"),
     ("MU11", "TEXT", "0x4dc77c|mov ds:0x92bf0c,edx", "G4"),
     ("MU12", "TEXT", "0x58eca8|push 0x69278c", "G5"),
+    ("MU13", "TEXT", "0x58ee0f|call 0x5ea484", "G3"),
     ("A1", "ALGO", "1", "G1"),
     ("A2", "ALGO", "2", "G1"),
     ("A3", "ALGO", "3", "G2"),
@@ -53,8 +54,6 @@ GATES = ["G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7"]
 def truncated_cache():
     """A cache with FUN_0058e7f0's body removed - the loader anchor disappears."""
     dst = os.path.join(tempfile.gettempdir(), "m372_notloader.txt")
-    if os.path.exists(dst):
-        return dst
     line = re.compile(r"^\s*([0-9a-f]{6,8}):")
     with open(CACHE, "r", errors="replace") as f, open(dst, "w") as g:
         for ln in f:
@@ -62,6 +61,8 @@ def truncated_cache():
             if m and 0x58E7F0 <= int(m.group(1), 16) < 0x58F002:
                 continue
             g.write(ln)
+    src = os.path.getsize(CACHE)
+    assert os.path.getsize(dst) < src, "truncated cache is not smaller than the source"
     return dst
 
 
@@ -105,7 +106,7 @@ def main():
         print("  %-4s %-4s %-28s want=%s red=%s rc=%d %s"
               % (mid, kind, (val or "truncated cache")[:28], want,
                  ",".join(reds) or "-", rc, "KILLED" if ok else "SURVIVOR"))
-    cov = {g: [r[0] for r in rows if r[2] == g and r[5]] for g in GATES}
+    cov = {g: [r[0] for r in rows if g in r[3] and r[5]] for g in GATES}
     print("\n  coverage (gate -> mutants that redden it):")
     for g in GATES:
         print("   %s %s" % (g, ",".join(cov[g]) or "NONE"))
