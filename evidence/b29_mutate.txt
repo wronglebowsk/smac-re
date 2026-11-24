@@ -1,0 +1,10 @@
+MU1 reddens ['G3', 'G4', 'G5', 'G7', 'G8', 'G9'] rc=1 
+MU2 reddens ['G2', 'G6'] rc=1 
+MU3 reddens ['G3', 'G4', 'G5', 'G7', 'G8', 'G9'] rc=1 
+ME1 reddens ['G1'] rc=1 
+ME2 reddens ['G5'] rc=1 
+ME3 reddens ['G2', 'G6', 'G8'] rc=1 
+ME4 reddens ['G4'] rc=1 
+ME5 reddens ['G9'] rc=1 
+MU9 reddens nothing rc=0 
+HARNESS PASS 9/9 mutants redden exactly their declared sets (digest ae1f8e0292a59ed3)

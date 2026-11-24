@@ -1,0 +1,86 @@
+B29 - the item table derived from alpha through M337's loader law
+geometry: row0=0x984d38 stride=0x30 +0x10 records=72 consumer-bound=39
+rec  a_idx  nf  cost upk  name
+  0      -   -     -   -  <placeholder: the loop never writes record 0>
+  1      0   6     5   0  Headquarters
+  2      1   6     5   1  Children's Creche
+  3      2   6     4   0  Recycling Tanks
+  4      3   6     5   0  Perimeter Defense
+  5      4   6    12   2  Tachyon Field
+  6      5   6     4   1  Recreation Commons
+  7      6   6     8   1  Energy Bank
+  8      7   6     8   1  Network Node
+  9      8   6     6   1  Biology Lab
+ 10      9   6     6   1  Skunkworks
+ 11     10   6     6   3  Hologram Theatre
+ 12     11   6    12   4  Paradise Garden
+ 13     12   6    12   3  Tree Farm
+ 14     13   6    24   4  Hybrid Forest
+ 15     14   6    12   3  Fusion Lab
+ 16     15   6    24   4  Quantum Lab
+ 17     16   6    12   3  Research Hospital
+ 18     17   6    24   4  Nanohospital
+ 19     18   6    20   4  Robotic Assembly Plant
+ 20     19   6    32   6  Nanoreplicator
+ 21     20   6    20   5  Quantum Converter
+ 22     21   6    10   2  Genejack Factory
+ 23     22   6    10   2  Punishment Sphere
+ 24     23   6     8   2  Hab Complex
+ 25     24   6    16   4  Habitation Dome
+ 26     25   6     8   0  Pressure Dome
+ 27     26   6     4   1  Command Center
+ 28     27   7     8   2  Naval Yard
+ 29     28   7     8   2  Aerospace Complex
+ 30     29   6    10   2  Bioenhancement Center
+ 31     30   6    10   2  Centauri Preserve
+ 32     31   6    20   3  Temple of Planet
+ 33     32   6    10   2  Psi Gate
+ 34     33   6    12   0  Sky Hydroponics Lab
+ 35     34   6    12   0  Nessus Mining Station
+ 36     35   6    12   0  Orbital Power Transmitter
+ 37     36   6    12   0  Orbital Defense Pod
+ 38     37   6     0   0  Stockpile Energy
+ 39     38  11    20   0  The Human Genome Project
+ 40     39  11    20   0  The Command Nexus
+ 41     40  11    20   0  The Weather Paradigm
+ 42     41  11    20   0  The Merchant Exchange
+ 43     42  11    20   0  The Empath Guild
+ 44     43  11    30   0  The Citizens' Defense Force
+ 45     44  11    30   0  The Virtual World
+ 46     45  11    30   0  The Planetary Transit System
+ 47     46  11    30   0  The Xenoempathy Dome
+ 48     47  11    30   0  The Neural Amplifier
+ 49     48   6    30   0  The Maritime Control Center
+ 50     49  11    30   0  The Planetary Datalinks
+ 51     50  11    30   0  The Supercollider
+ 52     51   6    30   0  The Ascetic Virtues
+ 53     52  11    30   0  The Longevity Vaccine
+ 54     53  11    30   0  The Hunter-Seeker Algorithm
+ 55     54   6    40   0  The Pholus Mutagen
+ 56     55  11    40   0  The Cyborg Factory
+ 57     56  11    40   0  The Theory of Everything
+ 58     57  11    40   0  The Dream Twister
+ 59     58  11    40   0  The Universal Translator
+ 60     59  11    40   0  The Network Backbone
+ 61     60   6    40   0  The Nano Factory
+ 62     61  11    40   0  The Living Refinery
+ 63     62  11    50   0  The Cloning Vats
+ 64     63   6    50   0  The Self-Aware Colony
+ 65     64  11    50   0  Clinical Immortality
+ 66     65  11    50   0  The Space Elevator
+ 67     66  11    60   0  The Singularity Inductor
+ 68     67  11    60   0  The Bulk Matter Transmitter
+ 69     68   6    60   0  The Telepathic Matrix
+ 70     69  11    60   0  The Voice of Planet
+ 71     70  11   200   0  The Ascent to Transcendence
+  ok   G1 8/8 leg pins carry address+token on ONE committed evidence line (misses none), and the CONTROL-bogus pin hits 0 lines
+  ok   G2 the loader window parsed out of the census (records 1..71, branch 39, end 72, iterations 71, bound 39) is REPRODUCED by the builder over alpha (records 1..71, branch 39, end 72, iterations 71) and the token census 42/2/27 == 42/2/27; the 39-record rival would end at 39
+  ok   G3 the DERIVED table equals the sim's table on 38/38 chargeable ids by upkeep and 38/38 by name, so ALPHA_SHIFT=1 is a consequence of the loader and no longer an assumption; the shift-0 rival differs at 22 ids [1, 2, 4, 5, 10, 11]
+  ok   G4 the 5 live-pinned (id, name, upkeep) rows are reproduced by the DERIVED table (5/5), the facility set [1, 3, 6, 7, 8] gives raw 3 == recorded 3 and disabled 2 == recorded 2 == 0x744f28 2 (disabled list [8]); by NAME the at-alpha-index rival matches 0/5 and the reversed order 0/5 - and the rival's VALUE-only score is 3/5, so the value alone would not discriminate and the name is the measured discriminator
+  ok   G5 B4's four DIFFERS rows are the alpha-index convention, not a different order: read at the alpha INDEX the derived table reproduces 4/4 M46 values [('Fusion Lab', 14, 4), ('Nanoreplicator', 19, 4), ('Quantum Converter', 20, 6), ('Quantum Lab', 15, 3)], read at index+1 (B4's own column) 0/4 [('Fusion Lab', 14, 4), ('Nanoreplicator', 19, 4), ('Quantum Converter', 20, 6), ('Quantum Lab', 15, 3)], while the same at-index convention puts the WRONG facility name at 0/5 pinned ids - so one convention cannot explain both sets
+  ok   G6 the boundary is a number: the loader writes 33 records past the branch (recs 39..71) and the feeder's bounds 1..34 reach 0 of them; 4 in-branch ids [35, 36, 37, 38] stay uncharged by M333's charge bound, and the consumer bound 39 == the branch 39
+  ok   G7 B28's run fed by the DERIVED table reproduces its pinned anchors: rows 705a4520c08c4062 == 705a4520c08c4062, print 99c52201f073499d == 99c52201f073499d, container 38bba29ab857654b == 38bba29ab857654b (table is the derived object: True); the honest pass still touches [], so nothing was loosened
+  ok   G8 rivals fail on the printed numbers {'R1-array-is-39': True, 'R2-no-shift': True, 'R3-reversed': True, 'R4-cost-sorted': True, 'R5-atidx-names': True}; two passes give rows e4b1c98e68ff8685 == e4b1c98e68ff8685, table fa829fcd87cf43d5 == fa829fcd87cf43d5, alpha sha bac04f33eb692085
+  ok   G9 the builder READS alpha: 71 rows with widths 42/2/27 equal the census, and a mutated alpha.json row moves exactly 1 derived cell (6, 1, 2) and reddens G3 at 1 id(s)
+PASS B29: 9/9 gates
+digest(rows)=e4b1c98e68ff8685 print_digest=377094bc16aa8f27 table_sha=fa829fcd87cf43d5 alpha_sha=bac04f33eb692085

@@ -1035,3 +1035,62 @@ out of the container and gates the two paths, it does not name it); which factio
 takes when energy goes negative (M333's OPEN lead, pick (x7) — B28 stops at the `jge`); the
 per-faction disabled list for the AI factions (only the player's recorded one is used, at G7).
 No box time, no /proc, no gdb, no game-binary load.
+
+---
+
+**B29 - the ITEM TABLE made DERIVED, not assumed: the feeder's per-slot `v` is computed from alpha
+`#FACILITIES` through the M337 LOADER LAW (record i = alpha row i-1), so `sim.economy`'s
+`ALPHA_SHIFT = 1` stops being an ASSUMPTION and becomes a measured consequence of the loader**
+(`sim/itemtable.py` = the law, its gates in the same file; s319 authors this rung from main
+f312c8d, as B14-B28 did).** B28 executed the feeder but took its price table from
+`sim.economy.upkeep_table`, whose `ALPHA_SHIFT = 1` row (`runtime id = alpha line index + 1`) is a
+B4-era ASSUMPTION inherited from `m32-m84e.md:270`; B4 itself printed two `table-later` rows that
+DIFFER under it ("Quantum Converter 5 vs M46 live read 6", "Quantum Lab 4 vs 3") and declared the
+runtime row order OPEN. M337 then pinned the order statically: the loader at `0x57a7ef..0x57a899`
+opens `FACILITIES`, walks `esi = record+0xc` from record 1 by 0x30 to record 72, reads one line per
+iteration and switches to the 11-token path exactly at alpha's first 11-token row (index 38 ->
+record 39); the consumer bound is 39 (`cmp esi,0x27` @`0x4f4a35`), not the array size. B29 executes
+that loader as a builder over `data/alpha.json`, derives the 72-record table (record 0 the
+placeholder the loop never writes), reprices the feeder from the DERIVED table, and settles B4's two
+DIFFERS rows as a measured id-convention artifact.
+
+`python3 -u -m sim.selftest --b29` must print `PASS B29: 9/9 gates` (authored once in
+`sim/itemtable.py`; `--b29` only relays, so the two entry points cannot print different text) with:
+**G1** transcription integrity - every leg pin is a (label, address, FIELD TOKEN, file) triple and
+ONE committed evidence line must carry BOTH the address and the token claimed for it, counted, with
+the deliberately-bogus control pin inside the same list so it is measured in the same pass and must
+hit nothing; **G2** the loader window is READ, not retyped - the census's own record numbers
+(start/branch/end/iterations, consumer bound) and its token census (`{6,7,11}` counts) are parsed
+out of `evidence/m337_item_order.txt` and the executable builder must REPRODUCE them from
+`data/alpha.json` (rival: the array is 39 records); **G3** the derived table must equal the sim's
+table for every chargeable id - name and upkeep over ids 1..38, plus the shift-1 identity on all 38,
+with the shift-0 rival differing at counted ids (this is what turns `ALPHA_SHIFT` from ASSUMED into
+VERIFIED); **G4** the five live-pinned (id, name, cost) rows, parsed out of
+`evidence/b4_economy.txt`, are reproduced by the DERIVED table (0 mismatches), and the recorded raw
+sum 3 / disabled sum 2 are recomputed from the derived costs over the recorded facility set, with
+the shift-0 and reversed-order rivals failing at counted ids; **G5** B4's two `table-later` DIFFERS
+rows, parsed out of the same evidence, are MEASURED: a single shift-0 reading of the alpha table
+reproduces BOTH M46 values exactly, while it fails all five pinned rows - so ONE id convention
+cannot explain both sets, and the residue is M46's alpha-line numbering, not a different runtime
+order (all four numbers printed, nothing waved); **G6** the boundary is a NUMBER - the derived
+records 39..71 (the 11-token/project rows from the branch on) are built, printed and shown
+UNREACHABLE by the feeder's charge bound, i.e. the set of records the consumer can charge is
+exactly the set before the branch (ids 1..38), counted; **G7** reuse, not forking - the feeder
+re-run on the save's own container with the DERIVED table reproduces B28's pinned anchors (rows
+digest `705a4520c08c4062`, print digest `99c52201f073499d`) and the container's own base totals
+are unchanged, so nothing in B28 is loosened or re-derived; **G8** rivals + determinism - every
+rival FAILS on the printed numbers, and two passes give an identical rows digest, an identical
+PRINTED-TABLE digest and an identical derived-table sha256, all three pinned to literals inside G8;
+**G9** the alpha file is read, not typed - names/costs/upkeep come from `data/alpha.json`, the
+counts printed (71 rows, 42/2/27 field-widths) equal the census's own counts, and a mutated
+`alpha.json` (one row's upkeep +1) moves exactly that one derived cell and reddens G3 at one id
+(the builder is shown to read the file it claims).
+
+DECLARED UNMODELED: records 39..71's trailing columns (the 12-store order beyond `+0x10` is M337's
+decoded `+00,+0c,+10,+14,+18,+04,+18,+1c,+2c,+24,+28,+20`, but only `+0x10` is priced here, since
+only it is charged); WHY M46 numbered its two rows by alpha line (a source-side convention, not
+re-derivable from the committed bytes - the gate measures the consequence, not the cause); the
+6 rows whose tails are commented out in this `alpha.txt` (M337's pitfall) are irrelevant to the
+price column but the 11-token path's re-sync is INFERRED, as M337 declared; whether the game's
+runtime table is patched by any non-loader writer (no such writer is claimed either way here).
+No box time, no /proc, no gdb, no game-binary load.
