@@ -36,16 +36,14 @@
 | commit 0x4b2570: `[eax+ecx*4+0x94d658]` <- `[esi+edx*4+0xcf8]`, eax=f*0x20bc; 1 grid dword, 1 at +0x20, 0 in the block; handlers 0x4b5530/0x4b55d0 | `:139` | V MU8-10 MU16 MU17 |
 | choice = rand%3+1 (1..3); 9 +0x58c loads: 5 0-tested, 3 name-pushed, 1 vs +0x590 => slot0 (0,0) = no agenda | `:148-149` | V MU6 MU7 |
 | OPEN: slot 0's owner; 0x2ce0 is pushed to the save/load helpers (4x) | `:110` | OPEN |
-## M393 (26/26) — pair 2 (+0x588/+0x590) has NO producer; 2 of its 3 reads cannot fire. `PASS M393: 26/26` `b0a0eb22422c2db1` (`evidence/m393_pair2.txt:97`), x2 same; 15/15 (`evidence/m393_mutate.txt:18`).
+## M393 (31/31) — pair 2 (+0x588/+0x590) has NO producer; 2 of 3 reads dead under `pair2==(0,0)`. `PASS 31/31` `72f86628daea0dd9` (`evidence/m393_pair2.txt:106`); 19/19 (`evidence/m393_mutate.txt:22`).
 | claim | ev | conf/mutant |
 |---|---|---|
-| stride from scorer's multiply 0x59c; anchors 927b14/18/1c/20; slot0 0x927590; 0x2ce0=8*stride | `:19-23` | V MU15 |
-| 0 stores on cat2/choice2 in 3 censuses (disp/folded/seeds); 2 in-block at +0; ctrl = 6 randomizer stores | `:24-44,62` | V MU1 MU3 MU12 |
-| block past .data file-backed end 0x6a9000 => loader-zero, no static init | `:13` | V MU4 |
-| only byte writer = the save/load mover FUN_00596540 (fread->[ebp+8]), args (0x927590,0x2ce0,1,file) | `:63-69` | V MU2 MU10 MU11 |
-| 8 refs, 4/field, all mov/cmp, 0 stores | `:70-80` | V MU8 MU14 |
-| picker skip needs choice 0 but `and ecx,3` zero-skips; scorer needs a NONZERO cell == 0; mirror -> `A.pair1==(0,0)`, TRUE for slot 0 | `:84-92` | V MU5 MU6 MU7 MU9 MU13 |
-| OPEN: slot-0 owner; `+0x594` readers | `:112` | OPEN |
+| stride from two scorer sites (`0x522dd3..de`,`0x522e62..6d`) = 0x59c; anchors 927b14/18/1c/20; slot0 0x927590; 0x2ce0=8*stride | `:19-26` | V MU15-16 |
+| 0 stores on cat2/choice2, 4 censuses (disp32 incl. RMW / per-function folded / string / seeds), 64,779 stores; ctrl = 6 first-pair stores | `:27-50,68` | V MU1-3 MU12 MU19 |
+| block inside `.data` but past its file-backed end 0x6a9000 => loader-zero | `:13-14` | V MU4 |
+| only byte writer = save/load mover FUN_00596540 (fread->[ebp+8]), args (file,1,0x2ce0,0x927590); 20 sites | `:72-77` | V MU2 MU10-11 |
+| 8 refs, all mov/cmp, 0 stores; picker skip needs choice 0 but `and ecx,3` zero-skips; scorer needs a NONZERO cell == 0; mirror `A.pair1==(0,0)` FIRES via slot 0 | `:78-104` | V MU5-9 MU13-14 MU17-18 |
 
 ## Not yet named (candidates, ranked by `COVERAGE.md`)
 - `0x5f6de9` — 305 callers, 550 B, 118 insns, no string literals

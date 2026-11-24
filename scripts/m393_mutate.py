@@ -21,7 +21,8 @@ CASES = [
      ["G5 zero producers"]),
     ("MU3", "naive census only (no offset folding)", {"M393_ALGO": "3"},
      ["G3 control finds the first-pair writer"]),
-    ("MU4", "the image carries static init bytes", {"M393_ALGO": "4"},
+    ("MU4", "the image carries static init bytes (.data raw end = its virtual end)",
+     {"M393_DATARAW": "0x99f284"},
      ["G5 block is loader-zero (no static init)", "G7 RIVAL-2 fails"]),
     ("MU5", "the roll keeps no +1 (choice1 0..2)", {"M393_ALGO": "5"},
      ["G6 choice1 is 1..3"]),
@@ -53,6 +54,18 @@ CASES = [
     ("MU15", "the block size push is wrong (4 slots)",
      {"M393_PATCH": "596ea4|push   0x1670"},
      ["G1 block size 8*stride"]),
+    ("MU16", "the scorer's SECOND stride site shifts by 2",
+     {"M393_PATCH": "522e68|shl    ecx,0x2"},
+     ["G1 stride read at two sites"]),
+    ("MU17", "the randomizer aims at slot 0's first pair",
+     {"M393_PATCH": "5a1171|mov    edi,0x927b1c"},
+     ["G7 slot 0's first pair is unset", "G7 mirror fires through slot 0"]),
+    ("MU18", "the predicate drops its second compare",
+     {"M393_PATCH": "5a1a9c|cmp    edi,edi"},
+     ["G7 R1 predicate is the (0,0) test"]),
+    ("MU19", "a string store is aimed at the block",
+     {"M393_PATCH": "5a1131|mov    edi,0x927b18"},
+     ["G5 zero producers", "G3 string stores (rep stos/movs) into the block"]),
 ]
 
 

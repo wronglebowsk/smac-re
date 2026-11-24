@@ -54,13 +54,16 @@ BLOCK_LO, BLOCK_HI = 0x927590, 0x92a270          # measured below from the save/
 ANCHORS = (0x927b14, 0x927b18, 0x927b1c, 0x927b20)   # measured below from the readers
 CAT2_OFF, CHOICE2_OFF = 0x588, 0x590
 
-NONSTORE = {"cmp", "test", "lea", "push", "call", "jmp", "je", "jne", "jz", "jnz",
+# A STORE is any instruction whose destination operand is memory EXCEPT a pure read.
+# RMW ops (add/adc/sub/sbb/and/or/xor/inc/dec/neg/not/shl/shr/sar/xchg/fst/fstp) and the
+# string ops (rep stos / rep movs, whose destination prints as es:[edi]) ARE stores.
+READONLY = {"cmp", "test", "lea", "push", "call", "jmp", "je", "jne", "jz", "jnz",
             "jl", "jg", "jle", "jge", "jb", "ja", "jbe", "jae", "js", "jns", "jo",
             "jno", "jp", "jnp", "loop", "ret", "nop", "int3", "in", "out", "cdq",
-            "cwde", "pop", "movzx", "movsx", "fld", "fst", "fstp", "fild", "fistp",
-            "seta", "setb", "setne", "sete", "setl", "setg", "sbb", "adc", "neg",
-            "not", "shl", "shr", "sar", "xor", "and", "or", "imul", "idiv", "mul",
-            "div", "inc", "dec", "rep", "stos", "movs", "xchg"}
+            "cwde", "pop", "movzx", "movsx", "fld", "fild", "fistp", "fcom", "fcomp",
+            "fucom", "fucomp", "seta", "setb", "setne", "sete", "setl", "setg",
+            "imul", "idiv", "mul", "div", "bt", "btc", "btr", "bts", "int", "leave"}
+NONSTORE = READONLY          # kept for the delta pass (which only looks at written registers)
 W16 = {"ax": "eax", "bx": "ebx", "cx": "ecx", "dx": "edx", "si": "esi", "di": "edi",
        "bp": "ebp", "sp": "esp"}
 W8 = {"al": "eax", "bl": "ebx", "cl": "ecx", "dl": "edx", "ah": "eax", "bh": "ebx",
@@ -165,7 +168,16 @@ def reg_of(x):
 
 
 def is_store(op, ops):
-    return ops is not None and op not in NONSTORE and "[" in ops[0]
+    if ops is None or "[" not in ops[0]:
+        return False
+    if op in READONLY:
+        return False
+    return True
+
+
+def is_string_store(op, ops):
+    """rep stos / rep movs: the destination is es:[edi], printed without a base reg name."""
+    return ops is not None and op in ("rep", "stos", "movs") and "es:[edi]" in ops[0]
 
 
 _S = None
@@ -213,9 +225,14 @@ for nm, vlo, vraw, vhi, ro in sects:
     say("G0", "section %-8s  VA %#010x  file-backed %#010x  vsize-end %#010x" %
         (nm, vlo, vraw, vhi))
 dot = [s for s in sects if s[0] == ".data"][0]
+DATARAW = int(os.environ.get("M393_DATARAW", "0") or "0", 0)
+if DATARAW:
+    dot = (dot[0], dot[1], DATARAW, dot[3], dot[4])
 say("G0", ".data raw/file-backed end %#x  virtual end %#x  block %#x..%#x" %
     (dot[2], dot[3], BLOCK_LO, BLOCK_HI))
-block_past_raw = BLOCK_LO >= dot[2]
+block_in_data = dot[1] <= BLOCK_LO and BLOCK_HI <= dot[3]
+block_past_raw = (BLOCK_LO >= dot[2]) and block_in_data
+say("G0", "block inside .data virtual extent  %s (VA %#x..%#x)" % (block_in_data, dot[1], dot[3]))
 if ALGO == 4:      # the image is claimed to carry static initial bytes for the block
     block_past_raw = False
 say("G0", "block past .data file-backed end   %s" % block_past_raw)
@@ -227,20 +244,37 @@ for a, nm in SITES:
 anchors = sorted({imm(ins(a)) for a, _ in SITES})
 say("G1", "field anchors           %s" % [hex(x) for x in anchors])
 
-# the reader's own record-index multiply: 0x522dd3..0x522dde
-seq = [ins(a) for a in range(0x522dd3, 0x522ddf)]
-mul = 1
-for t in seq:
-    m = re.search(r"lea\s+\w+,\[\w+\+\w+\*(\d)\]", t)
-    if m:
-        mul *= 1 + int(m.group(1))
-    m = re.search(r"shl\s+\w+,0x([0-9a-f]+)", t)
-    if m:
-        mul *= 1 << int(m.group(1), 16)
-    m = re.search(r"\bsub\s+\w+,(\w+)$", t)
-    if m:
-        mul -= 1
-say("G1", "reader stride (0x522dd3..de) %#x" % mul)
+# the record-index multiply appears TWICE in the same function; read both the same way
+def stride_at(lo, hi, want):
+    """Compose the compiler's (a*5 -> *9 -> <<3 -> -a -> <<2) form from its own shapes."""
+    got, ops_seen = 1, []
+    import bisect
+    for a in ORDER[bisect.bisect_left(ORDER, lo):bisect.bisect_left(ORDER, hi)]:
+        txt = ins(a)
+        ops_seen.append("%x:%s" % (a, txt.split()[0]))
+        m = re.match(r"lea\s+(\w+),\[(\w+)\+\2\*(\d)\]$", txt)
+        if m:
+            got *= 1 + int(m.group(3))
+            continue
+        m = re.match(r"shl\s+(\w+),0x([0-9a-f]+)$", txt)
+        if m:
+            got *= 1 << int(m.group(2), 16)
+            continue
+        m = re.match(r"sub\s+(\w+),(\w+)$", txt)
+        if m and m.group(1) != m.group(2):      # subtract the ORIGINAL index once
+            got -= 1
+            continue
+        if not txt.startswith(("mov", "lea")):
+            return None, ops_seen, "<unexpected %s>" % txt
+    return got, ops_seen, ""
+
+
+mul, seq1, bad1 = stride_at(0x522dd3, 0x522ddf, 0x59c)
+mul2, seq2, bad2 = stride_at(0x522e62, 0x522e6e, 0x59c)
+say("G1", "site A 0x522dd3..de     %s" % seq1)
+say("G1", "site B 0x522e62..6d     %s" % seq2)
+say("G1", "site A / site B value   %#x / %#x" % (mul or 0, mul2 or 0))
+mul = mul if mul else 1
 pair2_abs = sorted({ANC[1] + k * mul for ANC in [(0, 0x927b18)] for k in range(8)} |
                    {0x927b20 + k * mul for k in range(8)})
 say("G1", "slot0 cat2 / choice2    %#x / %#x" % (0x927b18, 0x927b20))
@@ -248,16 +282,18 @@ say("G1", "7 more slots, last      %#x / %#x" % (pair2_abs[-2], pair2_abs[-1]))
 slots = [BLOCK_LO + k * mul for k in range(8)]
 say("G1", "slot0 base              %#x  (block push @0x596ea9)" % BLOCK_LO)
 say("G1", "block size push @0x596ea4 %#x  == 8*stride %s" % (imm(ins(0x596ea4)), imm(ins(0x596ea4)) == 8 * mul))
-check("G1 stride from reader", mul == 0x59c)
+check("G1 stride read at two sites", mul == 0x59C and mul2 == 0x59C and not bad1 and not bad2)
 check("G1 four field anchors", anchors == list(ANCHORS))
 check("G1 block size 8*stride", imm(ins(0x596ea4)) == 8 * mul and slots[-1] + mul == BLOCK_HI)
 
 # ---------------------------------------------------------------- G2 naive census
 naive_pair, naive_block = [], []
+N_STORES = 0
 for a in ORDER:
     op, ops = split_op(INS[a])
     if not ops or not is_store(op, ops):
         continue
+    N_STORES += 1
     b = membody(ops[0])
     if b is None:
         continue
@@ -266,6 +302,7 @@ for a in ORDER:
         naive_pair.append((a, INS[a]))
     if BLOCK_LO <= d < BLOCK_HI:
         naive_block.append((a, INS[a], d))
+say("G2", "stores classified (mov + all RMW, any op) %d" % N_STORES)
 say("G2", "stores with disp 0x588/0x590        %d" % len(naive_pair))
 for a, t in naive_pair:
     say("G2", "   0x%x %s" % (a, t))
@@ -277,12 +314,21 @@ check("G2 naive block stores == 2 at +0", len(naive_block) == 2 and
       all(d == BLOCK_LO for _, _, d in naive_block))
 
 # ---------------------------------------------------------------- G3 offset-folded census
+STARTSET = sorted(json.load(open(os.path.join(ROOT, ".func_starts.json"))))
+
+
 def folded():
-    deltas, abs_hits, agg_w = {}, [], []
+    deltas, abs_hits, agg_w, resets, strs = {}, [], [], 0, []
     for a in ORDER:
+        if a in STARTSET:          # registers are function-scoped: no delta crosses a boundary
+            deltas = {}
+            resets += 1
         op, ops = split_op(INS[a])
         if not ops:
             continue
+        if is_string_store(op, ops) and deltas.get("edi") is not None and \
+                BLOCK_LO <= deltas["edi"] < BLOCK_HI:
+            strs.append((a, INS[a], deltas["edi"]))
         if is_store(op, ops):
             b = membody(ops[0])
             if b is not None:
@@ -315,10 +361,11 @@ def folded():
             deltas[d0] = v if v is not None else 0
         elif d0:
             deltas[d0] = 0
-    return abs_hits, agg_w
+    return abs_hits, agg_w, resets, strs
 
 
-ABS_HITS, AGGW = folded()
+ABS_HITS, AGGW, RESETS, STR = folded()
+say("G3", "per-function delta resets %d (register scope, not a global walk)" % RESETS)
 if ALGO == 1:      # the randomizer's +8 store is claimed to land on +0x590
     ABS_HITS = [(a, t, b, d, g, s, (o + 4) % mul) for a, t, b, d, g, s, o in ABS_HITS]
 if ALGO == 3:      # no offset folding at all
@@ -332,6 +379,10 @@ for a, t, b, dl, agg, slot, off in ctrl:
     say("G3", "     ctrl 0x%x slot %d +%#x" % (a, slot, off))
 pair_hits = [h for h in ABS_HITS if h[6] in (CAT2_OFF, CHOICE2_OFF)]
 say("G3", "  of those on any slot's cat2/choice2 %d" % len(pair_hits))
+say("G3", "string stores (rep stos/movs) into the block %d" % len(STR))
+for a, t2, v in STR:
+    say("G3", "   0x%x %-40s edi=%#x" % (a, t2, v))
+check("G3 string stores (rep stos/movs) into the block", len(STR) == 0)
 say("G3", "aggregate-disp stores in [0x580,0x59c) %d" % len(AGGW))
 for a, t, b, dl, agg in AGGW:
     say("G3", "   0x%x %-42s base=%s delta=%s agg=%#x" % (a, t, b, dl, agg))
@@ -344,18 +395,15 @@ check("G3 no folded store on cat2/choice2", len(pair_hits) == 0)
 check("G3 no aggregate store at 0x588/0x590", len(agg_pair) == 0)
 
 # each of the 12 window candidates belongs to a function with no block reference
+BLOCKREF = {}
+for a in ORDER:
+    if any(BLOCK_LO <= int(x, 16) < BLOCK_HI for x in re.findall(r"0x([0-9a-fA-F]+)", INS[a])):
+        f = own(a)
+        BLOCKREF[f] = BLOCKREF.get(f, 0) + 1
+
+
 def owner_block_refs(a):
-    f = own(a)
-    ls = ORDER
-    import bisect
-    i = bisect.bisect_left(ls, f)
-    n = 0
-    while i < len(ls) and own(ls[i]) == f:
-        t = INS[ls[i]]
-        if any(int(x, 16) == BLOCK_LO for x in re.findall(r"0x([0-9a-fA-F]+)", t)):
-            n += 1
-        i += 1
-    return n
+    return BLOCKREF.get(own(a), 0)
 
 
 win_owners = sorted({w[0] and own(w[0]) for w in AGGW})
@@ -406,7 +454,8 @@ say("G5", "  its destination                   %s" % ins(0x596598))
 say("G5", "  its file read @0x596578           %s" % ins(0x596578))
 say("G5", "transfer calls @0x596ecf/0x596ed6  %s  /  %s" % (ins(0x596ecf), ins(0x596ed6)))
 say("G5", "transfer calls @0x596eb0/0x596eb7  %s  /  %s" % (ins(0x596eb0), ins(0x596eb7)))
-say("G5", "transfer args  @0x596ec3/0x596ec8  %s %s" % (ins(0x596ec3), ins(0x596ec8)))
+say("G5", "transfer args  @0x596ebe..0x596ec8  %s | %s | %s | %s (file, count, size, addr)" %
+    (ins(0x596ebe), ins(0x596ebf), ins(0x596ec3), ins(0x596ec8)))
 transport_ok = ("BYTE PTR [edi],al" in ins(0x5965DE) and
                 "edi,DWORD PTR [ebp+0x8]" in ins(0x596598) and
                 imm(ins(0x596578)) == 0x64CC00 and          # the read path is fread
@@ -415,15 +464,23 @@ transport_ok = ("BYTE PTR [edi],al" in ins(0x5965DE) and
                 imm(ins(0x596EB7)) == 0x596540 and
                 imm(ins(0x596EB0)) == 0x596470 and
                 imm(ins(0x596EC8)) == BLOCK_LO and
-                imm(ins(0x596EC3)) == 8 * mul)
+                imm(ins(0x596EC3)) == 8 * mul and
+                ins(0x596EBF).startswith("push   0x1") and
+                ins(0x596EBE) == "push   esi")
 if ALGO == 2:                       # the copy is accepted as a producer
     say("G5", "ALGO=2: the byte copy is counted as a PRODUCER")
 check("G5 block is loader-zero (no static init)", block_past_raw)
 check("G5 only byte writer is the load transport", transport_ok)
-producers = len(pair_hits) + len(agg_pair) + len(seeds)
+producers = len(pair_hits) + len(agg_pair) + len(seeds) + len(STR)
 if ALGO == 2:
     producers += 1
-say("G5", "producers of cat2/choice2         %d" % producers)
+writer_sites = (sorted({h[0] for h in ABS_HITS}) + sorted({w[0] for w in AGGW}) +
+                sorted({s[0] for s in seeds}) + sorted({s[0] for s in STR}))
+say("G5", "union of every writer-shape site   %d  (%s)" %
+    (len(writer_sites), " ".join(hex(x) for x in sorted(set(writer_sites))[:14])))
+blk_writers = [h for h in ABS_HITS if h[6] == 0]
+say("G5", "sites writing the block's first dword %d" % len(blk_writers))
+say("G5", "producers of cat2/choice2         %d  (folded + aggregate + seeds + string)" % producers)
 check("G5 zero producers", producers == 0)
 
 # ---------------------------------------------------------------- G6 readers
@@ -475,8 +532,8 @@ if ALGO == 7:                                    # choice2 inherits pair1's rang
     choice2 = lo_choice
 say("G7", "measured: choice2=%s  candidate choices=%s  zero-cell guard=%s" %
     (choice2, cand_choices, "je" in ins(0x522e47)))
-# R1: the predicate is true only for the pair it is handed
-r1 = (choice2 == 0)
+# R1: the predicate compares BOTH fields against its two arguments
+r1 = ("cmp    esi,edx" in ins(0x5A1A8E)) and ("cmp    edi,esi" in ins(0x5A1A9C))
 # R2: the picker skips candidate == pair2 -> needs a comparable candidate choice == 0
 r2_fires = choice2 in cand_choices
 # R3: the scorer's match needs a NONZERO grid cell equal to choice2
@@ -498,6 +555,14 @@ for name, found, want in rivals:
 check("G7 RIVAL-1 fails", len([h for h in ctrl if h[6] == CHOICE2_OFF]) == 0)
 check("G7 RIVAL-2 fails", block_past_raw)
 check("G7 RIVAL-3 fails", all(v == 0 for v in win_refs.values()))
+slot0_pair1_zero = not any(h[5] == 0 and h[6] in (0x584, 0x58C) for h in ABS_HITS)
+mirror_fires = slot0_pair1_zero and (choice2 == 0)
+say("G7", "R4 slot 0's FIRST pair is 0        -> %s ; mirror then fires=%s" %
+    (slot0_pair1_zero, mirror_fires))
+check("G7 R1 predicate is the (0,0) test", r1 is True)
+check("G7 R4 reduces to A.pair1==(0,0)", r4_reduces_to == "A.pair1 == (0,0)")
+check("G7 slot 0's first pair is unset", slot0_pair1_zero)
+check("G7 mirror fires through slot 0", mirror_fires is True)
 check("G7 R2 cannot fire", r2_fires is False)
 check("G7 R3 cannot fire", r3_fires is False)
 
