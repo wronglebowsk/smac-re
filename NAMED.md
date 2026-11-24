@@ -1607,3 +1607,14 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | +0x2a = PLAN (M354 called it "class"): loader Plan token -> +0x2a; Planet-Buster branch hard-sets +0x2a=5 (alpha Plan 5); 49 sites (4 base regs) compare it with 12 | `:98-101` | V MU10,11 |
 | RIVALS: "+0x27 is the Plan column" FAILS (plan is +0x2a, +0x27 gets a literal); "+0x28 one writer" FAILS | `:103-106` | V MU3,5 |
 | OPEN: #REACTORS has 4 rows but the health readers clamp 1..3; +0x27's noun rests on elimination + the constant 1 | `:92` | lead |
+## M358 (s332, STATIC 10/10) — the 52-byte `0x98ad88` row atlas + row-63 prototype; `0x9267e4` = 128 dwords, NOT 64-byte rows. `:N` = `evidence/m358_row_layout.txt:1-77`
+| claim | ev | conf/mutant |
+|---|---|---|
+| row 0x98ad88 stride 0x34 (756 imul-0x34 sites); row63 base 0x98ba54 | `:20-23` | V MU1 |
+| 17 offsets, 1,907 mem refs/227 fns: name[0x20] +0x00 (NUL +0x1f), dword +0x20, bytes +0x24..2e, word +0x30 (+0x31 hi), word +0x32; 0x2f/0x33 unused | `:2-18` | V MU2-4 |
+| prototype FUN_00435610: src +0x141fc/200/204/20c -> +0x24/25/26/27, +0x14208d -> +0x20, 0xff -> +0x2e (pairs parsed store-by-store) | `:24-35` | V MU12,MU15 |
+| 0x9267e4 = 128 dwords (both builders' parsed loop bound 0x80), entry=(slot<0x40?0:owner<<6)+(slot&0x3f); 7 mem refs ALL `[reg*4+base]` -> NOT 64-byte rows | `:67-77,85` | V MU7-9,MU14 |
+| flags bit8: 1 clear (`and [..31],0xfe`) + 3 sets (`or [..31],0x1`), immediates decoded; noun OPEN | `:16,82-83` | V MU11,MU16/INF |
+| RETRACT "64-byte row"/"0x98adb8+0x34*i": +0x08..+0x14 = 16 cmp-only sentinels of 0x1c scans (backward jl, 24 iters), NOT fields | `:36-56,86-87` | V MU5,6 |
+| CROSS-REF `## M359` (same row): +0x27 = reactor level (INF), +0x28 = carry capacity (V), +0x2a = plan (M354's "class"); the labels printed at `:2-18` are pre-M359 placeholders | `## M359` | ref |
+| A: 0x80 slots -> cand[idx] -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34; ACCEPT 10/10 `1af1dcb6fcd4a4b6` x2 | `:57-66,98` | V MU10 |
