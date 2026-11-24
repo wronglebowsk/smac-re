@@ -1112,7 +1112,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | 234 disp hits (54W/180R; 0 ABS/+220/sub) +30seeds->20regW/7regR; 74sites/34owners; 45P/29U | G1-G3 `evidence/m325_block220_census.txt:289-291` | V MU2-4/14-17/20/22/29/30; M326 subreg-fix: 29 labels BLKCONST->STRIDE, pins/totals unchanged (`evidence/m326_block224_census.txt:32`, `evidence/m326_m325_seedcheck.txt:4`) |
 | 51f320: 16 st/0 str/0 blk; ROUND@51f53c YEAR@51f54f | G4 `:292` | V MU1/20/21 |
 | ENERGY: EDITORENERGY@68c938: field<-g999fa4@4e0336; caps 9999999/999999999/99999, -1000@5085c0, reset0@59eef3 | G3/G5 `:291,293` | V MU5-8/23/26/27 |
-| MIN derived (jle-skip@44262b); g999fa4=cheat-chain value (parse INFERRED); EDITORYEAR 4e0350 round=max(1,·-2100); **g999fa4 is element 0 of a 10-dword band whose only INDEXED writer is 0x626597 (M353)** | G6 `:294` | V MU9-13/18/22/25/28 |
+| MIN derived (jle-skip@44262b); g999fa4=cheat-chain value (parse INFERRED); EDITORYEAR 4e0350 round=max(1,·-2100); **g999fa4 is element 0 of a 10-dword band whose only INDEXED writer is 0x626597 (M353: `evidence/m353_numeric_band.txt:76`)** | G6 `:294`; M353 G2 `evidence/m353_numeric_band.txt:76` | V MU9-13/18/22/25/28; M353 MU2/MU10 |
 | save blkA@32c [10,28,112,69,229,60,102,37] <2100; R1-3 DEAD | G7/G8 `:295-296` | V MU18/19/20/25 |
 | ACCEPT 8/8 digest a623181d7fb68263 x2 (`:297`); 30/30 (1 NO-OP) digest 97c193e12593c95e (`evidence/m325_mutate.txt:34`); ST 4/4 | cite | V |
 | OPEN: ~~+224~~ ANSWERED M326; ~~+300~~ ANSWERED M330; MIN consumers; 920774; 519b00; 673b60; T9 | - | lead |
@@ -1124,7 +1124,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | hdr RW 59688a/596883->985ab8 sz31c; ROUND=blob+44 YEAR+48; sole imm carrier (heap decl) | G1/G2 `evidence/m324_save_carry.txt:82-83,63` | V MU1/MU2/MU3/MU24 |
 | blk+220 8/8: 596a91->94d430 sz105e0=8*20bc; fac1436 596ed6->927590 sz2ce0 | G1/G3 `:82,84` | V MU4/MU4b/MU5 |
 | pfx12; @50=50 @54=2150 @44=67 @48=18 @310=9; sha=M302 | G5 `:86` | V MU8/MU9 |
-| g999fa4 W={442642,626fd7}; fold [this+a24]*20bc+[94d650] ~~MAX~~ **MIN** (jle skips store; direction RETRACTED by M325 G6); uncarried; 0call/0AT; =cheat-parsed number (M325); **W set SUPERSEDED by M353** (+ scaled 0x626597) | G4 `:85,70-78`; M325 `:294` | V MU6/MU14/MU16/MU21; M325 MU9-13 |
+| g999fa4 W={442642,626fd7}; fold [this+a24]*20bc+[94d650] ~~MAX~~ **MIN** (jle skips store; direction RETRACTED by M325 G6); uncarried; 0call/0AT; =cheat-parsed number (M325); **W set SUPERSEDED by M353** (+ scaled 0x626597, `evidence/m353_numeric_band.txt:76,84`) | G4 `:85,70-78`; M325 `:294`; M353 G2/R1 `evidence/m353_numeric_band.txt:76,84` | V MU6/MU14/MU16/MU21; M325 MU9-13; M353 MU2/MU10 |
 | direct closure 440, 0 writers; 4e0350 callers {514ecf,517e3a} out; mode0; entry-first; M272 inv9 | G6/G7 `:87-88,79` | V MU7/MU20/MU22 |
 | R1/R2 DEAD; esi0@5a0fd3 | G8 `:89` | V MU7/MU8/MU17/MU19 |
 | ACCEPT 8/8 digest 700b4133f62bd714 x2 (`:100`,`_rerun.txt:100`); 28/28+1 5c3fa2bceb490009 (`m324_mutate.txt:29-30`) | cite | V |
@@ -1222,7 +1222,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | **THE LAW IS BYTE-LEVEL CARRY**: 4/4 rounds the container READ differs from the writer's last WRITE only by the falsifier's own bytes; 268/268 (round,unit) start tiles == a FRESH DECODE of the head bytes consumed; (+2,0) mod 64 and 2-accept/1-refuse hold from the RELOADED tile | `evidence/b25_selftest.txt:40-43` (table H), `:63` (G4) | V MU2/MU10/MU14/MU3/MU15 |
 | an image-only poison of record 0 at round 1 shifts its trajectory 39 mod 64 into the FINAL container ([19,42] vs clean [44,42]), 0 of 67 others move; the model-fed movers are blind to the falsifier, not to writing (268 unit bytes each, image == their own clean run) | `:21-23` (table D), `:65` (G6) | V MU1/MU7 |
 | the save's grid is 64x64 (`decode_save --sections`, 90,112 = 64*64*22) vs `planet.MP` 80x80: 37 records land out of the container, 27 return, `found_units` 67 -> 4, all six numbers PINNED in G5; B7 wrapped by the map file: 10 of 67 final tiles outside (4 of 67 at --turns 5) | `:52-53` (table I, mpwidth/wrapskip), `:38` (table F, B7), `:64` (G5) | V MU8/MU12/MU13 |
-| **THE TILE TEST IS NOT THE DECODER**: raw `tile >= width` and `sim/save._unit_ok` differ in 8/44 probes - exactly the records the decoder exempts (25 of the 67 carry +10 in [128,130,131,256,320,321,322,323], so it coord-checks 42); with that rule both agree 44/44, and `found_units` is reproduced from `_unit_ok` 44/44 | `:56` (TOTAL), `:45-55` (table I), `:64` | V MU12/MU16 |
+| **THE TILE TEST IS NOT THE DECODER**: raw `tile >= width` and `sim/save._unit_ok` differ in 8/44 probes - exactly the records the decoder exempts (25 of the 67 carry +10 in [128,130,131,256,320,321,322,323], so it coord-checks 42); with that rule both agree 44/44, and `found_units` is reproduced from `_unit_ok` 44/44 | `:56` (TOTAL), `:45-55` (table I), `:64` | V MU12/MU16 (archive: RETRACTED by M327) |
 | footprint == move law: 67 unit bytes == 67 tiles written/round at record offset +0 (x only), + 1 modeled header byte/round (year 2151->2154); final image 68 B from the save, 0 B outside a modeled span | `:4-7` (table A), `:61` (G2), `:66` (G7) | V MU3/MU4/MU5 |
 | rivals/controls: nowrite 0 unit bytes, lift 0 + year frozen 2150, budget3 1 accept/round; mpwidth and wrapskip COINCIDENT here (max_x 79 < 80, declared not separated); G8 requires the FULL table-E signature to differ from ALL 5 rival rows (the 3 `:clean` twins coincide by design) | `:26-36` (table E), `:67` (G8) | V MU4/MU5/MU6 |
 | ACCEPT `python3 -u -m sim.selftest --b25` -> **PASS B25: 9/9**, anchor **901a286332960a10**, 2 runs byte-identical and identical to `python3 -u -m sim.composedmove`; **G9 PINS the anchor to a literal** (MU9 reddens G9 and nothing else); harness **13/13 + 3 declared NO-OP**; `--selftest` 5/5 | `:59`, `:69`, `b25_movepersist.txt:69` (its 69 lines are byte-identical to `b25_selftest.txt:1-69`), `b25_mutate.txt:20`, `b25_mutate_selftest.txt:11` | V MU1-MU16 |
@@ -1553,15 +1553,15 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 
 ## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 11/11, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
 
-ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`** digest `86a07168fa9aa476`, two renders identical (`evidence/m353_numeric_band.txt:87`); harness `python3 -u scripts/m353_mutate.py` -> **`HARNESS PASS 11/11`** digest `3bf05a54ea23037b` (`evidence/m353_mutate.txt:14`). `:N` = a line of the ACCEPT evidence (`evidence/m353_numeric_band.txt:75-87`).
+ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`** digest `367fdae1d78979e5`, two renders identical (`evidence/m353_numeric_band.txt:87`); harness `python3 -u scripts/m353_mutate.py` -> **`HARNESS PASS 14/14`** digest `fd143532b283b01b` (`evidence/m353_mutate.txt:17`). `:N` = a line of the ACCEPT evidence (`evidence/m353_numeric_band.txt:75-87`).
 
 | claim | evidence | conf / mutant |
 |---|---|---|
-| the band is 10 dwords `[0x999fa4,0x999fcc)`: numeric/owner/payload bases 0x28 apart, text stride 0x100 x10 -> 0x99aa1c | `:77` | V MU3 |
-| 16 refs = 11 absolute + 5 `[reg*4+0x999fa4]`; stores = 3 — SCALED `0x626597`, absolute `0x442642`, absolute `0x626fd7` | `:75,76` | V MU1/MU2 |
-| FILLER = `FUN_00626581` (33 B): `k>9` returns 3, else `numeric[k]=v` and returns 0; 260 call sites, 242 literal k in 0..6, ZERO above 9 | `:38,39,78,79` | V MU4/MU5 |
-| M325/M324's `W={442642,626fd7}` was an ABSOLUTE-address census: SUPERSEDED here (the scaled store `0x626597` was invisible to it) | `:84`; `docs/named-archive-m353-rows.md:5` | V MU2 |
-| CONSUMERS: `$NUMBER`/`$NUM`/`$HEX` at `0x625c2c`/`0x625cec`/`0x625e4b`, each `itoa(v,10)` — so `$HEX` prints DECIMAL (arg3 of `0x64f980` IS the radix) | `:80,81` | V MU6/MU7 |
+| band = 10 dwords `[0x999fa4,0x999fcc)`: own/pay/txt bases + stride DERIVED from the writer body (0x28 apart, `shl 8` -> 0x100, 10*0x100 -> 0x99aa1c) | `:77` | V MU3/MU14 |
+| 16 refs = 11 absolute + 5 `[reg*4+0x999fa4]`; stores = 3, all `mov` (no xchg/movnti form) — SCALED `0x626597`, absolute `0x442642`, absolute `0x626fd7` | `:75,76` | V MU1/MU2 |
+| FILLER = `FUN_00626581` (33 B): `k>9` returns 3, else `numeric[k]=v` and returns 0; 260 call sites, 242 literal k, histogram `0:131,1:75,2:23,3:7,4:3,5:2,6:1`, ZERO above 9 | `:38,39,78,79` | V MU4/MU5 |
+| M325/M324's `W={442642,626fd7}` was an ABSOLUTE-address census: SUPERSEDED here (the scaled store `0x626597` was invisible to it) | `:76,84` | V MU2/MU10 |
+| CONSUMERS pinned per ADDRESS: `$NUMBER`@625c2c, `$NUM`@625cec, `$HEX`@625e4b, each `itoa(v,buf,10)`; the 0xa is ARG3 (3 pushes before the call, forwarded by `0x64f980`) -> `$HEX` prints DECIMAL | `:80,81` | V MU6/MU7/MU12/MU13 |
 | the 4th read is the `$#k` PREDICATE (`cmp numeric[k],1` -> `setne`), k = char-0x30 with NO bound — the `$k` path does bound (`cmp k,0xa`) | `:82` | V MU8 |
 | `$#` at k>=10 leaves the band: k=10 = owner[0], 20 = payload[0], 30 = text[0] | `:83,70` | V MU9 |
 | OPEN: what the `$#` flag gates; numeric[0] is DUAL-USE (the 0x442642 cheat clamp and the ENERGY read @0x4e032c) | - | lead |

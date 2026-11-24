@@ -124,19 +124,32 @@ def measure(dump_path, exe_path):
         disp = re.search(r"\[(\w+)\+%s\]" % lit, op)
         kind = "scaled" if scaled else ("disp" if disp else ("abs" if "ds:%s" % lit in op else "other"))
         fn, faddr = func_of(ix_starts, ix_rows, a)
-        refs.append(dict(addr=a, fn=fn, faddr=faddr, kind=kind, txt=txt.strip(),
-                         write=stores_to(txt, lit),
+        refs.append(dict(addr=a, fn=fn, faddr=faddr, kind=kind, txt=txt.strip(), mnem=mn.lower(),
+                         write=mn.lower() in ("mov", "movnti", "xchg", "stos") and lit in op.split(",")[0],
                          byte_op="BYTE PTR" in op,
                          idxreg=scaled.group(1) if scaled else None))
     m = dict(refs=refs)
 
-    # --- band geometry -------------------------------------------------
-    slots = (OWN - NUM) // 4
-    m["geometry"] = dict(num=NUM, own=OWN, pay=PAY, txt=TXT,
-                         num_own=OWN - NUM, own_pay=PAY - OWN, pay_txt=TXT - PAY,
-                         slots=slots, txt_span=TXT_NEXT - TXT,
-                         txt_stride=(TXT_NEXT - TXT) // slots if slots else 0,
-                         txt_next=TXT_NEXT)
+    # --- band geometry: DERIVED from the writer bodies, not assumed ----
+    body5 = [(a, t) for a, t in ins if 0x6265A2 <= a < 0x6266F0]
+    derived = {"num": NUM}
+    for a, t in body5:
+        for va, key in ((0x999FCC, "own"), (0x999FF4, "pay"), (0x99A01C, "txt")):
+            if "0x%x" % va in t and key not in derived:
+                derived[key] = va
+        sm = re.search(r"shl\s+(\w+),0x([0-9a-f]+)", t)
+        if sm and "stride" not in derived:
+            derived["stride"] = 1 << int(sm.group(2), 16)   # slot*k -> text base is a SHIFT, not a literal
+    slots = (derived["own"] - NUM) // 4
+    derived["slots"] = slots
+    derived["txt_next"] = derived["txt"] + derived["stride"] * slots
+    m["derived"] = derived
+    m["geometry"] = dict(num=derived["num"], own=derived["own"], pay=derived["pay"], txt=derived["txt"],
+                         num_own=derived["own"] - derived["num"],
+                         own_pay=derived["pay"] - derived["own"],
+                         pay_txt=derived["txt"] - derived["pay"],
+                         slots=slots, txt_span=derived["txt_next"] - derived["txt"],
+                         txt_stride=derived["stride"], txt_next=derived["txt_next"])
 
     # --- the setter body ----------------------------------------------
     body = [(a, t) for a, t in ins if SETTER <= a < SETTER_END]
@@ -195,23 +208,30 @@ def measure(dump_path, exe_path):
                     tok = (va, toks[va])
                     break
         r["token"] = tok
-        radix, radix_addr = None, None
+        radix, radix_addr, push_between = None, None, None
         for j in range(i, min(i + 14, len(ins))):
             if re.match(r"call\s+0x%x$" % ITOA, ins[j][1], re.I):
                 for q in range(j - 1, i, -1):
                     pm = re.match(r"push\s+0x([0-9a-f]+)$", ins[q][1], re.I)
                     if pm:
                         radix, radix_addr = int(pm.group(1), 16), ins[q][0]
+                        push_between = sum(1 for k in range(q + 1, j)
+                                           if re.match(r"push\b", ins[k][1], re.I))
                         break
                 break
-        r["radix"], r["radix_addr"] = radix, radix_addr
+        r["radix"], r["radix_addr"], r["push_between"] = radix, radix_addr, push_between
 
     # --- itoa: is arg3 the radix? -------------------------------------
     itoa_body = [(a, t) for a, t in ins if ITOA <= a < ITOA + 0x50]
+    fwd = [(a, t.strip()) for a, t in itoa_body if re.search(r"mov\s+e[a-z]x,DWORD PTR \[ebp\+0x10\]", t)]
+    fwd_ok = bool(fwd)
+    for fa, _ in fwd:
+        k = [a for a, _ in itoa_body].index(fa)
+        fwd_ok = fwd_ok and any(re.search(r"push\s+e[a-z]x", t) for _, t in itoa_body[k + 1:k + 4])
     m["itoa"] = dict(
         radix_cmp=[(a, t.strip()) for a, t in itoa_body if re.search(r"cmp\s+DWORD PTR \[ebp\+0x10\],0xa", t)],
         radix_fwd=[(a, t.strip()) for a, t in itoa_body if re.search(r"\[ebp\+0x10\]", t)],
-        body=itoa_body)
+        fwd_load=fwd, fwd_is_arg3=fwd_ok, body=itoa_body)
 
     # --- the `$#` predicate path (0x23) vs the `$<digit>` bound -------
     pred = [(a, t) for a, t in ins if 0x62606C <= a < 0x6260A1]
@@ -260,19 +280,21 @@ def gates(m):
         "refs=%d abs=%d scaled=%d disp/other=%d" % (len(refs), len(absr), len(scr), len(disp)))
 
     wr = [r for r in refs if r["write"]]
-    want = {(0x626597, "scaled"), (0x442642, "abs"), (0x626FD7, "abs")}
-    got = {(r["addr"], r["kind"]) for r in wr}
-    add("G2 stores into the band = exactly 3 (one SCALED, two absolute)",
-        got == want,
-        "stores=%s" % ", ".join("%#x/%s/%s" % (r["addr"], r["kind"], r["fn"]) for r in wr))
+    want = {(0x626597, "scaled", "mov"), (0x442642, "abs", "mov"), (0x626FD7, "abs", "mov")}
+    got = {(r["addr"], r["kind"], r["mnem"]) for r in wr}
+    add("G2 stores into the band = exactly 3, all `mov` (no xchg/cmov/non-mov writer hides)",
+        got == want and all(r["mnem"] == "mov" for r in wr),
+        "stores=%s non_mov=%s" % (", ".join("%#x/%s/%s" % (r["addr"], r["kind"], r["fn"]) for r in wr),
+                                  [hex(r["addr"]) for r in wr if r["mnem"] != "mov"] or "none"))
 
-    add("G3 band geometry: four 10-dword bands, text stride 0x100 over 10 slots -> 0x99aa1c",
+    add("G3 band geometry DERIVED from the writer body: four 10-dword bands, text stride 0x100 -> 0x99aa1c",
         (g["own"] - g["num"]) == 0x28 == (g["pay"] - g["own"]) == (g["txt"] - g["pay"])
         == g["slots"] * 4
         and g["txt_span"] == g["slots"] * g["txt_stride"] == 0xA00
-        and g["txt_stride"] == 0x100 and g["txt_next"] == TXT_NEXT,
-        "num_own=%#x own_pay=%#x pay_txt=%#x slots=%d txt_span=%#x stride=%#x"
-        % (g["num_own"], g["own_pay"], g["pay_txt"], g["slots"], g["txt_span"], g["txt_stride"]))
+        and g["txt_stride"] == 0x100 and g["txt_next"] == TXT_NEXT
+        and (g["num"], g["own"], g["pay"], g["txt"]) == (NUM, OWN, PAY, TXT),
+        "derived num=%#x own=%#x pay=%#x txt=%#x stride=%#x next=%#x"
+        % (g["num"], g["own"], g["pay"], g["txt"], g["txt_stride"], g["txt_next"]))
 
     add("G4 setter: bound literal == slots-1, error return 3, success 0, indexed store, jle first",
         s["bound"] and s["bound"][1] == g["slots"] - 1 and s["err"] and s["err"][1] == 3
@@ -283,25 +305,30 @@ def gates(m):
          s["ok"] or 0))
 
     kk = [c["k"] for c in calls if c["kind"] == "imm"]
+    hist = {}
+    for k in kk:
+        hist[k] = hist.get(k, 0) + 1
     over = [c for c in calls if c["kind"] == "imm" and (c["k"] > g["slots"] - 1)]
-    add("G5 setter callers: 260 sites, 0 pass a literal k > 9",
-        len(calls) == 260 and len(kk) >= 150 and not over,
-        "calls=%d literal_k=%d distinct=%s over_bound=%s"
-        % (len(calls), len(kk), sorted(set(kk)), [hex(c["addr"]) for c in over]))
+    add("G5 setter callers PINNED: 260 sites, 242 literal k, histogram, 0 above bound",
+        len(calls) == 260 and len(kk) == 242 and sorted(hist) == [0, 1, 2, 3, 4, 5, 6]
+        and hist == {0: 131, 1: 75, 2: 23, 3: 7, 4: 3, 5: 2, 6: 1} and not over,
+        "calls=%d literal_k=%d hist=%s over_bound=%s"
+        % (len(calls), len(kk), ",".join("%d:%d" % (k, hist[k]) for k in sorted(hist)),
+           [hex(c["addr"]) for c in over] or "none"))
 
     reads = [r for r in refs if r["kind"] == "scaled" and not r["write"]]
-    names = sorted({r["token"][1] for r in reads if r["token"]})
-    add("G6 consumers: 4 scaled reads in the expander; 3 tokens = $NUMBER/$NUM/$HEX",
-        len(reads) == 4 and all(r["fn"] == m["expander"]["fn"] for r in reads)
-        and names == ["$HEX", "$NUM", "$NUMBER"]
-        and sorted(r["token"][1] for r in reads if r["token"]).count("$HEX") == 1,
-        "reads=%s expander=%s" % (", ".join("%#x->%s" % (r["addr"], r["token"][1] if r["token"] else "?")
-                                            for r in reads), m["expander"]["fn"]))
+    mapping = {r["addr"]: (r["token"][1] if r["token"] else None) for r in reads}
+    add("G6 consumers PINNED per address: $NUMBER@625c2c, $NUM@625cec, $HEX@625e4b, `$#`@626091",
+        mapping == {0x625C2C: "$NUMBER", 0x625CEC: "$NUM", 0x625E4B: "$HEX", 0x626091: None}
+        and all(r["fn"] == m["expander"]["fn"] for r in reads),
+        "mapping=%s expander=%s" % ({hex(k): v for k, v in mapping.items()}, m["expander"]["fn"]))
 
-    rad = {r["token"][1]: r["radix"] for r in reads if r["token"]}
-    add("G7 every numeric token passes radix 0xa to the itoa -> $HEX prints DECIMAL",
-        sorted(rad.values()) == [10, 10, 10] and bool(m["itoa"]["radix_cmp"]),
-        "radix=%s itoa_bound=%#x" % (rad, m["itoa"]["radix_cmp"][0][0] if m["itoa"]["radix_cmp"] else 0))
+    add("G7 radix is ARG3: each token's 0xa sits 3 pushes before the itoa call, and the itoa forwards [ebp+0x10]",
+        all(r["radix"] == 10 and r["push_between"] == 2 for r in reads[:3])
+        and bool(m["itoa"]["radix_cmp"]) and m["itoa"]["fwd_is_arg3"] is True,
+        "radix/pushes=%s itoa_cmp=%s fwd_arg3=%s"
+        % ([(r["token"][1], r["radix"], r["push_between"]) for r in reads[:3] if r["token"]],
+           bool(m["itoa"]["radix_cmp"]), m["itoa"]["fwd_is_arg3"]))
 
     add("G8 the 4th read is the `$#` PREDICATE: cmp [band+k],1 -> setne, NO k bound on that path",
         len(m["pred"]["hash_cmp"]) == 1 and len(m["pred"]["sub"]) == 1

@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B32 MERGED s327 `e6875c63c8c2f911`; M353 MERGED s329 `86a07168fa9aa476`. Old header/enumerations/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B32 + M54A-M353; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
+# NEXT_PROMPT.md - footing (B32 MERGED s327 `e6875c63c8c2f911`; M353 MERGED s329 `367fdae1d78979e5`. Old header/enumerations/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B32 + M54A-M353; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -119,7 +119,7 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`); per-id `NAMED ## <id>` GOVERN.
 - M348 (s326) MERGED: slots 1/2 -> Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED (Create Session dialog). 12/12 `a3d46c017673526a`, harness 13/13.
-- M353 (s329) MERGED: `0x999fa4` = 10-dword band; filler `FUN_00626581` (k>9 -> ret 3), consumers `$NUMBER`/`$NUM`/`$HEX` (base 10) + `$#k` (no bound). 11/11 `86a07168fa9aa476`, harness 11/11. NEXT: (x6) pref-block writers.
+- M353 (s329) MERGED: `0x999fa4` = 10-dword band; filler `FUN_00626581` (k>9 -> ret 3), consumers `$NUMBER`/`$NUM`/`$HEX` (base 10) + `$#k` (no bound). 11/11 `367fdae1d78979e5`, harness 11/11. NEXT: (x6) pref-block writers.
 - B32 (s327) MERGED: the UNIT leg on the recorded trace - 4/4 unit heads stamp the M349 mapper bit, facility-range 0/2, post-pop head 0/6. 10/10 `e6875c63c8c2f911`, harness 13/13 `155781675e5086a1`. NEXT BUILD B33 = the facility leg's branch to the shared OR.
 - M334-M340 + M339 MERGED: upkeep AUTO-SELL, #DIFF ladder, PLAYER RECORD 1 difficulty, item order, the modal SCREEN RUNNER (0x5f1394, `+0xa40` cell), pref>=6 - rows in `NAMED ## M334`-`## M340`.
 - M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11

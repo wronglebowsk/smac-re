@@ -71,6 +71,19 @@ def mu11(m):  # the publisher does touch the numeric band
     m["publisher"]["refs"] = [dict(addr=0x6266AA)]
 
 
+def mu12(m):  # permute the address->token attribution (a set check would miss this)
+    a, b = find(m, 0x625C2C), find(m, 0x625E4B)
+    a["token"], b["token"] = b["token"], a["token"]
+
+
+def mu13(m):  # the radix push is not arg3 any more (one extra push between)
+    find(m, 0x625E4B)["push_between"] = 3
+
+
+def mu14(m):  # text stride read as the raw shift 8, not 1<<8
+    m["geometry"]["txt_stride"] = 8
+
+
 MUTANTS = [
     ("MU1", "G1", "drop absolute read 0x41a4e0", mu1),
     ("MU2", "G2", "626597 reclassified abs", mu2),
@@ -83,6 +96,9 @@ MUTANTS = [
     ("MU9", "G9", "numeric base +4", mu9),
     ("MU10", "R1", "scaled store counted absolute", mu10),
     ("MU11", "R2", "publisher gains a ref", mu11),
+    ("MU12", "G6", "token attribution permuted", mu12),
+    ("MU13", "G7", "radix push not 3rd arg", mu13),
+    ("MU14", "G3", "text stride = raw shift", mu14),
 ]
 
 

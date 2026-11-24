@@ -73,15 +73,15 @@ RIVAL B: the 10-slot publisher FUN_00626634 @0x626634 holds 0 refs to 0x999fa4
 
 GATES
   PASS G1 ref census: 16 = 11 abs + 5 scaled, 0 displacement-form                     refs=16 abs=11 scaled=5 disp/other=0
-  PASS G2 stores into the band = exactly 3 (one SCALED, two absolute)                 stores=0x442642/abs/FUN_00442320, 0x626597/scaled/FUN_00626581, 0x626fd7/abs/FUN_00626f19
-  PASS G3 band geometry: four 10-dword bands, text stride 0x100 over 10 slots -> 0x99aa1c num_own=0x28 own_pay=0x28 pay_txt=0x28 slots=10 txt_span=0xa00 stride=0x100
+  PASS G2 stores into the band = exactly 3, all `mov` (no xchg/cmov/non-mov writer hides) stores=0x442642/abs/FUN_00442320, 0x626597/scaled/FUN_00626581, 0x626fd7/abs/FUN_00626f19 non_mov=none
+  PASS G3 band geometry DERIVED from the writer body: four 10-dword bands, text stride 0x100 -> 0x99aa1c derived num=0x999fa4 own=0x999fcc pay=0x999ff4 txt=0x99a01c stride=0x100 next=0x99aa1c
   PASS G4 setter: bound literal == slots-1, error return 3, success 0, indexed store, jle first bound=(6448516, 9) err=(6448522, 3) jle=0x626588 store=mov    DWORD PTR [eax*4+0x999fa4],ecx ok=0x62659e
-  PASS G5 setter callers: 260 sites, 0 pass a literal k > 9                           calls=260 literal_k=242 distinct=[0, 1, 2, 3, 4, 5, 6] over_bound=[]
-  PASS G6 consumers: 4 scaled reads in the expander; 3 tokens = $NUMBER/$NUM/$HEX     reads=0x625c2c->$NUMBER, 0x625cec->$NUM, 0x625e4b->$HEX, 0x626091->? expander=FUN_00625b20
-  PASS G7 every numeric token passes radix 0xa to the itoa -> $HEX prints DECIMAL     radix={'$NUMBER': 10, '$NUM': 10, '$HEX': 10} itoa_bound=0x64f983
+  PASS G5 setter callers PINNED: 260 sites, 242 literal k, histogram, 0 above bound   calls=260 literal_k=242 hist=0:131,1:75,2:23,3:7,4:3,5:2,6:1 over_bound=none
+  PASS G6 consumers PINNED per address: $NUMBER@625c2c, $NUM@625cec, $HEX@625e4b, `$#`@626091 mapping={'0x625c2c': '$NUMBER', '0x625cec': '$NUM', '0x625e4b': '$HEX', '0x626091': None} expander=FUN_00625b20
+  PASS G7 radix is ARG3: each token's 0xa sits 3 pushes before the itoa call, and the itoa forwards [ebp+0x10] radix/pushes=[('$NUMBER', 10, 2), ('$NUM', 10, 2), ('$HEX', 10, 2)] itoa_cmp=True fwd_arg3=True
   PASS G8 the 4th read is the `$#` PREDICATE: cmp [band+k],1 -> setne, NO k bound on that path hash_cmp=1 cmp1=1 setne=1 bound_on_#path=0 bound_on_$path=1
   PASS G9 `$#` index >= 10 is UNBOUNDED: k=10 aliases owner[0], 20 -> payload[0], 30 -> text[0] alias={10: '0x999fcc', 11: '0x999fd0', 20: '0x999ff4', 30: '0x99a01c'}
   PASS R1 rival 'it is a scalar, all writers absolute' FAILS on the scaled store      abs_writers=['0x442642', '0x626fd7'] scaled_writers=['0x626597']
   PASS R2 rival 'the 10-slot publisher fills it' FAILS: 0 refs in the publisher body  publisher=FUN_00626634 @0x626634 refs=0
 
-PASS M353: 11/11 gates digest 86a07168fa9aa476
+PASS M353: 11/11 gates digest 367fdae1d78979e5

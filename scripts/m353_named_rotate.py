@@ -68,7 +68,8 @@ def conf_cell(cell):
     if cell.strip().lower() == "lead":
         return "lead"
     ids = re.findall(r"MU\d+(?:-MU\d+)?", cell)
-    return "V" + (" " + "/".join(dict.fromkeys(ids)) if ids else " (archive)")
+    keep = " (archive: RETRACTED by M327)" if re.search(r"RETRACT", cell, re.I) else ""
+    return "V" + (" " + "/".join(dict.fromkeys(ids)) if ids else "") + keep
 
 
 def archive_block(named):
@@ -124,6 +125,9 @@ def do_verify():
     checks.append(("one stub row per archived claim", len(st_rows) == len(ar_rows)))
     checks.append(("every stub cite cell == its archived twin",
                    all(a[1] == b[1] for a, b in zip(st_rows, ar_rows))))
+    checks.append(("every RETRACT in the archive survives in its stub twin",
+                   all("RETRACT" in a[0].upper() + a[2] for a, b in zip(ar_rows, st_rows)
+                       if "RETRACT" in (a[0] + a[2]).upper())))
     checks.append(("every stub row keeps a number of its twin",
                    all(set(re.findall(r"\d+", a[0])) & set(re.findall(r"\d+", " ".join(b)))
                        for a, b in zip(st_rows, ar_rows))))
