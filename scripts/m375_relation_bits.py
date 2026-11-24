@@ -108,9 +108,9 @@ def imms(s):
 
 
 def dwords_at(arg):
-    """(offset, addr) for every 0x94d4xx literal in a memory operand."""
+    """(offset, addr) for every 0x94d4xx literal in a memory operand (token-exact)."""
     out = []
-    for m in re.finditer(r'0x94d4([0-9a-f]{2})', arg.lower()):
+    for m in re.finditer(r'0x94d4([0-9a-f]{2})(?![0-9a-f])', arg.lower()):
         v = int("94d4" + m.group(1), 16)
         if BASE <= v <= BASE + 3:
             out.append((0 if ALGO == 2 else v - BASE, v))
@@ -200,11 +200,14 @@ say(f"  refs {len(refs)}  TEST {kinds['TEST']}  LOAD {kinds['LOAD']}  STORE {kin
 say(f"  byte-offset literals: {byte_offs}; DWORD tests at +0: {len(dword_tests)}"
     f"  -> the dword is read whole (bits 16..31 included) and byte-wise at +0/+1")
 say(f"  store sites: {' '.join('%08x' % INS[k]['a'] for k in sorted(stores))}")
-acc = (len(refs) > 600 and kinds["STORE"] == 27 and byte_offs == [0, 1] and len(dword_tests) >= 4)
+acc = (len(refs) == 658 and kinds["TEST"] == 378 and kinds["LOAD"] == 253
+       and kinds["STORE"] == 27 and byte_offs == [0, 1] and len(dword_tests) == 45)
 if not acc:
-    bit(f"G0 census refs={len(refs)} stores={kinds['STORE']} offs={byte_offs} dw={len(dword_tests)}")
+    bit(f"G0 census refs={len(refs)}/{658} test={kinds['TEST']}/378 load={kinds['LOAD']}/253 "
+        f"stores={kinds['STORE']}/27 offs={byte_offs} dw={len(dword_tests)}/45")
 else:
-    say("ok  G0 %d refs / 27 stores; byte literals only at +0/+1, DWORD tests at +0 carry bits 16-31" % len(refs))
+    say("ok  G0 658 refs = 378 test / 253 load / 27 stores, 45 DWORD tests at +0, byte literals "
+        "only at +0/+1 (all exact)")
 
 # ---------------------------------------------------------------- G1 access table
 say("")
@@ -281,11 +284,24 @@ for name, v, d, lt, w in rows:
     say(f"    {name}: readers {['%08x' % INS[k]['a'] for k in d]}"
         f" lift {[('%08x' % INS[a]['a'], '%08x' % INS[b]['a']) for a, b in lt]}"
         f" writers {['%08x' % INS[a]['a'] for a, b in w]}")
-covered = [r[0] for r in rows if r[2] or r[3]]
-if len(covered) != 5:
-    bit(f"G1 only {len(covered)}/5 bits have a reader: {covered}")
+EXPECT_R = {"0x800000": [0x53F863], "0x40": [0x508EBD, 0x508EF9, 0x547FD0],
+            "0x8000": [0x53BBED], "0x10000": [0x547367], "0x100000": []}
+EXPECT_L = {"0x40": [(0x5351A2, 0x5351A9), (0x56A11C, 0x56A123)],
+            "0x10000": [(0x532FA7, 0x532FB1), (0x5468C1, 0x5468CB)],
+            "0x100000": [(0x559CFD, 0x559D0B), (0x58BA79, 0x58BA80)]}
+got_r = {n: sorted(INS[k]["a"] for k in d) for n, v, d, lt, w in rows}
+got_l = {n: [(INS[a]["a"], INS[b]["a"]) for a, b in lt] for n, v, d, lt, w in rows}
+bad = []
+for n in EXPECT_R:
+    if got_r[n] != EXPECT_R[n]:
+        bad.append(f"{n}.R{['%08x' % x for x in got_r[n]]}")
+    if got_l.get(n, []) != EXPECT_L.get(n, []):
+        bad.append(f"{n}.L{['%08x' % x[0] for x in got_l.get(n, [])]}")
+if bad:
+    bit("G1 reader table differs from the pinned census: " + " ".join(bad))
 else:
-    say("ok  G1 all five bits have at least one exact reader; 0x8000 is read ONLY as a byte at +1 (0x94d449, 0x80)")
+    say("ok  G1 reader table is EXACT: 0x800000 1 DWORD test; 0x8000 1 byte test at +1; "
+        "0x40 3 direct + 2 lift; 0x10000 1 direct + 2 lift; 0x100000 2 lift only")
 
 # ---------------------------------------------------------------- G2 set vocabulary
 say("")
