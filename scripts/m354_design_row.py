@@ -8,8 +8,8 @@ This milestone reads the row arithmetic of the A block and every consumer of
 that row, and computes the answer from the objdump listing:
 
   0x4956c6  A loop: idx<0x80, item = cand[idx] @0x9267e4 (0x4956d6)
-  0x5a73f0  validator: row band (item>>6) must equal the owner, flags bit0 set,
-            owner mask bit clear, chassis domain and the +0x32 pre-req tech
+  0x5a73f0  validator: row flags bit0 set, owner mask bit clear, chassis domain,
+            and (item>=0x40) row band item>>6 must equal the owner
   0x49571b  imul edx,edx,0x34 / add edx,0x98ad88  -> the row's +0x00 NAME
   0x4957e2  imul ecx,ecx,0x34  / [ecx+0x98adb1]   -> +0x29 WEIGHT (cost)
   0x4959be  imul ecx,ecx,0x34  / [ecx+0x98adb2]   -> +0x2a CLASS (cmp 8)
@@ -18,9 +18,9 @@ that row, and computes the answer from the objdump listing:
 
   Field atlas (every offset below is computed from a literal, not authored):
     +0x00 name (appended through std::string @0x404010), +0x20 ability dword,
-    +0x24 domain, +0x25/+0x26 chassis bytes, +0x29 weight, +0x2a class,
-    +0x2c owner mask, +0x30 flags word (bit0 valid, bit2 design), +0x32 pre-req
-    tech (WORD -> tech record 0x92fdd4, stride 0xb).
+    +0x24 domain, +0x25..+0x28 component bytes (nouns INFERRED), +0x29 weight,
+    +0x2a class, +0x2c owner mask, +0x30 flags word (bit0 valid, bit2 design),
+    +0x32 pre-req tech (WORD -> tech record 0x92fdd4, stride 0xb).
 
   Cross-check against the QUEUE DECODER: the head<0 branch (0x4ef88b..0x4efa2c)
   reads the 0x984d38 table's cost (0x984d44) and NO 0x98ad88 field; the head>=0
@@ -71,7 +71,7 @@ def norm(s):
 
 
 class Listing:
-    def __init__(self, path):
+    def __init__(self, path, patch=None):
         self.at, self.order = {}, []
         with open(path, "r", errors="replace") as f:
             for line in f:
@@ -82,12 +82,29 @@ class Listing:
                 self.at[a] = norm(m.group(3))
                 self.order.append(a)
         self.order.sort()
+        if patch:
+            self.apply_patch(patch)
+
+    def apply_patch(self, spec):
+        """spec = '0xADDR|old|new' - one instruction edited in the parsed text.
+        The harness uses this instead of rewriting the 40 MB listing; a mutant
+        that does not match exactly one instruction raises, never passes."""
+        ad, old, new = spec.split("|")
+        ad = int(ad, 16)
+        t = self.at.get(ad)
+        if t is None or old not in t or t.count(old) != 1:
+            raise SystemExit("PATCH REJECTED: 0x%x %r not unique in %r" % (ad, old, t))
+        self.at[ad] = t.replace(old, new, 1)
 
     def get(self, a):
         return self.at.get(a)
 
     def window(self, lo, hi):
         return [(a, self.at[a]) for a in self.order if lo <= a < hi]
+
+    def prev(self, a):
+        i = self.order.index(a)
+        return self.order[i - 1] if i else None
 
     def refs(self, lo, hi, base, stride):
         """Every hex literal of an operand inside [base, base+stride)."""
@@ -99,9 +116,13 @@ class Listing:
                     out.append((a, t, v - base))
         return out
 
-    def strides(self, lo, hi):
-        return [(a, int(m.group(2), 16)) for a, t in self.window(lo, hi)
-                for m in [IMUL.search(t)] if m]
+    def strides(self, lo, hi, imm=None):
+        out = []
+        for a, t in self.window(lo, hi):
+            m = IMUL.search(t)
+            if m and (imm is None or int(m.group(2), 16) == imm):
+                out.append((a, int(m.group(2), 16)))
+        return out
 
 
 def digest_table(rows):
@@ -113,29 +134,36 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--digest", action="store_true")
     a = ap.parse_args()
-    L = Listing(TEXT)
-    fails = []
-    pin = []
+    L = Listing(TEXT, os.environ.get("SMAC_M354_PATCH") or None)
+    fails, gates = [], []
 
     def gate(gid, ok, msg):
         print("%s %-4s %s" % ("ok  " if ok else "FAIL", gid, msg))
+        gates.append(gid)
         if not ok:
             fails.append(gid)
-        return ok
+
+    pin = []
 
     # ------------------------------------------------------------------ TABLE 1
-    a_imul = L.strides(A_LO, A_HI)
+    a_imul = L.strides(A_LO, A_HI, 0x34)
+    a_all = L.strides(A_LO, A_HI)
     a_row = L.refs(A_LO, A_HI, ROW_BASE, ROW_STRIDE)
     print("TABLE 1  section A (0x%x..0x%x): the item is a 0x%x-stride row index"
           % (A_LO, A_HI, ROW_STRIDE))
     print("  item load            %s" % L.get(0x4956D6))
+    print("  all imul-immediates  %s" % [(hex(s), hex(v)) for s, v in a_all])
     for ad, st in a_imul:
         print("  0x%06x  %s" % (ad, L.get(ad)))
     print("  row-field reads      %s"
           % ", ".join("0x%02x@0x%06x" % (o, ad) for ad, _t, o in a_row))
-    triples = sorted((ad, o) for ad, _t, o in a_row if any(ad == s for s, _ in a_imul))
+    triples = []
+    for s, _st in a_imul:
+        nxt = [(ad, o) for ad, _t, o in a_row if 0 <= ad - s <= 12]
+        triples.append((s, nxt[0][1] if nxt else None))
+    triples = sorted(triples)
     print("  (imul site, field)   %s" % triples)
-    pin.append(("A", tuple((s, st) for s, st in a_imul), tuple(triples)))
+    pin.append(("A", tuple(a_imul), tuple(triples)))
 
     # ------------------------------------------------------------------ TABLE 2
     print()
@@ -146,44 +174,44 @@ def main():
     sets = {}
     for name, (lo, hi) in fns:
         r = L.refs(lo, hi, ROW_BASE, ROW_STRIDE)
-        st = L.strides(lo, hi)
-        sets[name] = (sorted({o for _a, _t, o in r}), len(r), [x for _a, x in st])
-        print("  %-18s refs=%d offsets=%s strides=%s"
-              % (name, len(r), ["0x%02x" % o for o in sets[name][0]], sets[name][2]))
+        st = L.strides(lo, hi, 0x34)
+        sets[name] = (sorted({o for _a, _t, o in r}), len(r), len(st))
+        print("  %-18s refs=%d offsets=%s stride-0x34 imuls=%d"
+              % (name, len(r), ["0x%02x" % o for o in sets[name][0]], len(st)))
     union = sorted({o for v in sets.values() for o in v[0]} | {o for _a, _t, o in a_row})
     print("  union offsets        %s" % ["0x%02x" % o for o in union])
     print("  any 0x98ad literal in B flags fn: %s"
           % [t for _a, t in L.window(*F_B) if "0x98ad" in t])
-    pin.append(("F", tuple((k, tuple(v[0]), v[1], tuple(v[2])) for k, v in sets.items()),
+    pin.append(("F", tuple((k, tuple(v[0]), v[1], v[2]) for k, v in sets.items()),
                 tuple(union)))
 
     # ------------------------------------------------------------------ TABLE 3
     print()
     print("TABLE 3  the candidate builder 0x596000: owner bands in the item space")
-    print("  %s" % L.get(0x596017))
-    print("  %s" % L.get(0x59601F))
-    print("  %s" % L.get(0x596028))
-    print("  %s" % L.get(0x596037))
-    band_shift = 6 if "0x6" in (L.get(0x59601F) or "") else None
-    owners = range(8)
-    ko_lo, ko_hi = 0x40, 0x3F
+    for ad in (0x596017, 0x59601F, 0x596028, 0x596037):
+        print("  0x%06x %s" % (ad, L.get(ad)))
+    band_shift = 6 if (L.get(0x59601F) or "").endswith("0x6") else None
+    m = re.match(r"cmp ecx,0x([0-9a-f]+)$", L.get(0x596017) or "")
+    split = int(m.group(1), 16) if m else None
+    if MUT == "band":                      # classifier mutant: read the band as 5 bits
+        band_shift = 5
+        print("  [mutant band] classifier reads the owner band as %d bits" % band_shift)
     maps = {}
-    for own in owners:
-        m = []
-        for k in range(0x80):
-            idx = (k & ko_hi) + ((own << band_shift) if k >= ko_lo else 0)
-            m.append(idx)
-        maps[own] = m
-        bands = sorted({v >> band_shift for v in m})
-        print("  owner %d: band set %s  first/mid/last %d/%d/%d"
-              % (own, bands, m[0], m[0x40], m[-1]))
-    shared = sum(1 for k in range(0x80) if maps[3][k] < 0x40)
+    for own in range(8):
+        maps[own] = [(k & 0x3F) + ((own << (band_shift or 0)) if split and k >= split else 0)
+                     for k in range(0x80)]
+    print("  owner 3 band set     %s" % sorted({v >> (band_shift or 0) for v in maps[3]}))
+    for own in range(8):
+        print("  owner %d: first/mid/last %d/%d/%d  bands %s"
+              % (own, maps[own][0], maps[own][0x40], maps[own][-1],
+                 sorted({v >> (band_shift or 0) for v in maps[own]})))
+    shared = sum(1 for k in range(0x80) if maps[3][k] < 0x40) if band_shift else -1
     print("  owner 3: %d entries < 0x40 (shared band), %d in band 3"
           % (shared, 0x80 - shared))
-    b_chain = [L.get(x) for x in (0x59603E, 0x596041, 0x596044)]
+    b_chain = [L.get(x) or "" for x in (0x59603E, 0x596041, 0x596044)]
     print("  row-stride chain      %s" % " ; ".join(b_chain))
-    print("  %s" % L.get(0x596047))
-    pin.append(("B", band_shift, tuple(maps[3])))
+    print("  0x596047 %s" % L.get(0x596047))
+    pin.append(("B", band_shift, tuple(maps[3]), tuple(b_chain)))
 
     # ------------------------------------------------------------------ TABLE 4
     print()
@@ -199,12 +227,11 @@ def main():
     neg_row = L.refs(*DEC_NEG, ROW_BASE, ROW_STRIDE)
     neg_fac = L.refs(*DEC_NEG, FAC_BASE, FAC_STRIDE)
     pos_row = L.refs(*DEC_POS, ROW_BASE, ROW_STRIDE)
-    print("  head<0  (0x%x..0x%x) row refs=%d facility refs=%d %s"
-          % (DEC_NEG[0], DEC_NEG[1], len(neg_row), len(neg_fac),
+    print("  head<0  row refs=%d facility refs=%d %s"
+          % (len(neg_row), len(neg_fac),
              [(hex(ad), "0x%02x" % o) for ad, _t, o in neg_fac]))
-    print("  head>=0 (0x%x..0x%x) row refs=%d %s"
-          % (DEC_POS[0], DEC_POS[1], len(pos_row),
-             [(hex(ad), "0x%02x" % o) for ad, _t, o in pos_row if o in (0x30, 0x2C)]))
+    print("  head>=0 row refs=%d stamps/flags %s"
+          % (len(pos_row), [(hex(ad), "0x%02x" % o) for ad, _t, o in pos_row if o == 0x30]))
     for ad in (0x4EF88B, 0x4EF897, 0x4EF899, 0x4EF89F, 0x4EF8ED,
                0x4EFE41, 0x4EFE44, 0x4EFE50, 0x4EFE60):
         print("  0x%06x %s" % (ad, L.get(ad)))
@@ -214,19 +241,28 @@ def main():
     print()
     print("TABLE 6  the field atlas as CONSUMERS read it (offset -> use)")
     atlas = [
-        (0x00, "name string, appended via 0x404010 (std::string, 130 callers)", 0x49571E, A_LO, A_HI),
-        (0x20, "ability dword, info builder 0x570e90", None, *F_INFO),
-        (0x24, "chassis domain byte, validator + info", None, *F_VAL),
-        (0x29, "production WEIGHT -> cost via 0x4e40a0(base+4)", None, A_LO, A_HI),
-        (0x2A, "CLASS byte (==8 colony-pod display rule)", 0x4959C9, A_LO, A_HI),
-        (0x2C, "owner MASK byte, tested 1<<owner by 0x5a73f0", None, *F_VAL),
-        (0x30, "flags WORD: bit0 valid, bit2 design stamped", 0x496065, *F_A),
-        (0x32, "pre-req tech id (WORD) -> 0x92fdd4 stride 0xb", 0x4EFE50, A_LO, A_HI),
+        (0x00, "name string, appended via 0x404010 (std::string, 130 callers)"),
+        (0x20, "ability dword, info builder 0x570e90"),
+        (0x24, "chassis DOMAIN byte (validator + info)"),
+        (0x25, "component byte (validator path / info) - noun OPEN"),
+        (0x26, "component byte (info) - noun OPEN"),
+        (0x27, "component byte (info) - noun OPEN"),
+        (0x28, "component byte (info) - noun OPEN"),
+        (0x29, "production WEIGHT -> cost via 0x4e40a0(base+4)"),
+        (0x2A, "CLASS byte (==8 colony-pod display rule)"),
+        (0x2C, "owner MASK byte, tested 1<<owner by 0x5a73f0"),
+        (0x30, "flags WORD: bit0 valid, bit2 design stamped"),
+        (0x32, "pre-req tech id (WORD) -> 0x92fdd4 stride 0xb"),
     ]
-    for off, use, probe, lo, hi in atlas:
-        has = off in [o for _a, _t, o in L.refs(lo, hi, ROW_BASE, ROW_STRIDE)]
-        print("  +0x%02x  %-52s ref-in-window=%s" % (off, use, has))
-    pin.append(("T", tuple(o for o, _u, _p, _l, _h in atlas)))
+    print("  %-6s %-52s %s" % ("off", "use", "ref-in-window"))
+    for off, use in atlas:
+        has = off in [o for _a, _t, o in L.refs(*F_INFO, ROW_BASE, ROW_STRIDE)] \
+            or off in [o for _a, _t, o in a_row] \
+            or off in [o for _a, _t, o in L.refs(*F_A, ROW_BASE, ROW_STRIDE)] \
+            or off in [o for _a, _t, o in L.refs(*F_VAL, ROW_BASE, ROW_STRIDE)] \
+            or off in [o for _a, _t, o in L.refs(*F_W, ROW_BASE, ROW_STRIDE)]
+        print("  +0x%02x  %-52s %s" % (off, use, has))
+    pin.append(("T", tuple(o for o, _u in atlas)))
 
     if a.digest:
         print()
@@ -238,72 +274,85 @@ def main():
     print("GATES")
     gate("G1", a_imul == [(0x49571B, 0x34), (0x4957E2, 0x34), (0x4959BE, 0x34)]
          and triples == [(0x49571B, 0x00), (0x4957E2, 0x29), (0x4959BE, 0x2A)],
-         "3 imul-by-0x34 sites, fields +0x00/+0x29/+0x2a  %s" % (triples,))
+         "3 imul-by-0x34 sites, fields +0x00/+0x29/+0x2a  %s"
+         % ([(hex(s), None if o is None else "0x%02x" % o) for s, o in triples],))
 
     prov = []
     for s, _st in a_imul:
         reg = re.match(r"imul\s+(\w+)", L.get(s) or "").group(1)
-        prev = [L.get(x) for x in (s - 3, s - 4, s - 7, s - 9)]
-        prov.append(any(p and p.startswith("mov %s,DWORD PTR [ebp-0x2c]" % reg)
-                        for p in prev))
-    gate("G2", all(prov) and "0x9267e4" in (L.get(0x4956D6) or "")
-         and "0x2c" in (L.get(0x4956DD) or ""),
+        p = L.get(L.prev(s)) or ""
+        prov.append(p == "mov %s,DWORD PTR [ebp-0x2c]" % reg)
+    gate("G2", bool(a_imul) and all(prov) and "0x9267e4" in (L.get(0x4956D6) or "")
+         and "[ebp-0x2c],edx" in (L.get(0x4956DD) or ""),
          "every row index is loaded from [ebp-0x2c], filled from [..*4+0x%x]  %s"
          % (CAND_BASE, prov))
 
     fa_off, fa_n, fa_st = sets["A flags   0x496050"]
-    gate("G3", fa_off == [0x2A, 0x30] and fa_n == 2 and fa_st == [0x34]
+    gate("G3", fa_off == [0x2A, 0x30] and fa_n == 2 and fa_st == 2
          and "cmp DWORD PTR [ebp+0x8],0x40" in (L.get(0x49605C) or "")
          and "and ecx,0x4" in (L.get(0x49606F) or ""),
-         "A flags fn reads exactly +0x2a,+0x30; guard 0x40; test bit 4  %s" % (fa_off,))
+         "A flags fn: %d refs at %s, %d stride sites, guard 0x40, test bit 4"
+         % (fa_n, ["0x%02x" % o for o in fa_off], fa_st))
 
     fb_off, fb_n, _fb_st = sets["B flags   0x4960f0"]
-    fb_rets = sorted({int(m.group(1), 16) for ad, t in L.window(*F_B)
+    fb_rets = sorted({int(m.group(1), 16) for _ad, t in L.window(*F_B)
                       for m in [re.match(r"mov eax,0x([0-9a-f]+)$", t)] if m})
     gate("G4", fb_n == 0 and not [t for _a, t in L.window(*F_B) if "0x98ad" in t]
          and set(fb_rets) <= {0, 1, 2, 3},
-         "B flags fn is PURE over the ordinal: 0 row refs, returns %s" % (fb_rets,))
+         "B flags fn is PURE over the ordinal: %d row refs, returns %s"
+         % (fb_n, fb_rets))
 
     gate("G5", "or al,0x20" in (L.get(0x495A8D) or "")
          and "or al,0x10" in (L.get(0x495DFF) or "")
          and "and eax,0x20" in (L.get(0x49772A) or "")
          and (L.get(0x49777C) or "").startswith("neg "),
-         "A rows get 0x20 (-> +item), B rows 0x10 (-> -item): %s / %s"
+         "A rows 0x20 (-> +item), B rows 0x10 (-> -item): %s / %s"
          % (L.get(0x495A8D), L.get(0x495DFF)))
 
-    gate("G6", band_shift == 6 and shared == 0x40 and maps[3][0] == 0
-         and maps[3][0x40] == 0xC0 and maps[3][-1] == 0xFF
-         and all((v >> 6) == o for o in owners for k, v in enumerate(maps[o]) if k >= 0x40)
-         and all(v < 0x40 for o in owners for v in maps[o][:0x40]),
-         "builder: k<0x40 -> k ; k>=0x40 -> owner*0x40|(k&0x3f); 64 shared + 64 owner")
-    # the row-stride chain must be 0x34*idx (13*4): assert separately so a drift bites
-    chain = [L.get(x) or "" for x in (0x59603E, 0x596041, 0x596044)]
-    stride_ok = ("lea eax,[ebx+ebx*2]" in chain[0] and "lea edi,[ebx+eax*4]" in chain[1]
-                 and "shl edi,0x2" in chain[2])
-    gate("G6b", stride_ok, "row stride chain 13*i then <<2 == 0x34*i  %s" % (chain,))
+    ok6 = (band_shift == 6 and split == 0x40 and shared == 0x40 and maps[3][0] == 0
+           and maps[3][0x40] == 0xC0 and maps[3][-1] == 0xFF
+           and all((v >> 6) == o for o in range(8) for k, v in enumerate(maps[o]) if k >= 0x40)
+           and all(v < 0x40 for o in range(8) for v in maps[o][:0x40]))
+    gate("G6", ok6,
+         "builder: k<0x%x -> k ; k>=split -> owner*0x40|(k&0x3f); 64 shared + 64 owner (split=%s)"
+         % (split or 0, split))
+
+    stride_ok = ("lea eax,[ebx+ebx*2]" in b_chain[0] and "lea edi,[ebx+eax*4]" in b_chain[1]
+                 and "shl edi,0x2" in b_chain[2] and 13 * 4 == ROW_STRIDE)
+    gate("G6b", stride_ok, "row stride chain 13*i then <<2 == 0x34*i  %s" % (b_chain,))
 
     fv_off, fv_n, fv_st = sets["validator 0x5a73f0"]
-    gate("G7", fv_off == [0x24, 0x2A, 0x2C, 0x30, 0x32] and fv_st == [0x34]
-         and "test BYTE PTR [edi+0x98adb8],0x1" in (L.get(0x5A7473) or "")
-         and 0x5A748B in [ad for ad, _t, o in L.refs(*F_VAL, ROW_BASE, ROW_STRIDE) if o == 0x2A],
-         "validator reads domain/class/mask/flags/pre-req, band = item>>6  %s" % (fv_off,))
+    v30 = [ad for ad, _t, o in L.refs(*F_VAL, ROW_BASE, ROW_STRIDE) if o == 0x30]
+    v2a = [ad for ad, _t, o in L.refs(*F_VAL, ROW_BASE, ROW_STRIDE) if o == 0x2A]
+    vch = [L.get(x) or "" for x in (0x5A73F9, 0x5A73FC, 0x5A73FF)]
+    gate("G7", fv_off == [0x24, 0x2A, 0x2C, 0x30, 0x32] and fv_st == 0
+         and v30 == [0x5A7402] and v2a == [0x5A748B]
+         and "test BYTE PTR [edx+0x98adb8],0x1" in (L.get(0x5A7402) or "")
+         and "lea eax,[edi+edi*2]" in vch[0] and "lea edx,[edi+eax*4]" in vch[1]
+         and "shl edx,0x2" in vch[2]
+         and "shl ebx,cl" in (L.get(0x5A7422) or "")
+         and "test bl,al" in (L.get(0x5A7424) or ""),
+         "validator refs %s; stride lea/lea/shl; flags bit0 @%s; class @%s; mask 1<<owner"
+         % (["0x%02x" % o for o in fv_off],
+            ["0x%x" % x for x in v30], ["0x%x" % x for x in v2a]))
 
-    gate("G8", set(atlas_offsets := union) >= {0x00, 0x20, 0x24, 0x25, 0x26, 0x29, 0x2A, 0x2C, 0x30, 0x32}
-         and len(union) == 10,
-         "the 10 consumed fields of the 0x34 row  %s" % (["0x%02x" % o for o in union],))
+    gate("G8", union == [0x00, 0x20, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2C, 0x30, 0x32],
+         "the 12 consumed fields of the 0x34 row  %s" % (["0x%02x" % o for o in union],))
 
-    gate("G9", len(neg_row) == 0 and len(neg_fac) >= 1 and len(pos_row) >= 2
+    pos_offs = [o for _a, _t, o in pos_row]
+    gate("G9", len(neg_row) == 0 and len(neg_fac) == 1 and len(pos_row) == 5
+         and [o for _a, _t, o in neg_fac] == [0x0C]
+         and pos_offs.count(0x30) == 2 and 0x2C not in pos_offs
          and "cmp ebx,0x40" in (L.get(0x4EFE41) or ""),
-         "decoder: head<0 -> facility table (%d refs, 0 row), head>=0 -> row (%d)"
-         % (len(neg_fac), len(pos_row)))
-
+         "decoder: head<0 -> facility cost +0x0c (%d ref, 0 row), head>=0 -> row (%d, %d at +0x30)"
+         % (len(neg_fac), len(pos_row), pos_offs.count(0x30)))
     dg = digest_table(pin)
     print()
     print("digest=%s" % dg)
     if fails:
-        print("FAIL M354: %d/%d gates red %s" % (len(fails), 11, fails))
+        print("FAIL M354: %d/%d gates red %s" % (len(fails), len(gates), fails))
         return 1
-    print("PASS M354: 10/10 gates  digest=%s" % dg)
+    print("PASS M354: %d/%d gates  digest=%s" % (len(gates), len(gates), dg))
     return 0
 
 

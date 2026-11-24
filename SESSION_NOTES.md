@@ -649,3 +649,32 @@ whether a facility completion stamps at all.
   reads ints with NO gate.
 - **OPEN**: what `Laptop` selects (its atoi feeds masks @0x58ea12/0x58eb2b); the twins'
   0x3a7168/0x327168 return; whether any completion path re-persists.
+
+## Session 329-chain2 (2026-11-24) — M354: section A's identity = the 0x98ad88 row (M351's OPEN closed; leg NOUNS retracted)
+
+- **ACCEPT** `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 10/10 gates`**,
+  table digest `ee70888f7fb55d69`; two runs byte-identical (`evidence/m354_design_row.txt`,
+  `evidence/m354_x2.txt`). `scripts/m354_mutate.py` -> **17/18 scored, NO-OP ['MU17']**,
+  covered {G1,G3,G5,G6,G7,G9} (`evidence/m354_mutate.txt:22`).
+- **THE ROW IS A 0x98ad88 RECORD**, stride 0x34, keyed by the A item: three imul sites
+  (0x49571b name, 0x4957e2 +0x29 weight, 0x4959be +0x2a class) all read the item from
+  [ebp-0x2c], filled from `[ecx*4+0x9267e4]` @0x4956d6. So a +head is a UNIT-TYPE/design
+  ROW, not a facility id — M351's OPEN "does A speak designs" is ANSWERED (V).
+- **THE FLAGS FNS DIFFER IN KIND**: 0x496050 (A) reads exactly +0x2a and +0x30 and is
+  band-guarded (`cmp [ebp+8],0x40`, bit 4 test); 0x4960f0 (B) reads NO memory at all and
+  returns {1,2,3}. Two different row spaces, proved by their field sets, not by names.
+- **BUILDER**: 0x596000 writes `owner*0x40 | (k&0x3f)` for k>=0x40 (shl 0x6; cmp 0x40) —
+  64 shared rows + 64 owner-band rows; the same value is row-indexed (13*i<<2 = 0x34*i).
+- **RETRACTION (narrows M349 + M351):** the decoder's legs are identified by their TABLES,
+  not by their labels: head<0 reads the 0x984d38/0x30 cost +0x0c (M337 = `#FACILITIES`);
+  head>=0 indexes 0x98ad88/0x34 and stamps +0x30 (0x4efe50/60). So M349's per-leg nouns
+  (neg=UNIT, +2=FACILITY) and M351's "unit row" label for section B are INVERTED; the
+  sign split and all arithmetic stand. Do not re-derive the nouns from trace names.
+- **PITFALL (new)**: gate messages that index a parsed list (`v30[0]`) crash *before* the
+  FAIL line prints, so the mutant scores MISSED — a gate that can die silently is a defect;
+  format parsed sets, then assert. MU11 also caught an AUTHORED constant (the 0x40 split
+  was hardcoded); the split is now parsed from 0x596017.
+- **DOC CAP**: NAMED 245,796 B was under the 5 KB trigger -> `## M312` rotated VERBATIM to
+  `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py
+  --verify` PASS) before `## M354` landed.
+- OPEN: game nouns of +0x25..+0x28; bit2 = prototype build INFERRED.
