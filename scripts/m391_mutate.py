@@ -18,13 +18,15 @@ MUTANTS = [
     ("MU3", {"M391_ALGO": "3"}, "G5.11", "the WAR arm's 0xfaeef378 clear dropped"),
     ("MU4", {"M391_ALGO": "4"}, "G2.2", "dominance gate skipped (no guard attributed)"),
     ("MU5", {"M391_ALGO": "5"}, "G4.4", "mask argument read at the wrong cdecl slot"),
-    ("MU6", {"M391_PATCH": "0x551be6|or edx,edx"}, "G5.10", "the final mask restore neutralised"),
+    ("MU6", {"M391_PATCH": "0x551be6|or edx,edx"}, "G5.9", "the final mask restore neutralised"),
     ("MU7", {"M391_ALGO": "7"}, "G5.13", "apply_api ORs the mask before the ANDs"),
     ("MU8", {"M391_ALGO": "8"}, "G2.3", "third arm's gate read as test bl,0x7f"),
     ("MU9", {"M391_PATCH": "0x551b17|and edx,0xffffffff"}, "G3.2", "blanket row A neutralised"),
     ("MU10", {"M391_PATCH": "0x55538c|and ecx,0xffffffff"}, "G3.3", "the only bit-11-only bigger mask neutralised"),
     ("MU11", {"M391_PATCH": "0x551a35|test bl,0x0"}, "G2.1", "treaty-stage guard rewritten to 0x0"),
     ("MU12", {"M391_PATCH": "0x551a88|and edx,0xffffffff"}, "G1.2", "one of the 3 masks replaced by all-ones"),
+    ("MU13", {"M391_PATCH": "0x551b17|and edx,0xfaeef379"}, "G5.0", "the WAR arm's mask identity changed"),
+    ("MU14", {"M391_PATCH": "0x551abc|or ebx,0x3"}, "G5.10", "a third ebx definition injected before the restore"),
 ]
 
 

@@ -36,7 +36,7 @@ G2 gating: which mask-argument bit each arm is conditional on
   ok   G2.2 the 0xfaeef378 clears sit under a `test bl,0x10` guard (the WAR arm) - 16 16
   ok   G2.3 the 0xff7fffff clears sit under a `test bl,0x17` guard - 23
   ok   G2.4 the WAR-bit arm is entered only by fall-through of the je at 0x551ac2
-  ok   G2.5 dominance is load-bearing (skipping it must change G2)
+  ok   G2.5 the two WAR ANDs lie between the arm entry 0x551ac8 and the je target 0x551b74
 
 G3 the population of 0xc00 CLEAR instructions on the pair dword
   pair writes: 27 direct-displacement + 15 through a tagged pointer = 42
@@ -49,7 +49,7 @@ G3 the population of 0xc00 CLEAR instructions on the pair dword
   bit 10 (0x400) clearers: 5 instructions ['00551b17', '00551b42', '0055538c', '005553e7', '005556e1']
   bit 11 (0x800) clearers: 3 instructions ['00551b17', '00551b42', '0055538c']
   functions carrying a bit-10 clear: ['FUN_00551a20', 'FUN_005551e0']
-  ok   G3.1 the pair-write population is 42 (27 direct + 15 pointer)
+  ok   G3.1 the pair-write population is 42 = 27 direct + 15 pointer - 42 = 27 + 15
   ok   G3.2 bit 10 is cleared by exactly 5 instructions - ['00551b17', '00551b42', '0055538c', '005553e7', '005556e1']
   ok   G3.3 bit 11 is cleared by exactly 3 instructions - ['00551b17', '00551b42', '0055538c']
   ok   G3.4 the bit-10 clearers span 2 functions - ['FUN_00551a20', 'FUN_005551e0']
@@ -64,15 +64,19 @@ G4 routing: every API call site with the mask argument resolved
     mask OPAQUE with set=0 (residual): ['004dad30', '004db02d', '004db08d']
   ok   G4.1 the set half has 70 call sites - 70
   ok   G4.2 the set/clear half has 36 call sites - 36
-  ok   G4.3 NO resolved mask passed to FUN_00551a20 carries 0x400 or 0x800 - 0 of 65
+  ok   G4.3 NO resolved mask passed to FUN_00551a20 carries 0x400 or 0x800 - 0 of 65 carry 0xc00
   ok   G4.4 exactly 2 call sites clear 0xc00, both through FUN_00551cf0 - ['004db11b', '00519bb5']
   ok   G4.5 the 5 setter sites pass 0xc00 with set=1 through the same half - ['0041b2d2', '004cd6f6', '005470d6', '00594cf7', '0059aef0']
   ok   G4.6 residual OPEN: opaque set=0 masks at 3 sites - ['004dad30', '004db02d', '004db08d']
     WAR-arm callers (mask&0x10): 24 of 65 resolved
   ok   G4.7 the WAR arm fires on 24 resolved call sites and none of them carries 0xc00 - 24 sites, 0 with 0xc00
 
-G5 bit-by-bit survival of the blanket sequence
-  bit 0xffee7faf 0xfaeef378 0xff7fffff WAR-net   known noun (INFERRED where noted)
+G5 bit-by-bit survival of the blanket sequence (masks read off the stream)
+  ladder (address order): ['@00551a88 gate=0x07 mask=ffee7faf', '@00551b17 gate=0x10 mask=faeef378', '@00551b98 gate=0x17 mask=ff7fffff']
+  ok   G5.0 the ladder is exactly (0x7,0xffee7faf) / (0x10,0xfaeef378) / (0x17,0xff7fffff) - [('0x7', 'ffee7faf'), ('0x10', 'faeef378'), ('0x17', 'ff7fffff')]
+  stamp read off 0x551b11 = 80000108
+  ok   G5.0b the stamp 0x80000108 is the stream's own immediate
+  bit 0xffee7faf 0xfaeef378 0xff7fffff all-arms  known noun (INFERRED where noted)
   0   -          CLEAR      -          CLEAR     
   1   -          CLEAR      -          CLEAR     TREATY
   2   -          CLEAR      -          CLEAR     TRUCE
@@ -97,19 +101,20 @@ G5 bit-by-bit survival of the blanket sequence
   21  -          -          -          -         
   22  -          -          -          -         
   23  -          -          CLEAR      CLEAR     TREATY-ON
-  WAR-write survivor mask   = fa6e7328
+  all-arms survivor mask    = fa6e7328
   treaty-write survivor mask= ff6e7faf
-  API stamp 0x80000108 & WAR-net = 80000108 (survives: True)
-  ok   G5.1 bit 10 is CLEARED by 0xfaeef378 and PRESERVED by the other two
-  ok   G5.2 bit 11 is CLEARED by 0xfaeef378 and PRESERVED by the other two
-  ok   G5.3 the 0xfaeef378 clear carries 10 bits, only 2 belong to 0xc00
-  ok   G5.4 WAR-net clears 0xc00 (bits 10,11) unconditionally
+  API stamp 0x80000108 & all-arms = 80000108 (survives: True)
+  ok   G5.1 bit 10 is CLEARED by the WAR arm and PRESERVED by the other two
+  ok   G5.2 bit 11 is CLEARED by the WAR arm and PRESERVED by the other two
+  ok   G5.3 the WAR arm's clear carries 10 bits, only 2 belong to 0xc00
+  ok   G5.4 the all-arms net clears 0xc00 (bits 10,11)
   ok   G5.5 treaty-net preserves 0xc00 - ff6e7faf
   ok   G5.6 COMMLINK 0x8 / PEACE 0x2000 / 0x20000 / bit31 survive the AND sequence
   ok   G5.7 TREATY 0x2 / TRUCE 0x4 / SET-TREATY 0x40 / 0x8000 / 0x10000 / TREATY-ON 0x800000 are cleared
-  ok   G5.8 the API's own 0x80000108 stamp survives its own AND
-  ok   G5.9 the stamp OR (0x551b11) precedes the AND and the mask restores come after (0x551be6)
-  ok   G5.10 WAR 0x10 is cleared by the treaty-stage AND and restored only by the final `or edx,ebx`
+  ok   G5.8 the API's own stamp survives its own AND
+  ok   G5.9 the WAR arm ANDs lie between the stamp OR (0x551b11) and the restore ORs (0x551be6/0x551c09) - ['00551b17', '00551b42']
+  ebx definitions in FUN_00551a20: ['00551a2a mov ebx,DWORD PTR [ebp+0x10]', '00551abc or ebx,0x2', '00551b11 or ebx,0x80000108']
+  ok   G5.10 ebx at the restore is the caller mask: its only defs are [ebp+0x10] and two ORs - ['mov ebx,DWORD PTR [ebp+0x10]', 'or ebx,0x2', 'or ebx,0x80000108']
   vector 0x80000f18 + mask 0x10 (WAR)          -> 80000318
   vector 0x80000f18 + mask 0x04 (TRUCE)        -> 80000f0c
   vector 0x80000f18 + mask 0x11 (TRUCE+WAR)    -> 80000319
@@ -131,4 +136,4 @@ G7 digest
   ok   G7.2 digest matches the pin - 76148839fd85b66e vs 76148839fd85b66e
 
 RESULT
-PASS M391: 51/51 gates digest 76148839fd85b66e
+PASS M391: 53/53 gates digest 76148839fd85b66e

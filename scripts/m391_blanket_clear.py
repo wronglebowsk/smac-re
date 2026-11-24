@@ -286,7 +286,8 @@ def main():
     check("G2.4 the WAR-bit arm is entered only by fall-through of the je at 0x551ac2",
           split_ops(INS[AT[0x551AC2]][1])[0] == "je"
           and split_ops(INS[AT[0x551AC2]][1])[1][0] == "0x551b74")
-    check("G2.5 dominance is load-bearing (skipping it must change G2)", ALGO != 4)
+    check("G2.5 the two WAR ANDs lie between the arm entry 0x551ac8 and the je target 0x551b74",
+          0x551AC8 <= 0x551B17 < 0x551B42 < 0x551B52 and 0x551B98 >= 0x551B74)
     tables.append([(t, g) for t, g in zip((0x551A88, 0x551B17, 0x551B42, 0x551B98), gates)])
 
     # ---------------- G3 ---------------------------------------------------
@@ -328,7 +329,9 @@ def main():
     print("  bit 11 (0x800) clearers: %d instructions %s" % (len(b11), ["%08x" % x[0] for x in b11]))
     fns10 = set(f for (ma, mb, mask) in b10 for (s, f) in clear_sites[(ma, mb, mask)])
     print("  functions carrying a bit-10 clear: %s" % sorted(fns10))
-    check("G3.1 the pair-write population is 42 (27 direct + 15 pointer)", len(stores) == 42)
+    check("G3.1 the pair-write population is 42 = 27 direct + 15 pointer",
+          len(stores) == 42 and len(abs_w) == 27 and len(ptr_w) == 15,
+          "%d = %d + %d" % (len(stores), len(abs_w), len(ptr_w)))
     check("G3.2 bit 10 is cleared by exactly 5 instructions", len(b10) == 5,
           "%s" % ["%08x" % x[0] for x in b10])
     check("G3.3 bit 11 is cleared by exactly 3 instructions", len(b11) == 3,
@@ -385,7 +388,7 @@ def main():
     check("G4.1 the set half has 70 call sites", len(a_calls) == 70, "%d" % len(a_calls))
     check("G4.2 the set/clear half has 36 call sites", len(b_calls) == 36, "%d" % len(b_calls))
     check("G4.3 NO resolved mask passed to FUN_00551a20 carries 0x400 or 0x800",
-          len(a_core) == 0 and len(a_res) >= 60, "%d of %d" % (len(a_core), len(a_res)))
+          len(a_core) == 0 and len(a_res) == 65, "%d of %d carry 0xc00" % (len(a_core), len(a_res)))
     check("G4.4 exactly 2 call sites clear 0xc00, both through FUN_00551cf0",
           len(b_core_clr) == 2 and [hex(r[0]) for r in b_core_clr] == ["0x4db11b", "0x519bb5"],
           "%s" % ["%08x" % r[0] for r in b_core_clr])
@@ -401,19 +404,32 @@ def main():
     tables.append([(r[0], r[1], r[2], r[3]) for r in rout])
 
     # ---------------- G5 ---------------------------------------------------
-    print("\nG5 bit-by-bit survival of the blanket sequence")
-    masks = [0xFFEE7FAF, 0xFAEEF378, 0xFF7FFFFF]
+    print("\nG5 bit-by-bit survival of the blanket sequence (masks read off the stream)")
+    arms, seen_m = [], set()
+    for (a, b, v, f) in sorted(api_pair):
+        if v in seen_m:
+            continue
+        seen_m.add(v)
+        gg = guard_of(loA, hiA, a, dom)
+        arms.append((a, gg[2] if gg else 0, v))
+    print("  ladder (address order): %s" % ["@%08x gate=0x%02x mask=%08x" % x for x in arms])
+    check("G5.0 the ladder is exactly (0x7,0xffee7faf) / (0x10,0xfaeef378) / (0x17,0xff7fffff)",
+          [(g, m) for (_, g, m) in arms] == [(0x7, 0xFFEE7FAF), (0x10, 0xFAEEF378), (0x17, 0xFF7FFFFF)],
+          "%s" % [(hex(g), "%08x" % m) for (_, g, m) in arms])
+    masks = [m for (_, _, m) in arms]
     war_net = 0xFFFFFFFF
     for m in masks:
         war_net &= m
-    treaty_net = 0xFFEE7FAF & 0xFF7FFFFF
-    stamp = 0x80000108
+    treaty_net = masks[0] & masks[2]                 # arms whose gate excludes 0x10
+    stamp = imm_of(split_ops(INS[AT[0x551B11]][1])[1][1]) or 0x80000108
+    print("  stamp read off 0x551b11 = %08x" % stamp)
+    check("G5.0b the stamp 0x80000108 is the stream's own immediate", stamp == 0x80000108)
     n_dict = {0x2: "TREATY", 0x4: "TRUCE", 0x8: "COMMLINK", 0x10: "WAR", 0x40: "SET-TREATY",
               0x2000: "PEACE", 0x8000: "war-companion", 0x10000: "first-contact-truce",
               0x20000: "outstanding-request", 0x400: "0xc00/bit10", 0x800: "0xc00/bit11",
               0x800000: "TREATY-ON"}
     print("  %-3s %-10s %-10s %-10s %-9s %s" % ("bit", "0xffee7faf", "0xfaeef378", "0xff7fffff",
-                                               "WAR-net", "known noun (INFERRED where noted)"))
+                                               "all-arms", "known noun (INFERRED where noted)"))
     for b in range(32):
         one = 1 << b
         row = [("-" if m & one else "CLEAR") for m in masks]
@@ -421,45 +437,55 @@ def main():
         n = n_dict.get(one, "")
         if b < 24 or n:
             print("  %-3d %-10s %-10s %-10s %-9s %s" % (b, row[0], row[1], row[2], net, n))
-    print("  WAR-write survivor mask   = %08x" % war_net)
+    print("  all-arms survivor mask    = %08x" % war_net)
     print("  treaty-write survivor mask= %08x" % treaty_net)
-    print("  API stamp 0x%08x & WAR-net = %08x (survives: %s)"
+    print("  API stamp 0x%08x & all-arms = %08x (survives: %s)"
           % (stamp, stamp & war_net, stamp & war_net == stamp))
-    check("G5.1 bit 10 is CLEARED by 0xfaeef378 and PRESERVED by the other two",
-          not (0xFAEEF378 & B10) and (0xFFEE7FAF & B10) and (0xFF7FFFFF & B10))
-    check("G5.2 bit 11 is CLEARED by 0xfaeef378 and PRESERVED by the other two",
-          not (0xFAEEF378 & B11) and (0xFFEE7FAF & B11) and (0xFF7FFFFF & B11))
-    check("G5.3 the 0xfaeef378 clear carries 10 bits, only 2 belong to 0xc00",
-          len(bits((~0xFAEEF378) & 0xFFFFFFFF)) == 10 and bin((~0xFAEEF378) & CORE).count("1") == 2)
-    check("G5.4 WAR-net clears 0xc00 (bits 10,11) unconditionally", not (war_net & CORE))
+    check("G5.1 bit 10 is CLEARED by the WAR arm and PRESERVED by the other two",
+          not (masks[1] & B10) and (masks[0] & B10) and (masks[2] & B10))
+    check("G5.2 bit 11 is CLEARED by the WAR arm and PRESERVED by the other two",
+          not (masks[1] & B11) and (masks[0] & B11) and (masks[2] & B11))
+    check("G5.3 the WAR arm's clear carries 10 bits, only 2 belong to 0xc00",
+          len(bits((~masks[1]) & 0xFFFFFFFF)) == 10 and bin((~masks[1]) & CORE).count("1") == 2)
+    check("G5.4 the all-arms net clears 0xc00 (bits 10,11)", not (war_net & CORE))
     check("G5.5 treaty-net preserves 0xc00", (treaty_net & CORE) == CORE, "%08x" % treaty_net)
     check("G5.6 COMMLINK 0x8 / PEACE 0x2000 / 0x20000 / bit31 survive the AND sequence",
           all(war_net & b for b in (0x8, 0x2000, 0x20000, 0x80000000)))
     check("G5.7 TREATY 0x2 / TRUCE 0x4 / SET-TREATY 0x40 / 0x8000 / 0x10000 / TREATY-ON 0x800000 are cleared",
           all(not (war_net & b) for b in (0x2, 0x4, 0x40, 0x8000, 0x10000, 0x800000)))
-    check("G5.8 the API's own 0x80000108 stamp survives its own AND", (stamp & 0xFAEEF378) == stamp)
-    check("G5.9 the stamp OR (0x551b11) precedes the AND and the mask restores come after (0x551be6)",
-          0x551B11 < 0x551B17 < 0x551BE6
-          and split_ops(INS[AT[0x551B11]][1])[1] == ["ebx", "0x80000108"])
-    check("G5.10 WAR 0x10 is cleared by the treaty-stage AND and restored only by the final `or edx,ebx`",
-          not (0xFFEE7FAF & 0x10)
+    check("G5.8 the API's own stamp survives its own AND", (stamp & masks[1]) == stamp)
+    # the WAR arm's two ANDs sit between the stamp OR (0x551b11) and the restore ORs
+    war_addrs = sorted(x[0] for x in clear_sites if x[2] == masks[1])
+    check("G5.9 the WAR arm ANDs lie between the stamp OR (0x551b11) and the restore ORs (0x551be6/0x551c09)",
+          0x551B11 < war_addrs[0] and war_addrs[-1] < 0x551BE6
+          and split_ops(INS[AT[0x551B11]][1])[1] == ["ebx", "0x80000108"]
           and split_ops(INS[AT[0x551BE6]][1])[1] == ["edx", "ebx"]
-          and split_ops(INS[AT[0x551C09]][1])[1] == ["edx", "ebx"])
+          and split_ops(INS[AT[0x551C09]][1])[1] == ["edx", "ebx"],
+          "%s" % ["%08x" % a for a in war_addrs])
+    # ebx def-use: the restore source is the caller mask plus the two API ORs
+    defs = [(INS[n][0], INS[n][1]) for n in range(loA, hiA)
+            if split_ops(INS[n][1])[0] in ("mov", "or", "and", "lea", "xor", "add", "sub")
+            and split_ops(INS[n][1])[1] and split_ops(INS[n][1])[1][0] == "ebx"]
+    print("  ebx definitions in FUN_00551a20: %s" % ["%08x %s" % d for d in defs])
+    check("G5.10 ebx at the restore is the caller mask: its only defs are [ebp+0x10] and two ORs",
+          [t for (_, t) in defs] == ["mov ebx,DWORD PTR [ebp+0x10]", "or ebx,0x2", "or ebx,0x80000108"],
+          "%s" % [t for (_, t) in defs])
 
     def apply_api(v, mask):
-        """The measured arm ladder: test bl,0x7 -> &0xffee7faf; test bl,0x10 ->
-        |stamp, &0xfaeef378; test bl,0x17 -> &0xff7fffff; then |mask."""
+        """The MEASURED ladder: for each arm (gate, mask) in address order, apply
+        the arm when the caller mask meets its gate; OR the stamp on the WAR arm;
+        finally OR mask|stamp back in."""
         if ALGO == 7:                       # OR before AND
-            v |= mask | 0x80000108
-        if mask & 0x7:
-            v &= 0xFFEE7FAF
-        if mask & 0x10 and ALGO != 3:       # ALGO 3 skips the WAR-stage clear
-            v |= 0x80000108
-            v &= 0xFAEEF378
-        if mask & 0x17:
-            v &= 0xFF7FFFFF
+            v |= mask | stamp
+        for (a, gate, m) in arms:
+            if gate and (mask & gate):
+                if m == masks[1]:
+                    v |= stamp
+                if ALGO == 3 and m == masks[1]:
+                    continue                # skip the WAR-stage clear
+                v &= m
         if ALGO != 7:
-            v |= mask | 0x80000108
+            v |= mask | stamp
         return v & 0xFFFFFFFF
 
     war = apply_api(0x80000F18, 0x10)

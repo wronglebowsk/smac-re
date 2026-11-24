@@ -656,9 +656,9 @@ by the preceding `lea`; a displacement grep alone reports zero stores for `0x551
 
 ## Session 343-chain4 — M391: `and 0xfaeef378` is 3 gated masks x 2 rows, not a blanket; the 0xc00 clears use the other API half
 
-- **ACCEPT** `python3 -u scripts/m391_blanket_clear.py` -> **`PASS M391: 51/51`** `76148839fd85b66e`
-  (`evidence/m391_blanket_clear.txt:134`, `cmp`-identical `evidence/m391_twice.txt`); harness
-  **12/12** (`evidence/m391_mutate.txt:18`). Static, zero box.
+- **ACCEPT** `python3 -u scripts/m391_blanket_clear.py` -> **`PASS M391: 53/53`** `76148839fd85b66e`
+  (`evidence/m391_blanket_clear.txt:139`, `cmp`-identical `evidence/m391_twice.txt`); harness
+  **14/14** (`evidence/m391_mutate.txt:20`). Static, zero box.
 - **M384 CORRECTED, not retracted**: "one arm ANDs 0xfaeef378" is **3 masks x 2 rows = 6 ANDs**
   (`:12-28`): 0x551a88/af `0xffee7faf`, 0x551b17/42 `0xfaeef378`, 0x551b98/bf `0xff7fffff`; each
   arm sits under a DIFFERENT mask-argument guard (`test bl,0x7` / `0x10` / `0x17`, `:29-40`). Only
