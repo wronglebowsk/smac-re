@@ -1,4 +1,4 @@
-M389 mutation harness: 21 mutants
+M389 mutation harness: 27 mutants
   MU1  KILL G1 every def is a `mov reg,imm`                            rc=1 0x4daea3|mov    ebx,DWORD PTR [esi+0x8]
   MU2  KILL G1 the resolved masks are {0x4,0x2,0x1000,0x2000}          rc=1 0x4db035|mov    edi,0x3000
   MU3  KILL G1 all four register masks resolve to a literal            rc=1 0x4dafcf|mov    edi,DWORD PTR [ebp+0x8]
@@ -20,6 +20,12 @@ M389 mutation harness: 21 mutants
   MA5  KILL ALGO: first `mov reg,imm` from function start (no dominanc rc=1 ALGO=5
   MA6  KILL ALGO: the guard call ignored (arm builder)                 rc=1 ALGO=6
   MA7  KILL ALGO: a data reference read as a call (reachability census rc=1 ALGO=7
+  MU15 KILL G1 0x4dad30's mask operand IS edi                          rc=1 0x4dad2d|push   esi
+  MU16 KILL G2 exactly one push in the 3 insns before each guard       rc=1 0x4dadd5|nop
+  MU17 KILL G2 the fall-through block jmps PAST the CLEAR witness      rc=1 0x4dae18|jmp    0x4dae1a
+  MU18 KILL G3 0x551a20 loads the MASK from [ebp+0x10]                 rc=1 0x551a2a|mov    ebx,DWORD PTR [ebp+0x14]
+  MU19 KILL G3 the je target separates the OR block from the AND block rc=1 0x551cf8|je     0x551cfa
+  MU20 KILL G2 big arms: the 2nd push feeding 0x551cf0 is edi          rc=1 0x4db02a|push   ebx
 
-21/21 killed
-PASS M389 mutants: 21/21
+27/27 killed
+PASS M389 mutants: 27/27

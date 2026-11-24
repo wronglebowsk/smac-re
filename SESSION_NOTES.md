@@ -793,11 +793,12 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
 - **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).
 
-## Session 343-chain2 — M389: the 0x4dadxx family's five OPEN masks are verbs (50/50)
+## Session 343-chain2 - M389: the 0x4dadxx family's five OPEN masks are verbs (60/60)
 
-- **ACCEPT** `python3 -u scripts/m389_family_mask.py` -> **`PASS M389: 50/50`** `05a36a50540466f3`
-  (`evidence/m389_family_mask.txt:101`), x2 same; `python3 -u scripts/m389_mutate.py` -> **21/21**
-  (`evidence/m389_mutate.txt:25`).
+- **ACCEPT** `python3 -u scripts/m389_family_mask.py` -> **`PASS M389: 60/60`** `05a36a50540466f3`
+  (`evidence/m389_family_mask.txt:113`), `python3 -u scripts/m389_mutate.py` -> **27/27**
+  (`evidence/m389_mutate.txt:31`).
+- **REVIEW** #425: 10 findings, all fixed at head - site-level operand gates (0x4dad30's 2nd push = edi; guard window = 1 push + 1 `mov ecx`), operand-verified verbs, PE-mapped VA, cites re-pointed (60 checks, 27 mutants).
 - **THE FIVE SITES** (M384): the four register masks resolve INSIDE FUN_004dadd0 —
   `mov ebx,0x4`@0x4daea3 -> 0x4daedd, `mov ebx,0x2`@0x4daf07 -> 0x4daf41, `mov edi,0x1000`@0x4dafcf -> 0x4db02d,
   `mov edi,0x2000`@0x4db035 -> 0x4db08d, zero intervening writes (`:13-17`). 0x4dad30's mask is
@@ -808,11 +809,9 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   [ebp+0x14] flag picks OR vs AND (`:46-60`).
 - **0x400** `:52-66`: exactly one `push 0x400` in the family (0x4db0aa into the FUN_004dacc0 gate); no arm can
   ask 0x400 or 0x800.
-- **ENTRY** `:68-78`: FUN_004dadd0 has two direct callers — 0x4dab96 in FUN_004dab90 (0 call/jmp sites
-  image-wide; ONE 4-byte pointer at 0x277ff8 = VA 0x677ff8, a post-.text table of .text pointers)
+- **ENTRY** `:68-78`: FUN_004dadd0 has two direct callers — 0x4dab96 in FUN_004dab90 (0 call sites; 1 .rdata pointer, VA 0x677ff8 by PE map)
   and 0x4dbc5a in FUN_004db480 (1 call site). Live path = FUN_004db480; FUN_004dab90 = indirect dispatch only.
-- **OPEN**: the guard FUN_0x6051fa's noun ([ecx]->[+8]->+0xbc, returns 0/nonzero); 3 applies outside the arms
-  (0x4db101 set 1, 0x4db11b clear 0xc20, 0x4db165 set 0x10) (`:45` `:55`).
+- **OPEN**: guard noun ([ecx]->[+8]->+0xbc); 3 out-of-arm applies (0x4db101, 0x4db11b, 0x4db165) (`:64`).
 - **PITFALLS**: (1) a backward def walk must clobber eax/ecx/edx ONLY — with callee-saved ebx/edi clobbered the
   four masks go opaque (MA1). (2) a 4-arg API's direction lives in a pushed flag, not the call site: two arms
-  share ONE 0x551cf0 call for both directions. (3) index n_callers counts data refs (FUN_004dab90's 1 = one .rdata slot).
+  share ONE 0x551cf0 call for both directions.

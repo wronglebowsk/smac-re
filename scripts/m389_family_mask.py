@@ -166,6 +166,32 @@ def dword_refs(target):
     return EXE_BYTES.count(struct.pack("<I", target))
 
 
+def pe_sections():
+    """Minimal PE32 section table: [(vs, va, raw_size, raw_ptr)] + image base."""
+    e = struct.unpack_from("<I", EXE_BYTES, 0x3C)[0]
+    assert EXE_BYTES[e:e + 4] == b"PE\0\0"
+    nsec = struct.unpack_from("<H", EXE_BYTES, e + 6)[0]
+    optsz = struct.unpack_from("<H", EXE_BYTES, e + 20)[0]
+    base = struct.unpack_from("<I", EXE_BYTES, e + 24 + 28)[0]
+    tbl = e + 24 + optsz
+    out = []
+    for i in range(nsec):
+        vs, va, rs = struct.unpack_from("<III", EXE_BYTES, tbl + i * 40 + 8)
+        rp = struct.unpack_from("<I", EXE_BYTES, tbl + i * 40 + 20)[0]
+        out.append((vs, va, rs, rp))
+    return base, out
+
+
+IMAGE_BASE, SECTIONS = pe_sections()
+
+
+def off_to_va(off):
+    for vs, va, rs, rp in SECTIONS:
+        if rp <= off < rp + max(rs, vs):
+            return IMAGE_BASE + va + (off - rp)
+    return None
+
+
 # ---------------------------------------------------------------- G0
 print("G0  parse and ranges")
 print("  .text dump: %d instructions, 0x%x..0x%x" % (len(INS), ADDR[0], ADDR[-1]))
@@ -207,7 +233,7 @@ for site, reg, lo, hi in SITES:
 check("G1 all four register masks resolve to a literal mov", all(d[3] is not None for d in DEFS))
 check("G1 every def is a `mov reg,imm`",
       all(d[4] == "mov-imm" for d in DEFS), str([d[4] for d in DEFS]))
-check("G1 every def strictly dominates its site in straight-line order",
+check("G1 no write to the register between def and site (straight-line order; CFG dominance NOT proven)",
       all(d[5] == 0 for d in DEFS), str([d[5] for d in DEFS]))
 check("G1 the resolved masks are {0x4,0x2,0x1000,0x2000}",
       sorted(d[3] for d in DEFS) == [2, 4, 0x1000, 0x2000], str([hex(d[3]) for d in DEFS]))
@@ -241,6 +267,39 @@ check("G1 its four callers each push exactly one literal",
 check("G1 the four pushed masks are {0x20,0x2000000,0x400,0x40000}",
       sorted(m for _, _, m in acc_masks) == [0x20, 0x400, 0x40000, 0x2000000],
       str([hex(m) for _, _, m in acc_masks]))
+check("G1 every caller pushes exactly once",
+      all(len(c[1]) == 1 for c in acc_callers), str([len(c[1]) for c in acc_callers]))
+check("G1 every caller's push is adjacent to its call (<= 8 bytes away)",
+      all(c[0] - p[0] <= 8 for c in acc_callers for p in c[1]),
+      str([c[0] - c[1][0][0] for c in acc_callers]))
+
+
+def pushes_before(addr, n=4):
+    """The pushes directly feeding a call (stop at a branch/call/ret)."""
+    j = IDX[addr] - 1
+    out = []
+    while j > 0 and len(out) < n:
+        t = INS[j][1]
+        if mn(t) == "push":
+            out.append((INS[j][0], ops(t)))
+        elif mn(t) in ("jmp", "je", "jne", "jz", "jnz", "call", "ret", "ret     4"):
+            break
+        j -= 1
+    return list(reversed(out))
+
+
+SITE30 = pushes_before(0x4dad30)
+SITE05 = pushes_before(0x4dad05)
+print("  0x4dad30 feeds: %s" % ", ".join("0x%x:push %s" % (a, o) for a, o in SITE30))
+check("G1 at the CLEAR arm 0x4dad30 the mask operand IS edi (2nd of 4 pushes)",
+      len(SITE30) == 4 and SITE30[1][1] == "edi", str(SITE30))
+check("G1 at the SET arm 0x4dad05 the mask operand IS edi (2nd of 4 pushes)",
+      len(SITE05) == 4 and SITE05[1][1] == "edi", str(SITE05))
+win = INS[IDX[0x4dacc5] + 1:IDX[0x4dad30]]
+w30 = [(a, t) for a, t in win if writes(t, "edi")]
+epi = all(any(mn(INS[IDX[a] + k][1]) == "ret" for k in range(1, 5)) for a, t in w30)
+check("G1 edi's nearest def at 0x4dad30 is still 0x4dacc5 (any other write is an epilogue pop+ret)",
+      len(w30) == 1 and w30[0][1].startswith("pop") and epi, str(w30))
 print("  => 0x4dad30 (mask edi at the CLEAR arm, 0x4dad30) carries {0x20,0x400,0x40000,0x2000000};")
 print("     0x4dad05 (SET arm) carries the same set. Both are 0x551cf0 calls.")
 
@@ -310,6 +369,34 @@ for i, g in enumerate(guards):
              ("one 0x551cf0 call @0x%x" % cf_calls[0]) if cf_calls else "two 3-arg calls"))
 
 ladder = [a[0] for a in ARM]
+# --- operand-level gates (review findings 1/2/7/8): the push IS the arg, the block IS the path
+def guard_window(g):
+    return [INS[j][1] for j in range(IDX[g] - 3, IDX[g])]
+
+
+g_one = all(sum(1 for t in guard_window(a[1]) if mn(t) == "push") == 1 for a in ARM)
+g_reg = all(sum(1 for t in guard_window(a[1]) if mn(t) == "mov" and ops(t).startswith("ecx,")) == 1
+            for a in ARM)
+jmp_ok = True
+for a in ARM:
+    sa_l = [c for c in a[4] if c[0] == "SET"]
+    ca_l = [c for c in a[4] if c[0] == "CLEAR"]
+    if not sa_l or not ca_l or a[2] is None:
+        jmp_ok = False                              # a mutant that removes a witness/je
+        continue
+    sa, ca = sa_l[0][1], ca_l[0][1]
+    seg = [(x, t) for x, t in range_ins(sa, a[2])]
+    if not seg or mn(seg[-1][1]) != "jmp" or int(ops(seg[-1][1]), 16) < ca:
+        jmp_ok = False
+big_pushes = [pushes_before(a[5][0]) for a in ARM if a[5]]
+check("G2 exactly one push in the 3 insns before each guard call", g_one)
+check("G2 exactly one `mov ecx,<this>` in that same window (arg slot 1)", g_reg)
+check("G2 the fall-through block ends in a `jmp` past the CLEAR witness (two blocks, one je)",
+      jmp_ok)
+check("G2 big arms: 4 pushes feed 0x551cf0 as (flag 0/1, mask edi, other, owner)",
+      len(big_pushes) == 2 and all(len(p) == 4 and p[1][1] == "edi" and
+                                    p[0][1] in ("0x0", "0x1") for p in big_pushes),
+      str([[x[1] for x in p] for p in big_pushes]))
 if ALGO == 4 and 0x400 not in ladder:                # mutant: admit a 0x400 arm
     ladder.append(0x400)
 check("G2 seven guarded arms", len(ARM) == 7, str(len(ARM)))
@@ -357,29 +444,47 @@ check("G2 exactly three applies sit outside the aka ladder (the 0x2000000 tail +
 
 
 # ---------------------------------------------------------------- G3
-print("\nG3  the verbs: what the two 3-arg callees do to the pair dword")
-body_or = [t for a, t in range_ins(0x551a20, 0x551a20 + 0x2d0) if mn(t) == "or"]
-body_clr = [t for a, t in range_ins(0x5518f0, 0x551a20) if mn(t) in ("not", "and")]
-if ALGO == 3:
-    body_clr = []                                   # mutant: semantics unwitnessed
-print("  FUN_00551a20: %d or insns   FUN_00518f0: %d not/and insns" % (len(body_or), len(body_clr)))
-check("G3 FUN_00551a20 ORs the argument into the pair dword", len(body_or) >= 1, str(len(body_or)))
-check("G3 FUN_00518f0 NOTs the argument and ANDs it out",
-      any(mn(t) == "not" for t in body_clr) and any(mn(t) == "and" for t in body_clr))
+print("\nG3  the verbs: operand-level, not mnemonic-level")
+a20 = range_ins(0x551a20, 0x551cf0)
+a18 = range_ins(0x5518f0, 0x551a20)
+cfb = range_ins(0x551cf0, 0x551d70)
+ld20 = [(a, t) for a, t in a20 if "ebx,DWORD PTR [ebp+0x10]" in t]
+or20 = [(a, t) for a, t in a20 if mn(t) == "or" and ops(t).replace(" ", "").endswith(",ebx")]
+st20 = [a for a, t in a20 if mn(t) == "mov" and re.search(r"DWORD PTR \[(eax|esi)(\+0x94d448)?\],(edx|edi)$", t)]
+ld18 = [] if ALGO == 3 else [(a, t) for a, t in a18 if "edx,DWORD PTR [ebp+0x10]" in t]
+not18 = [a for a, t in a18 if mn(t) == "not" and ops(t).strip() == "edx"]
+and18 = [(a, t) for a, t in a18 if mn(t) == "and" and ops(t).replace(" ", "").endswith(",edx")]
+st18 = [a for a, t in a18 if mn(t) == "mov" and re.search(r"DWORD PTR \[(eax|esi)\],(edx|edi)$", t)]
+ldf = [(a, t) for a, t in cfb if "[ebp+0x14]" in t]
+tstf = [(a, t) for a, t in cfb if mn(t) == "test" and ops(t).replace(" ", "") == "eax,eax"]
+jef = [(a, t) for a, t in cfb if mn(t) == "je"]
+T = int(ops(jef[0][1]), 16) if jef else 0
+orf = [(a, t) for a, t in cfb if mn(t) == "or" and ops(t).replace(" ", "") == "edx,ecx"]
+andf = [(a, t) for a, t in cfb if mn(t) == "and" and ops(t).replace(" ", "") == "edx,ecx"]
+notf = [(a, t) for a, t in cfb if mn(t) == "not" and ops(t).strip() == "ecx"]
+stf = [a for a, t in cfb if mn(t) == "mov" and re.search(r"DWORD PTR \[(eax|esi)(\+0x94d448)?\],(edx|edi)$", t)]
+print("  0x551a20: mask<-[ebp+0x10] %s, or->ebx %s, stores to 0x94d448 %s"
+      % ([hex(x) for x, _ in ld20], [hex(x) for x, _ in or20], [hex(x) for x in st20]))
+print("  0x5518f0: mask<-[ebp+0x10] %s, not %s, and->edx %s, stores %s"
+      % ([hex(x) for x, _ in ld18], [hex(x) for x in not18], [hex(x) for x, _ in and18],
+         [hex(x) for x in st18]))
+print("  0x551cf0: flag<-[ebp+0x14] %s, je->0x%x, or %s / not %s and %s / stores %s"
+      % ([hex(x) for x, _ in ldf], T, [hex(x) for x, _ in orf], [hex(x) for x, _ in notf],
+         [hex(x) for x, _ in andf], [hex(x) for x in stf]))
+check("G3 0x551a20 loads the MASK into ebx from [ebp+0x10] (prologue load)",
+      bool(ld20) and ld20[0][0] == 0x551a2a, str([hex(x) for x, _ in ld20]))
+check("G3 0x551a20 ORs that same ebx and stores the result to [..+0x94d448]",
+      bool(or20) and any(s > or20[0][0] for s in st20))
+check("G3 0x5518f0 loads the MASK into edx, NOTs edx, ANDs it out, stores to [..+0x94d448]",
+      bool(ld18) and bool(not18) and bool(and18) and bool(st18))
+check("G3 0x551cf0 reads the flag from [ebp+0x14] and tests it", bool(ldf) and bool(tstf))
+check("G3 flag!=0 falls through to `or edx,ecx` + store; flag==0 (je target) runs `not ecx`/`and edx,ecx` + store",
+      bool(jef) and bool(orf) and orf[0][0] < T and any(s > orf[0][0] and s < T for s in stf)
+      and bool(notf) and bool(andf) and notf[0][0] > T and any(s > T for s in stf))
 cf = [a for a, t in range_ins(*FN_ACC) if mn(t) == "call" and ops(t) == "0x551cf0"]
 print("  FUN_004dacc0's 0x551cf0 calls: %s" % ", ".join("0x%x" % a for a in cf))
 check("G3 FUN_004dacc0 has two 0x551cf0 arms (set 0x4dad05, clear 0x4dad30)",
       cf == [0x4dad05, 0x4dad30], str([hex(x) for x in cf]))
-flag_tests = [a for a, t in range_ins(0x551cf0, 0x551d70) if mn(t) == "test"]
-flag_src = [t for a, t in range_ins(0x551cf0, 0x551d70) if "[ebp+0x14]" in t]
-api_or = [t for a, t in range_ins(0x551cf0, 0x551d70) if mn(t) == "or"]
-api_and = [t for a, t in range_ins(0x551cf0, 0x551d70) if mn(t) == "and"]
-print("  FUN_00551cf0: reads %s, %d test, %d or insns, %d and insns"
-      % (flag_src[0] if flag_src else "-", len(flag_tests), len(api_or), len(api_and)))
-check("G3 0x551cf0 reads a flag argument ([ebp+0x14]) and tests it",
-      bool(flag_src) and bool(flag_tests))
-check("G3 0x551cf0 carries both an OR and an AND of the mask (flag picks the direction)",
-      bool(api_or) and bool(api_and), "%d or / %d and" % (len(api_or), len(api_and)))
 
 
 # ---------------------------------------------------------------- G4
@@ -408,7 +513,7 @@ for c in calls:
     sites = call_sites(fs)
     drefs = dword_refs(fs)
     off = EXE_BYTES.find(struct.pack("<I", fs)) if drefs else -1
-    va = off + 0x400000 if off >= 0 else 0
+    va = off_to_va(off) if off >= 0 else 0
     nb = [struct.unpack("<I", EXE_BYTES[off - 16 + 4 * i:off - 12 + 4 * i])[0]
           for i in range(8)] if off >= 16 else []
     if ALGO == 7 and drefs:
@@ -446,7 +551,7 @@ check("R2 'FUN_004dab90 is the ladder's live entry' refuted - 0 direct calls (1 
       "%d direct call into FUN_004db480" % (len(direct[0][3]) if direct else 0), r2)
 r3 = sorted(x for x in ladder if x) == [1, 2, 4, 8, 0x10, 0x1000, 0x2000]
 check("R3 'the ladder can ask 0x400 or 0x800' refuted - union is exactly the seven lows", r3)
-r4 = (any(mn(t) == "not" for t in body_clr) and len(body_or) >= 1)
+r4 = (bool(or20) and bool(not18) and bool(and18))
 check("R4 'one API serves both directions' refuted - two distinct 3-arg callees, OR vs NOT+AND", r4)
 r5 = len(acc_masks) == 4 and sorted(m for _, _, m in acc_masks) == [0x20, 0x400, 0x40000, 0x2000000]
 check("R5 'FUN_004dacc0 inherits the ladder's mask' refuted - 4 literal pushes, none in the ladder", r5)

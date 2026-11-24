@@ -28,15 +28,15 @@
 - `0x585720` `unit_action_resolve(unit, param, mode)` — per-unit action executor (AI + end of turn) (M)
 - `0x5abb40` `unit_array_compact()` — slides records down with `rep movsd` (H)
 
-## M389 (s343-c2, 50/50) — 0x4dadxx: 5 OPEN mask args are verbs. `scripts/m389_family_mask.py` -> **`PASS M389: 50/50`** `05a36a50540466f3` (`evidence/m389_family_mask.txt:101`); 21/21 (`evidence/m389_mutate.txt:25`).
-| claim | ev | conf/mutant |
+## M389 (s343-c2, 60/60) — 5 OPEN mask args = verbs. `scripts/m389_family_mask.py` -> **`PASS M389: 60/60`** `05a36a50540466f3` (`evidence/m389_family_mask.txt:113`); 27/27 (`evidence/m389_mutate.txt:31`).
+| claim | ev | conf |
 |---|---|---|
-| 4 reg masks resolve in-fn @0x4daea3 `ebx=4`, 0x4daf07 `2`, 0x4dafcf `edi=0x1000`, 0x4db035 `0x2000` | `:13-17` | V MU1-3 MA1 MA5 |
-| 7 FUN_0x6051fa-keyed arms; ladder {1,2,4,8,0x10,0x1000,0x2000}; SET on eax!=0 | `:34-44` | V MU5 MU6 MU9 MA2 MA6 |
-| lows SET 0x551a20(`or`) / CLEAR 0x5518f0(`not`+`and`); big arms = 1 0x551cf0 call, flag [ebp+0x14] | `:46-51` `:58-60` | V MU8 MU10 MU11 MA3 |
-| 0x4dad30 mask = edi=[ebp+8]; 4 callers push {0x20,0x2000000,0x400,0x40000}; 0x400 pushed once (0x4db0aa); no arm asks 0x400/0x800 | `:19-27` `:52-56` | V MU4 MU7 MU12 MA4 |
-| entry FUN_004db480 live; FUN_004dab90 0 call sites + 1 .rdata slot VA 0x677ff8 | `:68-78` | V MU13 MA7 |
-| OPEN: guard FUN_0x6051fa's noun + 3 out-of-arm applies | `:45` `:55` | OPEN |
+| 4 reg masks resolve in-fn @0x4daea3 `ebx=4`, 0x4daf07 `2`, 0x4dafcf `edi=0x1000`, 0x4db035 `0x2000` | `:19-23` `:32-34` | V MU1-3 MU15 MA1 MA5 |
+| 7 FUN_0x6051fa-keyed arms; ladder {1,2,4,8,0x10,0x1000,0x2000}; SET on eax!=0; fall-through jmp past CLEAR | `:49-62` | V MU5 MU6 MU9 MU16 MU17 MA2 MA6 |
+| 5 lows: 0x551a20 ORs ebx<-[ebp+0x10]; 0x5518f0 NOTs+ANDs; big arms: 1 0x551cf0 call, flag picks OR/AND | `:70-74` | V MU8 MU10 MU11 MU18 MU19 MA3 |
+| 0x4dad30 mask = edi=[ebp+8] (2nd push); 4 callers push {0x20,0x2000000,0x400,0x40000}; 0x400 pushed once (0x4db0aa) | `:26-34` `:79-83` | V MU4 MU12 MU20 |
+| entry FUN_004db480 live; FUN_004dab90 0 call sites + 1 .rdata slot VA 0x677ff8 | `:87-96` | V MU13 MA7 |
+| OPEN: guard noun + 3 out-of-arm applies | `:64` | OPEN |
 
 ## M388 (s342-chain6, 39/39) — slot 0's agenda pair has NO writer; the SE commit writes the live grid only. **`PASS M388: 39/39`** `e03bfb351d33c64e` (`evidence/m388_agenda_slot0.txt:164`), x2 same; 19/19 (`evidence/m388_mutate.txt:22`).
 | claim | ev | conf/mutant |
