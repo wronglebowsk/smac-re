@@ -38,6 +38,7 @@ ARM_PACT = 0x555394              # store of the PACT path's clear
 ARM_5529 = 0x552CE6              # FUN_00552970's `or al,0x40` store
 BITS = {"0x400": 0x400, "0x800": 0x800, "0x20000": 0x20000}
 ALGO = int(os.environ.get("M378_ALGO", "0") or 0)
+DIGEST_PIN = "1fd188d4b71bafd3"
 
 PAT = re.compile(r'^\s*([0-9a-f]+):\t([0-9a-f ]+?)(?:\t(.*))?$')
 FAM = {"eax": ("eax", "al", "ah"), "ebx": ("ebx", "bl", "bh"), "ecx": ("ecx", "cl", "ch"),
@@ -152,10 +153,13 @@ def mask_chain(ins, by, store_addr, field=FIELD):
             continue
         if i.mn == "or":
             sets |= v
+            clears &= ~v & 0xFFFFFFFF     # a later OR re-sets what an earlier AND cleared
             chain.append((i.addr, i.mn, v))
         else:
-            clears |= (~v) & 0xFFFFFFFF
-            chain.append((i.addr, i.mn, (~v) & 0xFFFFFFFF))
+            c = (~v) & 0xFFFFFFFF
+            clears |= c
+            sets &= v                     # a later AND can drop what an earlier OR set
+            chain.append((i.addr, i.mn, c))
     return load_i, sets, clears, chain
 
 
@@ -224,7 +228,8 @@ def main():
     chk(clears == 0x20400, "G1", "the AND clears exactly 0x20000|0x400 (0x%x)" % clears)
     chk(not (clears & 0x800), "G1", "0x800 is not cleared by this arm")
     nxt = ins[by[ARM_A] + 1]
-    chk(nxt.mn == "mov" and "0x94d4c8" in dst(nxt), "G1", "next insn arms the 50-tick cell: %s" % nxt.raw)
+    chk(nxt.mn == "mov" and "0x94d4c8" in dst(nxt) and imm2(src(nxt)) == 0x32, "G1",
+        "next insn arms the 50-tick cell with 0x32: %s" % nxt.raw)
 
     say("")
     say("-- G2 arm B: the 0x20000-only arm")
@@ -259,17 +264,26 @@ def main():
     chk(s3 == 0, "G3", "and sets none of the three")
     tst = ins[by[0x555371]]
     say("   gate: 0x%x  %s" % (tst.addr, tst.raw))
-    chk(tst.mn == "test" and imm2(tst.ops) == 0x1, "G3", "gated on bit 0 (PACT)")
+    chk(tst.mn == "test" and imm2(tst.ops) == 0x1 and dst(tst).strip() == "al"
+        and ins[by[0x555371] - 1].mn == "mov" and names_field(src(ins[by[0x555371] - 1]))
+        and dst(ins[by[0x555371] - 1]).strip() == "eax", "G3",
+        "gated on bit 0 of the freshly loaded eax (`test al,0x1`@0x555371)")
     call = next((i for i in ins[by[ARM_PACT]:by[ARM_PACT] + 3] if i.mn == "call"), None)
     chk(call is not None and "0x551a20" in call.ops, "G3",
         "then hands 0x2000 to the setter FUN_00551a20: %s" % (call.raw if call else "-"))
 
     say("")
     say("-- G2b the guard's provenance")
-    pre = [i for i in ins[by[0x5553A4]:by[0x5553AC] + 1]]
+    pre = [ins[by[0x5553A2] + d] for d in range(by[0x5553AC] - by[0x5553A2] + 1)]
     say("   " + " | ".join(i.raw for i in pre))
-    chk(any(i.mn == "mov" and "0x94d820" in src(i) for i in pre), "G2",
-        "the compared register is loaded from [pair+0x94d820]")
+    ld = next((i for i in pre if i.mn == "mov" and "0x94d820" in src(i)), None)
+    tv = next((i for i in pre if i.mn == "test"), None)
+    chk(ld is not None and ld.addr == 0x5553A4 and dst(ld).strip() == "ecx", "G2",
+        "the compared register ecx is loaded from [pair+0x94d820] at 0x5553a4")
+    chk(tv is not None and tv.addr == 0x5553AA and tv.ops.strip() == "ecx,ecx", "G2",
+        "0x5553aa tests that very register against itself (ecx,ecx)")
+    chk(gs[0].addr == 0x5553AC and ins[by[0x5553AC] - 1].addr == 0x5553AA, "G2",
+        "and the jge at 0x5553ac consumes that test's flags")
 
     say("")
     say("-- G4 readers: bit 0x400 / 0x800")
@@ -288,8 +302,13 @@ def main():
         say("   0x%x  %s   (after %s)" % (i.addr, i.raw, ins[by[i.addr] - 1].raw))
     chk([i.addr for i in reg_after] == [0x5468C7, 0x5552FF], "G4",
         "exactly TWO register-form 0x400 readers follow a load of this field")
-    rand = [i.addr for i in ins[by[0x555344]:by[0x55536B]] if i.mn == "call" and "0x64c6f0" in i.ops]
-    chk(len(rand) == 1, "G4", "the block it skips calls the RNG 0x64c6f0 (%d site)" % len(rand))
+    je = ins[by[0x555302]]
+    skipped = [i for i in ins if 0x555302 < i.addr < imm2(je.ops) and i.mn == "call"]
+    rand = [i.addr for i in skipped if "0x64c6f0" in i.ops]
+    say("   je 0x%x -> 0x%x; calls strictly inside the skipped range: %s"
+        % (je.addr, imm2(je.ops), ", ".join("0x%x" % i.addr for i in skipped)))
+    chk(je.mn == "je" and len(rand) == 1, "G4",
+        "the range the `je 0x555302` skips holds the RNG call 0x64c6f0 (%d)" % len(rand))
     chk(all(((imm2(i.ops) or 0) & (0x400 | 0x10)) for i in r800),
         "G4", "every 0x800 field test carries 0x400 or 0x10 - 0x800 is never asked alone (%d sites)" % len(r800))
 
@@ -311,10 +330,13 @@ def main():
     _, s5b, cl5b, _ = c5b
     say("   => the preceding store 0x552cca: sets %s, clears %s" % (bits(s5b), bits(cl5b)))
     chk(s5b == 0 and cl5b == 0x20, "G5", "the pair-wide clear at 0x552cca removes 0x20 only")
-    k = next((i for i in ins if i.mn == "mov" and imm2(src(i)) == 0xFFFFF3FF), None)
+    consts = [i for i in ins if i.mn == "mov" and imm2(src(i)) == 0xFFFFF3FF]
+    say("   image-wide `mov reg,0xfffff3ff` sites: %s" % ", ".join("0x%x %s" % (i.addr, i.ops) for i in consts))
+    chk(len(consts) >= 1, "G5", "the constant loads at %d site(s)" % len(consts))
+    k = consts[0]
     say("   0xfffff3ff constant loaded at: %s" % ("0x%x %s" % (k.addr, k.ops) if k else "-"))
     uses = []
-    if k is not None:
+    for k in consts:
         creg = dst(k).strip()
         for j in range(by[k.addr] + 1, min(len(ins), by[k.addr] + 30)):
             i = ins[j]
@@ -327,8 +349,8 @@ def main():
     say("   ANDs through that constant and the store each feeds:")
     for a2, nxt in uses:
         say("     0x%x -> %s" % (a2, nxt))
-    chk(len(uses) == 2 and all("0x94d468" in nxt for _, nxt in uses), "G5",
-        "both 0xc00 clears land on the SIBLING field +0x94d468, not the relations dword")
+    chk(len(uses) == 4 and all("0x94d468" in nxt for _, nxt in uses), "G5",
+        "all %d 0xc00 clears through that constant land on the SIBLING field +0x94d468" % len(uses))
 
     say("")
     say("-- G6 census: every direct test mask naming the field, image-wide")
@@ -342,6 +364,27 @@ def main():
     chk(set(hit["0x400"]) == {0xC10, 0xC11, 0xC30, 0x40C30}, "G6",
         "0x400 appears in the same composites (plus 0x5552ff's register form)")
     chk(0x810 in hit["0x800"] and 0x800 not in hit["0x800"], "G6", "0x800 is never tested alone")
+    byte2 = [i for i in ins if re.search(r'\[\w[^\]]*0x94d44a\]', i.ops) and imm2(i.ops) is not None]
+    say("   byte-view +0x94d44a masks: %s" % (", ".join("0x%x:0x%x" % (i.addr, imm2(i.ops)) for i in byte2) or "-"))
+    chk(not any((imm2(i.ops) or 0) & 0x2 for i in byte2), "G6",
+        "no byte-view test asks bit 17 (0x20000) either (%d site(s) seen)" % len(byte2))
+    reg_reads = []
+    for idx, i in enumerate(ins):
+        if i.mn == "mov" and names_field(src(i)) and dst(i).strip() in ("eax", "ebx", "ecx", "edx"):
+            for j in (idx + 1, idx + 2, idx + 3):
+                if j < len(ins) and ins[j].mn in ("test", "cmp"):
+                    v = imm2(ins[j].ops)
+                    if v is not None:
+                        reg_reads.append((i.addr, v))
+                        break
+    say("   register-form readers (field load then mask): %s"
+        % ", ".join("0x%x:0x%x" % t for t in reg_reads))
+    chk(not any(v & 0x20000 for _, v in reg_reads), "G6",
+        "0x20000 has 0 register-form tests either (%d windows seen)" % len(reg_reads))
+    ands = [(i.addr, (~(imm2(i.ops) or 0)) & 0xFFFFFFFF) for i in ins
+            if i.mn == "and" and "0x94d448" in i.ops and imm2(i.ops) is not None]
+    say("   field-name AND masks (bits they CLEAR): %s"
+        % ", ".join("0x%x:~0x%x" % t for t in ands))
     masks = sorted({(imm2(i.ops) or 0) for i in inline})
     chk(all(m in masks for m in (0x1, 0x8, 0x10, 0x20, 0x7)), "G6",
         "the known readers 1/8/0x10/0x20/7 survive the same parse")
@@ -355,7 +398,8 @@ def main():
     chk(clears & 0x20000 and cl3 & 0x20000, "G7", "R2: treaty arm and PACT arm both clear it")
     say("   R3 0x400 is the treaty flag: arm A clears it, and 0x400 is only ever asked")
     say("      together with 0x800 (the 0xc00 cluster) - never as 'treaty in force'")
-    chk(len(r400) == 5 and len(rand) == 1, "G7", "R3: every 0x400 field test also carries 0x800")
+    chk(len(r400) == 5 and all(((imm2(i.ops) or 0) & 0x800) for i in r400), "G7",
+        "R3: all five 0x400 field tests carry 0x800 too")
     say("   R4 0x800 is PACT: PACT is bit 0 and the PACT path CLEARS 0x800 -> refuted")
     chk(imm2(tst.ops) == 0x1 and bool(cl3 & 0x800), "G7", "R4: bit 0 tests, 0x800 cleared")
     if ALGO == 1:
@@ -364,9 +408,8 @@ def main():
     say("")
     say("-- G8 digest")
     d1 = hashlib.sha1("\n".join(OUT).encode()).hexdigest()[:16]
-    d2 = hashlib.sha1("\n".join(OUT).encode()).hexdigest()[:16]
     say("digest %s" % d1)
-    chk(d1 == d2, "G8", "the table digests twice to the same 16 hex")
+    chk(d1 == DIGEST_PIN, "G8", "the printed table hash is the pinned %s" % DIGEST_PIN)
     return finish()
 
 

@@ -41,6 +41,12 @@ MUTANTS = [
      "a 0x20000 bit smuggled into a test mask: the zero-reader negative reddens"),
     ("MU12", {"M378_PATCH": "5553f9|mov    DWORD PTR [edi+0x94d448],0x32"}, {"G1"},
      "the lease store redirected into the relations dword itself"),
+    ("MU14", {"M378_PATCH": "5553f9|mov    DWORD PTR [edi+0x94d4c8],0x33"}, {"G1"},
+     "the lease value moved 0x32 -> 0x33: G1 now reads the immediate, not just the address"),
+    ("MU15", {"M378_PATCH": "555371|test   cl,0x1"}, {"G3"},
+     "the PACT gate moved to another register: the `test al,0x1` shape reddens"),
+    ("MU16", {"M378_PATCH": "5553a4|mov    ecx,DWORD PTR [ebx+0x94d824]"}, {"G2"},
+     "the guard's source field shifted: the provenance chain reddens"),
     ("NOOP", {}, set(), "identity: nothing may redden"),
 ]
 

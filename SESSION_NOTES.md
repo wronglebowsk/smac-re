@@ -652,10 +652,10 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 ## Session 340-chain1 — M378: 0x800 = TREATY IN FORCE, 0x20000 = an outstanding treaty request
 
-- **ACCEPT** `python3 -u scripts/m378_bit_nouns.py` -> **`PASS M378: 40/40`**
-  `f0d487d67c35ee80` (`evidence/m378_bit_nouns.txt:103`; re-run byte-identical, sha1
-  `bf5789cfcef3a17a` both runs, `evidence/m378_twice.txt:2-3`); `scripts/m378_mutate.py`
-  **14/14, NO-OP `[]`** (`evidence/m378_mutate.txt:16`). Zero box.
+- **ACCEPT** `python3 -u scripts/m378_bit_nouns.py` -> **`PASS M378: 45/45`**
+  `b841021cb7b0f4b8` (`evidence/m378_bit_nouns.txt:115`; re-run identical, sha1
+  `da5742aa99cac132` both runs, `evidence/m378_twice.txt:2-3`); `scripts/m378_mutate.py`
+  **17/17, NO-OP `[]`** (`evidence/m378_mutate.txt:19`). Zero box.
 - **THE ARM B37 COULD NOT NAME** (0x5553e1..0x5553f9, FUN_005551e0): `and edx,0xfffdfbff` then
   `or edx,0x840` = **sets {0x800,0x40}, clears {0x20000,0x400}**, and the next instruction arms the
   50-tick lease `[pair+0x94d4c8]=0x32`. B37 proved 0x40 = "SET TREATY", so **0x800 is the durable
