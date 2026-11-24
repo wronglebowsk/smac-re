@@ -742,3 +742,15 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **RETRACTED mid-fire**: FUN_00551cf0/0x551d70 are 4-arg and the 4th arg selects SET vs CLEAR;
   reading them as clear-writers inverts the 0x20 story (caught before the first commit).
 - **OPEN**: the noun WORD for 0x20; the role of 0x80000000 (set with 0x10).
+## Session 336-chain2 — M369: relations bit 0x8 = COMMLINK (M364's AT WAR RETRACTED)
+
+Static, zero box. ACCEPT `python3 -u scripts/m369_commlink.py` -> **`PASS M369: 23/23 gates digest 44ad5e4a811941fc`** (`evidence/m369_commlink.txt:135`), re-run byte-identical; `scripts/m369_mutate.py` -> **32/32 killed** + 1 NO-OP (`evidence/m369_mutate.txt:40`).
+
+- Builder FUN_004db480: 13 (id, offset) rows; row 1 = id 0x8 -> `DAT_00997b20+0xdac` -> element 875 -> labels.txt line **886 "Commlink"** (line = 11+elem; line 10 is the count 1089 — M367's line numbers are 1 low, its texts right). All 13 recomputed (0x10 "Vendetta", 0x1 "Pact").
+- Vendetta block (FUN_00442320, 0x442cd3..0x442e42) READS mask 8 both directions (0x442d26/0x442d42); each `jne` goes FORWARD to 0x442d7d (build the row), the both-zero fall-through (0x442d78) jumps to 0x442cf5 (next candidate); **0 stores** to 0x94d448/0x94d468. Case 7 (0x442c01/0x442c1f) runs the same guard for a NON-war option.
+- FUN_00551a20: `or ebx,0x80000108` (0x551b11) is gated by `test bl,0x10` (0x551abf). **M364 ev `:184` mislabels it `test 0x7`** — the 0x7 branch only clears 0x10/0x40/0x8000/0x100000. Mask 8 matches no clear branch: 2 symmetric ORs (0x551be6/0x551c09, reload 0x551bea).
+- 10 explicit bit-8 writes, 8 fns. Plain-8 (3): council FUN_00429950 0x42999d (pairs 1..7 on CALLSCOUNCIL), page commit FUN_004dadd0 0x4dae13, goody-pod FUN_0056df40 0x56f5ad (only when `(rel&8)==0` = **first contact**). War masks co-set it: 0x18, 0x80000008, 0x80000018, 0x88000008 x4.
+- FUN_005076d0 pushes 0x10 on BOTH exits (0x507abc/0x507c6d), 0 push 0x8: the war record carries 8 only via the setter's implication.
+
+RETRACTION: M364's "0x8 = AT WAR" read a guard as the effect; the war bit is 0x10 (M366 V).
+PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` headers (16759 vs 17818) — match the two-line header. A gate must print FAIL not crash (`"%08x" % None` killed MU8's run until guarded).

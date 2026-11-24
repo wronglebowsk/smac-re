@@ -218,13 +218,15 @@ def main():
     say("    jne after each mask ask: %s" % ", ".join("%08x -> %08x" % (a, g) for (a, _), g in zip(mask_jne, tgt)))
     say("    other jne to 0x%x: %s (the faction-exists bit test)" % (ACCEPT_PC, ", ".join("%08x" % a for a, _ in extra)))
     jumps_to_skip = [(a, t) for a, t in w8 if t.startswith("jmp") and "0x442cf5" in t]
-    say("    jmp back to the loop increment: %d" % len(jumps_to_skip))
+    tail = [t for a, t in jumps_to_skip if a == 0x442D78]
+    say("    jmp back to the loop increment: %d (the both-zero fall-through at 0x442d78: %s)"
+        % (len(jumps_to_skip), "yes" if tail else "no"))
     gate("G4a", len(mask_jne) == 2 and len(extra) == 1 and all(g == ACCEPT_PC for g in tgt)
          and all(int(t.split("0x")[-1], 16) == ACCEPT_PC for _, t in extra),
          "3 jne land on 0x%x (two after the mask asks, one after 0x985b10's bit): the tested state ENABLES the option"
          % ACCEPT_PC)
-    gate("G4b", len(jumps_to_skip) >= 1,
-         "the fall-through is a jmp to the loop increment 0x%x (next candidate)" % SKIP_PC)
+    gate("G4b", bool(tail),
+         "the both-zero fall-through at 0x442d78 is a jmp to the loop increment 0x%x (next candidate)" % SKIP_PC)
 
     # ---------------------------------------------------------------- G4c case 7
     say("")
@@ -251,7 +253,7 @@ def main():
         say("    or   %08x  %s" % (a, t))
     or108 = [a for a, t in ors if t.endswith("0x80000108")]
     near = last_test_before(tst, or108[0]) if or108 else (None, "")
-    say("    nearest test above the 0x80000108 OR: %08x %s" % near)
+    say("    nearest test above the 0x80000108 OR: %s" % ("%08x %s" % near if near[0] is not None else "none"))
     gate("G5a", len(or108) == 1 and near[0] is not None and "0x10" in near[1] and "0x7" not in near[1],
          "the 0x80000108 OR is gated by test bl,0x10 (%s) - NOT by test bl,0x7 as M364's row 184 read"
          % near[1])
@@ -259,11 +261,13 @@ def main():
     gate("G5b", len(branch7) == 0,
          "the 0x7 branch never ORs 0x80000108 (%d): making peace clears 0x10/0x40/0x8000/0x100000 and does NOT set 0x8"
          % len(branch7))
-    # mask 8 alone: 8 & each branch test == 0
-    say("    mask 8 alone and each branch test: 8&7=%d 8&1=%d 8&0x10=%d 8&0x17=%d"
-        % (8 & 7, 8 & 1, 8 & 0x10, 8 & 0x17))
-    gate("G5c", (8 & 7) == 0 and (8 & 1) == 0 and (8 & 0x10) == 0 and (8 & 0x17) == 0,
-         "8 triggers no clear branch: setting it is a pure symmetric OR")
+    # mask 8 alone: 8 & each clear-branch test == 0 (masks READ from the bytes, not authored)
+    branch_masks = [int(re.search(r"0x([0-9a-f]+)$", t).group(1), 16) for _, t in tst
+                    if int(re.search(r"0x([0-9a-f]+)$", t).group(1), 16) in (0x7, 0x1, 0x10, 0x17)]
+    say("    clear-branch test masks: %s | 8 & each: %s"
+        % (" ".join("0x%x" % m for m in branch_masks), " ".join("0x%x" % (8 & m) for m in branch_masks)))
+    gate("G5c", sorted(branch_masks) == [0x1, 0x7, 0x10, 0x17] and all((8 & m) == 0 for m in branch_masks),
+         "mask 8 matches none of the four clear branches: setting it is a pure symmetric OR")
 
     # ---------------------------------------------------------------- G6 symmetric store
     say("")
@@ -350,15 +354,16 @@ def main():
     cntxt = "\n".join(council["body"]) if council else ""
     pod_goody = podtxt.count("GOODYPOD")
     pod_guard = re.search(r"\[\(uVar13 \* 0x82f \+ uVar9\) \* 4\] & 8\) == 0", podtxt)
+    pod_call = re.search(r"FUN_00551a20\(uVar13,uVar9,8\);", podtxt)
     cnt_call = cntxt.count("CALLSCOUNCIL")
     cnt_loop = re.search(r"for \(local_c = 1; local_c < (\d+); local_c = local_c \+ 1\)", cntxt)
     cnt_inner = re.search(r"for \(local_8 = 1; local_8 < local_c;", cntxt)
-    say("    FUN_0056df40 GOODYPOD literals: %d | (rel&8)==0 guard before the set: %s"
-        % (pod_goody, "yes" if pod_guard else "no"))
+    say("    FUN_0056df40 GOODYPOD literals: %d | (rel&8)==0 guard before the set: %s | the set uses the tested pair: %s"
+        % (pod_goody, "yes" if pod_guard else "no", "yes" if pod_call else "no"))
     say("    FUN_00429950 CALLSCOUNCIL literals: %d | outer loop bound: %s | inner loop: %s"
         % (cnt_call, cnt_loop.group(1) if cnt_loop else "?", "yes" if cnt_inner else "no"))
-    gate("G9a", pod_goody >= 2 and bool(pod_guard),
-         "the pod handler only contacts a faction it has NOT met ((rel & 8)==0) and then sets 8 - first contact")
+    gate("G9a", pod_goody >= 2 and bool(pod_guard) and bool(pod_call),
+         "the pod handler only contacts a faction it has NOT met ((rel & 8)==0) and then sets 8 on that same pair - first contact")
     gate("G9b", cnt_call >= 1 and bool(cnt_loop) and cnt_loop.group(1) == "8" and bool(cnt_inner),
          "the council routine sets 8 for every ordered faction pair (1..7 x <outer) as the council convenes")
 

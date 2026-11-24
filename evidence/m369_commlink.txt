@@ -47,9 +47,9 @@ G3  the declare-vendetta case block (0x442cd3..0x442e42): mask-8 reads, no bit-8
 G4  the guard's polarity: a zero pair skips the candidate, a hit accepts it
     jne after each mask ask: 00442d40 -> 00442d7d, 00442d5c -> 00442d7d
     other jne to 0x442d7d: 00442d76 (the faction-exists bit test)
-    jmp back to the loop increment: 3
+    jmp back to the loop increment: 3 (the both-zero fall-through at 0x442d78: yes)
   G4a   PASS  3 jne land on 0x442d7d (two after the mask asks, one after 0x985b10's bit): the tested state ENABLES the option
-  G4b   PASS  the fall-through is a jmp to the loop increment 0x442cf5 (next candidate)
+  G4b   PASS  the both-zero fall-through at 0x442d78 is a jmp to the loop increment 0x442cf5 (next candidate)
 
 G4c the SAME two-direction mask-8 guard on the preceding option (case 7)
     push 0x8: 00442c01, 00442c1f | call 0x426d60: 00442c11, 00442c2f
@@ -66,8 +66,8 @@ G5  FUN_00551a20's byte-level implications: the OR 0x80000108 lives in the 0x10 
     nearest test above the 0x80000108 OR: 00551abf test bl,0x10
   G5a   PASS  the 0x80000108 OR is gated by test bl,0x10 (test bl,0x10) - NOT by test bl,0x7 as M364's row 184 read
   G5b   PASS  the 0x7 branch never ORs 0x80000108 (0): making peace clears 0x10/0x40/0x8000/0x100000 and does NOT set 0x8
-    mask 8 alone and each branch test: 8&7=0 8&1=0 8&0x10=0 8&0x17=0
-  G5c   PASS  8 triggers no clear branch: setting it is a pure symmetric OR
+    clear-branch test masks: 0x7 0x1 0x10 0x17 | 8 & each: 0x0 0x0 0x0 0x0
+  G5c   PASS  mask 8 matches none of the four clear branches: setting it is a pure symmetric OR
 
 G6  the setter writes BOTH directions: two ORs, the index pair swapped between them
     or edx,ebx: 00551be6, 00551c09 | stores through [eax]: 2 | index reload between the ORs: yes
@@ -104,9 +104,9 @@ G8  the claim-critical sites are byte-verified: push <mask> -> call 0x551a20 in 
   G8a   PASS  4/4 claim-critical sites carry the exact push-immediate at the pinned address
 
 G9  what the non-menu writers are: first contact (pod) and the council
-    FUN_0056df40 GOODYPOD literals: 2 | (rel&8)==0 guard before the set: yes
+    FUN_0056df40 GOODYPOD literals: 2 | (rel&8)==0 guard before the set: yes | the set uses the tested pair: yes
     FUN_00429950 CALLSCOUNCIL literals: 1 | outer loop bound: 8 | inner loop: yes
-  G9a   PASS  the pod handler only contacts a faction it has NOT met ((rel & 8)==0) and then sets 8 - first contact
+  G9a   PASS  the pod handler only contacts a faction it has NOT met ((rel & 8)==0) and then sets 8 on that same pair - first contact
   G9b   PASS  the council routine sets 8 for every ordered faction pair (1..7 x <outer) as the council convenes
 
 G10 the declare path FUN_005076d0 sets 0x10 and never names 8
@@ -130,6 +130,6 @@ R4  RIVAL 'M364's block membership proves war' - refuted by the same guard on a 
   R4    PASS  case 7 pairs the same two-direction mask-8 reads (2) with zero stores; the guard is reachability
 
 SUMMARY  23/23 gates
-DIGEST   1ecd24f41f6feb27
+DIGEST   44ad5e4a811941fc
 
-PASS M369: 23/23 gates digest 1ecd24f41f6feb27
+PASS M369: 23/23 gates digest 44ad5e4a811941fc
