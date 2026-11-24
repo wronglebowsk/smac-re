@@ -19,7 +19,7 @@ G1  the 13 sync rows of FUN_004db1b0, re-decoded (id, mask, dword)
   G1b   PASS  record offsets +0x18 (dword A) / +0x38 (dword B), delta 0x20 = 8 dwords
   G1c   PASS  13 distinct ids over 11 mask values; single-bit masks 13/13
   G1d   PASS  mask values carried by BOTH dwords ['0x8', '0x2000'] -> directional pairs (A/B copies of one bit)
-  G1e   PASS  stride 0x82f dwords x4 == 0x20bc bytes = the predicate's imul
+  G1e   PASS  the sync block's index chain EMULATES to fac*0x82f + tgt*0x1 + 0, x4 == the predicate's imul 0x20bc (both read from the bytes)
 
 G2  the relation predicate FUN_00426d60(fac, tgt, mask), decoded
       0x00426d60  push   ebp
@@ -39,7 +39,7 @@ G2  the relation predicate FUN_00426d60(fac, tgt, mask), decoded
       0x00426d82  mov    esp,ebp
       0x00426d84  pop    ebp
       0x00426d85  ret
-  G2a   PASS  8 insns, 1 imul eax,eax,0x20bc = the 0x20bc record stride
+  G2a   PASS  17 insns in the window (8 after the frame setup), 1 imul eax,eax,0x20bc = the 0x20bc record stride
   G2b   PASS  0 stores: a pure READ, i.e. a test and not a setter
   G2c   PASS  tail `and    eax,DWORD PTR [ebp+0x10]` -> arg2 (3rd pushed) is the MASK
 
@@ -172,7 +172,7 @@ G4  noun witnesses: the literals of the functions that ASK each bit
   G4a   PASS  bit 0x1 = pact in force: its case block carries ['REALLYENDPACT', 'DONTHAVEPACT'] and NONE of the rival keys ['DIPLONOVENDETTA', 'DIPLOVENDETTA']
   G4b   PASS  bit 0x8 = at war (vendetta): its case block carries ['DIPLOVENDETTA', 'DIPLONOVENDETTA'] and NONE of the rival keys ['DONTHAVEPACT', 'REALLYENDPACT']
   G4c   PASS  the 0x1 and 0x8 case blocks share NO literal -> the two nouns are discriminated at the call-site level
-  G4d   PASS  asker counts: 0x1=14 functions (53 sites), 0x8=9 (20), 0x10=14 (37)
+  G4d   PASS  asker counts: 0x1=14 functions / 53 sites (= the maximum over all masks, top=53); 0x8=9/20; 0x10=14/37
 
 G5  the co-setting rules inside the writers, and the page's bulk apply masks
     rule = `test m` then, on the taken path, `or s` / `and ~c`
@@ -186,23 +186,24 @@ G5  the co-setting rules inside the writers, and the page's bulk apply masks
       0x551c40  test 0x00000020 -> and 0xffffffbf  (clear 0x40)
   G5a   PASS  the 3-bit group 0x7 also sets 0x1000000|0x100000 in FUN_005518f0
   G5b   PASS  bit 0x10 also sets 0x8000|0x40 (one rule, both directions)
-    4 writer calls in the apply handler; bulk masks:
-      0x00001f89 covers  4 of the 13 ids ['0x1', '0x8', '0x400', '0x1000']
-      0x02043c20 covers  6 of the 13 ids ['0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']
-      0xdd9bc3c0 covers  0 of the 13 ids []
-  G5c   PASS  4 writer calls; 0x1f89 covers exactly {1,8,400,1000} = ['0x1', '0x8', '0x400', '0x1000']
+    4 writer calls in the apply handler; every mask-like push:
+      0x0000001f SETS  5 ['0x1', '0x2', '0x4', '0x8', '0x10']  CLEARS  6 ['0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']
+      0x00001f89 SETS  4 ['0x1', '0x8', '0x400', '0x1000']  CLEARS  7 ['0x2', '0x4', '0x10', '0x20', '0x2000', '0x40000', '0x2000000']
+      0x02043c20 SETS  6 ['0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']  CLEARS  5 ['0x1', '0x2', '0x4', '0x8', '0x10']
+      0xdd9bc3c0 SETS  0 []  CLEARS 11 ['0x1', '0x2', '0x4', '0x8', '0x10', '0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']
+  G5c   PASS  4 writer calls, 4 bulk pushes; 0x1f SETS exactly {1,2,4,8,10} and 0x1f89 SETS exactly {1,8,0x400,0x1000}
 
 G6  corroboration: instructions that name a pair dword directly
     mnemonics: test=388, mov=300, lea=39, movsx=1
     single-bit immediates: 0x1=150, 0x2=17, 0x8=14, 0x10=62, 0x20=37, 0x40=3, 0x80=5, 0x2000=1, 0x10000=1, 0x40000=2, 0x80000=3, 0x800000=1, 0x1000000=2, 0x2000000=5, 0x8000000=5, 0x20000000=1
-  G6a   PASS  direct-displacement census: test=388 mov=300 lea=39 (all other mnemonics 1)
+  G6a   PASS  direct-displacement census: test=388 mov=300 lea=39 and exactly 1 other mnemonic (['movsx'])
   G6b   PASS  bit 0x1 dominates the direct single-bit immediates (150 vs 0x10=62)
 
 G7  RIVALS (each must FAIL on the numbers printed above)
   G7a   PASS  R1 'the bits are a 3-bit enum 0..7': 16 of 19 single-bit asks lie OUTSIDE 0x7 -> refuted
   G7b   PASS  R2 'ids are row ordinals 1..13': 19 distinct bits, gaps at 0x200/0x800 - refuted
-  G7c   PASS  R3 '0x1 is vendetta (the natural guess)': 0x1 askers 14 vs 0x8 askers 9; the pact keys sit on 0x1, the vendetta keys on 0x8 -> refuted
-  G7d   PASS  R4 'the two dwords are one 16-bit field': they are 0x20 apart = 8 dwords, and only 2 of 11 mask values repeat - refuted
+  G7c   PASS  R3 '0x1 is vendetta (the natural guess)': 0x1's case block carries [] vendetta keys and 0x8's carries [] pact keys -> refuted ON THE KEYS
+  G7d   PASS  R4 'the two dwords are one 16-bit field': the PARSED rows read 2 dwords ['0x94d448', '0x94d468'], 0x20 = 8 dwords apart, and only 2 of 11 mask values repeat -> refuted
 
 PASS  M364: 24/24 gates
 digest f6d006d0281ac189

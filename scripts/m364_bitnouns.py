@@ -135,6 +135,55 @@ def single(x):
 
 
 # ---------------------------------------------------------------- G1 geometry
+def emulate_index(insns):
+    """symbolically run one sync block's index arithmetic: every register holds
+    (fac_coeff, tgt_coeff, const).  Returns the register used as `[reg*4+base]`."""
+    R = {}
+    load = {"[esi+0xa1c]": (1, 0, 0), "[esi+0xa20]": (0, 1, 0)}
+
+    def val(x):
+        x = x.strip().lower()
+        return R.get(x, (0, 0, 0)) if x in R else None
+
+    def add(a, b):
+        return (a[0] + b[0], a[1] + b[1], a[2] + b[2])
+
+    for i in insns:
+        op, arg = i["op"], i["arg"].replace(" ", "").lower()
+        if i["t"].replace(" ", "").lower().endswith("[edx*4+0x94d448]"):
+            return R.get("edx", (0, 0, 0))          # the first read of the pair dword
+        if op == "mov" and "," in arg:
+            d, src = arg.split(",")[0], arg.split(",")[1].replace("dwordptr", "")
+            k = [x for x in load if src == x]
+            if k:
+                R[d] = load[k[0]]
+            elif src in R:
+                R[d] = R[src]
+        elif op == "lea" and "," in arg:
+            d, e = arg.split(",")[0], arg.split(",")[1].strip("[]")
+            m = re.fullmatch(r"([a-z]{3})\+([a-z]{3})\*(\d+)", e)
+            if m and m.group(1) in R and m.group(2) in R:
+                k = int(m.group(3))
+                R[d] = (R[m.group(1)][0] + k * R[m.group(2)][0],
+                        R[m.group(1)][1] + k * R[m.group(2)][1],
+                        R[m.group(1)][2] + k * R[m.group(2)][2])
+        elif op == "shl" and "," in arg:
+            d, k = arg.split(",")[0], imm(arg.split(",")[1])
+            if d in R and k is not None:
+                R[d] = (R[d][0] << k, R[d][1] << k, R[d][2] << k)
+        elif op == "add" and "," in arg:
+            d, src = arg.split(",")[0], arg.split(",")[1]
+            v = imm(src)
+            if d in R:
+                R[d] = (R[d][0], R[d][1], R[d][2] + v) if v is not None else add(R[d], R[src])
+        elif op == "sub" and "," in arg:
+            d, src = arg.split(",")[0], arg.split(",")[1]
+            if d in R and src in R:
+                # fac*2095 = fac*2096 - fac: the classic strength-reduced multiply
+                R[d] = (R[d][0] - R[src][0], R[d][1] - R[src][1], R[d][2] - R[src][2])
+    return R.get("edx", (0, 0, 0))
+
+
 def g1():
     print("G1  the 13 sync rows of FUN_004db1b0, re-decoded (id, mask, dword)")
     print("    #  call@       id         mask       and@        dword  rec_off")
@@ -187,8 +236,14 @@ def g1():
     gate("G1d", dup == [0x8, 0x2000],
          f"mask values carried by BOTH dwords {[hex(m) for m in dup]} -> directional pairs"
          f" (A/B copies of one bit)")
-    gate("G1e", STRIDE_DW * 4 == STRIDE_B and 0x82F == STRIDE_B // 4,
-         f"stride {STRIDE_DW:#x} dwords x4 == {STRIDE_B:#x} bytes = the predicate's imul")
+    fac_c, tgt_c, const = emulate_index(w)
+    imul_imm = None
+    for i in window(PRED, PRED + size_of("FUN_00426d60")):
+        if i["op"] == "imul":
+            imul_imm = imm(i["arg"].split(",")[-1])
+    gate("G1e", (fac_c, tgt_c, const) == (STRIDE_DW, 1, 0) and imul_imm == fac_c * 4,
+         f"the sync block's index chain EMULATES to fac*{fac_c:#x} + tgt*{tgt_c:#x} + {const},"
+         f" x4 == the predicate's imul {imul_imm:#x} (both read from the bytes)")
     return hits
 
 
@@ -203,8 +258,9 @@ def g2():
               and "[" in i["arg"].split(",")[0]]
     imul = [i for i in body if i["op"] == "imul"]
     ands = [i for i in body if i["op"] == "and" and "[" not in i["arg"].split(",")[0]]
-    gate("G2a", imul and imm(imul[0]["arg"].split(",")[-1]) == STRIDE_B,
-         f"{len(body)} insns, 1 imul {imul[0]['arg'] if imul else '-'} = the 0x20bc record stride")
+    gate("G2a", len(w) == 17 and imul and imm(imul[0]["arg"].split(",")[-1]) == STRIDE_B,
+         f"{len(w)} insns in the window ({len(body)} after the frame setup), 1 imul"
+         f" {imul[0]['arg'] if imul else '-'} = the 0x20bc record stride")
     gate("G2b", len(stores) == 0,
          f"{len(stores)} stores: a pure READ, i.e. a test and not a setter")
     gate("G2c", ands and ands[-1]["arg"].replace(" ", "").endswith("[ebp+0x10]"),
@@ -376,9 +432,12 @@ def g4(sites, const):
     gate("G4c", set(casew.get(0x1, ())) .isdisjoint(casew.get(0x8, ())),
          f"the 0x1 and 0x8 case blocks share NO literal -> the two nouns are discriminated"
          f" at the call-site level")
-    gate("G4d", len(ask[0x1]) == 14 and len(ask[0x8]) == 9,
-         f"asker counts: 0x1={len(ask[0x1])} functions ({const[0x1]} sites), "
-         f"0x8={len(ask[0x8])} ({const[0x8]}), 0x10={len(ask[0x10])} ({const[0x10]})")
+    top = max(const.values())
+    gate("G4d", len(ask[0x1]) == 14 and const[0x1] == 53 and const[0x1] == top
+         and len(ask[0x8]) == 9 and const[0x8] == 20,
+         f"asker counts: 0x1={len(ask[0x1])} functions / {const[0x1]} sites (= the maximum"
+         f" over all masks, top={top}); 0x8={len(ask[0x8])}/{const[0x8]};"
+         f" 0x10={len(ask[0x10])}/{const[0x10]}")
     return out
 
 
@@ -429,14 +488,17 @@ def g5():
     for a, wf, args in calls:
         for x in args:
             v = imm(x)
-            if v is not None and v > 0xFF:
-                bulk[v] = {i for i in ids if v & i == i}
-    print(f"    {len(calls)} writer calls in the apply handler; bulk masks:")
-    for m, cov in sorted(bulk.items()):
-        print(f"      {m:#010x} covers {len(cov):2d} of the 13 ids {[hex(c) for c in sorted(cov)]}")
-    gate("G5c", len(calls) == 4 and bulk.get(0x1F89) == {0x1, 0x8, 0x400, 0x1000},
-         f"{len(calls)} writer calls; 0x1f89 covers exactly {{1,8,400,1000}} = "
-         f"{[hex(c) for c in sorted(bulk.get(0x1F89, ()))]}")
+            if v is None or v < 0x2:
+                continue
+            bulk[v] = ({i for i in ids if v & i == i}, {i for i in ids if not v & i})
+    print(f"    {len(calls)} writer calls in the apply handler; every mask-like push:")
+    for m, (sets, clrs) in sorted(bulk.items()):
+        print(f"      {m:#010x} SETS {len(sets):2d} {[hex(c) for c in sorted(sets)]}"
+              f"  CLEARS {len(clrs):2d} {[hex(c) for c in sorted(clrs)]}")
+    gate("G5c", len(calls) == 4 and bulk.get(0x1F, ({},))[0] == {0x1, 0x2, 0x4, 0x8, 0x10}
+         and bulk.get(0x1F89, ({},))[0] == {0x1, 0x8, 0x400, 0x1000},
+         f"{len(calls)} writer calls, {len(bulk)} bulk pushes; 0x1f SETS exactly"
+         f" {{1,2,4,8,10}} and 0x1f89 SETS exactly {{1,8,0x400,0x1000}}")
 
 
 # ------------------------------------------------- G6 direct-access corroboration
@@ -454,17 +516,21 @@ def g6():
                 bits[v] += 1
     print("    mnemonics: " + ", ".join(f"{k}={v}" for k, v in kinds.most_common(8)))
     print("    single-bit immediates: " + ", ".join(f"{m:#x}={c}" for m, c in sorted(bits.items())))
-    gate("G6a", kinds["test"] == 388 and kinds["mov"] == 300 and kinds["lea"] == 39,
+    other = sum(kinds.values()) - 388 - 300 - 39
+    gate("G6a", kinds["test"] == 388 and kinds["mov"] == 300 and kinds["lea"] == 39
+         and other == 1,
          f"direct-displacement census: test={kinds['test']} mov={kinds['mov']} "
-         f"lea={kinds['lea']} (all other mnemonics {sum(kinds.values()) - 388 - 300 - 39})")
+         f"lea={kinds['lea']} and exactly {other} other mnemonic"
+         f" ({[k for k in kinds if k not in ('test', 'mov', 'lea')]})")
     gate("G6b", bits[0x1] == 150 and bits[0x1] > 2 * bits[0x10],
          f"bit 0x1 dominates the direct single-bit immediates ({bits[0x1]} vs 0x10={bits[0x10]})")
     return kinds, bits
 
 
 # ---------------------------------------------------------------- G7 rivals
-def g7(sites, const):
+def g7(sites, const, hits, masks0=None):
     print("\nG7  RIVALS (each must FAIL on the numbers printed above)")
+    masks = [h[2] for h in hits]
     sb = sorted(m for m in const if single(m))
     outside = [m for m in sb if m & 0x7 == 0]
     gate("G7a", len(outside) == 16,
@@ -478,14 +544,20 @@ def g7(sites, const):
     for a, fn, args, v in sites:
         if v is not None:
             ask[v].add(fn)
-    flip = ask.get(0x1) == ask.get(0x8)
-    gate("G7c", not flip,
-         f"R3 '0x1 is vendetta (the natural guess)': 0x1 askers {len(ask.get(0x1, ()))} vs 0x8"
-         f" askers {len(ask.get(0x8, ()))}; the pact keys sit on 0x1, the vendetta keys on 0x8"
-         f" -> refuted")
-    gate("G7d", (REC_OFF_B - REC_OFF_A) >> 2 == 8,
-         f"R4 'the two dwords are one 16-bit field': they are {REC_OFF_B - REC_OFF_A:#x} apart"
-         f" = {(REC_OFF_B - REC_OFF_A)//4} dwords, and only 2 of 11 mask values repeat - refuted")
+    cw = menu_case_witness()
+    vend = {"DIPLOVENDETTA", "DIPLONOVENDETTA"}
+    pact = {"DONTHAVEPACT", "REALLYENDPACT"}
+    gate("G7c", not (set(cw.get(0x1, ())) & vend) and not (set(cw.get(0x8, ())) & pact),
+         f"R3 '0x1 is vendetta (the natural guess)': 0x1's case block carries"
+         f" {sorted(set(cw.get(0x1, ())) & vend)} vendetta keys and 0x8's carries"
+         f" {sorted(set(cw.get(0x8, ())) & pact)} pact keys -> refuted ON THE KEYS")
+    dws = sorted({h[4] for h in hits})
+    delta = dws[-1] - dws[0]
+    dupn = len([m for m in set(masks) if masks.count(m) > 1])
+    gate("G7d", len(dws) == 2 and delta == 8 * 4 and dupn == 2,
+         f"R4 'the two dwords are one 16-bit field': the PARSED rows read {len(dws)} dwords"
+         f" {[hex(d) for d in dws]}, {delta:#x} = {delta//4} dwords apart, and only {dupn} of"
+         f" {len(set(masks))} mask values repeat -> refuted")
 
 
 def main():
@@ -493,13 +565,13 @@ def main():
     global FNS, STARTS
     FNS, STARTS = extents()
     print("M364 - the nouns of the faction-relations bits\n")
-    g1()
+    hits = g1()
     g2()
     sites, const = g3()
     g4(sites, const)
     g5()
     g6()
-    g7(sites, const)
+    g7(sites, const, hits)
     good = sum(1 for _, ok, _ in GATES if ok)
     n = len(GATES)
     head = f"M364: {good}/{n} gates"
