@@ -750,15 +750,12 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | OPEN: whose record the exit block's BYTE[edi+0x7] is (edi = [ebp-0x4], sole pre-range writer 0x51dd28); the walk's meaning (tile-class filter 0x51de5b-61 + distance vs ds:0x8f0d34 0x51dece-0x51ded0 + 3 `or ebx,-1` sentinels) - shape V, semantics INFERRED | `evidence/m301_ebxtable.txt:132-146` | lead |
 | ACCEPTANCE `python3 scripts/m301_ebxtable.py` -> **PASS M301: 8/8** (zero box, zero /proc, zero gdb) | `evidence/m301_ebxtable.txt` tail | V |
 
-## B19 (s257, BUILD 10/10) - the slot [+4] visit counter made EXECUTABLE (sim/visitcounter.py)
-| claim | evidence | conf |
-|---|---|---|
-| the gated inc: `[0x989ce8+28*site+4]++` runs IFF `FUN_005832b0(x,y) != 0` at 0x51dffd - the inc block 0x51e00d-0x51e01b (load [esi+0x989cec] / inc / store) is entered ONLY by fall-through (je 0x51e11d past the store, no branch into the interior), the counter field DECODES to MAX operand +4 on the same pinned 28-B esi; every model constant read out of the W1/W2 windows embedded in the M299 evidence file (rung 0x102000 / flag 0x2000@0x985ac4 / sel 0xc000000 / rung3 0x10000000 / rand 0x92a380 / strides 0x69220c+0x692210 / coefs -5*sar(h,2)-3*sar(d,2) mask 0xf, B mask 0x1f + trunc4); branch-A lattice runs as TWO agreeing implementations + the RECORDED 36/36 theorem | `sim/visitcounter.py`, `evidence/b19_visitcounter.txt:10,:13` (G1/G4), pins `evidence/m299_visitgate.txt:5,:52` | V |
-| replay over the 2321 recorded decision rows (B17 loader + B16 transposition + B18 site_of): sites {1:2253, 9:68} == B18 anchor (counter table = MAX table, +4 vs +0); census {'branchA':1099,'rung1':1222}; 1222 CERTAIN-refuse / 0 CERTAIN-accept / 1099 possible; DECLARED baseline Live(flag2000=False,rand=1): 20 eax=2 accepts, 1079 undecided (branch-A miss -> never-recorded branch-B stride lattice); eax=1 return STRUCTURAL-ONLY in this window (0 rows, 5 dump records) | `evidence/b19_visitcounter.txt:5-9,:17-18` (G8/G9 + table) | V (law + brackets); the counts' LIVE side OPEN (values unrecorded) |
-| the M300 24-caller census + the M301 eax-witness re-graded against the W1 BYTES inside the sim (21/2/1, 17/1/6, single IN-WRITER 0x51dffd line-for-line; 0 backward edges, je 0x51dff5 pre-call) | `evidence/b19_visitcounter.txt:15-16` (G6/G7) vs `evidence/m300_callers.txt` S2, `evidence/m301_ebxtable.txt` A6 | V |
-| DECLARED UNMODELED: live VALUES ds:0x92a380/0x69220c/0x692210/0x985ac4-bit2000 (address witnesses only `evidence/m299_visitgate.txt:175-178`) - one read-only /proc pass dumping these four + the 0x989ce8/0x94eca8 tables grades every B19 count ABSOLUTELY (LEAD, sharpens B18's); counter-table CONTENTS; the 0x51e02c 0x94ed28 post-read downstream; which REACHES callers run | docstring, `evidence/b19_visitcounter.txt:14,:18` | lead |
-| ACCEPTANCE `python3 -m sim.selftest --b19 programs/saves/m54b_clean.SAV` -> **PASS B19: 10/10**, two runs byte-identical (zero box, zero /proc, zero gdb) | `evidence/b19_visitcounter.txt:20` | V |
-
+## B19 (s257, BUILD 10/10) - ROTATED VERBATIM to `docs/named-archive-b19-rows.md` (sha1 `f12ca5e5df2a5a7d9a4c25f2bbd52b9b5d8be8e8`): the slot [+4] visit counter is executable (`sim/visitcounter.py`). One line per claim, each with its full `path:line`.
+- GATED INC: `[0x989ce8+28*site+4]++` IFF `FUN_005832b0(x,y) != 0`@0x51dffd; inc block 0x51e00d-0x51e01b entered ONLY by fall-through (`je 0x51e11d`); field DECODES to MAX +4 on the pinned 28-B esi; two agreeing impls + the recorded 36/36 theorem - V (`evidence/b19_visitcounter.txt:10`, `evidence/b19_visitcounter.txt:13`, `evidence/m299_visitgate.txt:5`, `evidence/m299_visitgate.txt:52`)
+- REPLAY 2321 rows: sites {1:2253, 9:68} == B18 anchor; census {'branchA':1099,'rung1':1222}; 1222 CERTAIN-refuse / 0 accept / 1099 possible; baseline = 20 eax=2, 1079 undecided; eax=1 STRUCTURAL-ONLY (0 rows) - V law, LIVE side OPEN (`evidence/b19_visitcounter.txt:5-9`, `evidence/b19_visitcounter.txt:17-18`)
+- M300/M301 re-graded in-sim: 21/2/1 and 17/1/6, one IN-WRITER 0x51dffd line-for-line, 0 backward edges - V (`evidence/b19_visitcounter.txt:15-16`, `evidence/m300_callers.txt`, `evidence/m301_ebxtable.txt`)
+- DECLARED UNMODELED: live ds:0x92a380 / 0x69220c / 0x692210 / 0x985ac4-bit2000; counter-table CONTENTS; 0x51e02c 0x94ed28; which REACHES callers run - lead (`evidence/m299_visitgate.txt:175-178`, `evidence/b19_visitcounter.txt:14`, `evidence/b19_visitcounter.txt:18`)
+- ACCEPTANCE `python3 -m sim.selftest --b19 programs/saves/m54b_clean.SAV` -> **PASS B19: 10/10**, two runs byte-identical - V (`evidence/b19_visitcounter.txt:20`)
 ## M302 (s258, BOX-READ read-only /proc) - B19's unmodeled live values pinned; the 1099 undecided rows collapse to a point
 | claim | evidence | conf |
 |---|---|---|
@@ -1671,6 +1668,16 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | TRANSCRIPT 16/16 (`ac8c2caad0d71d55`); classifier chain @0x507975..0x5079a7 (16 insns) == sim.classify on 65,536 pairs; pact+treaty does NOT satisfy a want of treaty | `evidence/b36_relations.txt:58,61-68` | V MU3,7,13 |
 | ACTION LAYER (4,0x691144)=(ENEMYTRUCE), (2,0x691150)=(ENEMYTREATY), (1,none) — the BYTES read through the PE table at image base 0x400000; 5 rivals differ, min 2,424 | `evidence/b36_relations.txt:69-78` | V MU8,9 |
 | UNMODELED: the nouns of 0x800000 / 0x40 / 0x8000 / 0x10000 / 0x100000; which site fires each transition in a live game | - | lead |
+
+## B37 (s339-chain1, BUILD 8/8, zero box; 13 mutants) - the TREATY LIFECYCLE: `0x40` arms a 50-tick cell; the countdown is its only expirer
+| claim | evidence | conf |
+|---|---|---|
+| countdown = 10 insns 0x5552b6..0x5552d4 (`and al,0xbf`@0x5552d1) with ONE exit 0x5552d9, so a zero cell stores NOTHING; 4 arms of 0x32 (0x551d22 caller-mask behind `test cl,0x40`; 0x552ce6 `or al,0x40`; 0x5553f3/0x5556eb `and 0xfffdfbff`+`or 0x840`), each proved from its own chain | `evidence/b37_treaty.txt:13,:32` | V MU1-4 |
+| parity 2048 pairs, 0 disagreements, expiry at tick 50; replay: re-arm t30, status t40, expires ONCE at t79 | `evidence/b37_treaty.txt:38,:48` | V MU5-7 MU12 |
+| PEACE 0xffee7faf clears 0x40 -> NULL expiry (49/49); WAR 0xfaeef378 KEEPS it (0x78) -> real clear (0/49); 0 of 11 cell refs inside FUN_00551a20; corrects M375's list presentation only | `evidence/b37_treaty.txt:54` | V MU8 |
+| 0x800000 TREATY ON: all 4 masks with a 0x17 bit clear it, expiry cannot (`0xbf & 0x800000 = 0`) | `evidence/b37_treaty.txt:60` | V MU9 |
+| six rivals differ (min 1 config); ACCEPTANCE `python3 -u -m sim.treaty` PASS 8/8 `5dd4119bd1882d1d`, twice identical | `evidence/b37_treaty.txt:75`, `evidence/b37_twice.txt:2` | V MU10-11 |
+| UNMODELED: nouns of 0x800/0x20000/0x400; FUN_00552970's role; one upkeep pass == one turn | docstring | lead |
 
 ## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..128) of `evidence/m371_war_contact.txt:8`.
 | claim | evidence | conf |

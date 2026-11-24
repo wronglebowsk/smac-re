@@ -1,0 +1,4 @@
+# B37 acceptance re-run, byte-identical to evidence/b37_treaty.txt
+74bbea3a09264c8a5e64b3714781b2e0f7b5bc72  evidence/b37_treaty.txt
+74bbea3a09264c8a5e64b3714781b2e0f7b5bc72  evidence/b37_treaty.txt (2nd run)
+75 evidence/b37_treaty.txt

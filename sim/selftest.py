@@ -1744,6 +1744,14 @@ def run_b36(sav_path, results):
     return srel.main([])
 
 
+def run_b37(sav_path, results):
+    """Rung B37: the treaty lifecycle - sim/treaty.py authors every claim (the extracted
+    countdown block, the arm census, the replay and the rivals), so --b37 and
+    `python3 -m sim.treaty` cannot print different text."""
+    from . import treaty as stt
+    return stt.main([])
+
+
 def run_b35(sav_path, results):
     """Rung B35: WHO calls the grant family - sim/grantcall.py authors every claim (the site
     census, the item decode, the mapper law, the recorded births), so --b35 and
@@ -1971,6 +1979,9 @@ def main(argv=None):
     ap.add_argument("--b36", nargs="*", metavar="ARG",
                     help="rung B36: the faction-relations state machine - writer parity, "
                          "classifier chain, action layer (no input needed)")
+    ap.add_argument("--b37", nargs="*", metavar="ARG",
+                    help="rung B37: the treaty lifecycle - arm/countdown/expiry, the peace-vs-war "
+                         "null write (no input needed)")
     ap.add_argument("--b35", nargs="*", metavar="ARG",
                     help="rung B35: who calls the grant family - the caller census, the 11/10 item "
                          "sites and the recorded births (no input needed)")
@@ -2082,6 +2093,8 @@ def main(argv=None):
         return run_b34(None, results)
     if args.b36 is not None:
         return run_b36(None, results)
+    if args.b37 is not None:
+        return run_b37(None, results)
     if args.b35 is not None:
         return run_b35(None, results)
     if args.b30 is not None:
