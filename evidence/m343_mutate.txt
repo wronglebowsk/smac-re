@@ -1,0 +1,23 @@
+MU0   NO-OP  gates=9 total=('9', '9')  SCORE
+MU1   names G1  reddened=G1,G3,G9           SCORE
+MU2   names G2  reddened=G2                 SCORE
+MU3   names G3  reddened=G3,G4,G6,G9        SCORE
+MU4   names G4  reddened=G1,G3,G4,G9        SCORE
+MU5   names G5  reddened=G1,G3,G4,G5,G6,G7,G9 SCORE
+MU6   names G6  reddened=G6                 SCORE
+MU7   names G7  reddened=G7                 SCORE
+MU8   names G8  reddened=G8                 SCORE
+MU9   names G9  reddened=G1,G3,G9           SCORE
+
+covered set (measured):
+  G1 <- MU1,MU4,MU5,MU9 (4)
+  G2 <- MU2 (1)
+  G3 <- MU1,MU3,MU4,MU5,MU9 (5)
+  G4 <- MU3,MU4,MU5 (3)
+  G5 <- MU5 (1)
+  G6 <- MU3,MU5,MU6 (3)
+  G7 <- MU5,MU7 (2)
+  G8 <- MU8 (1)
+  G9 <- MU1,MU3,MU4,MU5,MU9 (5)
+
+HARNESS PASS M343: 10/10 scored, NO-OP [], uncovered []

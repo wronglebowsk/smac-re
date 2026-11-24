@@ -1,0 +1,118 @@
+M343 -- the [obj+0xa40] result cell: census, class, writers
+image: 781379 insns parsed; refs naming displacement 0xa40 = 97
+
+A. SHAPE CENSUS
+  class                       n
+  indexed [x+y*1+0xa40]      25
+  field [x+0xa40]            72  (dword stores 47 / reads 25)
+  lea reg,[x+0xa40]           0  (no lea form exists -> store census complete)
+
+  indexed refs by function (array elements, excluded from the field set):
+    FUN_004038c0   x2  @4039b6 4039d1
+    FUN_00403c40   x3  @403e18 403e41 403e9d
+    FUN_005e7af0   x1  @5e7bbe
+    FUN_005e7c08   x1  @5e7cca
+    FUN_005e7ead   x1  @5e7f3d
+    FUN_005e8006   x3  @5e8379 5e8390 5e83a3
+    FUN_005e8507   x2  @5e8535 5e8547
+    FUN_005e85a8   x2  @5e85d6 5e85e8
+    FUN_005e8649   x2  @5e8677 5e8689
+    FUN_005e86ea   x2  @5e8718 5e872a
+    FUN_005e8c53   x2  @5e8d0e 5e8d48
+    FUN_005e9530   x4  @5e960f 5e9677 5e9701 5e9751
+
+B. CLASS ATTRIBUTION (vtable slots read from the image bytes)
+  0x5f5759 = +0xa8 of class 0x67164c, +0xb0 of CPane subobj 0x671644, +0xa8 of class 0x6717cc, +0xa8 of class 0x6728c0
+  0x5f58fa = +0x64 of class 0x67164c, +0x6c of CPane subobj 0x671644, +0x64 of class 0x6717cc, +0x64 of class 0x6728c0, +0x64 of class 0x675cc4, +0x64 of class 0x6776c8
+
+C. RECEIVER FINGERPRINT  cluster {+0x21d0 container, +0x2350 state, +0x30a8 flags, +0x3100 stage}
+  function       21d0   2350   30a8   3100   pair store  read
+  FUN_00413c70   False  False  False  False  no       0     1
+  FUN_004266c0   False  False  False  False  no       4     0
+  FUN_004282d0   False  False  False  False  no       1     0
+  FUN_00435380   False  False  False  False  no       1     0
+  FUN_00448c60   False  False  False  False  no       2     2
+  FUN_0045ed90   False  False  False  False  no       0     1
+  FUN_0047ac50   False  False  False  False  no       4     2
+  FUN_004894c0   False  False  False  False  no       1     1
+  FUN_0048a090   False  False  False  False  no       0     1
+  FUN_0048a170   False  False  False  False  no       1     3
+  FUN_00492030   False  False  False  False  no       1     0
+  FUN_004923d0   False  False  False  False  no       0     1
+  FUN_00492940   False  False  False  False  no      11     0
+  FUN_004930e0   False  False  False  False  no       0     1
+  FUN_00493a10   False  False  False  False  no       1     0
+  FUN_00497850   False  False  False  False  no       2     1
+  FUN_00497d80   False  False  False  False  no       0     1
+  FUN_004b0750   False  False  False  False  no       1     0
+  FUN_004b0a80   True   False  False  False  no       0     3
+  FUN_005ce4a9   False  False  False  False  no       1     0
+  FUN_005ce4dc   False  False  False  False  no       1     0
+  FUN_005ee350   True   False  True   True   no       1     0
+  FUN_005eede6   True   False  True   True   no       1     0
+  FUN_005f1394   True   True   True   False  YES      0     1
+  FUN_005f5759   True   True   True   True   YES      4     0
+  FUN_005f58fa   True   True   True   False  YES      3     0
+  FUN_005f5a11   True   True   True   True   YES      2     0
+  FUN_005f6b8c   False  False  False  False  no       1     0
+  FUN_005f6de9   False  False  False  False  no       1     0
+  FUN_005f7e91   False  False  False  False  no       0     4
+  FUN_005f882f   False  False  False  False  no       0     2
+  FUN_0063fcd0   False  False  False  False  no       2     0
+  functions carrying the PAIR: FUN_005f1394, FUN_005f5759, FUN_005f58fa, FUN_005f5a11
+  WRITERS under the pair: FUN_005f5759, FUN_005f58fa, FUN_005f5a11
+  WRITERS under '>=3 of cluster': FUN_005ee350, FUN_005eede6, FUN_005f5759, FUN_005f58fa, FUN_005f5a11 (5)
+
+D. THE WRITER SET (every store, with value provenance)
+  addr       function       mn    operand                                  value
+  005f5765 FUN_005f5759   mov   DWORD PTR [eax+0xa40],0x0                IMM 0x0
+  005f57b4 FUN_005f5759   mov   DWORD PTR [edx+0xa40],eax                SELECTED eax+edx*1+0xec
+  005f57da FUN_005f5759   mov   DWORD PTR [edx+0xa40],eax                RESOLVER
+  005f581c FUN_005f5759   mov   DWORD PTR [edx+0xa40],0xffffffff         IMM 0xffffffff
+  005f5920 FUN_005f58fa   mov   DWORD PTR [edx+0xa40],0x0                IMM 0x0
+  005f5988 FUN_005f58fa   mov   DWORD PTR [ecx+0xa40],edx                SELECTED edx+ecx*1+0xec
+  005f59ae FUN_005f58fa   mov   DWORD PTR [ecx+0xa40],eax                RESOLVER
+  005f5aa5 FUN_005f5a11   mov   DWORD PTR [edx+0xa40],eax                SELECTED eax+edx*1+0xec
+  005f5acb FUN_005f5a11   mov   DWORD PTR [edx+0xa40],eax                RESOLVER
+  total dword stores on the dialog receiver: 9
+
+E. RECEIVER IDENTITY (runner frame local -> ds:0x9977f0 -> callback receiver -> read)
+  0x005f13b2 mov    DWORD PTR [ebp-0x394],ecx
+  0x005f3d3b mov    eax,DWORD PTR [ebp-0x394]
+  0x005f3d47 cmp    ecx,DWORD PTR [ebp-0x394]
+  0x005f3d70 mov    DWORD PTR ds:0x9977f0,ecx
+  0x005f3e02 mov    ds:0x9977f0,eax
+  0x005f3f3f mov    eax,DWORD PTR [ebp-0x394]
+  0x005f3f45 mov    eax,DWORD PTR [eax+0xa40]
+  0x005f5a17 mov    eax,ds:0x9977f0
+
+F. CANCEL CHAIN in FUN_005f5759 (arg = [ebp+0x8])
+  0x005f57e0 mov    eax,DWORD PTR [ebp+0x8]
+  0x005f57e6 cmp    DWORD PTR [ebp-0x10],0xfffffffe
+  0x005f57ea je     0x5f57f4
+  0x005f57ec cmp    DWORD PTR [ebp-0x10],0xffffffff
+  0x005f57f0 je     0x5f5835
+  0x005f57f4 mov    ecx,DWORD PTR [ebp-0xc]
+  0x005f57f7 mov    edx,DWORD PTR [ecx+0x30a8]
+  0x005f57fd and    edx,0x40
+  0x005f5800 test   edx,edx
+  0x005f581c mov    DWORD PTR [edx+0xa40],0xffffffff
+
+G1 PASS  census: 97 refs = 25 indexed + 72 field; field dword stores 47 / reads 25; 0 lea   [mutant MU1 (treat the indexed forms as fields)]
+G2 PASS  class: 0x5f5759 = +0xa8 of 3 class vtables (+0xb0 of the subobject); 0x5f58fa = +0x64 of all 6   [mutant MU2 (slot_of returns an off-by-one slot)]
+G3 PASS  fingerprint: the pair admits exactly 3 writers; '>=3 of cluster' wrongly admits 2 more   [mutant MU3 (use >=3 of the cluster instead of the pair)]
+G4 PASS  writers: 9 stores = 5759 x4 + 58fa x3 + 5a11 x2; the dialog ctor FUN_00405ef0 has 0 refs   [mutant MU4 (count the indexed refs as field stores)]
+G5 PASS  runner FUN_005f1394: 1 ref, a READ at 0x5f3f45, 0 stores   [mutant MU5 (role() reads the dest-first mov as a source)]
+G6 PASS  value law: both vmethods publish {0, selected, resolver}; the callback {selected, resolver}; one -1   [mutant MU6 (chase stops at the stack slot -> 3 UNRESOLVED)]
+G7 PASS  identity: 0x5f3d70 stores the [ebp-0x394] object into ds:0x9977f0, 0x5f3e02 restores, 0x5f3f45 reads that same local; 5a11 loads ds:0x9977f0   [mutant MU7 (drop the identity chain -> 5a11's receiver unexplained)]
+G8 PASS  cancel law: the only -1 store (0x5f581c) is reached from arg == -2 with ([this+0x30a8] & 0x40)   [mutant MU8 (compare the arg with -1 instead of -2)]
+
+R1 the runner computes its own result         0 stores in the runner's 1 refs                -> KILLED
+R2 the dialog ctor seeds the result cell      0 refs in FUN_00405ef0                         -> KILLED
+R3 any +0xa40 field is the same cell          62/72 field refs fail the pair                 -> KILLED
+R4 >=3 of the cluster is the right filter     5 functions admitted, 2 of them non-dialog     -> KILLED
+
+G9 PASS  rivals R1-R4 all die on the printed numbers   [mutant MU9 (print R3's excluded count as 0)]
+
+table_sha256=06577d5fbab8d657
+PASS M343: 9/9 gates  digest=bcdace84a0352b4a
