@@ -1,0 +1,70 @@
+G0  the 0x2000 set-sites and their hosts
+    push 0x2000 sites image-wide: 33
+    addresses: 43b3cc 43f7ec 4db311 4db93f 50393d 506cf1 507ffd 508049 ...
+    distinct host functions: 17
+    sites whose next call (<=4 insns) is FUN_00551a20: 6 -> 50393d 506cf1 507ffd 508049 5533d4 553498
+    inside FUN_00502cd0: 2 site(s) -> 50393d 506cf1
+    50393d: mov ecx,DWORD PTR [ebp-0x4] | push 0x2000 | push ecx | push esi | call 0x551a20
+    506cf1: call 0x5314b0 | push 0x2000 | push edi | push esi | call 0x551a20
+    setter-2 guard window: test BYTE PTR [eax*4+0x94d448],0x10 | jne 0x506d00 | push 0x5 | push esi | push edi | call 0x5314b0
+    setter-2 window carries a 0x94e48c strength operand: False
+ok  G0 33 push 0x2000 sites in 17 hosts, 6 feeding FUN_00551a20; FUN_00502cd0 carries exactly two stamps and only 0x50393d consults 0x94e48c
+
+G1  the stamp loop, byte-exact (0x5038a3..0x50397d)
+    69 instructions pinned, 0 mismatched
+ok  G1 69-instruction loop byte-exact; two exit-skipped factions, PACT on the third party's row, peace+commlink on the acting row, then the strength test
+
+G2  index algebra: the strength chain folds to 2095*ecx, with no +esi
+    mov eax,ecx | shl eax,0x6 | add eax,ecx | lea eax,[ecx+eax*2] | shl eax,0x4 | sub eax,ecx
+    folded multiplier for ecx: 2095 (0x82f); stride/4 = 2095
+    `add eax,esi` in 0x503920..0x50392f: 0
+    where +esi DOES appear: 0x5038f4 (row edx) and 0x50390f (row ecx) - the relations rows
+ok  G2 left operand = field(ecx) (2095*ecx, no +esi); the +esi contrast lives only in the two relations chains
+
+G3  edi walks one field per faction: mov edi,0x950548 .. cmp edi,0x95ea6c
+    edi0-field = 8380 = 1 stride(s); end-field = 67040 = 8 stride(s)
+    iterations while edi < end: 7 (esi = 1..7)
+ok  G3 edi0 = field(1), end = field(8), step = 0x20bc -> factions 1..7, each with field(esi) as the right-hand side
+
+G4  the threshold: a live peer value, strict >
+    cmp: cmp eax,DWORD PTR [edi]  bytes 3b 07
+    branch: jle 0x50396a  bytes 7e 30
+    immediates inside the compare/branch 0x503936..0x503938 (addresses stripped): 0 -> []
+    mul/div in the compare window: 0
+    right operand 'DWORDPTR[edi]' is memory, target of jle = 0x50396a (the loop-continue skip)
+ok  G4 cmp eax,[edi], jle past the stamp: threshold = the peer's own MIGHTY/MEEK value, strict >, no constant and no scale
+
+G5  the stamp and the callee's mask algebra
+    mov ecx,DWORD PTR [ebp-0x4] | push 0x2000 | push ecx | push esi | call 0x551a20
+    cdecl: push 0x2000, push [ebp-4], push esi -> FUN_00551a20(esi, [ebp-4], 0x2000)
+    AND masks in FUN_00551a20: 551a62:0xfe 551a88:0xffee7faf 551aaf:0xffee7faf 551b17:0xfaeef378 551b42:0xfaeef378 551b98:0xff7fffff 551bbf:0xff7fffff
+    dword masks: 0xffee7faf 0xffee7faf 0xfaeef378 0xfaeef378 0xff7fffff 0xff7fffff | byte masks: 0xfe
+    dword masks that would CLEAR 0x2000: 0 []
+    tail `or edx,ebx` (mask into the value) sites: 551be6 551c09
+ok  G5 6 dword AND masks (3 distinct) preserve 0x2000; the unconditional tail ORs the mask at 0x551be6/0x551c09 - bit 13 lands on BOTH rows of the pair
+
+G6  the follow-on: FUN_00531b0 is the ATTITUDE delta, and 0x800000 buys +3
+    mov eax,DWORD PTR [ebx] | test eax,0x800000 | push 0x3 | push esi | push edx | call 0x5314b0
+    ebx init 0x94f504 + 4*[ebp-4], +0x20bc per iteration -> stat(+0x1078+4*[ebp-4]) of faction esi
+    callee head: mov ecx,DWORD PTR [edx*4+0x94d488] | cmp ecx,0x14 | mov DWORD PTR [edx],ecx
+    FUN_00531b0(a,b,delta) adds delta to [a,b]+0x94d488 and clamps to 0x14; cdecl args here = ([ebp-4], esi, +3); test mask 0x800000
+ok  G6 esi's +0x94f504 stat tested for 0x800000; hit -> FUN_00531b0([ebp-4], esi, +3), an attitude add clamped to 0x14
+
+G7  bit-13 readers on a relations dword
+    byte-form (test ah,0x20 after a +0x94d448 load): 5 -> 54820d 5555a0 55563b 55572d 555747
+    dword-form (test/and reg,0x2000 after a +0x94d448 load): 1 [5092107]
+    bit-31 clear guarded by bit 13: mov eax,DWORD PTR [edi+0x94d448] | test ah,0x20 | and eax,0x7fffffff
+ok  G7 5 byte-form readers (0x54820d 0x5555a0 0x55563b 0x55572d 0x555747) + 1 dword form (0x4db30b -> FUN_006050d4); 0x555747 guards the 0x80000000 clear at 0x555750
+
+G8  rivals, each measured against the printed numbers
+    R1 '0x2000 is stamped whenever the pair is at peace' would need no strength test before the push; measured: 0x503936 cmp + 0x503938 jle sit between the peace tests and 0x50393d -> STANDS
+    R2 'the threshold is a constant'                     the compare operand is 'DWORDPTR[edi]' and the window carries 0 immediates -> STANDS
+    R3 'the comparison is >='                            the branch is jle 0x50396a -> only strictly greater stamps -> STANDS
+    R4 'the left operand is the pair cell (2095*ecx+esi)' the strength chain folds to 2095 and carries 0 `add eax,esi` -> STANDS
+    R5 'bit 13 is written to the weaker faction only'    FUN_00551a20's tail ORs the mask into both rows (2 or-edx,ebx sites) -> STANDS
+    R6 '0x2000 = MEEK, a strength-gap flag'              setter 2 @0x506cf1 stamps on `not at war` alone; its 8-instruction guard window carries no 0x94e48c operand (False) -> STANDS
+ok  G8 6/6 rivals refuted on the printed numbers
+
+digest 73c5356395ecec3e (decode twice: True)
+
+PASS M381: 9/9 gates digest 73c5356395ecec3e
