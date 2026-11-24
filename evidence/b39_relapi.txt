@@ -1,0 +1,45 @@
+B39  relations API family - four entry points, two words
+dump text.txt sha1 7d3294cdf10bc708
+exe  terran.exe sha1 a889fd11be2fc4cc421fd669dde3eeda93584f90
+
+G1  store census per API body
+    api       len  rowscale  fields          stores
+    00551a20  161   2095     A,A,A,A,A,A,A,A  8
+        0551a8e -> 9753672 AND 0xffee7faf
+        0551ab5 -> 9753672 AND 0xffee7faf
+        0551b1d -> 9753672 AND 0xfaeef378
+        0551b4a -> 9753672 AND 0xfaeef378
+        0551b9e -> 9753672 AND 0xff7fffff
+        0551bc5 -> 9753672 AND 0xff7fffff
+        0551be8 -> 9753672 OR ebx
+        0551c0d -> 9753672 OR ebx
+    00551c40   57   2095     B,B,B,B         4
+        0551c75 -> 9753704 AND 0xffffffbf
+        0551c99 -> 9753704 AND 0xffffffbf
+        0551cbc -> 9753704 OR ebx
+        0551ce1 -> 9753704 OR ebx
+    00551cf0   41   2095     A,A,L           3
+        0551d22 -> 9753672 OR ecx
+        0551d2a -> 9753800 OR ecx
+        0551d62 -> 9753672 AND ecx
+    00551d70   37   2095     B,B             2
+        0551da4 -> 9753704 OR ecx
+        0551dd1 -> 9753704 AND edx
+ok   G0 pins: 781429 dump rows, four API bodies resolved to [161, 57, 41, 37] instructions
+ok   G1 field homes {'0x551a20': ['A'], '0x551c40': ['B'], '0x551cf0': ['A', 'L'], '0x551d70': ['B']} (551c40 4 stores = 2 per path, 551d70 2 = one per mode)
+ok   G2 row scale [2095] == 2095 dwords; WORD_B-WORD_A = 0x20 = 8 dwords
+ok   G3 guards 551a20=[('bl', '0x7'), ('BYTE PTR [edx*4+0x94d448]', '0x10'), ('bl', '0x1'), ('bl', '0x10'), ('BYTE PTR [eax+0x94d448]', '0x7'), ('bl', '0x17'), ('bl', '0x1f')] 551c40=[('bl', '0x20')] 551cf0=[('cl', '0x40')] 551d70 4th-arg mode=True
+
+    exec 551c40(0x2000) B[0][1]=0x2000 B[1][0]=0x2000 | 551c40(0x2040) B[2][3]=0x2010 (seeded 0x2050, the 0x20 arm clears 0x40 and does NOT set 0x20) | 551cf0(0x40) A[0][1]=0x40 cell=0x32 | 551d70 set-then-clear B[4][5]=0x0
+ok   G4 verbs: 551c40 sets BOTH directions; 0x20-arm clears 0x40; 551cf0 arms cell 0x32; 551d70 mode 0 clears
+
+    host 0523b20..052433e  block calls [('0x523f3c', '0x551a20', ['0x50', 'edx', 'esi']), ('0x523f4c', '0x551a20', ['0x1', 'edi', 'esi']), ('0x523f58', '0x551c40', ['0x2000', 'edi', 'esi']), ('0x523f6c', '0x551d70', ['0x8', 'edx', 'esi'])]
+ok   G5a peace block call sequence [('0x551a20', '0x50'), ('0x551a20', '0x1'), ('0x551c40', '0x2000')]
+ok   G5b the `je` at 0523f46 skips BOTH the 0x1 call (0523f4c) and the 0x2000 call (0523f58)
+    exec pair(0,1) B=0x2000/0x2000 | self-pair B=0x0/0x0 | A-row 0x2000000 -> gated: A-row bit0 clear
+ok   G5c host execution: pair gets 0x2000 both ways, self-pair gets none, 0x2000000 gates it
+ok   G6 rivals fail: one-matrix=False B-is-mirror=False unconditional-0x1=False padding=False peace-on-A=False
+
+digest 57987f64b83e3289 / 57987f64b83e3289
+ok   G7 two decodes of the dump agree (57987f64b83e3289)
+PASS B39: 10/10 gates  digest 57987f64b83e3289

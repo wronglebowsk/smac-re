@@ -1521,3 +1521,30 @@ DECLARED UNMODELED: which live event selects each category (the UI path); whethe
 reachable at all (M376: the agenda consumer never samples Future Society); any arithmetic between
 the 11 totals and the unit/energy stats — no such consumer is measured, so none is invented. No box
 time, no /proc, no gdb.
+
+**B39 — THE RELATIONS API FAMILY: four entry points, TWO words** (`sim/relapi.py`). Every rung from
+M364 to M388 has mapped ONE dword, `0x94d448`. The peace host that M368 left open (`0x523f4c`)
+calls three APIs in a row — `0x551a20(esi,edx,0x50)`, `0x551a20(esi,edi,0x1)`, `0x551c40(esi,edi,
+0x2000)` — and `0x551c40`'s stores land at `0x94d468`: eight dwords deeper in the SAME 2095-dword
+faction block (M297's identity). A sibling API at `0x551d70` writes `0x94d468` too, and `0x551cf0`
+writes `0x94d448` plus the B37 lease cell `0x94d4c8`. So the pair is a PAIR OF WORDS, not a mirror,
+and each API has a measured field home, an arg guard and a verb. This rung extracts the four bodies
+from the dump, censuses every relation store in each, and runs the peace host's own three-call
+sequence on a constructed pair of words.
+
+`python3 -u -m sim.relapi` must print `PASS B39: <n>/<n> gates` with: **G0** pins (text dump and
+`terran.exe` sha1, the four API entries and their byte extents); **G1** the STORE CENSUS per body —
+every relation displacement printed, and the field homes separated (`0x551a20`→A, `0x551cf0`→A+lease,
+`0x551c40`→B, `0x551d70`→B); **G2** the index algebra decoded from each body's `shl/add/lea/sub`
+chain equals the 2095-dword row scale for all four, and `0x94d468-0x94d448 = 0x20` = 8 dwords;
+**G3** the guards measured as immediates: `test bl,0x7` (`0x551a20`), `test bl,0x20` (`0x551c40`),
+post-OR `test cl,0x40` arming the lease (`0x551cf0`), the mode arg at `+0x14` choosing SET vs CLEAR
+(`0x551d70`); **G4** the model EXECUTES: verb applied to field, per measured guard, four scenarios,
+and a mask carrying `0x40` through `0x551cf0` writes the lease cell `0x32` — parity with the
+constant B37 recorded; **G5** the peace host: its three call sites in order with their masks, the
+three guards (`test al,0x1` on the A-row, `test eax,0x2000000` as a skip, `cmp esi,edi; je` skipping
+only the `0x1` call) and the resulting word pair; **G6** four rivals FAIL on the printed numbers
+(one-matrix, B-as-mirror-of-A, unconditional `0x1`, `0x94d468` as padding); **G7** digests twice.
+DECLARED UNMODELED: the ladder body of `0x551a20` (B36 owns it — only its field home and stores are
+censused here); what noun each of the four APIs' bits carries on word B; which readers read B. No box
+time, no /proc, no gdb.
