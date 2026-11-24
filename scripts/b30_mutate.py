@@ -51,7 +51,7 @@ MUTANTS = [
      "    m[\"identity_sha_ok\"] = (sow.build_image(sv, bases_override=ov) == sv.data[:64])",
      "the writer's inertness check made trivially false (the hook's no-write leg unchecked)"),
     # ---- the instrument: EXPECT mutants --------------------------------------------------
-    ("ME1", "sim/composedfacility.py",
+    ("MU6", "sim/composedfacility.py",
      "    m[\"n_eligible\"] = sum(1 for r in qrows if r[6])",
      "    m[\"n_eligible\"] = sum(1 for r in qrows if not r[6])",
      "the eligible count inverted (G1's container assert reads the complement)"),
@@ -82,7 +82,7 @@ DECLARED = {
     "MU3": {"G4", "G6"},
     "MU4": {"G5", "G6"},
     "MU5": {"G4", "G6"},
-    "ME1": {"G1", "G6"},
+    "MU6": {"G1", "G6"},
     "ME2": {"G6"},
     "ME3": {"G5", "G6"},
     "ME4": {"G5", "G6"},

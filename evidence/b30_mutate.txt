@@ -3,9 +3,9 @@ MU2 reddens ['G2', 'G6'] rc=1
 MU3 reddens ['G4', 'G6'] rc=1 
 MU4 reddens ['G5', 'G6'] rc=1 
 MU5 reddens ['G4', 'G6'] rc=1 
-ME1 reddens ['G1', 'G6'] rc=1 
+MU6 reddens ['G1', 'G6'] rc=1 
 ME2 reddens ['G6'] rc=1 
 ME3 reddens ['G5', 'G6'] rc=1 
 ME4 reddens ['G5', 'G6'] rc=1 
 MU9 reddens nothing rc=0 
-PASS HARNESS B30: 10/10 mutants redden exactly their declared sets, digest 18aac65a6ac028f4
+PASS HARNESS B30: 10/10 mutants redden exactly their declared sets, digest 76a481b5d8a7d8b0
