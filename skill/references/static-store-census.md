@@ -123,6 +123,13 @@ Before treating a live mismatch as a model failure, histogram the discriminator 
 table (reactor/owner/flag bytes, plus chassis/weapon/armor indices vs the shipped `#CHASSIS`/`#WEAPONS`/
 `#DEFENSES` row counts). Rows with out-of-range indices or impossible values are stale/unallocated
 records — separate them in the check output so the mismatch count means only real failures.
+- **A "row" with no writer is a SENTINEL table, not a record.** Before mapping a stride's fields, look for a
+  STORE into it. When every leg is a `cmp`/`test` against one displacement at `base + stride*i` and the image
+  holds no store at all, those offsets are SCAN BOUNDS the code compares a live index against — report the
+  sentinel set and retract the row reading instead of publishing a field atlas for it (the "52-byte type row"
+  at `0x98adb8 + 0x34*i` is four compare-only sentinels at +8/+0xc/+0x10/+0x14, zero writers). The same test
+  catches the neighbouring trap: a table with a real writer but a density of index stores that only fill
+  `0..pending-1` has a RECORD COUNT shorter than its stride-derived row count.
 
 ## 7. Live read template (no tracer)
 

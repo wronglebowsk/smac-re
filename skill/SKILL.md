@@ -197,7 +197,9 @@ re-summarise.
   lost context; then the PARENT verifies before merging (re-run the script, diff the evidence, read the gate
   for scope) — never trust the child's summary line.
 - **A cron fire's `ok` is a SESSION status, not a CLOSE-OUT status** - a fire can be green on its acceptance and
-  still owe the harness/evidence/notes/PR. Full text: `references/session-discipline.md` §taking over a cut-off fire.
+  still owe the harness/evidence/notes/PR, and a fire that exits ok at its API-call cap has usually left the PR
+  OPEN — verify `gh pr checks` and merge it yourself. Full text: `references/session-discipline.md` §taking
+  over a cut-off fire.
 
 ### Verify the OUTCOME, not the mechanism — full text: `references/verify-outcome.md`
 - Verify the OUTCOME, not the mechanism: compute rival predictions from the baseline, REFUSE a shape where model and null agree on every candidate, read the effect back from memory/state, encode the four exit states (0 measured / 4 never reached / 5 wedged / 8 dirty), and re-verify delegated scripts via a TEMP capture (never process-substitution diff against the script's own output file). Full bullet set VERBATIM: `references/verify-outcome.md` §s290 retirement.

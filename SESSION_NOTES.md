@@ -671,3 +671,32 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **OPEN**: each row's noun (label text is runtime; 0x997b20's table is not in the file);
   0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 = audio on/off (INFERRED).
 - NAMED: `## M360` rotated VERBATIM (docs/named-archive-m360-rows.md, sha1 e504b483); 247,881 B.
+
+## Session 334-chain1 (2026-11-24) — M363: the four A/V audio callees touch the MIXER ONLY (0 pref-cell sites in the closure, 6 in the handler)
+
+- **ACCEPT** `python3 -u scripts/m363_audio_callees.py` -> **`PASS  M363: 18/18 gates`
+  `00277b4215de2a60`** (`evidence/m363_audio_callees.txt:132`), rerun byte-identical;
+  `scripts/m363_mutate.py` -> **`RUN PASS 16 mutants, NO-OP []`** (`evidence/m363_mutate.txt:38`).
+- **ANSWER**: the four are mixer methods, not preference toggles. Their bodies hold ZERO
+  absolute data operands and their 8-function closure (them + 0x4b9330/0x4b9370/0x4b9460/
+  0x4b94a0) holds ZERO too; the cells have 121 sites/62 fns (0x985ab8) and 99/34 (0x985abc)
+  across .text with 0 in the closure (`:11-53`).
+- **SHAPE**: 0x4b8a60 = voice-slot START (byte flag slot+0x24 <- 1, play via buffer vtable
+  +0x8c), 0x4b8af0 = STOP (flag <- 0, +0x14); index*0x18, bound `cmp [ebp+0x8],0xf`
+  (16 slots), buffer ptr slot+0x2c (`:81-86`). 0x4b87f0/0x4b8820 = ONE guarded vtable call
+  each into slot 0x60/0x64 of `[this+0x14]` (`:88-91`); no import-form call in the closure.
+- **`this` = 0x8a7920** at all 6 handler sites (static sound object), 12 call sites total:
+  6 in FUN_00493ff0, 6 in 5 mixer internals (`:64-79`). The cells are written by the HANDLER:
+  6 sites, master-off = load both, `and ch,0xf3` / `and ah,0xbf`, store both (`:55-62`).
+- **JUMP TABLE 0x4941ec** (image): 0x4b->0x494154 (master), 0x4c->0x494068, 0x4d->0x49400e,
+  0x4e->0x4940c3. start/stop pair with the turn-ON/OFF row store (`mov edi,0x1` vs
+  `xor ebx,ebx`) 4/4 (`:108-114`); the 0x4e row (flag 0x158b8) is NOT wired to the audio
+  object — it calls 0x446490 + two vtable slots (`:116`).
+- **QUALIFIED**: M361's "audio on/off (INFERRED)" — measured start/stop + enable/disable over
+  a 16-slot voice table, no preference state anywhere in the leg.
+- **Pitfall**: an `indirect_calls()` filter that keeps only `DWORD PTR [` makes an
+  import-form gate unable to fail — MU12 found it (the closure gate was green on a state it
+  could not see).
+- NAMED: `## B27` rotated VERBATIM (docs/named-archive-b27-rows.md, sha1 `c327508bcd76`,
+  `--verify` 10/10 claims), 247,217 -> 244,834 B; NEXT_PROMPT trimmed to the 12,000 fail.
+
