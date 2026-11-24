@@ -31,7 +31,7 @@ the game's own run; 16/16 `ce7688c0cb3b5f9d`, harness 12/12 `087e1d0228debbe9`).
 author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
 decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (`wc -c` s324, post-B31): `NAMED.md` 247,113/250,000 = 2,887 B (B24 rotated VERBATIM to `docs/named-archive-b31-rows.md:5`, sha1 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `scripts/b31_named_rotate.py --verify`; M340/M329 archives stand) - ROTATE BEFORE adding: headroom is under the 5 KB trigger. NEXT_PROMPT <=12,000.**
+  **DOC CAP (`wc -c` s324, post-B31): `NAMED.md` 247,676/250,000 = 2,324 B (B24 rotated VERBATIM to `docs/named-archive-b31-rows.md:5`, sha1 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `scripts/b31_named_rotate.py --verify`; M340/M329 archives stand) - ROTATE BEFORE adding: headroom is under the 5 KB trigger. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
