@@ -722,3 +722,39 @@ whether a facility completion stamps at all.
 - **DOC CAP**: `scripts/m356_named_rotate.py` rotated `## M298` VERBATIM ->
   `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
 - OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.
+
+## Session 332-chain2 (2026-11-24) — M359: +0x28 = CARRY CAPACITY (V), +0x27 = reactor level (INFERRED); M356's single-writer row RETRACTED
+
+- **ACCEPT** `python3 -u scripts/m359_design_record.py` -> **`PASS M359: 14/14 gates`**,
+  digest `7d4a2d1356c9ff41` (`evidence/m359_x1.txt:112,114`); `diff -q evidence/m359_x1.txt
+  evidence/m359_x2.txt` empty; `m359_mutate.py` -> **18/18 RED, NO-OP none**
+  (`evidence/m359_mutate.txt:41`), incl. two algorithm mutants (arg resolution MU13, a
+  def-use insert MU19) and the carry multiply->add MU7.
+- **WRITER** 0x595b10 = the design-record builder. Arg->field map computed from the
+  stores (`:26-34`): +0x24<-arg0xc, +0x25<-arg0x10, +0x26<-arg0x14, +0x27<-arg0x1c,
+  +0x20<-arg0x18, +0x29<-ret(0x595820), +0x28<-ret(0x570860) or 0.
+- **LOADER** 0x579f40 = #UNITS parser. Six stack args (`:38-44`): (row band, chassis,
+  weapon, armor, ability bits, **constant 1**), call target 0x595b10; then it writes the
+  alpha columns Plan/Cost/Carry/Icon at +0x2a/+0x29/+0x28/+0x2e, each guarded
+  (`test`+`jl` for plan<0, `test`+`je` for cost==0/carry==0, jump lands after the store)
+  (`:47-55`).
+- **+0x28 = CARRY CAPACITY** (V): the auto-value is gated `cmp byte [wep+0x02],0x7`
+  (`:61`; alpha #WEAPONS Mode 7 = Transport, same base +0x00 == 99 = Planet Buster);
+  0x570860 = chassis +0x03 * arg(reactor), /2 on ability 0x800000 and (3v+1)/2 on 0x80000
+  (`:64-90`); the loader's Carry column lands in the same byte. **Two writers** by the
+  anchored-register census: 0x595d1c and 0x57a041 (`:57-59`).
+- **+0x27 = REACTOR LEVEL** (INFERRED, strong): constant 1 for every basic unit; 127
+  loads, the only compare band is **{1:53, 3:54} over 52 clamp sites** (`:92-93`); the UI
+  health path scales `clamp(v,1,3)*10/3` with the input written only by the clamp (`:95-96`).
+- **RETRACTION** (M356 G14): "+0x28 has ONE writer" is FALSE — the literal-form grep sees
+  one; the anchored census (absolute-displacement form + literal base advanced by 0x34)
+  sees two (`:57`). +0x2a is the PLAN (M354 called it "class"): the loader's Plan token
+  lands there, the Planet-Buster branch hard-sets +0x2a=5 = alpha Plan 5, and **49** sites
+  (4 base registers) compare it with 12 (`:98-101`).
+- **REVIEW #385** 10 findings (3 P1) all fixed: G12 added (conditional guards), G7 now
+  gates the ability chain, G5 replaced by an anchored writer census, G11 generalized
+  (43->49 across 4 registers), G6 binds index<<4/+0x02 to the 99 compare, G9 pins the
+  full divide + clamp input, G3 binds loader args to the callee's +0x27, resolve_arg is
+  def-use (MU19 is the counter-example).
+- **OPEN**: alpha #REACTORS has 4 rows but the health readers clamp to 1..3 (pre-SMAX
+  path or display bucket?); the +0x27 noun still rests on elimination + the constant 1.
