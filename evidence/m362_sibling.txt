@@ -1,0 +1,101 @@
+M362 - the 0x4db1xx sibling dialog's +0x15a0 flag group
+
+G1  the 13 set-by-id rows of FUN_004db1b0 (0x4db1b0..0x4db474)
+    #  call@       id         mask       base        id==mask|hi
+     1 0x4db1e6   0x8        0x8        0x94d448   yes
+     2 0x4db217   0x10       0x10       0x94d448   yes
+     3 0x4db248   0x4        0x4        0x94d448   yes
+     4 0x4db279   0x2        0x2        0x94d448   yes
+     5 0x4db2aa   0x1        0x1        0x94d448   yes
+     6 0x4db2e0   0x1000     0x1000     0x94d448   yes
+     7 0x4db316   0x2000     0x2000     0x94d448   yes
+     8 0x4db347   0x20       0x20       0x94d448   yes
+     9 0x4db37d   0x2000000  0x2000000  0x94d448   yes
+    10 0x4db3b3   0x400      0x400      0x94d448   yes
+    11 0x4db3e9   0x40000    0x40000    0x94d448   yes
+    12 0x4db41d   0x80000008 0x8        0x94d468   yes
+    13 0x4db453   0x80002000 0x2000     0x94d468   yes
+  G1a   PASS  13 distinct set-by-id rows (got 13, distinct 13)
+  G1b   PASS  11 rows id==mask on 0x94d448, 2 rows id==mask|0x80000000 on 0x94d468
+  G1c   PASS  the 0x80000000 prefix set is EXACTLY the 0x94d468-row set (2/2)
+
+G2  index arithmetic, emulated per block
+    #  block@      fac coeff  tgt coeff  const
+     1 0x4db1b4    0x82f      0x1        0x0   
+     2 0x4db1eb    0x82f      0x1        0x0   
+     3 0x4db21c    0x82f      0x1        0x0   
+     4 0x4db24d    0x82f      0x1        0x0   
+     5 0x4db27e    0x82f      0x1        0x0   
+     6 0x4db2af    0x82f      0x1        0x0   
+     7 0x4db2e5    0x82f      0x1        0x0   
+     8 0x4db31b    0x82f      0x1        0x0   
+     9 0x4db34c    0x82f      0x1        0x0   
+    10 0x4db382    0x82f      0x1        0x0   
+    11 0x4db3b8    0x82f      0x1        0x0   
+    12 0x4db3ee    0x82f      0x1        0x0   
+    13 0x4db422    0x82f      0x1        0x0   
+  G2a   PASS  all 13 blocks compute 0x82f*fac + 1*tgt + 0
+    record 0x94d448..0x94f504: the enclosing dialog touches 12 slots (12 in-record, 0 out)
+  G2b   PASS  12 distinct slots, ALL inside the one 0x20bc-byte record (0x82f dwords)
+  G2c   PASS  one identical instruction sequence in 13/13 blocks (1 distinct)
+
+G3  the widget: an INLINE sub-object at dialog+0x15a0
+    lea [esi+0x15a0]: 1   mov ecx,edi: 13   fields read: 0xa1c,0xa20
+    tail: mov    ecx,DWORD PTR [edi] | mov    edx,DWORD PTR [ecx+0x4] | mov    eax,DWORD PTR [edx+esi*1+0x15a0] | lea    ecx,[edx+esi*1+0x15a0] | call   DWORD PTR [eax+0xf0] | pop    edi | pop    esi | ret
+  G3a   PASS  one `lea edi,[esi+0x15a0]` feeds 13 set-by-id calls
+  G3b   PASS  the window reads exactly the two fields 0xa1c/0xa20
+  G3c   PASS  tail = vtable [eax+0xf0] call through the +0x15a0 object (8 insns)
+
+G4  the builder's 13 add_item rows (FUN_004db480)
+    #  call@       id         label slot
+     1 0x4db882    0x8        0x9988cc
+     2 0x4db8a5    0x10       0x998538
+     3 0x4db8c8    0x4        0x99852c
+     4 0x4db8ea    0x2        0x998530
+     5 0x4db90d    0x1        0x998534
+     6 0x4db933    0x1000     0x9988b0
+     7 0x4db958    0x2000     0x9988b4
+     8 0x4db97b    0x20       0x9988b8
+     9 0x4db9a1    0x2000000  0x9988bc
+    10 0x4db9c6    0x400      0x9988c0
+    11 0x4db9ec    0x40000    0x9988c4
+    12 0x4dba12    0x80000008 0x9988c8
+    13 0x4dba37    0x80002000 0x998918
+  G4a   PASS  13 rows, ids and ORDER identical to the sync (13/13)
+  G4b   PASS  13 distinct label slots in the 0x997b20 text object (13 distinct)
+  G4c   PASS  every row's slot is an argument to FUN_0061482f(0x997b28, [0x997b20+off], 0) (13/13)
+
+G5  the 4 toggle handlers -> writer pairs
+    handler     id class  test base   writer sites            getter
+    0x4dabb0    plain     0x94d448    0x551a20,0x5518f0       1
+    0x4dac30    high      0x94d468    0x551c40,0x5519c0       1
+    0x4dacc0    plain     0x94d448    0x551cf0,0x551cf0       1
+    0x4dad40    high      0x94d468    0x551d70,0x551d70       1
+  G5a   PASS  4/4 handlers ask is_checked once and call a writer on BOTH branches (8 sites)
+  G5b   PASS  the id class selects the dword: high|0x80000000 <-> 0x94d468, 4/4
+  G5c   PASS  the two 4-arg writers are each called by exactly one handler (one-way pair)
+
+G6  the 6 writers: base, op, directions
+    writer      bases           primary     ops      forms                     stores
+    0x5518f0    0x94d448,0x94d468 0x94d448    clear+set p1>p2 p2>p1 p1>p2 p2>p1   4
+    0x5519c0    0x94d468        0x94d468    clear    p1>p2 p2>p1               2
+    0x551a20    0x94d448        0x94d448    clear+set p1>p2 p1>p2 p2>p1 p1>p2 p2>p1 p2>p1 p1>p2 p2>p1 p1>p2 p2>p1 7
+    0x551c40    0x94d468        0x94d468    clear+set p1>p2 p2>p1 p1>p2 p2>p1   4
+    0x551cf0    0x94d448        0x94d448    clear+set p1>p2 p1>p2               1
+    0x551d70    0x94d468        0x94d468    clear+set p1>p2 p1>p2               2
+  G6c   PASS  every index form resolves to a parameter (0 unknown of 24)
+  G6a   PASS  4 writers build both (p1,p2)/(p2,p1) forms, 2 only one ([1, 1, 2, 2, 2, 2])
+  G6b   PASS  primary (last-store) base splits 3 A / 3 B: 0x94d448,0x94d468,0x94d448,0x94d468,0x94d448,0x94d468
+
+G7  RIVALS (each must FAIL on the numbers above)
+    R1 'this group is the preferences flag block 0x92befc..' -> bases seen ['0x94d448', '0x94d468']; overlap 0
+  R1    PASS  R1 refuted: no 0x92befc/0x92bf00/0x92bf04 read in the window
+    R2 'ids are row ordinals 1..13' -> sorted ids 0x1,0x2,0x4,0x8,0x10,0x20,0x400,0x1000,0x2000,0x40000,0x2000000,0x80000008,0x80002000; contiguous False
+  R2    PASS  R2 refuted: 11 ids are single bits, gaps at 0x40/0x800/0x8000/0x100000
+    R3 '0x94d468 is an independent array' -> bases seen 0x94d448,0x94d468, delta 0x20 = 8 dwords, index forms identical 13/13; 0x94d5dc inside the record: True
+  R3    PASS  R3 refuted: base+0x20 is slot +8 INSIDE the same 0x82f-dword block
+    R4 'the pair is written one-way' -> 4/6 writers write both directions, the two one-way ones are the only writers the 3rd/4th handlers call
+  R4    PASS  R4 refuted for 4 of 6 writers; asymmetry localised to 2
+
+PASS M362: 22/22 gates
+digest 18298ed8d31de144

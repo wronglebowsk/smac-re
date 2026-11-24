@@ -47,10 +47,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 
 ## (ARCHIVE) M89-M221: moved VERBATIM to `docs/named-archive-m89-m221.md` (s251 hygiene split - 619 lines, 55 headings; grep there for per-id semantics of M89-M221 incl. UNMERGED M101/M103/M109; git history is the trail)
 ## (ARCHIVE) M227-M245 + B1-B2: moved VERBATIM to `docs/named-archive-m227-m245.md` (s254 hygiene split - 133 lines, 10 headings; grep there for per-id semantics; git history is the trail)
-## M246 (s197) — the save's last 4 B are a `timeGetTime()` save-CREATION stamp — FULL rows VERBATIM at `docs/named-archive-b28-rows.md:10` (§rotation-1 marker at `:8`, s316-chain1 headroom rotation, sha1 `fcd4989fdf15` — the region is bounded by its own terminator line, its line number AND full digest re-asserted by `scripts/b28_named_rotate.py --verify`); this stub governs.
-- `FUN_00597ce0` writes the trailing dword from `timeGetTime()` (`local_8` line 15 → `FUN_0064c9a0(&local_8,4,1,iVar2)` line 44), the codec never reads it; Δ(dword) vs Δ(mtime) ≤ 2.5 s on 5/5 same-session pairs | shard_015.c | V
-- creation-stamped, not file-write-stamped: `0x15c79939` on 3 files 486,979 s apart, `0x2db1b939` on 2 files 71,224 s apart | census G3, 17 saves | V
-
+## M246 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `5fc00420de391631`, 757 B)
 ## M247 (s197) — the region map's row stride is `Rw>>1`, not `(Rw+1)/2` — rows in the same archived region; this stub governs.
 - 6 referencing functions; the only element accessors `FUN_00582340`/`FUN_00582360` index `(param_1>>1)+DAT_0092ae18+(DAT_0092ad9c>>1)*param_2`; `(Rw+1)/2` occurs once image-wide (the length) | G4 | V
 - builder `FUN_0058ce00` (y<Rh, x=(y&1) step 2<Rw) writes exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 for odd Rw, else 0 | G5 | V
@@ -79,7 +76,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 | OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
 | instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
 
-## M250-M254 (s200-s201; PASS 7/7 + 7/7 + 7/7 + 8/8 + 8/8) — the region generator, the per-faction per-region verdict byte, the coarse map's single consumer, the four verdict codes, and the contact bits — FULL rows VERBATIM at `docs/named-archive-b28-rows.md:41` (§rotation-2 marker at `:40`, s316-chain1 review-round headroom rotation #2, sha1 `c839a606651b` — the region is bounded by its own terminator line, its line number AND the full digest re-asserted by `scripts/b28_named_rotate2.py --verify`); this stub governs. M254's bit-naming row stays INFERRED (named); every other row is V.
+## M250-M254 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `a9fc5ea5dbca1673`, 591 B)
 ## M255-M258 (s201-s202, PASS 8/8) - ROTATED VERBATIM to `docs/named-archive-m255-m258.md`
 Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`, asserted byte-exact by `scripts/m329_named_rotate.py`; the archive holds the full rows, git history is the trail. One line per claim, gates and cites unchanged:
 
@@ -201,7 +198,7 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | deterministic: two runs -> byte-identical 67,790-B dump, sha256 3b62847494b252ad... | `evidence/b7_moveslice.txt:5` (`python3 -m sim.selftest --b7 ...` -> `PASS B7: 6/6 gates`) | V |
 | declared ASSUMED in the dump `smac-sim-move/1`: positions come from the save (load-restore not modeled - M106 kernel write); the gesture is applied to EVERY unit (the trace's 117-120 live in a different save); uniform 3 MP cost | dump `assumed` | ASSUMED (declared) |
 
-## M277 (s218, PASS 6/6) - the scaled read is the permanent block-0 view; M274 G2's spill landing is arithmetically dead — FULL rows VERBATIM at `docs/named-archive-m337-rows.md:8` (§rotation-1 marker at `:7`, s318-chain1 headroom rotation, sha1 `653c93cda817` — the region is bounded by its own terminator line, its line number AND the full digest re-asserted by `scripts/m337_named_rotate.py --verify`); this stub governs. Every row is V; the M278 refinement (the player-index-0 real row) is archived with them.
+## M277 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `6aa8eebae1f0d955`, 513 B)
 ## M278 (s219, PASS 7/7) - block 0 is the player-index-0 real row AND the unowned fallback; no neutral/player slot
 
 | fact | evidence | status |
@@ -915,19 +912,17 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | QUALIFIES `## B30`: B30's setter was ASSUMED; this run measures no positive completion case and one recorded NEGATIVE at a facility-range head, so "a paid queue item becomes a facility" is UNVERIFIED against the game's own run | `evidence/b31_facoracle.txt:35-36` | V MU5 |
 | CLOSED by `## M349` + `## B32`: the unit-id decode is head<0 = negated TYPE and a unit completion stamps its mapper bit (4/4); STILL OPEN: a FACILITY completion stamps nothing on this run (0/2) and which loss is a raze vs an identity change | `evidence/b32_unitoracle.txt:25` | V (B32 MU3) |
 
-## B22 (s273, BUILD 12/12, zero box; post-Greptile #286: one P1 arithmetic error retracted, the falsifier made load-bearing) - BOTH save record arrays grow in ONE writer call, and the CREATE leg demonstrably reads its ARGUMENTS out of the reloaded image (sim/composedgrowth.py)
-| claim | evidence | conf |
-|---|---|---|
-| ONE WRITE GROWS BOTH ARRAYS: image +1572 B = 5x304 (bases) + 52 (one unit) over the untouched save, vs B21's bases-only +1520 B. The writer's layout is MEASURED band by band, `[unit originals 3484][the ONE new unit 52][base originals 5472][the grown bases 1520][tail 10800]`, every band byte-equal to its own source (the rung's first draft claimed one uniform lift - FALSE) | `evidence/b22_composedgrowth.txt:8` | V |
-| THE SHAPE LOCATOR CANNOT SEE A FOUNDED BASE: on every grown container `sim/save`'s scan CONFIRMS ONLY the 18 NAMED bases of the header count's 23, because M282's founders write an EMPTY name span and `_base_ok` demands `[ -~]{3,30}\x00` at +19 - a grown base is locatable by COUNT, never by SHAPE. It costs the locator nothing, because `units_off` is DERIVED back from `bases_off` | `evidence/b22_composedgrowth.txt:6,9` | V |
-| COUNT AND SHAPE AGREE EXACTLY on all three containers (`bases_pred == bases_off`, `closes` True on orig/B21/B22; the base array moves +52 B, the unit anchor does not). RETRACTED here: this run first claimed a 52-B DISAGREEMENT, which was its own arithmetic (a 68-unit count applied to a 67-unit image) and not the file's geometry - Greptile P1 on #286 | `evidence/b22_composedgrowth.txt:9` | V |
-| INBOUND HALF OF THE ROUND-TRIP (the rung's point), through ONE shared producer `record_from_image`: the B12 CREATE leg's tile AND faction come out of the RELOADED image's 304-B base record (base[22] at (27,29) fac 1); FALSIFIER - corrupting tile AND faction IN THE IMAGE (1447,1448, fac 5A) makes the created unit CARRY those bytes | `evidence/b22_composedgrowth.txt:7,13` | V |
-| THE FALSIFIER IS LOAD-BEARING, proved in-process every run: rebinding the shared leg to read the MODEL instead of the image makes G9's record collapse back onto G3's (the model's own 27,29 fac 1) while the real leg on the SAME corrupted image carries the bad bytes; G3 is DECLARED blind to that mutation (model tuple == container tuple in this fixture) | `evidence/b22_composedgrowth.txt:15` | V |
-| HEADER DIFF IS EXACTLY 3 BYTES (0x44 units dword -> 68, 0x48 bases dword -> 23, 0x54 year word -> 2180), all inside modeled spans. 4 was the DECORATED guess ("one per modeled field") - cur/tf already hold their recorded values in this save | `evidence/b22_composedgrowth.txt:11` | V |
-| RE-PARSE CLOSES THE CHAIN: n_units 67->68, n_bases 23, the 67 original unit records byte-identical, the new record AT THE ARRAY END, `units_off` unmoved / `bases_off` +52 B / tail +1572 B, parsed x/y/type/owner == the base tile read from the first reload | `evidence/b22_composedgrowth.txt:12` | V |
-| RIVALS FAIL THE SAME FIT: growing ONLY the unit array re-derives n_bases 18 and loses the 5 grown records (242591 B != 244111); the idle order-2 record is NOT the produced record; a perturbed unit stride mis-places the tail (244245 B != 244111) | `evidence/b22_composedgrowth.txt:14` | V |
-| ACCEPTANCE `python3 -m sim.selftest --b22 programs/saves/m54b_clean.SAV` -> **PASS B22: 12/12**, exit 0; `python3 -u -m sim.composedgrowth` prints the SAME 12 labels (`--b22` only relays the module's claims); two runs byte-identical (report digest, written image sha256 f7d90eb77ca7abac) | `evidence/b22_composedgrowth.txt:15-20` | V |
-| UNMODELED (declared): WHICH base really ran the completion (the m289 trace tracks only year/cur/tf/ledger; the base is CHOSEN as the last surviving founding - a fixture); the created record's unmodeled bytes (zero + named fields, as B12); the founding's economy/research/units and the queue's per-turn progress | - | lead |
+## B22 (s273, BUILD 12/12, zero box) - ROTATED VERBATIM to `docs/named-archive-b22-rows.md` (sha1 `524f63de766e026d187e1dabdaf80a6e687ccf2d`): BOTH save record arrays grow in ONE writer call and the CREATE leg reads its ARGUMENTS out of the reloaded image. One line per claim.
+- ONE WRITE GROWS BOTH ARRAYS: +1572 B = 5x304 + 52 over the untouched save; bands `[units 3484][new unit 52][bases 5472][grown 1520][tail 10800]` each byte-equal to its source; the uniform-lift draft was FALSE - V (`evidence/b22_composedgrowth.txt:8`)
+- THE SHAPE LOCATOR CANNOT SEE A FOUNDED BASE: 18 of 23 named bases confirm; an empty name span fails `_base_ok`; growth is locatable by COUNT, `units_off` is DERIVED from `bases_off` - V (`:6,9`)
+- COUNT AND SHAPE AGREE on all three containers; RETRACTED: the first draft's 52-B disagreement was a 68-vs-67 unit count (Greptile P1 #286) - V (`:9`)
+- INBOUND HALF via ONE producer `record_from_image`: B12's CREATE leg takes tile+faction from the RELOADED base[22]; FALSIFIER - corrupted image bytes (1447,1448, fac 5A) are carried - V (`:7,13`)
+- THE FALSIFIER IS LOAD-BEARING every run: rebinding the leg to the MODEL collapses G9 onto G3; G3 is DECLARED blind in this fixture - V (`:15`)
+- HEADER DIFF IS EXACTLY 3 BYTES (0x44 n_units, 0x48 n_bases, 0x54 year), not the decorated 4 - V (`:11`)
+- RE-PARSE CLOSES: 67->68 units, 23 bases, originals byte-identical, new record at the array END, tail +1572 B - V (`:12`)
+- RIVALS FAIL: unit-only growth re-derives 18 bases; idle order-2 record is not the produced one; a perturbed stride mis-places the tail (244245 != 244111) - V (`:14`)
+- ACCEPTANCE `python3 -m sim.selftest --b22` -> PASS B22: 12/12, image sha256 f7d90eb77ca7abac, two runs identical - V (`:15-20`)
+- UNMODELED (declared): WHICH base ran the completion (fixture); the created record's unmodeled bytes; the founding's economy/research - lead
 ## B23 (s280, BUILD 11/11, zero box) - the production queue's PER-TURN progress round-trips through the writer at every recorded boundary, and a corruption that lands ONLY in the container changes the fold's LATER verdicts (sim/composedturn.py)
 
 | Claim | Evidence | V |
@@ -1075,8 +1070,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | ACCEPT 13/13 digest 470d844054b1b101 x2 (`:67-68`,`_rerun.txt:67-68`); 31/31+1 digest cf85092dea6baa93 (`evidence/m330_mutate.txt:36-38`); ST 5/5 (`evidence/m330_mutate_selftest.txt:6`) | cite | V |
 | OPEN: slot; ~~985aec~~ ANSWERED M332 (runtime mirror of the INI pref "Difficulty", master 0x92bde8); ~~+2fc/+308~~ ANSWERED M331 (income siblings); profile+300 | - | lead |
 
-## M326 (s301-chain2, STATIC 10/10, review #332 hardened) — FULL rows VERBATIM at `docs/named-archive-m338-rows.md:7` (§rotation-1 marker at `:6`, s319-chain2 headroom rotation, sha1 `a882ee40851d` — the region is bounded by its own terminator line and its digest is re-asserted by `scripts/m338_named_rotate.py --verify`); this stub governs. block+224 = the per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt), settled at upkeep; hurry defer-vs-pay flag chain 920434&91c62c, readers = AVAILABLE (220-224), reset 59f0bf/c1, save carry [0]*8.
-
+## M326 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `b35a213c4a689285`, 550 B)
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
 | claim | evidence | conf |
@@ -1421,7 +1415,7 @@ ROTATED VERBATIM to `docs/named-archive-m344-rows.md` (sha1 `e7b59fa35e2635c8`);
 | ACCEPT `scripts/m344_completion_caller.py` 8/8 `034bf0e1a1606d2c` x2; harness 10/10 `[]` | `:148`, `evidence/m344_mutate.txt:14` | V MU0 |
 ## M345 (s324-chain2, 12/12) — the dialog family `+0x64` commit slot has no .text dispatcher
 
-ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`); this stub governs: one line per claim; acceptance `m345_slot64_dispatch` -> **`PASS M345: 12/12`** `833faf38e189ad40` x2; harness 11/11 `[]`.
+ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`); this stub governs: one line per claim; acceptance `m345_slot64_dispatch` -> **`PASS M345: 12/12`** `833faf38e189ad40` x2; harness 13/13 `[]`.
 
 | claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
@@ -1431,7 +1425,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | universe = 19 `[r+0x64]` + 18 `[r+0x6c]` calls, 0 jmp, 0 in the dialog module | `:18-57,:86-89` | V MU6,MU10 |
 | arity {0:3,1:5,5:8,6:3}: 5 fit ret 4 = 3 MEMBER + 2 self, none a dialog | `:59-65,:100` | V MU8,MU9 |
 | module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64` | `:67-77,:102` | V MU7,MU10 |
-| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 `[]` | `:104`, `evidence/m345_mutate.txt:17` | V MU0 |
+| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 13/13 `[]` | `:104`, `evidence/m345_mutate.txt:17` | V MU0 |
 | OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped | - | lead |
 ## M346 (s325, ANALYSE, static; M348 qualified the 'alert' framing: the bank is the general text-variable bank; ACCEPT `scripts/m346_alert_raiser.py` -> **`PASS M346: 18/18`** `ab4f0ca8123245bb` x2 (`evidence/m346_alert_raiser.txt:110`); harness 22/22 `[]` (`evidence/m346_mutate.txt:25`)) — the build-finished ALERT = 2 posts into a 10-slot `$`-token table; `0x985b10` is NOT its channel.
 
@@ -1522,7 +1516,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
 | ~~OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b)~~ ANSWERED by `## M355`: the DEFAULT bit-vectors of `Preferences`/`More Preferences`; twins return 0x3a7168/0x327168 | `:97` | V (M355) |
 
-## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 11/11, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
+## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 13/13, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
 
 ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`** digest `367fdae1d78979e5`, two renders identical (`evidence/m353_numeric_band.txt:87`); harness `python3 -u scripts/m353_mutate.py` -> **`HARNESS PASS 14/14`** digest `fd143532b283b01b` (`evidence/m353_mutate.txt:17`). `:N` = a line of the ACCEPT evidence (`evidence/m353_numeric_band.txt:75-87`).
 
@@ -1559,16 +1553,28 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## M361 (s333-c2) — the A/V radio flags: widget+0xa18 of 4 rows (0x12cbc+k*0xb4c). Readers = relabel 0x493ec0, commit 0x492940, aggregate 0x492030, seed 0x4930e0; relabel ends in generic set-label 0x5fa1e8. ev `evidence/m361_radio_flags.txt:165` (38/38, `b92f1a61c041ae87`)
+## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |
 |---|---|---|
-| 0x136d4/14220/14d6c/158b8 = widget+0xa18; ctor 0x48fed0 zeroes 4; 3 children are vtable objects, master is not | `:77-86` | V MU7-9,23 |
-| 0x493ec0 table 0x493fe0: cmd 0x4b..4e -> those flags x {12cbc,13808,14354,14ea0} | `:68-76` | V MU3-6,26 |
-| flag -> 1 of 2 ids [997b20+10e0..10fc] -> 0x61482f -> 0x5fa1e8 at widget+0xa7c; 0x5fa1e8 has no flag (10 sites/4 fns) | `:68-76,:124-130` | V MU5,19-21 |
-| commit (GLOBAL scan): 14d6c->a50\|4000, 14220->a4c\|400, 158b8->a4c\|800 (def-use); master never committed | `:94-102` | V MU11-13 |
-| 0x492030: master := 0 then 1 per child!=0; 0x493ff0 master-off clears all + (ch,f3)/(ah,bf); propagation runs BOTH ways | `:103-123` | V MU14-18,28 |
-| 0x4930e0 seeds flags from +0xa50 bits w/ relabel cmd; 55 sites = 17 reads/4 fns + 38 writes; 3 loners BYTE | `:5-42,:87-93,:145-156` | V MU1,2,10,22,24,25,27,29,30 |
+| FUN_004db1b0: ids {8,10,4,2,1,1000,2000,20,2000000,400,40000} <- 0x94d448 + {80000008,80002000} <- 0x94d468; id==mask 11/11, high 2/2 == B rows | `:9-20` | V MU1-3,18 |
+| 13/13 blocks: ONE 6-insn idiom = fac*0x82f+tgt; 12 slots all inside the 0x20bc-B record; 0x94d468 = +8 dwords | `:22-40` | V MU4,5,20 |
+| inline widget +0x15a0: 1 `lea`, 13 `mov ecx,edi`, tail `[eax+0xf0]`; fields 0xa1c/0xa20 only | `:42-47` | V MU6-8 |
+| builder: same 13 ids/order; 13 label slots, each an arg to 0x61482f(0x997b28,[0x997b20+off]); TEXT OPEN | `:49-66` | V MU9,10,17,23 |
+| 4 handlers: id class picks the dword 4/4; 8 writer sites; 2 one-way writers, 1 handler each | `:68-76` | V MU11,12,19 |
+| 6 writers: 4 both-direction, 2 one-way; 0/24 forms unresolved; primary 3 A / 3 B | `:78-88` | V MU13,14,21 |
+| RIVALS refuted: 0x92befc, ordinals, separate array, one-way 4/6 | `:90-98` | V MU15,16,1,22 |
+| OPEN: 13 label strings; bit NOUNS (chain-2); 0x551a20's 3rd slot | - | lead |
+## M361 (s333-c2) — the A/V radio flags: widget+0xa18 of 4 rows (0x12cbc+k*0xb4c). Readers = relabel 0x493ec0, commit 0x492940, aggregate 0x492030, seed 0x4930e0; relabel ends in generic set-label 0x5fa1e8. ev `evidence/m361_radio_flags.txt:160`
+| claim | ev | conf |
+|---|---|---|
+| 0x136d4/14220/14d6c/158b8 = widget+0xa18; ctor 0x48fed0 zeroes 4; 3 children are vtable objects, master is not | `:75-85` | V MU7-9,23 |
+| 0x493ec0 table 0x493fe0: cmd 0x4b..4e -> those flags x {12cbc,13808,14354,14ea0} | `:58-74` | V MU3-6,26 |
+| flag -> 1 of 2 ids [997b20+10e0..10fc] -> 0x61482f -> 0x5fa1e8 at widget+0xa7c; 0x5fa1e8 has no flag (10 sites/4 fns) | `:66-74,:120-126` | V MU5,19-21 |
+| commit: 14d6c->a50\|4000, 14220->a4c\|400, 158b8->a4c\|800 (def-use); master never committed | `:93-101` | V MU11-13 |
+| 0x492030: master := 0 then 1 per child!=0; 0x493ff0 master-off clears all + (ch,f3)/(ah,bf); child ON -> master | `:102-119` | V MU14-18 |
+| 0x4930e0 seeds flags from +0xa50 bits w/ relabel cmd; 55 sites = 17 reads/4 fns + 38 writes; 3 loners BYTE | `:4-57,:86-92,:140-147` | V MU1,2,10,22,24,25,27 |
 | INF: the rows are the A/V radio group's pending state (label text is runtime; image .data absent) | - | INF |
+
 ## M357 (s330-c3, 18/18 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
 | claim | ev | conf |
 |---|---|---|
@@ -1628,3 +1634,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | RETRACT "64-byte row"/"0x98adb8+0x34*i": +0x08..+0x14 = 16 cmp-only sentinels of 0x1c scans (backward jl, 24 iters), NOT fields | `:36-56,86-87` | V MU5,6 |
 | CROSS-REF `## M359` (same row): +0x27 = reactor level (INF), +0x28 = carry capacity (V), +0x2a = plan (M354's "class"); the labels printed at `:2-18` are pre-M359 placeholders | `## M359` | ref |
 | A: 0x80 slots -> cand[idx] -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34; ACCEPT 10/10 `1af1dcb6fcd4a4b6` x2 | `:57-66,98` | V MU10 |
+
+## B34 (s333, BUILD, zero box) — a FACILITY completion stamps `+0x8c` NOWHERE: the completion leg holds no writer, and the recorded bytes falsify the stamp at all 3 discriminating completions
+| claim | evidence | conf |
+|---|---|---|
+| the census is 21 stores - M342's 20 PLUS the screen's byte COPY at `4f0d60` its short lea-window missed: 194 refs = 11 direct + 183 address loads (9 lea / 174 mov-imm), 10 of which feed a store; API 2 (`4e4528`/`4e4546`), GRANT 11, SET 1 (`4f0ec0`), COPY 7 (2 in `FUN_0041cf20`, 3 in the unnamed `4f38bb`/`4f3ebc`/`4f3f4c` region, 1 in `FUN_004f47f0`); COPY is the only LOSS-capable family | `evidence/b34_facstamp.txt:14,15,88,91` | V MU6,MU10,MU11 |
+| the pop `FUN_004ef5d0` (88 insns) has 0 bitmap refs and 0 API calls; the base screen `FUN_004ef6d0` (the pop's ONLY caller, MEASURED: 3 sites) has 0 API calls and its 2 bitmap stores (`4f0d60` mov, `4f0ec0` or) both sit in the unit-only blocks | `:89` | V MU4 |
+| the API's 8 host functions and the pop's MEASURED host set `{FUN_004ef6d0}` are DISJOINT, so no function both pops and stamps | `:90` | V MU5 |
+| the recorded run holds 6 facility-head paid completions (Korolev r0, Virgin Soil s1/s9, New Jerusalem s1/s9, Training Camp s15); every bitmap is UNCHANGED 6/6; 3 already had the bit set (vacuous), 3 discriminate | `:54-59,92` | V MU1,MU2,MU7 |
+| at all 3 discriminating completions the stamp model differs from the recording by exactly 1 byte (`[8]`->`[2,8]`, `[27]`->`[2,27]`): the stamp rival is falsified ON BYTES | `:70-76,94` | V MU7 |
+| the 5 gains are NOT completions: every before-head is unit-encoded (321/-2/-8/-3/-6); Virgin Soil s11 (gain 4 + loss 27, no pay) is the COPY signature 1/1 | `:61-67,93` | V MU8,MU9 |
+| ACCEPT `python3 -u -m sim.facstamp` -> 10/10 `5296fdad6d26caa3` (x2 identical); harness 13/13 `c9b43904f9bcd028`; `sim.selftest --b34` relays | `:99`, `evidence/b34_mutate.txt:16` | V MU3 |
+| QUALIFIES `## B31`: its "one NEGATIVE at a facility-range head" is real but is 3 boundaries, and it did not flag the 3 vacuous rows | `:54-59` | V MU1,MU2,MU7 |
+| OPEN: which grant/copy call site fired in the run (no call stack in the trace); `FUN_0059ce10`'s 11 literal items (1 caller `FUN_005a0fa0`) | - | lead |

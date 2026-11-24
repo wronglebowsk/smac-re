@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M358 MERGED s332 `1af1dcb6fcd4a4b6`; B33 s330 `8cb969b`. STATE: B1-B33 + M54A-M358; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (M358 MERGED s332 `1af1dcb6fc`; B34 s333 `5296fdad`. STATE: B1-B34 + M54A-M358; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
 Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS (grep only), skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
@@ -22,12 +22,11 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B33 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B30`-`## B33` govern).
-**B33 MERGED**: the OR `0x4f0ec0` is unit-only (door `0x4f0b80 jg` on `[ebp-0x30]`, the unit
-branch's `0x4ef8a4`); facility heads spend at `0x4efed8` and never stamp (`## B33`). **B34**:
-author its rung in `BUILD_SPINE.md` BEFORE probing - does a facility completion stamp `+0x8c`
-anywhere (0x4f3ebc/0x4f3f4c)? The 52-byte row is ANSWERED (`## M358`). **DOC CAP (s332): NAMED
-246,657/250,000 - rotate before the next add.**
+box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B34 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B30`-`## B34` govern).
+**B34 MERGED (s333)**: a facility completion stamps NOTHING - the leg holds no writer (pop 0 refs/0 API, screen 0
+API) and the run's 6 facility completions are 6/6 unchanged, the 3 discriminating ones falsified ON BYTES
+(`## B34`). **B35**: author its rung in `BUILD_SPINE.md` BEFORE probing - who calls the grant family
+(`FUN_004e47d0`/`FUN_0059ce10`, 11 literal items, 1 caller `FUN_005a0fa0`)? **DOC CAP: NAMED 245,677/250,000.**
 
 ## THE LEDGER
 
@@ -117,13 +116,13 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - B33 (s330) MERGED: the facility leg WALKED - the OR `0x4f0ec0` is unit-only (door `0x4f0b80 jg` on `[ebp-0x30]` = the unit branch's `0x4ef8a4`); 12/12 `b89b9e6bd940e8d3`, harness 11/11. NEXT BUILD B34 = where a facility stamps `+0x8c`.
 - M358 (s332) MERGED: `0x98ad88` = 52 B (name[0x20], dword +0x20, bytes +0x24..2e, word +0x30, word +0x32); `0x9267e4` = 128 dwords, NOT 64-byte rows. 10/10 `1af1dcb6fcd4a4b6`, harness 15/16. NEXT: (x6); B34 = `+0x8c`.
 - M349 (s326-c2): a negative head is the NEGATED TYPE (`neg` @0x4ef89f; -38 sentinel; >=0x40 gated by 0x98adb8 bit2); 13/13 `4d3c2e4ded19d620`.
-- M351 (s328-c2): the negative head's producer = the chooser row ITEM (negated when flags&0x20==0); unit rows' item = the TYPE ORDINAL (0x984d38+0x30*i) -> base+0x50 @0x418b57. 15/15 `504c7342fb16273b`, 20/20.
-- M352 (s328-c3): `ds:0x6710fc`=WritePrivateProfileStringA; 13 keys, 12 cell-backed+stamp; Laptop/Language read-only; `0x6926ec` literal; M350 OPEN closed. 7/7 `d553194a` 13/13.
+- B34 (s333) MERGED: facility completions stamp NOTHING - 20 stores (API 2/GRANT 11/SET 1/COPY 6), pop+screen
+  writer-free, 6 completions 6/6 unchanged, 3 discriminating falsified on bytes. 10/10 `5296fdad6d26caa3`, 11/11.
 - M354 (s329-c2): section A's item IS the 0x98ad88 design row (name/weight/class read off the item); A rows +, B rows -; M349/M351 leg NOUNS swapped. 11/11 `dd5e689e8d9af320`, 23/24.
-- M355 (s329-c3): `Laptop` = the DEFAULT bit-vectors of `Preferences` (0xbbe1dd96/0xa3e1dd16 -> 0x92befc) / `More Preferences` (0x3a7168/0x327168 -> 0x92bf00); Laptop!=0 clears {7,27,28}/{19}. 7/7 `c742bc13`, 24/24. NEXT: bit->option labels.
 - M357 (s330-c3): pref checkbox LABELS — 6 Script.txt sections -> 66 rows (id->cell bit, 1:1); Laptop delta = movies/interludes/SFX/monuments. 18/18 `095258c8b40d0e23`, harness 23/23.
 
 - M356 (s330-c2): +0x30 bit2 = state bit (11 setters, one XOR-toggler 0x4396f6); +0x24 chassis 0x92ae80, +0x25 weapons 0x92b950 (21x0x10), +0x26 armor 0x92fd18 (10x0x10). 17/17 `c1a2beb794cec9f8`, harness 27/27.
 - M359 (s332-chain2): +0x28 = CARRY CAPACITY (V, Mode 7=Transport gates it; TWO writers, M356 G14 retracted); +0x27 = reactor level (INF); +0x2a = PLAN (M354's "class" retracted). 14/14 `7d4a2d1356c9ff41`, harness 18/18. NEXT: #REACTORS=4 vs the 1..3 clamp.
 - M360 (s331-c3): the 4 row-less ids are NOT a seventh page - 0x37/0x38/0x39 are A/V radio rows (+0x7aec 8 built/11 queried, class 1/2/3 relabel ctrl 0x4e/0x4c/0x4d) and 0x50 is the seventh widget's 4th id (built 0x30, queried 0x50); a miss resolves to bit<count>, unwritten in A/V. 25/25 `eb9f07df920a75ab`, harness 23/23. NEXT: readers of the radio flags [0x14d6c]/[0x14220]/[0x158b8].
-- M361 (s333-c2): A/V radio flags = widget+0xa18 of 4 rows (0x12cbc+k*0xb4c); readers 0x493ec0/0x492940/0x492030/0x4930e0; relabel ends in generic 0x5fa1e8; master never commits. 38/38 `b92f1a61c041ae87`, harness 30/30. NEXT: what 0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 toggle.
+- M362 (s333-c3): the 0x4db1xx sibling = the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits (11 from 0x94d448, 2 from 0x94d468 = slot +8; 0x80000000 selects it). 6 writers, 4 symmetric. 20/20 `3b30baa33ea67fcb`, harness 19/19. NEXT: the 13 label strings (0x997b20 heap); bit nouns.
+- M361 (s333-c2): A/V radio flags = widget+0xa18 of 4 rows (0x12cbc+k*0xb4c); readers 0x493ec0/0x492940/0x492030/0x4930e0; relabel ends in generic 0x5fa1e8; master never commits; propagation both ways. 38/38 `b92f1a61c041ae87`, harness 30/30. NEXT: what 0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 toggle.
