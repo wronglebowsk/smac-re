@@ -66,6 +66,12 @@ fix it yourself BEFORE merging — and on this repo `gh pr edit` does not work (
 `projectCards` / Projects-classic deprecation), so patch the title over REST:
 `gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -f title="..."`, then echo `.title` from the same call to
 confirm it took (a merged PR title is what the next session greps in `git log` and in `gh pr view`).
+**The squash commit message snapshots the title AT MERGE**, so a lane that patches the title during its
+own review round can lose the race against the parent's `merge`: re-read
+`gh pr view <n> --json title,mergeCommit` in the same breath as the merge and treat a stale subject as a
+recorded finding — the squash subject is immutable afterwards, so put the post-review counts in the PR
+body, the evidence file and the NAMED block, and state the discrepancy in the session notes rather than
+rewriting history. A lane reporting "title patched" is a claim; the parent's read-back is the state.
 
 **If `gh pr create` (or `submit`) dies with `GraphQL: Something went wrong`, open the PR over REST instead of
 re-running submit in a loop.** The branch is already pushed, so only the PR object is missing:

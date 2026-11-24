@@ -124,6 +124,7 @@ dropped sections are restored VERBATIM from the base commit — `scripts/named_r
 if the result breaches the cap. **A PR with `mergeable_state=dirty` gets NO CI
 run** — `no checks reported` there means conflict, not an outage; merge `origin/main` in and the run appears on
 the push. Both: `references/git-workflow.md`.
+**`milestone.py start` dies in a linked worktree** — it runs `git checkout main`, which fails with "main is already used by worktree at …": create the branch directly (`git checkout -b milestone/<ID> origin/main`) and continue. Symlinked `ghidra_out/ scratch/ programs/` are not matched by the `.gitignore` trailing-slash entries, so add non-slash patterns to `.git/info/exclude` or `start` refuses a false-dirty tree. **With 3+ lanes, assign each fire its ID in the run context** (M350, M351…): fires left to pick "the next number" collide (two M348 PRs, one needing a rename fire).
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten `NEXT_PROMPT.md`
 (<= 12,000 BYTES at close — the budget warn; what `evidence.py budget` prints is `wc -c`). `scratch/` is
 gitignored: probes are not repo products; the tracked products are `scripts/`, `evidence/`, docs.
