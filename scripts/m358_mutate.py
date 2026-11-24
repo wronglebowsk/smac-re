@@ -31,6 +31,9 @@ MUTANTS = [
     ("MU9", 0x596028, "and ebx,0x8000003f", "and ebx,0x8000007f", "G7", "mod-64 mask widened to mod-128", "builder band sequence"),
     ("MU10", 0x4956C6, "cmp DWORD PTR [ebp-0x28],0x80", "cmp DWORD PTR [ebp-0x28],0x40", "G8", "candidate loop bound 0x80 -> 0x40", "A: 0x80 slots -> cand -> imul"),
     ("MU11", 0x4F05BD, "or BYTE PTR [eax+0x98adb9],0x1", "or BYTE PTR [eax+0x98adb9],0x2", "G9", "a bit8 setter becomes bit9", "bit8: 1 clear + 3 set"),
+    ("MU14", 0x59612A, "cmp ecx,0x80", "cmp ecx,0x7c", "G6", "builder loop bound 0x80 -> 0x7c", "table = 128 dwords"),
+    ("MU15", 0x435634, "mov ds:0x98ba79,al", "mov ds:0x98ba7a,al", "G10", "prototype +0x25 store lands on +0x26", "source->dest pairs"),
+    ("MU16", 0x4EF398, "and BYTE PTR [ebx+0x98adb9],0xfe", "and BYTE PTR [ebx+0x98adb9],0xfc", "G9", "the bit8 clearer becomes bit9", "1 and 0xfe + 3 or 0x1"),
     ("MU12", 0x43565A, "mov eax,DWORD PTR [edx+0x14208]", "mov eax,DWORD PTR [edx+0x14210]", "G10", "prototype dword source +0x14208 -> +0x14210", "proto stores into row 63"),
 ]
 NOOP = ("MU13", 0x4956F9, "add esp,0xc", "add esp,0x10", "NOOP", "an instruction no gate pins", "no claim")

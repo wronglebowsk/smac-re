@@ -632,9 +632,11 @@ whether a facility completion stamps at all.
 ## Session 332-chain1 (2026-11-24) — M358: the 52-byte 0x98ad88 row's full layout; 0x9267e4 is a 128-dword slot table (not 64-byte rows)
 
 - **ACCEPT** `python3 -u scripts/m358_row_layout.py` -> **`PASS M358: 10/10 gates`
-  `1af1dcb6fcd4a4b6`** (`evidence/m358_row_layout.txt:77`), rerun byte-identical;
+  `1af1dcb6fcd4a4b6`** (`evidence/m358_row_layout.txt:98`), rerun byte-identical;
   `scripts/m358_mutate.py` -> **12/13 scored, NO-OP ['MU13'], coverage G1-G10**
-  (`evidence/m358_mutate.txt:19`).
+  (`evidence/m358_mutate.txt:22`); review #386's 10 findings all fixed (G6 reads the
+  builders' bound, G7 parsed shift/mask, G8 the full A chain, G9 decoded immediates,
+  G10 store-by-store pairing, G5 parsed stride/jl/start, G2 census counts, cites re-lined).
 - **CENSUS**: 1,991 refs (1,907 memory) in 227 functions over the 0x98ad88 span
   (64 rows x 0x34); 756 `imul reg,reg,0x34` sites. 17 field offsets: name
   char[0x20] at +0x00 (the only +0x1f ref is its NUL store), dword +0x20

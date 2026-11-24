@@ -164,6 +164,78 @@ def seq(ins, lo, hi):
     return [ins[a] for a in range(lo, hi) if a in ins]
 
 
+def imm_of(ops):
+    """the trailing immediate of an operand string, or None."""
+    t = ops.split(",")[-1].strip()
+    try:
+        return int(t, 16)
+    except ValueError:
+        return None
+
+
+def sentinel_math(ins, rows):
+    """parse each sentinel's stride advance, branch direction, static start, iterations."""
+    out = []
+    for r in rows:
+        if r["off"] not in SENT_OFFS:
+            continue
+        i = ins[r["addr"]]
+        reg = i.ops.split(",")[0].strip().split(" ")[-1]
+        end = imm_of(i.ops)
+        stride = None
+        for x in reversed(seq(ins, r["addr"] - 8, r["addr"])):
+            if x.mn == "add" and x.ops.split(",")[0].strip() == reg:
+                stride = imm_of(x.ops)
+                break
+        back = False
+        for x in seq(ins, r["addr"] + 1, r["addr"] + 24):
+            if x.mn == "jl":
+                back = imm_of(x.ops) is not None and imm_of(x.ops) < r["addr"]
+                break
+        start = None
+        for x in reversed(seq(ins, r["addr"] - 400, r["addr"])):
+            if x.fn != i.fn:
+                break
+            if x.mn == "mov" and x.ops.split(",")[0].strip() == reg:
+                v = imm_of(x.ops)
+                if v is not None and 0x98A000 <= v <= 0x98B000:
+                    start = v
+                    break
+        iters = (end - start) // stride if (start is not None and stride) else None
+        out.append(dict(addr=r["addr"], off=r["off"], stride=stride, back=back,
+                        start=start, end=end, iters=iters))
+    return out
+
+
+def proto_pairs(ins):
+    """pair every row-63 store with the register load that feeds it."""
+    last, pairs = {}, {}
+    for x in seq(ins, PROTO_FN, PROTO_FN + 0x64):
+        if x.mn != "mov":
+            continue
+        dst, src = [t.strip() for t in x.ops.split(",", 1)]
+        m = re.search(r"\[[a-z]+\+0x(14[0-9a-f]{3})\]", src)
+        REGS = ("eax", "ebx", "ecx", "edx", "esi", "edi", "ax", "cx", "dx",
+                "al", "cl", "dl", "bl", "ah", "ch", "dh", "bh")
+        if dst in REGS and m:
+            last[dst] = ("src", int(m.group(1), 16))
+        elif dst in REGS and re.fullmatch(r"0x[0-9a-f]+", src):
+            last[dst] = ("imm", int(src, 16))
+        m2 = re.search(r"ds:0x([0-9a-f]+)", dst)
+        if m2:
+            field = int(m2.group(1), 16) - proto_base0()
+            if 0 <= field < ROW_STRIDE:
+                if re.fullmatch(r"0x[0-9a-f]+", src):
+                    pairs[field] = ("imm", int(src, 16))
+                elif src in last:
+                    pairs[field] = last[src]
+    return pairs
+
+
+def proto_base0():
+    return ROW_BASE + PROTO_ROW * ROW_STRIDE
+
+
 def has(ins, lo, hi, sub, gaps=10):
     s = seq(ins, lo, hi)
     for i, x in enumerate(s):
@@ -221,12 +293,22 @@ def main():
         if x.mn == "mov" and ("ds:0x98ba" in x.ops or "0x1420" in x.ops or "0x141f" in x.ops):
             print("  0x%08x %s %s" % (x.addr, x.mn, x.ops))
     print("== sentinels (cmp immediates sharing the row window) ==")
+    smath = sentinel_math(ins, rows)
     for off, want in sorted(SENT_OFFS.items()):
         print("  +0x%02x refs=%d cmp=%d want=%d" % (
             off, len(sent[off]), sum(1 for r in sent[off] if ins[r["addr"]].mn == "cmp"), want))
-    print("== 0x1c loops with static starts ==")
-    for s, e in SENT_STARTS:
-        print("  0x%x..0x%x  (end-start)/0x1c = %d" % (s, e, (e - s) // 0x1C))
+    print("== the 0x1c scans (stride / backward jl / static start / iterations) ==")
+    for d in smath:
+        if d["start"] is not None:
+            print("  0x%08x +0x%02x stride=0x%x back=%s start=0x%x end=0x%x iters=%d" % (
+                d["addr"], d["off"], d["stride"] or 0, d["back"], d["start"], d["end"], d["iters"] or 0))
+    print("  %d sentinel refs: %d carry a static start, %d have a backward jl" % (
+        len(smath), sum(1 for d in smath if d["start"] is not None),
+        sum(1 for d in smath if d["back"])))
+    print("== A loop: slot -> item -> row ==")
+    for a in (0x4956C6, 0x4956D6, 0x4956DD, 0x4956F0, 0x4956F4, 0x49571B, 0x49571E, 0x4957E2, 0x4959BE):
+        i = ins.get(a)
+        print("  0x%08x %s" % (a, (i.mn + " " + i.ops) if i else "MISSING"))
     print("== 0x9267e4: %d refs, %d mem, table dwords %d ==" % (len(cand), sum(1 for c in cand if c["mem"]), CAND_N))
     for c in cand:
         print("  %s 0x%08x %-22s %s" % ("mem" if c["mem"] else "imm", c["addr"], c["fn"], c["ins"]))
@@ -270,11 +352,14 @@ def main():
 
     field_offs = sorted(atlas)
     want_fields = sorted(FIELD)
-    gate("G1", len(im) == 756 and proto_base == 0x98BA54
-         and 0x98BA74 == proto_base + 0x20,
-         "756 imul-0x34 sites; row63 base 0x%x, its +0x20 store at 0x98ba74" % proto_base)
-    gate("G2", field_offs == want_fields,
-         "%d field offsets %s" % (len(field_offs), ["0x%02x" % o for o in field_offs]))
+    nobj = len({r["fn"] for r in rows})
+    pairs = proto_pairs(ins)
+    want_pairs = {f: ("src", int(v, 16)) if v != "0xff" else ("imm", 0xff) for f, v in PROTO_STORES}
+    gate("G1", len(im) == 756 and proto_base == 0x98BA54,
+         "stride 0x34: %d imul sites, row63 base 0x%x (=0x98ba54)" % (len(im), proto_base))
+    gate("G2", field_offs == want_fields and len(rows) == 1991 and len(mem) == 1907 and nobj == 227,
+         "%d field offsets %s; census %d refs / %d mem / %d fns"
+         % (len(field_offs), ["0x%02x" % o for o in field_offs], len(rows), len(mem), nobj))
     gate("G3", atlas[0x20]["w"] == {"d", "b"}
          and all(atlas[o]["w"] == {"b"} for o in range(0x24, 0x2F))
          and atlas[0x30]["w"] == {"w", "b"} and atlas[0x31]["w"] == {"b"}
@@ -285,20 +370,27 @@ def main():
     gate("G4", len(nul) == 1 and nul[0]["acc"] == "write" and nul[0]["ins"].endswith(",0x0") and name_free,
          "name char[0x20]: one NUL store at +0x1f (%r), no mem ref +0x01..+0x1e"
          % (nul[0]["ins"] if nul else None,))
-    ok_sent = all(sum(1 for r in sent[o] if ins[r["addr"]].mn == "cmp") == n for o, n in SENT_OFFS.items())
-    ok_adv = all(any(x.mn == "add" and x.ops.endswith(",0x1c") for x in seq(ins, r["addr"] - 6, r["addr"]))
-                 for o in SENT_OFFS for r in sent[o])
-    iters = [(e - s) // 0x1C for s, e in SENT_STARTS]
-    gate("G5", ok_sent and ok_adv and iters == [24, 24, 24, 24],
-         "16 sentinels all cmp with add cursor,0x1c; four static loops = %s iterations" % (iters,))
-    gate("G6", len(cand) == 10 and sum(1 for c in cand if c["mem"]) == 7
-         and all(c["disp"] == CAND_BASE and "*4+0x9267e4" in c["ins"] for c in cand if c["mem"]),
-         "0x9267e4 = 0x%x dwords: 10 refs, 7 mem, all [reg*4+base], no other displacement" % CAND_N)
+    ok_sent = all(len(sent[o]) == n and all(ins[r["addr"]].mn == "cmp" for r in sent[o])
+                  for o, n in SENT_OFFS.items())
+    stat = [d for d in smath if d["start"] is not None]
+    starts = sorted({d["start"] for d in stat})
+    gate("G5", ok_sent and len(smath) == 16
+         and all(d["stride"] == 0x1C and d["back"] for d in smath)
+         and len(starts) == 4 and all(d["iters"] == 24 for d in stat),
+         "16 cmp-only sentinels, all stride 0x1c + backward jl; %d static scans over 4 starts, all 24 iterations"
+         % (len(stat),))
     s1 = seq(ins, BUILDERS[0], BUILDERS[0] + 0x160)
     s2 = seq(ins, BUILDERS[1], BUILDERS[1] + 0x160)
 
+    def builder_bound(s):
+        return [imm_of(x.ops) for x in s if x.mn == "cmp" and (x.ops.endswith(",0x80") or x.ops.endswith(",0x40"))]
+    b1, b2 = builder_bound(s1), builder_bound(s2)
+    gate("G6", len(cand) == 10 and sum(1 for c in cand if c["mem"]) == 7
+         and all(c["disp"] == CAND_BASE and "*4+0x9267e4" in c["ins"] for c in cand if c["mem"])
+         and 0x80 in b1 and 0x80 in b2,
+         "0x9267e4: 10 refs, 7 mem all [reg*4+base]; both builders bound the loop at the parsed 0x80 dwords")
     def builder_shape(s):
-        """match the ordered 14-instruction band sequence; return (slot, band) or None."""
+        """match the ordered 14-instruction band sequence; return (slot, band, shift, mask)."""
         for i, x in enumerate(s[:40]):
             if not (x.mn == "cmp" and x.ops.endswith(",0x40")):
                 continue
@@ -312,16 +404,23 @@ def main():
             if k1 is None:
                 return None
             k2 = nxt(lambda y: y.mn == "mov" and y.ops.startswith("eax"), k1 + 1)
-            k3 = nxt(lambda y: y.mn == "shl" and y.ops == "eax,0x6", k2 + 1)
+            k3 = nxt(lambda y: y.mn == "shl" and y.ops.startswith("eax,"), k2 + 1)
+            if k3 is None:
+                return None
+            shift = imm_of(s[k3].ops)
             k4 = nxt(lambda y: y.mn == "jmp", k3 + 1)
             k5 = nxt(lambda y: y.mn == "xor" and y.ops == "eax,eax", k4 + 1)
             k6 = nxt(lambda y: y.mn == "mov" and y.ops.endswith("," + slot), k5 + 1)
             if k6 is None:
                 return None
             band = s[k6].ops.split(",")[0]
-            need = [("and", band + ",0x8000003f"), ("jns", None), ("dec", band),
-                    ("or", band + ",0xffffffc0"), ("inc", band), ("add", band + ",eax")]
-            j = k6
+            k7 = nxt(lambda y: y.mn == "and" and y.ops.split(",")[0] == band, k6 + 1)
+            if k7 is None:
+                return None
+            mask = imm_of(s[k7].ops)
+            need = [("jns", None), ("dec", band), ("or", band + ",0xffffffc0"), ("inc", band),
+                    ("add", band + ",eax")]
+            j = k7
             for mn, ops in need:
                 j2 = nxt(lambda y, mn=mn, ops=ops: y.mn == mn and (ops is None or y.ops == ops), j + 1)
                 if j2 is None:
@@ -331,29 +430,39 @@ def main():
                 "DWORD PTR [" + slot + "*4+0x9267e4]," + band), j + 1)
             if k13 is None:
                 return None
-            return (slot, band)
+            return (slot, band, shift, mask)
         return None
     shp1, shp2 = builder_shape(s1), builder_shape(s2)
-    gate("G7", shp1 == ("ecx", "ebx") and shp2 == ("edx", "esi")
-         and entry(2, 0x41) == 0x81 and entry(1, 0x41) == 0x41,
-         "both builders match the 14-insn band sequence %s/%s; owner2 slot41 -> 0x81"
-         % (shp1, shp2))
-    chain = [0x4956C6, 0x4956D6, 0x49571B, 0x4957E2, 0x4959BE]
-    gate("G8", all(a in ins for a in chain)
-         and "cmp DWORD PTR [ebp-0x28],0x80" == (ins[0x4956C6].mn + " " + ins[0x4956C6].ops)
-         and "0x9267e4" in ins[0x4956D6].ops and "0x34" in ins[0x49571B].ops,
-         "A: 0x80 slots -> cand[idx] -> imul 0x34 -> row")
+    def entry(owner, slot, shift, mask):
+        return (0 if slot < 0x40 else owner << shift) + (slot & (mask & 0x3F))
+    ok7 = (shp1 is not None and shp2 is not None
+           and shp1[2] == 6 and shp2[2] == 6 and shp1[3] == 0x8000003F and shp2[3] == 0x8000003F)
+    gate("G7", ok7 and entry(2, 0x41, shp1[2], shp1[3]) == 0x81,
+         "both builders match the 14-insn band sequence %s/%s; parsed shift=%s mask=0x%x give owner2 slot41 -> 0x%x"
+         % (shp1, shp2, shp1[2] if shp1 else None, shp1[3] if shp1 else 0,
+            entry(2, 0x41, shp1[2], shp1[3]) if shp1 else -1))
+    chain_txt = {a: (ins[a].mn + " " + ins[a].ops) if a in ins else "" for a in
+                 (0x4956C6, 0x4956D6, 0x4956DD, 0x49571B, 0x49571E)}
+    call_ok = any("0x5a73f0" in (x.mn + " " + x.ops) for x in seq(ins, 0x4956E0, 0x495700))
+    arg_ok = any(x.ops == "eax,DWORD PTR [ebp-0x2c]" or x.ops == "DWORD PTR [ebp-0x2c],eax"
+                 for x in seq(ins, 0x4956E0, 0x495700))
+    gate("G8", chain_txt[0x4956C6] == "cmp DWORD PTR [ebp-0x28],0x80"
+         and chain_txt[0x4956D6] == "mov edx,DWORD PTR [ecx*4+0x9267e4]"
+         and chain_txt[0x4956DD] == "mov DWORD PTR [ebp-0x2c],edx"
+         and call_ok and arg_ok
+         and chain_txt[0x49571B] == "imul edx,edx,0x34"
+         and chain_txt[0x49571E] == "add edx,0x98ad88",
+         "A: cmp 0x80 -> cand load -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34 -> add 0x98ad88")
     hi = [r for r in rows if r["off"] == 0x31]
-    clears = [r for r in hi if ",0xfe" in r["ins"]]
-    sets = [r for r in hi if ",0x1" in r["ins"] and r["ins"].startswith("or")]
+    clears = [r for r in hi if r["acc"] == "rmw" and ins[r["addr"]].mn == "and" and imm_of(r["ins"].split(",")[-1]) == 0xFE]
+    sets = [r for r in hi if r["acc"] == "rmw" and ins[r["addr"]].mn == "or" and imm_of(r["ins"].split(",")[-1]) == 0x1]
     gate("G9", len(hi) == 4 and len(clears) == 1 and len(sets) == 3,
-         "flags bit8: %d sites = %d clear (and 0xfe) + %d set (or 0x1)" % (len(hi), len(clears), len(sets)))
-    ptext = " ".join(x.mn + " " + x.ops for x in seq(ins, PROTO_FN, PROTO_FN + 0x64))
-    okp = all(("ds:0x%x" % (proto_base + f)) in ptext and src in ptext for f, src in PROTO_STORES)
-    gate("G10", okp and ins[PROTO_FN].mn == "push",
-         "FUN_00435610 stores %s into row %d" % ([hex(f) for f, _ in PROTO_STORES], PROTO_ROW))
+         "flags bit8: %d sites = %d and 0xfe + %d or 0x1 (decoded immediates)" % (len(hi), len(clears), len(sets)))
+    gate("G10", pairs == want_pairs,
+         "FUN_00435610 source->dest pairs %s" % (sorted((hex(k), v[0], hex(v[1])) for k, v in pairs.items()),))
 
     digest = hashlib.sha256("\n".join(tbl).encode()).hexdigest()[:16]
+
     if fails:
         print("FAIL M358: %d/%d gates red %s" % (len(fails), 10, fails))
         return 1

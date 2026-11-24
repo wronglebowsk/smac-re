@@ -38,11 +38,32 @@
   +0x0c refs=2 cmp=2 want=2
   +0x10 refs=1 cmp=1 want=1
   +0x14 refs=1 cmp=1 want=1
-== 0x1c loops with static starts ==
-  0x98aaf0..0x98ad90  (end-start)/0x1c = 24
-  0x98aaf4..0x98ad94  (end-start)/0x1c = 24
-  0x98aaf8..0x98ad98  (end-start)/0x1c = 24
-  0x98aafc..0x98ad9c  (end-start)/0x1c = 24
+== the 0x1c scans (stride / backward jl / static start / iterations) ==
+  0x0040ec2b +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d2427 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d27b9 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d2db7 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d2e81 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004ef0c6 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004ef1a2 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x0052b76d +0x10 stride=0x1c back=True start=0x98aaf8 end=0x98ad98 iters=24
+  0x005736a6 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x0057376c +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x00573923 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x005739ea +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x0057a6c8 +0x0c stride=0x1c back=True start=0x98aaf4 end=0x98ad94 iters=24
+  0x0059599c +0x14 stride=0x1c back=True start=0x98aafc end=0x98ad9c iters=24
+  16 sentinel refs: 14 carry a static start, 16 have a backward jl
+== A loop: slot -> item -> row ==
+  0x004956c6 cmp DWORD PTR [ebp-0x28],0x80
+  0x004956d6 mov edx,DWORD PTR [ecx*4+0x9267e4]
+  0x004956dd mov DWORD PTR [ebp-0x2c],edx
+  0x004956f0 mov eax,DWORD PTR [ebp-0x2c]
+  0x004956f4 call 0x5a73f0
+  0x0049571b imul edx,edx,0x34
+  0x0049571e add edx,0x98ad88
+  0x004957e2 imul ecx,ecx,0x34
+  0x004959be imul ecx,ecx,0x34
 == 0x9267e4: 10 refs, 7 mem, table dwords 128 ==
   mem 0x0043dcc6 FUN_0043dc60           cmp eax,DWORD PTR [edx*4+0x9267e4]
   mem 0x0043df1c FUN_0043dd30           mov eax,DWORD PTR [edx*4+0x9267e4]
@@ -64,14 +85,14 @@
   R1 '0x9267e4 is a 64-byte record array': refs=10, mem=7, mem with a non-*4 index=0, refs at a 0x40 stride=0 -> REFUTED
   R2 'the row starts at 0x98adb8 (only +0x30/+0x32 are fields)': mem refs below +0x30 = 1706 across 14 offsets, name NUL at +0x1f -> REFUTED
   R3 '+0x08/+0x0c/+0x10/+0x14 are row fields': 16/16 are cmp-immediate sentinels of 0x1c scans -> REFUTED
-PASS G1: 756 imul-0x34 sites; row63 base 0x98ba54, its +0x20 store at 0x98ba74
-PASS G2: 17 field offsets ['0x00', '0x1f', '0x20', '0x24', '0x25', '0x26', '0x27', '0x28', '0x29', '0x2a', '0x2b', '0x2c', '0x2d', '0x2e', '0x30', '0x31', '0x32']
+PASS G1: stride 0x34: 756 imul sites, row63 base 0x98ba54 (=0x98ba54)
+PASS G2: 17 field offsets ['0x00', '0x1f', '0x20', '0x24', '0x25', '0x26', '0x27', '0x28', '0x29', '0x2a', '0x2b', '0x2c', '0x2d', '0x2e', '0x30', '0x31', '0x32']; census 1991 refs / 1907 mem / 227 fns
 PASS G3: +0x20={d,b}, +0x24..2e=b, +0x30={w,b}, +0x31=b, +0x32=w; 0x2f/0x33 unaddressed
 PASS G4: name char[0x20]: one NUL store at +0x1f ('mov BYTE PTR [ebx+0x98ada7],0x0'), no mem ref +0x01..+0x1e
-PASS G5: 16 sentinels all cmp with add cursor,0x1c; four static loops = [24, 24, 24, 24] iterations
-PASS G6: 0x9267e4 = 0x80 dwords: 10 refs, 7 mem, all [reg*4+base], no other displacement
-PASS G7: both builders match the 14-insn band sequence ('ecx', 'ebx')/('edx', 'esi'); owner2 slot41 -> 0x81
-PASS G8: A: 0x80 slots -> cand[idx] -> imul 0x34 -> row
-PASS G9: flags bit8: 4 sites = 1 clear (and 0xfe) + 3 set (or 0x1)
-PASS G10: FUN_00435610 stores ['0x20', '0x24', '0x25', '0x26', '0x27', '0x2e'] into row 63
+PASS G5: 16 cmp-only sentinels, all stride 0x1c + backward jl; 14 static scans over 4 starts, all 24 iterations
+PASS G6: 0x9267e4: 10 refs, 7 mem all [reg*4+base]; both builders bound the loop at the parsed 0x80 dwords
+PASS G7: both builders match the 14-insn band sequence ('ecx', 'ebx', 6, 2147483711)/('edx', 'esi', 6, 2147483711); parsed shift=6 mask=0x8000003f give owner2 slot41 -> 0x81
+PASS G8: A: cmp 0x80 -> cand load -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34 -> add 0x98ad88
+PASS G9: flags bit8: 4 sites = 1 and 0xfe + 3 or 0x1 (decoded immediates)
+PASS G10: FUN_00435610 source->dest pairs [('0x20', 'src', '0x14208'), ('0x24', 'src', '0x141fc'), ('0x25', 'src', '0x14200'), ('0x26', 'src', '0x14204'), ('0x27', 'src', '0x1420c'), ('0x2e', 'imm', '0xff')]
 PASS M358: 10/10 gates  1af1dcb6fcd4a4b6
