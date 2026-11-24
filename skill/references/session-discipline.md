@@ -254,6 +254,15 @@ matches.
 
 **A BUILD fire may have to AUTHOR its rung.** `track_mode.py` counts `B<n>` prefixes in merged history, so it can print `next_rung=B<n>` when BUILD_SPINE.md's ladder stops short (B14, s241): the spine records a rung only when a fire ships it. Then the build fire writes the rung text FIRST (from the last build's DECLARED frontier + the laws the intervening ANALYSE fires settled - the ladder is authored from settled census law, never from new decompile claims), appends it to BUILD_SPINE.md, and only then implements it; state the authoring in SESSION_NOTES so the numbering convention stays auditable.
 
+**A BUILD rung may be a FALSIFICATION rung, and that is a success.** The highest-value build unit is often
+an ORACLE: replay the model's own composed law against the game's recorded trace/boundary samples and
+score it (measured: a "the queue head's id is the bit that appeared" rule scored 0/6 while an independent
+raw-XOR delta matched every sample). When the recorded bytes refute the model, the deliverable is the
+refutation PLUS an in-place qualification of the registry block that asserted the old mechanism
+(`UNVERIFIED against recorded bytes`) — not a weakened instrument and not a deleted claim. Design the
+oracle with at least one NON-VACUOUS recorded negative (a case where the rule would fire and the bytes
+show it did not); without one, a 0/6 score can mean the window never exercised the rule at all.
+
 
 ## s242 retirement: session discipline + budget/closing caps
 > Moved VERBATIM out of `skill/SKILL.md` at s242 (context hygiene); the hot core in
@@ -459,7 +468,12 @@ build track. Protocol, validated end to end:
   every other lane needs a DISJOINT pick from a finite static list, so past ~4 lanes they overlap
   (a collision, not parallelism) or invent work; and shared-doc merge conflicts grow roughly with the
   number of lane PAIRS. Add a lane at a round boundary, not mid-round, when the shared docs are being
-  written. Every lane's transient footing must name the other lanes' job/row as NOT a collision — the
+  written. **A worktree whose `ghidra_out`/`scratch`/`programs` are SYMLINKS reads DIRTY**: the repo's
+  `.gitignore` entries carry trailing slashes (`ghidra_out/`, `scratch/`, `programs/`), which git does
+  not match against symlinks, so `milestone.py start` refuses with `worktree dirty` on a lane that has
+  no edits. Add the bare names (`ghidra_out`, `scratch`, `programs`) to `.git/info/exclude` in the
+  shared repo — one edit covers every linked worktree — and confirm `git status --short` is empty
+  before firing. Every lane's transient footing must name the other lanes' job/row as NOT a collision — the
   stored prompts of older lanes know only the lanes that existed when they were written.
 - **Pace**: a free-tier/shared endpoint runs ~2–3× slower per fire (queueing + long generations) but
   completes full milestones including review rounds inside one fire when the unit is bounded. Keep

@@ -1,0 +1,165 @@
+M348 — pref-block co-writers of ds:0x92bde8..0x92bf34 (static, .text 781429 insns)
+
+T1 the loader is the SOLE authoritative writer (store census + key band)
+  cell      name              push      parse     store     block-reads
+  0x92bde8 Difficulty        0x58e8a1 0x5ea484 0x58e8c6 2
+  0x92bdf4 Map Type          0x58e905 0x5ea484 0x58e922 1
+  0x92bdf8 Top Menu          0x58e969 0x5ea484 0x58e98e 1
+  0x92bdec Faction           0x58e9cd 0x5ea484 0x58e9ec 1
+  0x92befc Preferences       0x58eaf1 0x5ea493 0x58eb11 2
+  0x92bf00 More Preferences  0x58ec07 0x5ea493 0x58ec20 2
+  0x92bf0c Semaphore         0x58eca8 0x5ea493 0x58ecc9 2
+  0x92bf14 Customize         0x58ed08 0x5ea484 0x58ed2a 1
+  0x92bf08 Rules             0x58edfd 0x5ea493 0x58ee16 2
+  0x92bf04 Announce          0x58eee9 0x5ea493 0x58ef00 2
+  0x92bf10 Time Controls     0x58efe4 0x5ea484 0x58eff8 2
+  table digest=23794d225859ed83
+  [PASS] G1 store 0x58e8c6 is `mov    ds:0x92bde8,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58e8c6
+  [PASS] G1 key 0x692718 (pushed 0x58e8a1) resolves to 'Difficulty' in the PE
+  [PASS] G1 store 0x58e922 is `mov    ds:0x92bdf4,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58e922
+  [PASS] G1 key 0x692724 (pushed 0x58e905) resolves to 'Map Type' in the PE
+  [PASS] G1 store 0x58e98e is `mov    ds:0x92bdf8,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58e98e
+  [PASS] G1 key 0x692730 (pushed 0x58e969) resolves to 'Top Menu' in the PE
+  [PASS] G1 store 0x58e9ec is `mov    ds:0x92bdec,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58e9ec
+  [PASS] G1 key 0x69273c (pushed 0x58e9cd) resolves to 'Faction' in the PE
+  [PASS] G1 store 0x58eb11 is `mov    ds:0x92befc,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58eb11
+  [PASS] G1 key 0x69274c (pushed 0x58eaf1) resolves to 'Preferences' in the PE
+  [PASS] G1 store 0x58ec20 is `mov    ds:0x92bf00,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58ec20
+  [PASS] G1 key 0x692760 (pushed 0x58ec07) resolves to 'More Preferences' in the PE
+  [PASS] G1 store 0x58ecc9 is `mov    ds:0x92bf0c,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58ecc9
+  [PASS] G1 key 0x692780 (pushed 0x58eca8) resolves to 'Semaphore' in the PE
+  [PASS] G1 store 0x58ed2a is `mov    ds:0x92bf14,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58ed2a
+  [PASS] G1 key 0x69278c (pushed 0x58ed08) resolves to 'Customize' in the PE
+  [PASS] G1 store 0x58ee16 is `mov    ds:0x92bf08,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58ee16
+  [PASS] G1 key 0x6927a0 (pushed 0x58edfd) resolves to 'Rules' in the PE
+  [PASS] G1 store 0x58ef00 is `mov    ds:0x92bf04,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58ef00
+  [PASS] G1 key 0x6927b0 (pushed 0x58eee9) resolves to 'Announce' in the PE
+  [PASS] G1 store 0x58eff8 is `mov    ds:0x92bf10,eax` in FUN_0058e7f0
+  [PASS] G1 a 0x5ea484/0x5ea493 parse call feeds the store at 0x58eff8
+  [PASS] G1 key 0x6927d4 (pushed 0x58efe4) resolves to 'Time Controls' in the PE
+  [PASS] G1 block profile-read counts == declared [2, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2], summing to M332's 18
+  [PASS] G1 loader stores to the scalar cells = 11 == 11 declared
+  [PASS] G1 loader store cells == the declared cell set (both directions)
+
+T2 block EXTENT — the loader's FULL store census
+  scalar moffs stores (loader)      = 11
+  indirect store insn `mov [esi],eax` = 1  @['0x58efd4']  (7 iterations)
+  loop: `mov esi,0x92bf18` @['0x58efc4']  `add esi,0x4` @['0x58efd6']  `cmp esi,0x92bf34` @['0x58efd9']
+  array entries = (0x92bf34-0x92bf18)/4 = 7 ; block END = 0x92bf34 (footing said 0x92bf14)
+  [PASS] G2 ONE indirect store insn executes 7 times = (0x92bf34-0x92bf18)/4
+  [PASS] G2 the array loop is `esi=0x92bf18 ; add 4 ; cmp 0x92bf34 ; jl`
+  [PASS] G2 the loader's scalar store count is 11 (11) -> no second scalar store
+  Custom World key 0x6927c4 = 'Custom World'
+  default-value pattern tokens = ['2, ', '1, ']
+  [PASS] G2 the 7 stores are parsed from the key `Custom World`
+  writeback: 11 scalar loads, 1 array loads, cursor @['0x58f352'] bound @['0x58f388']
+  [PASS] G2 the writeback mirrors 11 scalars + the same 7-slot loop
+  list joiner key 0x689bbc = ', '
+  [PASS] G2 the writeback joins the 7 slots with the `, ` string
+
+T3 CO-REFERENCE census per cell (loader + writeback excluded)
+  0x92bde8 Difficulty        refs= 8 co= 5 co_store= 1  FUN_00484da0,FUN_00487fd0,FUN_0057c550
+  0x92bdec Faction           refs= 5 co= 3 co_store= 1  FUN_0057c550
+  0x92bdf4 Map Type          refs= 4 co= 2 co_store= 1  FUN_0057e890
+  0x92bdf8 Top Menu          refs= 4 co= 2 co_store= 1  FUN_0057f740
+  0x92befc Preferences       refs=16 co=14 co_store= 9  FUN_004923d0,FUN_00510730,FUN_00512b40,FUN_00516b80,FUN_00522850,FUN_0057f740,FUN_0058f3d0,FUN_005a0fa0
+  0x92bf00 More Preferences  refs=10 co= 8 co_store= 7  FUN_004923d0,FUN_00510730,FUN_00512b40,FUN_00516b80,FUN_0058f3d0
+  0x92bf04 Announce          refs= 5 co= 3 co_store= 2  FUN_0048f100,FUN_004923d0,FUN_0058f3d0
+  0x92bf08 Rules             refs=12 co=10 co_store= 4  FUN_00484da0,FUN_00487fd0,FUN_004dc5f0,FUN_00522850,FUN_0057c550
+  0x92bf0c Semaphore         refs= 8 co= 6 co_store= 4  FUN_00487fd0,FUN_004dc5f0,FUN_0057c550
+  0x92bf10 Time Controls     refs= 4 co= 2 co_store= 1  FUN_0057c550
+  0x92bf14 Customize         refs= 4 co= 2 co_store= 1  FUN_0057c550
+  totals: refs=80 co_refs=57 co_stores=32  co_writer_functions=14
+  census digest=f9c2b0cc2e5ea7d5
+  [PASS] G3 per-cell total refs == the declared census
+  [PASS] G3 per-cell co-store counts == the declared census (32 total)
+  [PASS] G3 the SCALAR co-reference function set == the declared 14
+  [PASS] G3 Custom World[0] has exactly one co-writer ['FUN_0057e420'] (RMW + persist)
+  [PASS] G3 totals 80 refs = 11 loader stores + 1 loader re-read + 11 writeback loads + 57 co-refs; 32 scalar co-stores
+  byte-level disp32 scan: 88 (cell,insn) pairs; objdump ds: text: 82
+  byte-only (materialisations, not ds: operands): [('0x92bde8', '0x579bc6'), ('0x92bde8', '0x57ab57'), ('0x92bf18', '0x57d923'), ('0x92bf18', '0x57d92a'), ('0x92bf18', '0x58efc4'), ('0x92bf18', '0x58f352')]
+  [PASS] G3 0 text refs are missing from the byte scan (text-only = 0)
+  [PASS] G3 the byte-only set == the declared 6 materialisations (2 sentinel cmp + 4 array base)
+  materialised scalar addresses (non-ds operand): 2 [(5741510, 'cmp    edi,0x92bde8'), (5745495, 'cmp    esi,0x92bde8')]
+  [PASS] G3 the ONLY materialised scalar address is the 0x92bde8 sentinel (2 cmp bounds)
+
+T4 COMMIT law — every co-store classified by its next apply/persist call
+  site      cell      fn              verdict     via        provenance
+  0x48f564 0x92bf04 FUN_0048f100    COMMIT      PERSIST/site EXTERNAL (load of a different source @48f55e)
+  0x492464 0x92befc FUN_004923d0    COMMIT      APPLY/site EXTERNAL (load of a different source @492434)
+  0x49246f 0x92bf00 FUN_004923d0    COMMIT      APPLY/site EXTERNAL (load of a different source @492469)
+  0x49247a 0x92bf04 FUN_004923d0    COMMIT      APPLY/site EXTERNAL (load of a different source @492474)
+  0x4dc776 0x92bf08 FUN_004dc5f0    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @4dc75b)
+  0x4dc77c 0x92bf0c FUN_004dc5f0    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @4dc769)
+  0x4dc8bd 0x92bf08 FUN_004dc5f0    COMMIT      PERSIST/site EXTERNAL (load of a different source @4dc8b1)
+  0x4dc8c3 0x92bf0c FUN_004dc5f0    COMMIT      PERSIST/site EXTERNAL (load of a different source @4dc75b)
+  0x510901 0x92bf00 FUN_00510730    COMMIT      PERSIST/site EXTERNAL (register redefined @5108ef)
+  0x51095a 0x92bf00 FUN_00510730    COMMIT      PERSIST/site EXTERNAL (load of a different source @510955)
+  0x5109a8 0x92befc FUN_00510730    COMMIT      PERSIST/site EXTERNAL (load of a different source @5109a3)
+  0x5109f8 0x92befc FUN_00510730    COMMIT      PERSIST/site EXTERNAL (load of a different source @5109f3)
+  0x515c4e 0x92bf00 FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (register redefined @515c3c)
+  0x515c9a 0x92befc FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (load of a different source @515c94)
+  0x515d97 0x92befc FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (load of a different source @515d92)
+  0x515e03 0x92bf00 FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (load of a different source @515dfd)
+  0x517377 0x92bf00 FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (load of a different source @517371)
+  0x5173c4 0x92befc FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (load of a different source @5173be)
+  0x51740c 0x92befc FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (load of a different source @517407)
+  0x517470 0x92bf00 FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (register redefined @51745e)
+  0x57c7b0 0x92bde8 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (call boundary @57c7a2)
+  0x57c914 0x92bf14 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (register redefined @57c912)
+  0x57cb0c 0x92bf08 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cafe)
+  0x57cb1e 0x92bf0c FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cb12)
+  0x57cc60 0x92bf08 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cc54)
+  0x57cc66 0x92bf0c FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cb12)
+  0x57cdaa 0x92bdec FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (call boundary @57cd93)
+  0x57d276 0x92bf10 FUN_0057c550    COMMIT      PERSIST/site EXTERNAL (register redefined @57d251)
+  0x57e6cc 0x92bf18 FUN_0057e420    COMMIT      PERSIST/site EXTERNAL (load of a different source @57e6c3)
+  0x57e93d 0x92bdf4 FUN_0057e890    COMMIT      PERSIST/site EXTERNAL (register redefined @57e935)
+  0x57f9f7 0x92bdf8 FUN_0057f740    COMMIT      PERSIST/site EXTERNAL (register redefined @57f9ea)
+  0x5a0ff2 0x92befc FUN_005a0fa0    COMMIT      APPLY/site SELF (load of the same cell @5a0fe8 + ALU)
+  0x5a1006 0x92befc FUN_005a0fa0    COMMIT      APPLY/site SELF (load of the same cell @5a0fff + ALU)
+  verdicts: {'COMMIT': 24, 'TAIL-NONE': 9}
+  provenance: {'EXTERNAL': 31, 'SELF': 2}
+  law digest=1680ba6459e58100
+  co-STORE functions (11): FUN_0048f100,FUN_004923d0,FUN_004dc5f0,FUN_00510730,FUN_00512b40,FUN_00516b80,FUN_0057c550,FUN_0057e420,FUN_0057e890,FUN_0057f740,FUN_005a0fa0
+  read-only co-readers (scalar): FUN_00484da0,FUN_00487fd0,FUN_00522850,FUN_0058f3d0
+  [PASS] G4 co-store sites = 33 (32 scalar + 1 at Custom World[0] 0x92bf18)
+  [PASS] G4 the co-STORE function set == the declared 11
+  [PASS] G4 the 3 read-only co-readers == the declared set
+  [PASS] G4 verdict split == declared {'COMMIT': 24, 'TAIL-NONE': 9}
+  [PASS] G4 self-RMW sites == declared ['0x5a0ff2', '0x5a1006']
+  [PASS] G4 31/33 co-stores take their value from outside the cell
+  TAIL-NONE exceptions: ['0x4dc776', '0x4dc77c', '0x57c7b0', '0x57c914', '0x57cb0c', '0x57cb1e', '0x57cc60', '0x57cc66', '0x57cdaa']
+
+T5 PUBLISHER FUN_0058f3d0
+  stores to 0x985axx: 3
+    0x58f3e1 mov    ds:0x985ab8,eax
+    0x58f3e6 mov    DWORD PTR ds:0x985abc,ecx
+    0x58f3ec mov    DWORD PTR ds:0x985ac0,edx
+  block refs: [('0x92befc', 'LOAD', '0x58f3d0'), ('0x92bf00', 'LOAD', '0x58f3d5'), ('0x92bf04', 'LOAD', '0x58f3db')]
+  [PASS] G5 FUN_0058f3d0 stores exactly 3 globals (3)
+  map: {'0x92befc': '0x985ab8', '0x92bf00': '0x985abc', '0x92bf04': '0x985ac0'}
+  [PASS] G5 the publisher map == declared 3 cells -> 3 globals
+  [PASS] G5 the publisher touches only those 3 cells (0 other pref refs)
+
+T6 RIVALS (each must FAIL on the numbers above)
+  R1 'the block ends at 0x92bf14': loader loop stores = 7 (7 insn x 7 iters), writeback loop loads = 7, and the DISPLACEMENT refs to those 7 slots in either pref function = 0
+  [PASS] G6 R1 REFUTED: 7 stores + 7 loads past 0x92bf14 exist and BOTH are pointer forms (0 displacement refs) -- the census that produced the old end could not see them
+  R2 'a co-writer derives the value, so the loader is not authoritative': loader stores with an in-function pred = 11 ; co-stores with an in-function pred = 33
+  [PASS] G6 R2 REFUTED: the loader's 11 stores have 0 in-function predecessors, all 33 co-stores do
+  R3 'the 11 scalars are one struct walked by base+index': materialised bases = 2 ; indexed scalar forms = 0
+  [PASS] G6 R3 REFUTED: no base is materialised for a scalar cell (only 2 cmp sentinels)
+
+GATES: 6 gates, 0 FAIL
+RESULT: PASS M348: 6/6 gates
+ACCEPT: python3 -u scripts/m348_pref_cowriters.py -> PASS M348: 6/6 gates

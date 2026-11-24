@@ -557,3 +557,31 @@ whether a facility completion stamps at all.
   idempotence check moved from the header line to the archive/stub body (finding 9).
 - **STILL OPEN:** which .rdata template consumes slots 1/2 (and whether a facility completion
   ever reaches a template); the unit-id decoding (M68/M69 NEG_TYPE).
+
+## Session 326 (2026-11-24) — M348: the pref-block co-writers of 0x92bde8..0x92bf34 (milestone/M348)
+
+- **ACCEPT** `python3 -u scripts/m348_pref_cowriters.py` -> **`PASS M348: 6/6 gates`**, table
+  `23794d225859ed83`, census `f9c2b0cc2e5ea7d5`, law `1680ba6459e58100`, two runs identical
+  (`evidence/m348_pref_cowriters.txt:164`); `scripts/m348_mutate.py` -> **12/12**, NO-OP green
+  (`evidence/m348_mutate.txt:20`).
+- **EXTENT (the finding):** the block does NOT end at 0x92bf14. The loader FUN_0058e7f0 fills 7
+  more dwords by POINTER — `mov esi,0x92bf18 ; call 0x5ea484 ; mov [esi],eax ; add esi,4 ; cmp
+  esi,0x92bf34 ; jl` (7 iterations, key `Custom World` 0x6927c4, default `2, ` / `1, `) — and
+  FUN_0058f0d0 re-emits all 7 joined with `, ` (0x689bbc). BOTH are 0-displacement forms, which
+  is exactly why a displacement census (M332's method) stopped at the last scalar.
+- **MAP:** 11 scalar cells, exactly ONE loader store each, each fed by a 0x5ea484/0x5ea493 parse:
+  Difficulty 92bde8, Map Type 92bdf4, Top Menu 92bdf8, Faction 92bdec, Preferences 92befc,
+  More Preferences 92bf00, Semaphore 92bf0c, Customize 92bf14, Rules 92bf08, Announce 92bf04,
+  Time Controls 92bf10. **Correction to the read-side assumption:** 0x92befc's block reads key
+  `Preferences` (0x69274c) — `Laptop` (0x692704) is a default-value string, not a key. Each
+  block's FIRST profile read takes its key pointer from a global (`ds:0x6926ec`); per-block read
+  counts sum to 18 = M332's G9.5 count.
+- **CO-WRITERS:** 57 co-refs / 32 scalar co-stores over 11 site functions (4 read-only, one being
+  the publisher). LAW: 24/33 co-stores reach apply FUN_0058f3d0 or persist FUN_0058f0d0 within 8
+  instructions; 9 go to a shared tail with neither in-window (`:131`). 31 take a value from
+  outside the cell; 2 (0x5a0ff2, 0x5a1006 in FUN_005a0fa0) are self-RMW through `al`.
+- **PUBLISHER:** FUN_0058f3d0 = 3 loads -> 3 stores (0x92befc/bf00/bf04 -> 0x985ab8/abc/c0). It is
+  the APPLY step; FUN_0058f0d0 is the persist.
+- **Docs:** NAMED 241,138 B (M314 4,399 B rotated VERBATIM to `docs/named-archive-m348-rows.md`,
+  sha1 `decdd34b21f8dadbb475a7648efdca8bcf00f4d6`, `scripts/m348_named_rotate.py --verify` PASS).
+  NEXT_PROMPT +1 line. STILL OPEN: who sets ds:0x6926ec; the 9 tail paths' composition.
