@@ -26,7 +26,7 @@ HEADER = ("# NAMED archive - M340 headroom rotation (s320): the M332 block VERBA
           "(moved by `scripts/m340_named_rotate.py`; the region's sha1 is pinned to `%s` -\n"
           "run `--verify` after any edit; NAMED.md's stub keeps one line per claim)\n\n" % EXPECT_SHA1)
 
-STUB = """## M332 (s311-chain1, pick (x2), STATIC 8/8) — `ds:0x985aec` is the RUNTIME MIRROR of the game's own `Difficulty` preference; its master `ds:0x92bde8` is the win-INI key `Difficulty`, read by FUN_0058e7f0 and written back by FUN_0058f0d0 (REFINES `## M308`). FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m340-rows.md:5` (sha1 `3ef265e11aca`); this stub governs, one line per claim
+STUB = """## M332 (s311-chain1, pick (x2), STATIC 9/9) — `ds:0x985aec` is the RUNTIME MIRROR of the game's own `Difficulty` preference; its master `ds:0x92bde8` is the win-INI key `Difficulty`, read by FUN_0058e7f0 and written back by FUN_0058f0d0 (REFINES `## M308`). FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m340-rows.md:5` (sha1 `3ef265e11aca`); this stub governs, one line per claim
 
 | claim | evidence | conf |
 |---|---|---|
@@ -37,7 +37,7 @@ STUB = """## M332 (s311-chain1, pick (x2), STATIC 8/8) — `ds:0x985aec` is the 
 | the pref table: 11 key-exclusive 6-arg profile reads in FUN_0058e7f0, an INJECTIVE name->field map, `Difficulty`@0x58e8a1 -> 0x92bde8@0x58e8c6, paired with the writeback load@0x58f11d; API identity measured (G9.5): 18 read / 8 write calls through `edi` == Ghidra's counts; 6/6 three-way names agree (s312 P2 correction) | `:105-107` + `:51-53`, `:68`, G9.5 `:94-97` | V MU4-15 |
 | siblings the same map names: 0x92bdf4 = `Map Type`, 0x92bdf8 = `Top Menu`, 0x92bdec = `Faction` (what `## M328` called "92bdf8 mode global") | `:106-107` | V MU9,13 |
 | RIVAL KILLED: 0x92bde8 is BOTH the end of the 4x0xd4 record array at 0x92ba98 (G9.6 reads the loops) AND a scalar pref cell (2 stores, 6 loads) - "sentinel only" fails on 0 stores | `:108` + G9.6 `:98-100` | V MU4,6,10,12,20 |
-| ACCEPT digest(table) `d2691dc5abb39240`, `PASS M332: 9/9`; harness 20 scored + 1 NO-OP, digest `a9a944201849d026` | `evidence/m332_mutate.txt:25` | V |
+| ACCEPT `PASS M332: 9/9` digest(table) `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP, digest `a9a944201849d026` (`evidence/m332_mutate.txt:25`) | both files | V |
 | OPEN: the difficulty INDEX->label order is now ALPHA `#DIFF` file order (M335: 4=Thinker, 5=Transcend); the 0x8f0090 consumer is a player-record difficulty byte (M336); a pref >=6 is ADMITTED verbatim (M340, 7/7). Still open: 0x5f1394's semantics (chain 2), the other writers of the 0x92bde8..0x92bf14 block | - | lead |
 """
 
@@ -59,9 +59,10 @@ def main():
         aL = arch.split("\n") if START in arch else []
         pos = arch.index(START) if START in arch else 0
         asha = hashlib.sha1(arch[pos:].encode()).hexdigest() if aL else ""
-        ok = (asha == EXPECT_SHA1 and STUB.split("\n")[0] in text)
-        print("archive region sha1 %s expect %s  stub_present=%s"
-              % (asha, EXPECT_SHA1, STUB.split("\n")[0] in text))
+        gone = arch[pos:] not in text if aL else False
+        ok = (asha == EXPECT_SHA1 and STUB.split("\n")[0] in text and gone)
+        print("archive region sha1 %s expect %s  stub_present=%s  full_block_absent=%s"
+              % (asha, EXPECT_SHA1, STUB.split("\n")[0] in text, gone))
         print("VERIFY %s" % ("PASS" if ok else "FAIL"))
         return 0 if ok else 1
     if sha != EXPECT_SHA1:

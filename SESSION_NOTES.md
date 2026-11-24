@@ -371,10 +371,18 @@ printers of measured values need the same None-guard as the gate.
   k=5 -> 0x94d2c0 last legal, k=6 -> 0x94d2c4 == TABLE_END; the three pref-fed readers
   0x48678f / 0x44a1c8 / 0x599405 index TABLE at scale 4 from MEMORY loads, no clamp (G7).
 - ACCEPT `python3 -u scripts/m340_pref_admission.py` -> **PASS M340: 7/7**, rows
-  `277483c12bd5cc44`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2nd run
-  diff-identical (`evidence/m340_pref_admission.txt:60-71`); `scripts/m340_mutate.py` ->
-  **PASS HARNESS M340: 9/9**, 7/7 gates covered, NO-OP `[]` `b25e0bc3a09693f5`
-  (`evidence/m340_mutate.txt:13`), `--selftest` OK.
+  `1cc44d0146a8b419`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2nd run
+  diff-identical (`evidence/m340_pref_admission.txt:79-90`); `scripts/m340_mutate.py` ->
+  **PASS HARNESS M340: 12/12**, 7/7 gates covered, NO-OP `[]` `a2a1726721114b4d`
+  (`evidence/m340_mutate.txt:16`), `--selftest` OK.
+- **REVIEW #358 (local Strata, 10 findings: 3 P1 / 7 P2), ALL fixed in the gates:** G1 now
+  measures the argc-6 push window + the 0x997120 lpDefault (MU10/MU11); G2 pins the cursor
+  store cell; G3 proves the call chain 0x58e8b9 -> 0x5ea484 -> 0x5eaa53 -> {0x5ea985,
+  0x6287e2} (MU9); G5 reads the whole Language switch shape (argument -> slot -> cmp 4 -> ja
+  -> table), not just a stray cmp; G6 MEASURES both endpoints from 0x57ac74/0x57ac88; G7
+  proves a def-use gap with no branch/call/compare/rewrite; `m340_named_rotate.py --verify`
+  also asserts the full block is gone from NAMED; the M332 stub cites both evidence files and
+  says 9/9; the sessions-304-305 archive pointer is repaired.
 - **ID:** `milestone/m339` is chain 2's worktree branch (~/reverse/wt-chain2), so this fire
   took M340. NAMED headroom: M332 rotated VERBATIM to `docs/named-archive-m340-rows.md:5`
   (sha1 `3ef265e11aca`, `scripts/m340_named_rotate.py --verify`); M335/M338 OPEN rows

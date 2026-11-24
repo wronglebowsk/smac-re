@@ -22,13 +22,16 @@ EVID = os.path.join(ROOT, "evidence", "m340_mutate.txt")
 
 DECL = {
     "MU1": {"G1"},        # Difficulty key immediate -> Language's key
-    "MU2": {"G2"},        # a jcc inside the store window
+    "MU2": {"G2", "G3"}, # a jcc inside the store window
     "MU3": {"G3"},        # pop ebp -> pop eax on the return path
     "MU4": {"G4", "G5"},  # a value-space bound (5) appears in the atoi (G5 reads the classifier)
     "MU5": {"G5"},        # Language's bound 4 -> 2 (positive control dies)
     "MU6": {"G7"},        # pref-fed reader's table base displaced one dword
     "MU7": {"G1", "G2"},  # the pref store lands on 0x92bdec
     "MU8": {"G6"},        # the ladder's own loop bound 6 -> 7
+    "MU9": {"G3"},        # the wrapper's downstream call retargeted (chain identity)
+    "MU10": {"G1"},       # lpDefault moves off the itoa(0) buffer
+    "MU11": {"G1"},       # the profile read's size argument leaves the argc-6 window
     "ALG1": {"G4", "G5"},  # classifier mutant: every cmp constant is a bound
 }
 GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7"]

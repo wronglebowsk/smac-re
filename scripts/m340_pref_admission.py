@@ -31,28 +31,28 @@ plus the PE strings of `programs/terran.exe`; zero box time):
 
 GATES (printed FIRST, then asserted; every V row names a mutant in
 scripts/m340_mutate.py):
-  G1  the Difficulty read: 18 profile-call sites, exactly one with key imm
-      0x692718 == "Difficulty"; its value store is ds:0x92bde8 at 0x58e8c6;
-      that is the ONLY store to 0x92bde8 in the function; the injected default
-      is the string "0".
-  G2  the 0x58e8a9..0x58e8c6 window is straight-line: 10 insns, 0 jcc/jmp/ret,
-      exactly 2 stores, the pref store's source register is eax.
-  G3  return-path identity: 0x5ea484 and 0x5eaa53 have no jcc and no eax write
-      after their downstream call -> the stored dword IS the parser's return.
+  G1  the Difficulty read: 18 `call edi` sites whose 6-push window holds exactly
+      one `push 0x100` (argc-6); exactly one key imm 0x692718 == "Difficulty"; its
+      lpDefault push IS 0x997120, the itoa(0) buffer seeded at 0x58e865; its value
+      store ds:0x92bde8 @0x58e8c6 is the ONLY store to that cell in the function.
+  G2  0x58e8a9..0x58e8c6: 10 insns, 0 jcc/jmp/ret, exactly the two stores
+      ds:0x996be8,eax (parse cursor) and ds:0x92bde8,eax.
+  G3  the store's eax IS 0x6287e2's return: 0x58e8b9 calls 0x5ea484 -> 0x5eaa53 ->
+      {0x5ea985, 0x6287e2}; both wrappers branch-free, no eax write after their
+      call, pop ebp/ret epilogue, and no eax write between call and store.
   G4  parse-chain compare census: the constant set equals the declared set and
       contains NO element of {2,3,4,5,6}.
-  G5  rivals, each evaluated and each FAILING on the printed numbers:
-      R1 "the Difficulty path clamps to the 6-row ladder"; R2 "a bounded
-      default caps it"; R3 "Language's bounded switch is Difficulty's
-      consumer". Positive control: Language bound == 4 (found), Difficulty
-      bound == none (found).
-  G6  table arithmetic: (0x94d2c4-0x94d2ac)/4 == 6 rows; k=5 -> 0x94d2c0 (last
-      legal row); k=6 -> 0x94d2c4 == TABLE_END, i.e. one dword past by exactly
-      4 bytes.
-  G7  the pref-fed readers: the three census loads whose index provenance is a
-      difficulty pref cell all compute TABLE_END at k=6 (base and scale decoded
-      from their own addressing bytes), while the loop-counted builder cannot
-      reach 6.
+  G5  rivals, each evaluated and each FAILING on the printed numbers (R1 clamps to
+      the 6-row ladder; R2 a bounded default; R3 Language's switch is Difficulty's
+      consumer). Positive control READ STRUCTURALLY: the argument reaches
+      [ebp-0x4], `cmp [ebp-0x4],0x4`, `ja`, then indexes [edx*4+0x6281ac].
+  G6  table endpoints MEASURED from the ladder's own loader (0x57ac74 base,
+      0x57ac88 end) and the row count from the list builder's loop bound
+      (0x57c6cb `cmp esi,0x6`): 6 rows, k=5 -> 0x94d2c0 last legal, k=6 -> the
+      measured end 0x94d2c4, one dword past.
+  G7  the pref-fed readers: base and scale decoded from each load's own addressing
+      bytes, the index from a memory load, and a def-use gap between that load and
+      the table access with NO branch, call, compare or index rewrite.
 """
 import hashlib
 import os
@@ -159,6 +159,12 @@ def apply_mut(ins):
           "ds:0x92bde8,eax", "ds:0x92bdec,eax")
     elif MUT == "MU8":    # the ladder's own loop bound 6 -> 7
         P(ins, 0x57C6CB, "83 fe 06", "83 fe 07", "esi,0x6", "esi,0x7")
+    elif MUT == "MU9":    # the wrapper's downstream call retargeted (chain identity)
+        P(ins, 0x5EAA63, "e8 7a dd 03 00", "e8 b8 dc 03 00", "0x6287e2", "0x628720")
+    elif MUT == "MU10":   # the lpDefault argument moves off the itoa(0) buffer
+        P(ins, 0x58E89C, "68 20 71 99 00", "68 24 71 99 00", "0x997120", "0x997124")
+    elif MUT == "MU11":   # the profile read's size argument is not the 0x100 of the window
+        P(ins, 0x58E896, "68 00 01 00 00", "68 00 00 00 00", "0x100", "0x0")
     return ins
 
 
@@ -273,25 +279,44 @@ def main():
     fs, fe = FUNC
     body = window(ins, fs, fe)
     calls = [i for i in body if i["mn"] == "call" and i["ops"].strip() == "edi"]
+
+    def pushes_before(c):
+        """The push window feeding `call edi`: collect pushes backwards, stop at a call."""
+        got, seen = [], 0
+        for i in reversed([x for x in body if x["a"] < c["a"]]):
+            seen += 1
+            if i["mn"] == "push":
+                got.append(i)
+            elif i["mn"] == "call":
+                break
+            if len(got) == 6 or seen > 14:
+                break
+        return list(reversed(got))
+
     # key immediate = the push of a 0x69xxxx address inside the 6-push window
     keys = {}
+    argc6 = 0
     for c in calls:
-        prev = [i for i in body if i["a"] < c["a"]][-6:]
+        prev = pushes_before(c)
+        if len(prev) == 6 and [p["ops"].strip() for p in prev].count("0x100") == 1:
+            argc6 += 1
         k = [i for i in prev if i["mn"] == "push" and re.match(r"^0x69[0-9a-f]{4}$", i["ops"].strip())]
-        keys[c["a"]] = (k[0]["a"], int(k[0]["ops"].strip(), 16)) if k else (None, None)
+        keys[c["a"]] = (k[0]["a"] if k else None, int(k[0]["ops"].strip(), 16) if k else None,
+                        [p["ops"].strip() for p in prev])
     strs = pe_str([KEY_DIFF, KEY_LANG])
-    diff_sites = [a for a, (ka, kv) in keys.items() if kv == KEY_DIFF]
-    lang_sites = [a for a, (ka, kv) in keys.items() if kv == KEY_LANG]
+    diff_sites = [a for a, (ka, kv, _) in keys.items() if kv == KEY_DIFF]
+    lang_sites = [a for a, (ka, kv, _) in keys.items() if kv == KEY_LANG]
+    diff_push = keys[diff_sites[0]][2] if diff_sites else []
     store_cell = stores(body, PREF)
     store_addrs = [s["a"] for s in store_cell]
 
     print("== M340 gate table (computed, printed before assertion) ==")
     print("FN_0058e7f0 extent 0x%x..0x%x  insns=%d" % (fs, fe, len(body)))
-    print("G1  profile-call sites=%d  keys: Difficulty=%d (%s)  Language=%d"
-          % (len(calls), len(diff_sites), strs.get(KEY_DIFF), len(lang_sites)))
+    print("G1  `call edi` sites=%d  six-push (argc-6) windows=%d  Difficulty=%d (%s)  Language=%d"
+          % (len(calls), argc6, len(diff_sites), strs.get(KEY_DIFF), len(lang_sites)))
     if diff_sites:
-        print("    Difficulty call 0x%x key-push 0x%x  PE=%r"
-              % (diff_sites[0], keys[diff_sites[0]][0], strs.get(KEY_DIFF)))
+        print("    Difficulty call 0x%x key-push 0x%x  PE=%r  push window=%s"
+              % (diff_sites[0], keys[diff_sites[0]][0], strs.get(KEY_DIFF), diff_push))
     print("    stores to ds:0x92bde8 in the function = %s" % [hex(a) for a in store_addrs])
     win = window(ins, 0x58E8A9, 0x58E8C7)
     print("G2  window 0x58e8a9..0x58e8c6: %d insns, branches=%d" %
@@ -303,21 +328,33 @@ def main():
     # default string: the itoa(0) push that seeds 0x997120 before the key window
     pre = window(ins, 0x58E85F, 0x58E892)
     default_zero = [i for i in pre if i["mn"] == "push" and i["ops"].strip() == "0x0"]
-    print("    default seed: push 0x0 at %s (itoa(0)/strcpy into 0x%x)"
-          % ([hex(i["a"]) for i in default_zero], DEFAULT_BUF))
+    print("    default seed: push 0x0 at %s -> itoa(0)/strcpy into 0x%x, then pushed as the"
+          " lpDefault argument (%s)" % ([hex(i["a"]) for i in default_zero], DEFAULT_BUF,
+                                        "0x997120" in diff_push))
 
     # ---- G3 return path -------------------------------------------------
     rp = []
+    link = {}
+    # the window's call must BE the wrapper, the wrapper must call the next, etc.
+    c0 = site(ins, 0x58E8B9)
+    link["0x58e8b9"] = c0["ops"].strip()
     for lo, hi, lab in ((0x5EA484, 0x5EA493, "0x5ea484"), (0x5EAA53, 0x5EAA6F, "0x5eaa53")):
         seq = window(ins, lo, hi)
         ci = [n for n, i in enumerate(seq) if i["mn"] == "call"]
         tail = seq[ci[0] + 1:] if ci else []
         eaw = [i for i in tail if writes(i, "eax")]
         br = [i for i in seq if i["mn"].startswith("j")]
-        rp.append((lab, len(seq), len(br), len(eaw),
+        epi = [(i["mn"], i["ops"]) for i in seq[-3:]]
+        link[lab] = [i["ops"].strip() for i in seq if i["mn"] == "call"]
+        rp.append((lab, len(seq), len(br), len(eaw), epi, ci[0] if ci else None,
                    [("%x" % i["a"], i["mn"], i["ops"]) for i in eaw]))
-        print("G3  %s: insns=%d jcc=%d eax-writes-after-call=%d %s"
-              % (lab, len(seq), len(br), len(eaw), rp[-1][4]))
+        print("G3  %s: insns=%d jcc=%d eax-writes-after-call=%d call->%s epilogue=%s"
+              % (lab, len(seq), len(br), len(eaw), link[lab], epi))
+    # nothing between the wrapper's return and the store may touch eax
+    between = window(ins, 0x58E8BE, 0x58E8C6)
+    btw = [i for i in between if writes(i, "eax")]
+    print("G3  0x58e8be..0x58e8c6 between call and store: %d insns, eax writes=%d %s"
+          % (len(between), len(btw), [(i["mn"], i["ops"]) for i in between]))
 
     # ---- G4 compare census ----------------------------------------------
     census = []
@@ -338,14 +375,25 @@ def main():
         print("      %x  %-5s %-13s 0x%-2x  %s" % (a, mn, lab, c, ops))
 
     # ---- G5 rivals / positive control -----------------------------------
-    lang = window(ins, 0x628130, 0x6281AC)
-    lang_c = [(a, c) for a, _, c, _ in consts(lang)]
-    lang_ja = [i for i in lang if i["mn"].startswith("j")]
-    lang_bound = [c for _, c in lang_c if c in BOUND_SPACE]
+    # STRUCTURAL read of the Language switch: the compared operand is the ARGUMENT,
+    # the branch is `ja`, and the table index is that same slot.
+    lang = window(ins, 0x628130, 0x6281B0)
+    seq = [(i["mn"], i["ops"]) for i in lang]
+    want_shape = [("push", "ebp"), ("mov", "ebp,esp"), ("push", "ecx"),
+                  ("mov", "eax,DWORD PTR [ebp+0x8]"), ("mov", "ds:0x99aa98,eax"),
+                  ("mov", "ecx,DWORD PTR ds:0x99aa98"), ("mov", "DWORD PTR [ebp-0x4],ecx"),
+                  ("cmp", "DWORD PTR [ebp-0x4],0x4"), ("ja", "0x6281a8"),
+                  ("mov", "edx,DWORD PTR [ebp-0x4]"),
+                  ("jmp", "DWORD PTR [edx*4+0x6281ac]")]
+    lang_bound = [c for a, _, c, _ in consts(lang) if c in BOUND_SPACE]
     diff_bound = hit
-    print("G5  positive control Language@0x628130: cmp consts=%s jcc=%s bound=%s"
-          % ([hex(c) for _, c in lang_c], [i["mn"] for i in lang_ja], lang_bound))
-    print("    Difficulty@0x58e8c6: bound=%s" % diff_bound)
+    print("G5  Language@0x628130 instruction shape (%d of %d expected):" % (len(seq), len(want_shape)))
+    for n, (mn, op) in enumerate(seq[:len(want_shape)]):
+        print("      %2d %-5s %-32s %s" % (n, mn, op,
+                                           "OK" if (mn, op) == want_shape[n] else "SHAPE"))
+    print("    compared slot is the argument: cmp operand %r == jump index source"
+          " (edx <- [ebp-0x4])" % (seq[7][1] if len(seq) > 7 else None))
+    print("    Language bound=%s  Difficulty bound=%s" % (lang_bound, diff_bound))
     print("    R1 'Difficulty clamps to the 6-row ladder'  -> bound found? %s (must be empty)"
           % diff_bound)
     print("    R2 'a bounded default caps it'              -> default is the string %r, comps before store=%d"
@@ -353,16 +401,26 @@ def main():
     print("    R3 'Language's bounded switch is Difficulty's consumer' -> the switch is at 0x628130 reached from 0x58e85a, difficulty store followed by 0x58e8be (next field setup)")
 
     # ---- G6 table arithmetic --------------------------------------------
-    # the row count is MEASURED, not assumed: the UI list builder's loop bound
+    # BOTH endpoints are MEASURED from the ladder's own loader (0x57ac74 / 0x57ac88),
+    # and the row count from the UI list builder's loop bound (0x57c6cb).
+    b_ins = site(ins, 0x57AC74)
+    e_ins = site(ins, 0x57AC88)
+    mb = re.search(r",0x([0-9a-f]+)$", b_ins["ops"])
+    me = re.search(r",0x([0-9a-f]+)$", e_ins["ops"])
+    base_m = int(mb.group(1), 16) if mb else None
+    end_m = int(me.group(1), 16) if me else None
     lb = site(ins, 0x57C6CB)
     m = re.search(r",0x([0-9a-f]+)$", lb["ops"])
     rows_meas = int(m.group(1), 16) if m else None
-    rows_n, rem = divmod(TABLE_END - TABLE, 4)
-    k5, k6 = TABLE + 4 * 5, TABLE + 4 * 6
+    rows_n, rem = divmod(end_m - base_m, 4) if (end_m and base_m) else (0, 1)
+    k5, k6 = base_m + 4 * 5, base_m + 4 * 6
+    print("G6  loader endpoints measured: 0x57ac74 `%s %s` -> base=0x%x ;"
+          " 0x57ac88 `%s %s` -> end=0x%x"
+          % (b_ins["mn"], b_ins["ops"], base_m or 0, e_ins["mn"], e_ins["ops"], end_m or 0))
     print("G6  loop bound 0x57c6cb `%s %s` -> rows_measured=%s"
           % (lb["mn"], lb["ops"], rows_meas))
-    print("G6  rows=(0x%x-0x%x)/4=%d rem=%d  k=5 -> 0x%x  k=6 -> 0x%x (END=0x%x)"
-          % (TABLE_END, TABLE, rows_n, rem, k5, k6, TABLE_END))
+    print("G6  rows=(0x%x-0x%x)/4=%d rem=%d  k=5 -> 0x%x  k=6 -> 0x%x"
+          % (end_m or 0, base_m or 0, rows_n, rem, k5, k6))
 
     # ---- G7 pref-fed readers --------------------------------------------
     r7 = []
@@ -371,45 +429,62 @@ def main():
         base, sc = scale_of(si)
         m = re.search(r"\[(e?[abcds][xi])\*", si["ops"])
         reg = m.group(1) if m else None
-        prev = [i for i in ins if i["a"] < a]
-        defs = [i for i in prev if writes_fam(i, reg)] if reg else []
+        defs = [i for i in ins if i["a"] < a and writes_fam(i, reg)] if reg else []
         d = defs[-1] if defs else None
-        r7.append((a, lab, kind, base, sc, reg, d))
-        print("G7  0x%x %-26s %-11s base=0x%x scale=%d idx=%s def=%s"
+        gap = window(ins, d["a"] + 1, a) if d else []
+        bad = [i for i in gap if i["mn"].startswith("j") or i["mn"] in ("call", "ret")
+               or i["mn"] in ("cmp", "test") or writes_fam(i, reg)]
+        r7.append((a, lab, kind, base, sc, reg, d, gap, bad))
+        print("G7  0x%x %-26s %-11s base=0x%x scale=%d idx=%s def=%s gap=%d bad=%d"
               % (a, lab, kind, base, sc, reg,
-                 ("%x %s %s" % (d["a"], d["mn"], d["ops"])) if d else "none"))
+                 ("%x %s %s" % (d["a"], d["mn"], d["ops"])) if d else "none",
+                 len(gap), len(bad)))
+        for i in gap:
+            print("        gap %x %s %s" % (i["a"], i["mn"], i["ops"]))
     pref_ok = True
-    for a, lab, kind, base, sc, reg, d in r7:
+    for a, lab, kind, base, sc, reg, d, gap, bad in r7:
         if a not in PREF_FED:
             continue
-        # the index must come from a MEMORY LOAD, not a constant or a compare
-        if not (base == TABLE and sc == 4 and d is not None and "PTR" in d["ops"]):
+        # def-use WINDOW: the index comes from a memory load and NOTHING between that
+        # load and the table access branches, calls, compares or rewrites the index.
+        if not (base == TABLE and sc == 4 and d is not None and "PTR" in d["ops"] and not bad):
             pref_ok = False
-    print("G7  pref-fed sites %s: base==TABLE, scale==4, index defined by a memory"
-          " load: %s" % ([hex(a) for a in PREF_FED], pref_ok))
+    print("G7  pref-fed sites %s: base==TABLE, scale==4, memory-loaded index, and a gap"
+          " window with 0 branches/calls/compares/rewrites: %s"
+          % ([hex(a) for a in PREF_FED], pref_ok))
 
     # ---- assert ----------------------------------------------------------
-    gate("G1", len(calls) == 18 and len(diff_sites) == 1 and strs.get(KEY_DIFF) == "Difficulty"
-         and store_addrs == [0x58E8C6] and len(default_zero) == 1,
-         "18 profile calls; 1 Difficulty key (PE %r); store 0x92bde8 at %s; default '0'"
+    gate("G1", len(calls) == 18 and argc6 == 18 and len(diff_sites) == 1
+         and strs.get(KEY_DIFF) == "Difficulty" and store_addrs == [0x58E8C6]
+         and len(default_zero) == 1 and "0x997120" in diff_push,
+         "18 argc-6 push windows (one push 0x100 each); 1 Difficulty key (PE %r);"
+         " lpDefault = 0x997120 seeded by itoa(0); store 0x92bde8 at %s"
          % (strs.get(KEY_DIFF), [hex(a) for a in store_addrs]))
     gate("G2", len(win) == 10 and not any(isbr(i) for i in win) and len(wstores) == 2
+         and wstores[0]["ops"] == "ds:0x996be8,eax"
          and wstores[-1]["ops"] == "ds:0x92bde8,eax",
          "10 insns, 0 branches, stores %s, pref store src eax" % [i["ops"] for i in wstores])
-    gate("G3", all(b == 0 and e == 0 for _, _, b, e, _ in rp),
-         "both wrappers: 0 branches, 0 eax writes after the call -> stored dword == parser return")
+    gate("G3", link.get("0x58e8b9") == "0x5ea484"
+         and link.get("0x5ea484") == ["0x5eaa53"]
+         and link.get("0x5eaa53") == ["0x5ea985", "0x6287e2"] and not btw
+         and all(b == 0 and e == 0 and epi[-2:] == [("pop", "ebp"), ("ret", "")]
+                 for _, _, b, e, epi, _, _ in rp),
+         "call chain 0x58e8b9 -> 0x5ea484 -> 0x5eaa53 -> {0x5ea985, 0x6287e2}: both wrappers"
+         " branch-free, no eax write after their call, pop ebp/ret epilogue; 0 eax writes"
+         " between the wrapper and the store")
     gate("G4", set(cset) == DECLARED_CMP and not hit,
          "cmp constants == declared set, intersection with {2..6} empty")
-    gate("G5", lang_bound == [4] and not diff_bound,
-         "Language bound=%s (positive control), Difficulty bound=%s -> R1/R2/R3 fail"
+    gate("G5", seq[:len(want_shape)] == want_shape and lang_bound == [4] and not diff_bound,
+         "Language: the compared slot IS the argument ([ebp-0x4] <- [0x99aa98] <- [ebp+0x8]),"
+         " branch ja, table [edx*4+0x6281ac]; bound=%s; Difficulty bound=%s"
          % (lang_bound, diff_bound))
-    gate("G6", rows_n == 6 and rem == 0 and k5 == 0x94D2C0 and k6 == TABLE_END
-         and rows_meas == rows_n,
-         "6 rows (loop bound measured 0x57c6cb), k=5 last legal 0x94d2c0,"
-         " k=6 == 0x94d2c4 one dword past")
+    gate("G6", rows_n == 6 and rem == 0 and base_m == TABLE and end_m == TABLE_END
+         and rows_meas == rows_n and k5 == 0x94D2C0 and k6 == end_m,
+         "endpoints MEASURED from 0x57ac74/0x57ac88 (base 0x94d2ac, end 0x94d2c4), 6 rows,"
+         " k=5 last legal 0x94d2c0, k=6 == 0x94d2c4 one dword past")
     gate("G7", pref_ok and len(LOADS) == 7,
-         "each pref-fed reader: base==0x94d2ac, scale==4, index from a memory"
-         " load (no constant, no clamp) -> k=6 lands on 0x94d2c4")
+         "each pref-fed reader: base==0x94d2ac, scale==4, index from a memory load, and a"
+         " def-use gap with 0 branches/calls/compares/rewrites -> k=6 lands on 0x94d2c4")
 
     print("\n== gate rows ==")
     for gid, st, det in rows:

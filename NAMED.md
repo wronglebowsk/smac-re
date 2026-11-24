@@ -1057,7 +1057,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | ACCEPT 14/14 digest 030a6fc12e4a7cd7 x2 (`evidence/m328_hurry_globals.txt:85-86`,`_rerun.txt:85-86`); harness 38 mutants (37 scored + 1 NO-OP) digest 36259eee0736d9c1 (`evidence/m328_mutate.txt:41-43`); ST 5/5 (`evidence/m328_mutate_selftest.txt:7`) | as cited | V |
 | OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); SP-path noun INFERRED (DIFFICULTY/USERULES strings); ~~92bdf8 mode global~~ ANSWERED M332 (the win-INI pref cell "Top Menu"; read/write/pseudocode views agree); ~~+300 upkeep refund~~ ANSWERED M330 (spend accumulator, k=1/2 law V); ~~facprofile+4ec interest~~ ANSWERED M331 (rate%/100 on ENERGY, +508 bit14 gate) | - | lead |
 
-## M332 (s311-chain1, pick (x2), STATIC 8/8) — `ds:0x985aec` is the RUNTIME MIRROR of the game's own `Difficulty` preference; its master `ds:0x92bde8` is the win-INI key `Difficulty`, read by FUN_0058e7f0 and written back by FUN_0058f0d0 (REFINES `## M308`). FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m340-rows.md:5` (sha1 `3ef265e11aca`); this stub governs, one line per claim
+## M332 (s311-chain1, pick (x2), STATIC 9/9) — `ds:0x985aec` is the RUNTIME MIRROR of the game's own `Difficulty` preference; its master `ds:0x92bde8` is the win-INI key `Difficulty`, read by FUN_0058e7f0 and written back by FUN_0058f0d0 (REFINES `## M308`). FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m340-rows.md:5` (sha1 `3ef265e11aca`); this stub governs, one line per claim
 
 | claim | evidence | conf |
 |---|---|---|
@@ -1068,7 +1068,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | the pref table: 11 key-exclusive 6-arg profile reads in FUN_0058e7f0, an INJECTIVE name->field map, `Difficulty`@0x58e8a1 -> 0x92bde8@0x58e8c6, paired with the writeback load@0x58f11d; API identity measured (G9.5): 18 read / 8 write calls through `edi` == Ghidra's counts; 6/6 three-way names agree (s312 P2 correction) | `:105-107` + `:51-53`, `:68`, G9.5 `:94-97` | V MU4-15 |
 | siblings the same map names: 0x92bdf4 = `Map Type`, 0x92bdf8 = `Top Menu`, 0x92bdec = `Faction` (what `## M328` called "92bdf8 mode global") | `:106-107` | V MU9,13 |
 | RIVAL KILLED: 0x92bde8 is BOTH the end of the 4x0xd4 record array at 0x92ba98 (G9.6 reads the loops) AND a scalar pref cell (2 stores, 6 loads) - "sentinel only" fails on 0 stores | `:108` + G9.6 `:98-100` | V MU4,6,10,12,20 |
-| ACCEPT digest(table) `d2691dc5abb39240`, `PASS M332: 9/9`; harness 20 scored + 1 NO-OP, digest `a9a944201849d026` | `evidence/m332_mutate.txt:25` | V |
+| ACCEPT `PASS M332: 9/9` digest(table) `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP, digest `a9a944201849d026` (`evidence/m332_mutate.txt:25`) | both files | V |
 | OPEN: the difficulty INDEX->label order is now ALPHA `#DIFF` file order (M335: 4=Thinker, 5=Transcend); the 0x8f0090 consumer is a player-record difficulty byte (M336); a pref >=6 is ADMITTED verbatim (M340, 7/7). Still open: 0x5f1394's semantics (chain 2), the other writers of the 0x92bde8..0x92bf14 block | - | lead |
 
 ## M331 (s310-chain2, STATIC 14/14, review #345 hardened) - block+2fc/+308 = upkeep INCOME siblings
@@ -1375,16 +1375,16 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | ACCEPT `m338_diff_readers.py` -> `PASS M338: 8/8` `1ae1563d47d0039e` x2 (sha256 288a0edc); harness 16/16 `56455db0eadbedd7` (`evidence/m338_mutate.txt:18`), ST 3/3; review #357's 10 findings all fixed IN the gates | `:59-67` | V |
 | OPEN: the +0x20 index is UNCLAMPED (a HoF byte >=6 reads past `0x94d2c4`); FUN_0058e7f0 admitting a pref >=6 is now ANSWERED by M340 (ADMITTED, 7/7); 0x44a1c8's window is the HoF screen INFERRED | - | lead |
 
-## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, zero box) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder — `evidence/m340_pref_admission.txt:60-71`
+## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, review #358 hardened) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder — `evidence/m340_pref_admission.txt:79-90`
 
 | claim | evidence | conf |
 |---|---|---|
-| 18 six-arg profile reads in FUN_0058e7f0; exactly ONE key immediate 0x692718 == PE `"Difficulty"` (0x58e8a1) and its store `ds:0x92bde8` @0x58e8c6 is the ONLY store to that cell in the function; the injected default is the itoa(0) buffer 0x997120 (push 0x0 @0x58e865) | `:3-8` | V MU1,MU7 |
-| 0x58e8a9..0x58e8c6 is 10 STRAIGHT-LINE insns (0 jcc/jmp/ret), 2 stores (cursor 0x996be8, pref 0x92bde8), pref store source = eax | `:6-18` | V MU2,MU7 |
-| eax there IS 0x6287e2's return: wrappers 0x5ea484 / 0x5eaa53 have 0 jcc and 0 eax write after their call => ZERO post-processing | `:19-20` | V MU3 |
-| the whole parse chain (atoi 0x64c360 + 0x64c460, tokeniser 0x5ea985, radix 0x6287e2/0x628720/0x62876b) compares CHARACTER CLASSES only: constants {0x0,0x1,0x2b,0x2c,0x2d,0x30,0x31,0x36}; intersection with {2,3,4,5,6} EMPTY | `:21-42` | V MU4,ALG1 |
-| POSITIVE CONTROL, same function: `Language` IS bounded — 0x628130 `cmp [ebp-0x4],0x4` + `ja` + jump table; the same classifier finds bound 4 there and NONE for Difficulty, so "no bound" is measured, not assumed | `:43-47` | V MU5 |
-| 6 rows MEASURED from the ladder's own loop bound (0x57c6cb `cmp esi,0x6`); k=5 -> 0x94d2c0 last legal row, k=6 -> 0x94d2c4 == TABLE_END | `:48-49` | V MU8 |
-| the three pref-fed readers 0x48678f / 0x44a1c8 / 0x599405 load TABLE at scale 4 with an index from a MEMORY LOAD (difficulty byte, HoF byte +0x20, `ds:0x985aec`) — no constant, no clamp => k=6 lands on 0x94d2c4 | `:50-57` | V MU6 |
-| ACCEPT `python3 -u scripts/m340_pref_admission.py` -> `PASS M340: 7/7 gates`, rows `277483c12bd5cc44`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2 runs byte-identical; `scripts/m340_mutate.py` -> `PASS HARNESS M340: 9/9`, all 7 gates covered, NO-OP `[]`, `b25e0bc3a09693f5` | `evidence/m340_mutate.txt:13` | V |
-| OPEN: what the runtime dword AT 0x94d2c4 holds (a box read; the six rows end there); whether any other writer of the 0x92bde8/0x985aec pair (0x57c7b0 writes both in one breath, source not traced) supplies a bounded value | - | lead |
+| 18 `call edi` sites, each with a 6-push window holding exactly one `push 0x100` (argc-6); exactly ONE key 0x692718 = PE `"Difficulty"` (0x58e8a1) whose lpDefault push IS 0x997120, the itoa(0) buffer seeded at 0x58e865; its store `ds:0x92bde8` @0x58e8c6 is the ONLY store to that cell in the function | `:3-8` | V MU1,MU10,MU11 |
+| 0x58e8a9..0x58e8c6 is 10 straight-line insns (0 jcc/jmp/ret) with the two stores `ds:0x996be8,eax` (cursor) and `ds:0x92bde8,eax` | `:6-18` | V MU2,MU7 |
+| the stored eax IS 0x6287e2's return: 0x58e8b9 calls 0x5ea484 -> 0x5eaa53 -> {0x5ea985, 0x6287e2}; both wrappers are branch-free, write no eax after their call and end pop ebp/ret; 0 eax writes between the call and the store | `:19-21` | V MU2,MU3,MU9 |
+| the parse chain (atoi 0x64c360/0x64c460, tokeniser 0x5ea985, radix 0x6287e2/0x628720/0x62876b) compares CHARACTER CLASSES only: constants {0x0,0x1,0x2b,0x2c,0x2d,0x30,0x31,0x36}; intersection with {2,3,4,5,6} EMPTY | `:22-42` | V MU4,ALG1 |
+| POSITIVE CONTROL, same function: `Language`'s consumer 0x628130 puts the argument in [ebp-0x4], `cmp [ebp-0x4],0x4`, `ja 0x6281a8`, then indexes `[edx*4+0x6281ac]` — bound 4 there, NONE on the Difficulty path | `:44-58` | V MU5 |
+| endpoints MEASURED from the ladder loader 0x57ac74/0x57ac88 (base 0x94d2ac, end 0x94d2c4) and 6 rows from 0x57c6cb `cmp esi,0x6`; k=5 -> 0x94d2c0 last legal, k=6 -> 0x94d2c4 | `:61-65` | V MU8 |
+| the three pref-fed readers 0x48678f / 0x44a1c8 / 0x599405 load TABLE at scale 4 from a memory-loaded index whose def-use gap (0/0/2 insns) holds no branch, call, compare or rewrite | `:67-76` | V MU6 |
+| ACCEPT `python3 -u scripts/m340_pref_admission.py` -> `PASS M340: 7/7 gates`, rows `1cc44d0146a8b419`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2 runs byte-identical; `scripts/m340_mutate.py` -> `PASS HARNESS M340: 12/12`, 7/7 gates covered, NO-OP `[]`, `a2a1726721114b4d` | `evidence/m340_mutate.txt:16` | V |
+| OPEN: what the runtime dword AT 0x94d2c4 holds (a box read); whether any other writer of the 0x92bde8/0x985aec pair (0x57c7b0 writes both in one breath, source untraced) supplies a bounded value | - | lead |

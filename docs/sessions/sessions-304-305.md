@@ -3,7 +3,8 @@
 Rotated out of `SESSION_NOTES.md` by `scripts/session_rotate.py` to keep the hot
 file readable in one context window. Same evidence file paths apply.
 
-Older sessions: `docs/sessions/sessions-300-305.md` — the hot file cites only THIS archive, so
+Older sessions: Session 307 lives in `docs/sessions/sessions-307-307.md`; that archive points to
+`docs/sessions/sessions-300-305.md`. The hot file cites only THIS archive, so
 the chain onward lives here; without this line the older archives are orphans (s292).
 
 ## Session 304-chain2 (2026-11-19, M328 CLOSED, STATIC: the two HURRY globals named)
