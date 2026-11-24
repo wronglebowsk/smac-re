@@ -1,0 +1,61 @@
+G1 ORACLE READ FROM THE RECORDED BYTES
+  samples=20 (before=10 after=10) bases/sample=[19, 20, 21, 22] records=407 bitmap bytes=4
+  oracle digest=7afda4dd49566fb4  first=(0, 'round_before', 0, 0, 'University Base')  last=(19, 'round_after', 9, 21, 'Dreams of Green')
+ok   G1 recorded run decoded: 10 before + 10 after samples, 407 base-records, one bitmap each  bases/sample=[19, 20, 21, 22]
+
+G2 BIT CHANGES IN THE RECORDED RUN (gain = completion can explain, loss = it cannot)
+  sample  3 round_after  r1 base  4 Sparta Command         head=128   pend=0 st=0   gained=[4]      lost=[1]
+  sample  5 round_after  r2 base  7 Morgan Energy Monopoly head=-6    pend=0 st=2   gained=[2]      lost=[]
+  sample 11 round_after  r5 base  3 Morgan Industries      head=-24   pend=0 st=3   gained=[8]      lost=[]
+  sample 11 round_after  r5 base 14 Virgin Soil            head=133   pend=0 st=0   gained=[4]      lost=[27]
+  sample 13 round_after  r6 base 13 Morgan Processing      head=-2    pend=0 st=1   gained=[3]      lost=[]
+  sample 15 round_after  r7 base  7 Morgan Energy Monopoly head=-8    pend=0 st=1   gained=[6]      lost=[]
+  gains=6 losses=2 rows=6 digest=ce7688c0cb3b5f9d
+ok   G2 the recorded bitmaps are NOT monotonic: 6 gains and 2 losses at 6 changed samples, every symmetric difference fully accounted  digest=ce7688c0cb3b5f9d
+ok   G2b every changed id lies inside the four-byte window
+
+G3 THE RULE 'the queue head id is the bit that appeared' SCORED
+  sample  3 base  4 Sparta Command         head=321   gained_bit=4   match=False head_outside_window=True
+  sample  5 base  7 Morgan Energy Monopoly head=-2    gained_bit=2   match=False head_outside_window=True
+  sample 11 base  3 Morgan Industries      head=-8    gained_bit=8   match=False head_outside_window=True
+  sample 11 base 14 Virgin Soil            head=2     gained_bit=4   match=False head_outside_window=False
+  sample 13 base 13 Morgan Processing      head=-3    gained_bit=3   match=False head_outside_window=True
+  sample 15 base  7 Morgan Energy Monopoly head=-6    gained_bit=6   match=False head_outside_window=True
+  matches=0/6 heads_outside_window=5 digest=9a4f2c466f3d18b7
+ok   G3 the head->bit rule FAILS on the recorded numbers: 0/6 matches; 5 heads are unit-encoded and 1 in-window head(s) did not stamp  digest=9a4f2c466f3d18b7
+
+G4 THE RECORDED TRANSACTION, REPLAYED WITH THE STAMP ATTACHED (Korolev Center)
+  before: st=8 head=2 pend=1 bits=[8]
+  no-stamp log [('spend', 0), ('pop', 2)] -> st=0 bits=[8]
+  stamp     log [('spend', 0), ('stamp', 2), ('pop', 2)] -> st=0 bits=[2, 8]
+  pop-first log [('pop', 2), ('stamp', 2), ('spend', 0)] -> st=0 bits=[2, 8]
+  recorded next sample: round_after r0 st=0 pend=1 bits=[8]
+ok   G4a the spend is B23's parity-verified arithmetic: st 8 + 1 - 9 = 0 == the recorded after 0
+ok   G4b the head 2 is INSIDE the facility window, so the negative is not vacuous
+ok   G4c the recorded bitmap does NOT move at this boundary (bits stay [8]), so a stamp here FAILS the recorded bytes
+  2-deep fixture (pending=2, slots [2,6,..], declared): order-first [('spend', 0), ('stamp', 2), ('pop', 2)] -> [2] ; pop-first [('pop', 2), ('stamp', 6), ('spend', 0)] -> [6]
+ok   G4e the NO-STAMP replay leaves the recorded bitmap UNCHANGED (the recorded negative)
+ok   G4d pop-first stamps the NEXT item (6) and misses the head (2)
+
+G5 ORACLE BITMAP CARRIED THROUGH THE WRITER (University Base {1,8} -> target {1,4})
+  writes=2 diff_offsets=['0x8c', '0x8d'] reload_bits=[1, 4] other_records_identical=True identity_build=True
+  written sha256[:16]=fb0bc0caa186b766 bytes=242539
+ok   G5 the writer carries an ARBITRARY bitmap (a LOSS included, which the OR-only setter cannot express) and the reload reads it back
+
+G6 RIVALS + DETERMINISM
+  rival1 'the head stamps the bit' matches 0/6
+  rival2 'the bitmap only ever grows' contradicted by 2 loss(es)
+  rival3 'pop-first stamps the head' -> stamped [6], head-first stamps [2]
+  determinism: deltas digest True == True ; oracle digest True == True
+ok   G6a rival1 fails (0/6)
+ok   G6b rival2 fails (2 losses)
+ok   G6c rival3 stamps the next item, not the head
+ok   G6d two passes are identical (deltas + oracle digests)
+
+G7 ANCHORS PINNED (rows, oracle, score, written image)
+  rows=ce7688c0cb3b5f9d oracle=7afda4dd49566fb4 score=9a4f2c466f3d18b7 img=fb0bc0caa186b766
+ok   G7 the run reproduces every pinned anchor
+
+B31 TABLE digest=ce7688c0cb3b5f9d oracle=7afda4dd49566fb4 score=9a4f2c466f3d18b7
+PASS B31: 15/15 gates
+ANCHORS rows=ce7688c0cb3b5f9d oracle=7afda4dd49566fb4 score=9a4f2c466f3d18b7 img=fb0bc0caa186b766

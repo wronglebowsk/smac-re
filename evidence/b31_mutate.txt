@@ -1,0 +1,12 @@
+MU1_bitmap_off     declared={G3,G5,G7}                   red={G3,G5,G7}                   rc=1 OK
+MU2_head_off       declared={G3,G7}                      red={G3,G7}                      rc=1 OK
+MU3_price10        declared={G4a,G4c,G4d,G4e,G6c}        red={G4a,G4c,G4d,G4e,G6c}        rc=1 OK
+MU4_noadd          declared={G4a,G4c,G4d,G4e,G6c}        red={G4a,G4c,G4d,G4e,G6c}        rc=1 OK
+MU5_stamp_always   declared={G4e}                        red={G4e}                        rc=1 OK
+MU6_pop_first      declared={G4d,G6c}                    red={G4d,G6c}                    rc=1 OK
+MU7_monotonic      declared={G2,G3,G6b,G7}               red={G2,G3,G6b,G7}               rc=1 OK
+MU8_write_shift    declared={G5,G7}                      red={G5,G7}                      rc=1 OK
+MU9_nondet         declared={G6d,G7}                     red={G6d,G7}                     rc=1 OK
+MU10_noop          declared={}                           red={}                           rc=0 OK
+
+PASS HARNESS B31: 10/10 mutants redden exactly their declared sets (NO-OP []), digest a8bb479abbe42272

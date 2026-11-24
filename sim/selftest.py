@@ -1703,6 +1703,16 @@ def run_b29(sav_path, results):
     return sit.main([sav_path])
 
 
+def run_b31(sav_path, results):
+    """Rung B31: the recorded-run ORACLE - sim/facoracle.py authors every claim, so --b31 and
+    `python3 -m sim.facoracle` cannot print different text."""
+    import os as _os
+    from . import facoracle as sfac
+    if not _os.path.exists(sav_path):
+        return fail("B31: missing input: %s" % sav_path)
+    return sfac.main([sav_path])
+
+
 def run_b30(sav_path, results):
     """Rung B30: the COMPLETION leg - a paid queue item becomes a facility the base HAS; the
     reader's inverse writes ONE bitmap byte through the writer, the RELOAD reads it back, and
@@ -1906,6 +1916,10 @@ def main(argv=None):
     ap.add_argument("--b28", nargs="*", metavar="ARG",
                     help="rung B28: the UPKEEP FEEDER executable, the carried half-unit "
                          "persisted through the writer (defaults: <SAV>)")
+    ap.add_argument("--b31", nargs="*", metavar="ARG",
+                    help="rung B31: the recorded-run facility-bitmap ORACLE - every bit "
+                         "gain/loss scored against the queue head, Korolev r0 replayed "
+                         "(defaults: <SAV>)")
     ap.add_argument("--b30", nargs="*", metavar="ARG",
                     help="rung B30: the COMPLETION leg - the queue item stamped into the "
                          "base's +0x8c bitmap, carried through the writer (defaults: <SAV>)")
@@ -2003,6 +2017,9 @@ def main(argv=None):
     if args.b28 is not None:
         sav = args.b28[0] if args.b28 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b28(sav, results)
+    if args.b31 is not None:
+        sav = args.b31[0] if args.b31 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b31(sav, results)
     if args.b30 is not None:
         sav = args.b30[0] if args.b30 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b30(sav, results)
