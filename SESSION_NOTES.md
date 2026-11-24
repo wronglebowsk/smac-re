@@ -636,6 +636,31 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (3) `or r,reg` preserves an IN bit but turns a provable 0 into unknown. (4) seed every
   register UNKNOWN at entry, or a join inherits another path's value.
 
+## Session 342-chain6 — M388: slot 0's agenda pair has NO writer; the SE dialog stops at the live grid
+
+- **ACCEPT** `python3 -u scripts/m388_agenda_slot0.py` -> **`PASS M388: 39/39`** `e03bfb351d33c64e`
+  (`evidence/m388_agenda_slot0.txt:164`), two runs identical (`evidence/m388_twice.txt:3`);
+  `scripts/m388_mutate.py` **19/19 killed** (`evidence/m388_mutate.txt:22`), kill = the gate's own FAIL line. Static only, zero box.
+- **GEOMETRY** (`:12`,`:20`): the bit-24 randomizer's own imms — seed 0x9280b8, stride 0x59c,
+  `mov ebx,0x1` / `cmp ebx,0x8` — give **7** records, bases 0x927b2c..0x929cd4, end 0x92a270;
+  slot 0 = 0x927590 and its pair 0x927b14 (CAT +0x584) / 0x927b1c (CHOICE +0x58c) fall out of that
+  arithmetic (`:21`), never authored. Block = 8*0x59c = the 0x2ce0 pushed at 0x596ea4 (`:19`).
+- **WRITER = NONE** (`:23-34`), four censuses over 64,494 stores: (a) the five agenda displacements
+  sit in exactly 3 stores (0x5bee99/0x5bf5cd/0x5c6173), all C++ ctors (vtable 0x67902c), none in a
+  0x59c/0x927 context; (b) only 2 stores carry a disp32 inside the block (0x4dd996/0x57efe4, rec+0);
+  (c) the folded form `[i*0x59c+0x927b14..20]` has 33 operands and **0 stores**; (d) 39 pointer
+  seeds, none on the pair — the one naming slot 0 (0x579e9c) is skip-guarded (`:109`).
+- **SE PATH STOPS AT THE GRID** (`:115-139`): dialog key handlers FUN_4b5530/FUN_4b55d0 (Enter 0xd /
+  ESC 0x1b) call commit FUN_004b2570 — store `[eax+ecx*4+0x94d658]`, eax = faction*0x20bc, source
+  `[faction_obj+0xcf8+cat*4]`; 19 body stores: **1** grid dword, 1 at the block's +0x20 counter, **0** in the agenda block. The grid is what the scorers
+  COMPARE the agenda to (0x522df1/0x531fd8/0x555dd5), never copied from.
+- **SENTINEL** (`:148-149`): choice = `rand%3 + 1` (1..3, never 0) and all 9 loads of +0x58c are
+  0-tested (5) or name-formatted (4) => slot 0's (0,0) is a designed "no agenda" row, not a
+  placeholder for anyone's SE choices. The pick's premise is REFUTED.
+- **OPEN**: slot 0's OWNER (human vs unused id 0) — M43: the human is not block 0 in the 0x20bc
+  family; the 0x2ce0 block is pushed to the save/load helpers 4x (2 name the block, 2 a stack twin, `:110`).
+- **PITFALL**: the compiler folds `rec(i)+field` into `[i*0x59c+0x927b14]`, so a 0x584 displacement
+  grep misses every reader; and 0x927b14 is ALSO a 4-stride base in two `lea`s. Derive from the walk.
 ## Session 342 — B38: the `#SOCIO` SE-effect matrix is executable (9/9, 12 mutants, zero box)
 - **The grid.** `data/alpha.json` `#SOCIO` (19 records) -> 4 categories x 4 choices x 11 keyword
   columns; each entry = the signed count of the token's `+`/`-` prefix. Geometry recomputed from

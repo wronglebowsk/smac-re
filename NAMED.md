@@ -28,6 +28,14 @@
 - `0x585720` `unit_action_resolve(unit, param, mode)` — per-unit action executor (AI + end of turn) (M)
 - `0x5abb40` `unit_array_compact()` — slides records down with `rep movsd` (H)
 
+## M388 (s342-chain6, 39/39) — slot 0's agenda pair has NO writer; the SE commit writes the live grid only. **`PASS M388: 39/39`** `e03bfb351d33c64e` (`evidence/m388_agenda_slot0.txt:164`), x2 same; 19/19 (`evidence/m388_mutate.txt:22`).
+| claim | ev | conf/mutant |
+|---|---|---|
+| randomizer: seed 0x9280b8, stride 0x59c, `mov ebx,0x1`/`cmp ebx,0x8` -> 7 records 0x927b2c..0x929cd4; slot0 0x927590, pair 0x927b14/0x927b1c; block 8*0x59c | `:12-21` | V MU1-5 MU14 |
+| 4 censuses / 64,494 stores: 3 ctor, 2 at rec+0, 33 folded operands / 0 stores, 39 seeds none on the pair | `:23-34,68,109` | V MU11-13 MU19 |
+| commit 0x4b2570: `[eax+ecx*4+0x94d658]` <- `[esi+edx*4+0xcf8]`, eax=f*0x20bc; 1 grid dword, 1 at +0x20, 0 in the block; handlers 0x4b5530/0x4b55d0 | `:139` | V MU8-10 MU16 MU17 |
+| choice = rand%3+1 (1..3); 9 +0x58c loads: 5 0-tested, 3 name-pushed, 1 vs +0x590 => slot0 (0,0) = no agenda | `:148-149` | V MU6 MU7 |
+| OPEN: slot 0's owner; 0x2ce0 is pushed to the save/load helpers (4x) | `:110` | OPEN |
 ## Not yet named (candidates, ranked by `COVERAGE.md`)
 - `0x5f6de9` — 305 callers, 550 B, 118 insns, no string literals
 - `0x483470` — 292 callers, 556 B, 141 insns, no string literals
@@ -998,17 +1006,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | ACCEPT 14/14 digest 442270fd57be2b62 x2 (`evidence/m331_ledger_census.txt:90-91`, `evidence/m331_ledger_census_rerun.txt:90-91`); 43/43+1 digest 29061c567f9132fb (`evidence/m331_mutate.txt:48-50`); ST 5/5 (`evidence/m331_mutate_selftest.txt:6`) | cite | V |
 | OPEN: income nouns; 4e9880; 8f0d40 law; +c0/+304; cap action; 920754 | - | lead |
 
-## M330 (s307-chain2, STATIC 13/13) - block+300 = UPKEEP SPEND ACCUMULATOR
-
-| claim | evidence | conf |
-|---|---|---|
-| 25->11 FIELD (4W/7R STRIDE)+2 arg-fed; 14 excl | G1/G12 `evidence/m330_block300_census.txt:2,31,64` | V MU12-14,17-19,28-30 |
-| W={4f4962,52056d 0,52078f resid,59f26a reset}; refund 520714-78f: 985aec>3,x!=0: r=trunc(kx/3) k=1(==4)/2(>=5); E+=r,x-=r; magic 55555556; mask VACUOUS | G2/G4-6 `:43,45-51` | V MU1-8,25,26,32 |
-| feeder 4f47f0 ROUND>1: v=[984d48+48*slot] (bits 95da9c); CONDITIONAL halving (owner-match +bit5 parity /2 else FULL); E-=v,+300+=v | G10 `:58-59` | V MU9,10,22-24 |
-| entry zeroes +2fc/300/308/3f8; +310:=+2fc; +30c:=+308-300+2fc; carry (M324) vals=[0,1,1,0,1,0,1,1] | G7-9/11 `:52-57,61` | V MU8,11,15,16,21,27 |
-| ACCEPT 13/13 digest 470d844054b1b101 x2 (`:67-68`,`_rerun.txt:67-68`); 31/31+1 digest cf85092dea6baa93 (`evidence/m330_mutate.txt:36-38`); ST 5/5 (`evidence/m330_mutate_selftest.txt:6`) | cite | V |
-| OPEN: slot; ~~985aec~~ ANSWERED M332 (runtime mirror of the INI pref "Difficulty", master 0x92bde8); ~~+2fc/+308~~ ANSWERED M331 (income siblings); profile+300 | - | lead |
-
+## M330 — VERBATIM at `docs/named-archive-m388-rows.md` (sha1 `8d7e818c0ec09da5`, 1134 B); this stub governs.
 ## M326 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `b35a213c4a689285`, 550 B)
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
