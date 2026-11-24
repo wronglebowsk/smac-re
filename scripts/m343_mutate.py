@@ -33,6 +33,8 @@ MUTANTS = [
     ("MU7", "G7", "5f3d70=DWORD PTR ds:0x9977f4,ecx", None),           # break ds:0x9977f0
     ("MU8", "G8", "5f57e6=DWORD PTR [ebp-0x10],0xffffffff", None),     # -2 -> -1
     ("MU9", "G9", "5f6c85=DWORD PTR [ecx+0xa44],edx", None),           # drop one field ref
+    ("MU10", "G7", "5f3d6a=ecx,DWORD PTR [ebp-0x398]", None),            # break the identity link
+    ("MU11", "G6", "5f5790=edx,0x222c", None),                           # break the 0x2228 chain
 ]
 
 

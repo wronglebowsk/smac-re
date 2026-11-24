@@ -1418,23 +1418,23 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 
 | # | claim (one line) | conf |
 |---|---|---|
-| 1 | SITE A 0x449793/96 = `5*[obj+0x59f4] + [obj+0xa918] - 5`, 0 other ebx defs | V |
-| 2 | SITE B 0x44af9b/9e = `5*[obj+0xa4c] + slot - 5`; `[obj+0xa4c]` <- `ds:0x91b5b4` at 0x44aed9 | V |
-| 3 | SITE C 0x44b5a7..b9 insert-shift: dst = src + 0x8c, k in {0..3} | V |
-| 4 | extent: base 0x983a10 / stride 0x8c / 35 records = 7x5 / index 35 = terminator 0x984d34 | V |
-| 5 | NO CLAMP: the only direct 0x59f4 ref in 781,379 insns is the load 0x44970f | V |
-| 6 | the 6-probe loop tests COLUMNS of ONE record (reload 0x449982), 6 != rows | V |
+| 1 | SITE A 0x449793/96 = `5*[obj+0x59f4] + [obj+0xa918] - 5`, 0 other ebx defs | V MU1,MU2,MU8,MU9,ALG1 |
+| 2 | SITE B 0x44af9b/9e = `5*[obj+0xa4c] + slot - 5`; `[obj+0xa4c]` <- `ds:0x91b5b4` at 0x44aed9 | V MU3,MU11,MU13,MU14,MU15 |
+| 3 | SITE C 0x44b5a7..b9 insert-shift: dst = src + 0x8c, k in {0..3} | V MU10,MU16,MU17 |
+| 4 | extent: base 0x983a10 / stride 0x8c / 35 records = 7x5 / index 35 = terminator 0x984d34 | V MU4,MU5,MU6,MU7 |
+| 5 | NO CLAMP: the only direct 0x59f4 ref in 781,379 insns is the load 0x44970f | V MU8 |
+| 6 | the 6-probe loop tests COLUMNS of ONE record (reload 0x449982), 6 != rows | V MU12,MU18 |
 | 7 | OPEN: +0x59f4's writer (lead: a control at obj+0x5970); page 1..7 = faction block is INFERRED | lead |
-## M343 (s323-chain2, STATIC 9/9) — the M339 OPEN `[obj+0xa40]` writer: THREE dialog-family methods publish the SELECTED item there; the runner only reads it
+## M343 (s323-chain2, STATIC 9/9, review #365 hardened) — the M339 OPEN `[obj+0xa40]` writer: THREE dialog-family methods publish the SELECTED item there; the runner only reads it
 
 | claim | evidence | conf |
 |---|---|---|
-| census: 97 refs name displacement 0xa40 = 25 indexed (12 fns) + 72 field, all dword (47 stores / 25 reads); 0 `lea reg,[..+0xa40]` -> complete for stores | `evidence/m343_a40_writer.txt:5-22` | V MU1,MU5 |
-| writers: `FUN_005f5759` (+0xa8 of 0x67164c/0x6717cc/0x6728c0, +0xb0 of 0x671644) x4, `FUN_005f58fa` (+0x64 of all six family vtables) x3, `FUN_005f5a11` (receiver `ds:0x9977f0`) x2; runner `FUN_005f1394` = 1 READ 0x5f3f45, 0 stores; ctor `FUN_00405ef0` = 0 refs | `:66-77`, `:26` | V MU4,MU5,MU2 |
-| receiver fingerprint = the PAIR {[+0x21d0] container, [+0x2350] state}: exactly 4 functions carry it; ">=3 of {21d0,2350,30a8,3100}" wrongly admits `FUN_005ee350` + `FUN_005eede6` | `:28-38` | V MU3,MU9 |
-| identity: 0x5f13b2 [ebp-0x394]=ecx -> 0x5f3d70 `ds:0x9977f0` -> 0x5f3e02 restore -> 0x5f3f45 `[ebp-0x394]+0xa40`; 5a11 loads `ds:0x9977f0` (same object) | `:81-87` | V MU7 |
-| value law: each writer publishes {0 reset, `[container+0xec]` direct, `FUN_005fdcf7(container)`}; 5a11 has no reset; the -1 at 0x5f581c is reached only from arg == -2 with `[this+0x30a8] & 0x40` | `:70-77`, `:91-99` | V MU6,MU8 |
-| ACCEPT `python3 -u scripts/m343_a40_writer.py` -> `PASS M343: 9/9` `digest=bcdace84a0352b4a` x2; harness `m343_mutate.py` 10/10, NO-OP `[]` | `:118`, `evidence/m343_mutate.txt:23` | V |
+| census: 97 refs name displacement 0xa40 = 25 indexed (12 fns) + 72 field, all dword (47 stores / 25 reads); 0 `lea reg,[..+0xa40]` and 0 `,0xa40` immediate -> both pointer-form store evasions absent | `evidence/m343_a40_writer.txt:5-22` | V MU1 |
+| writers: `FUN_005f5759` (+0xa8 of 0x67164c/0x6717cc/0x6728c0, +0xb0 of 0x671644) x4, `FUN_005f58fa` (+0x64 of the five class vtables; 0x671644 carries it at +0x6c) x3, `FUN_005f5a11` (receiver `ds:0x9977f0`) x2; runner `FUN_005f1394` = 1 READ 0x5f3f45, 0 stores; ctor `FUN_00405ef0` = 0 refs | `:66-77`, `:24-26` | V MU4,MU5,MU2 |
+| receiver fingerprint = the PAIR {[+0x21d0] container, [+0x2350] state}: exactly 4 functions carry it (runner + 3 writers); ">=3 of {21d0,2350,30a8,3100}" wrongly admits `FUN_005ee350` + `FUN_005eede6` | `:28-64` | V MU3,MU9 |
+| identity: 0x5f13b2 [ebp-0x394]=ecx -> 0x5f3d6a reload -> 0x5f3d70 `ds:0x9977f0` -> 0x5f3e02 restore -> 0x5f3f45 `[ebp-0x394]+0xa40`; 5a11 loads `ds:0x9977f0` into its own local and both stores reload it (10-link chain, adjacency asserted) | `:79-88` | V MU7,MU10 |
+| value law: each writer publishes {0 reset, the `[this+0x2228]` -> `[+8]` -> `+0xec` member, `FUN_005fdcf7` on the `+0x21d0` container}; 5a11 has no reset; the -1 at 0x5f581c is reached only from arg == -2 with `[this+0x30a8] & 0x40` | `:66-77`, `:89-99` | V MU6,MU8,MU11 |
+| ACCEPT `python3 -u scripts/m343_a40_writer.py` -> `PASS M343: 9/9` `digest=bcdace84a0352b4a` x2; harness `m343_mutate.py` 12/12, NO-OP `[]` | `:118`, `evidence/m343_mutate.txt:25` | V MU0 |
 | OPEN: dispatcher of the +0x64 slot (19 `call [reg+0x64]` sites image-wide, 0 direct); the container's item record past +0xec; any consumer of `[this+0x3100]` (5759 stages the arg) | - | lead |
 
 

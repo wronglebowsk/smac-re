@@ -8,6 +8,8 @@ MU6   names G6  reddened=G6                 SCORE
 MU7   names G7  reddened=G7                 SCORE
 MU8   names G8  reddened=G8                 SCORE
 MU9   names G9  reddened=G1,G3,G9           SCORE
+MU10  names G7  reddened=G7                 SCORE
+MU11  names G6  reddened=G6                 SCORE
 
 covered set (measured):
   G1 <- MU1,MU4,MU5,MU9 (4)
@@ -15,9 +17,9 @@ covered set (measured):
   G3 <- MU1,MU3,MU4,MU5,MU9 (5)
   G4 <- MU3,MU4,MU5 (3)
   G5 <- MU5 (1)
-  G6 <- MU3,MU5,MU6 (3)
-  G7 <- MU5,MU7 (2)
+  G6 <- MU3,MU5,MU6,MU11 (4)
+  G7 <- MU5,MU7,MU10 (3)
   G8 <- MU8 (1)
   G9 <- MU1,MU3,MU4,MU5,MU9 (5)
 
-HARNESS PASS M343: 10/10 scored, NO-OP [], uncovered []
+HARNESS PASS M343: 12/12 scored, NO-OP [], uncovered []

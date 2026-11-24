@@ -166,6 +166,7 @@ REFS = [(a, m, o) for (a, m, o) in INS if DISP in o]
 FIELD = [(a, m, o) for (a, m, o) in REFS if "*" not in inner(o)]
 SCALED = [(a, m, o) for (a, m, o) in REFS if "*" in inner(o)]
 LEA = [(a, m, o) for (a, m, o) in REFS if m == "lea"]
+IMMS = [(a, m, o) for (a, m, o) in INS if re.search(r",0xa40$", o)]  # `add reg,0xa40` evasion
 DSTORES = [(a, m, o) for (a, m, o) in FIELD
            if role(m, o) in ("STORE", "RMW") and width(o) == 4]
 DLOADS = [(a, m, o) for (a, m, o) in FIELD
@@ -326,9 +327,11 @@ def gate(tag, cond, text, mutant):
     print("%s %s  %s   [mutant %s]" % (tag, "PASS" if cond else "FAIL", text, mutant))
 
 
+idx_fns = len(set(fn_name(a) for a, _m, _o in SCALED))
 gate("G1", len(REFS) == 97 and len(SCALED) == 25 and len(FIELD) == 72
-     and len(DSTORES) == 47 and len(DLOADS) == 25 and len(LEA) == 0,
-     "census: 97 refs = 25 indexed + 72 field; field dword stores 47 / reads 25; 0 lea",
+     and len(DSTORES) == 47 and len(DLOADS) == 25 and len(LEA) == 0
+     and len(IMMS) == 0 and idx_fns == 12,
+     "census: 97 refs = 25 indexed (12 fns) + 72 field (47 stores / 25 reads); 0 lea and 0 `,0xa40` immediate",
      "MU1 (treat the indexed forms as fields)")
 
 slot_ok = ([v for v, _n, _s in SLOTS[CLICK]] == [0x67164C, 0x671644, 0x6717CC, 0x6728C0]
@@ -337,10 +340,14 @@ slot_ok = ([v for v, _n, _s in SLOTS[CLICK]] == [0x67164C, 0x671644, 0x6717CC, 0
            and [s for _v, _n, s in SLOTS[CLICK]] == [0xA8, 0xB0, 0xA8, 0xA8]
            and [s for _v, _n, s in SLOTS[SIB64]] == [0x64, 0x6C, 0x64, 0x64, 0x64, 0x64])
 gate("G2", slot_ok,
-     "class: 0x5f5759 = +0xa8 of 3 class vtables (+0xb0 of the subobject); 0x5f58fa = +0x64 of all 6",
+     "class: 0x5f5759 = +0xa8 of the three class vtables (0x671644 carries it at +0xb0); "
+     "0x5f58fa = +0x64 of the five class vtables (0x671644 at +0x6c)",
      "MU2 (slot_of returns an off-by-one slot)")
 
+PAIRSET = sorted(k for k in PAIR if PAIR[k])
 gate("G3", WRITER_FNS == ["FUN_005f5759", "FUN_005f58fa", "FUN_005f5a11"]
+     and PAIRSET == ["FUN_005f1394", "FUN_005f5759", "FUN_005f58fa", "FUN_005f5a11"]
+     and len(PAIRSET) == 4
      and len(LOOSE) == 5 and "FUN_005ee350" in LOOSE and "FUN_005eede6" in LOOSE
      and len(STORE_FNS) == 22,
      "fingerprint: the pair admits exactly 3 writers; '>=3 of cluster' wrongly admits 2 more",
@@ -350,36 +357,63 @@ gate("G4", len(STORE_DETAIL) == 9
      and sum(1 for d in STORE_DETAIL if d[1] == "FUN_005f5759") == 4
      and sum(1 for d in STORE_DETAIL if d[1] == "FUN_005f58fa") == 3
      and sum(1 for d in STORE_DETAIL if d[1] == "FUN_005f5a11") == 2
-     and "FUN_00405ef0" not in BY_FN,
-     "writers: 9 stores = 5759 x4 + 58fa x3 + 5a11 x2; the dialog ctor FUN_00405ef0 has 0 refs",
+     and "FUN_00405ef0" not in BY_FN
+     and not any(fn_name(a) == "FUN_00405ef0" for a, _m, _o in REFS),
+     "writers: 9 stores = 5759 x4 + 58fa x3 + 5a11 x2; the dialog ctor FUN_00405ef0 has 0 refs (ALL 97)",
      "MU4 (count the indexed refs as field stores)")
 
+rrall = [(a, m, o) for a, m, o in REFS if fn_name(a) == "FUN_005f1394"]
 rr = BY_FN.get("FUN_005f1394", [])
-gate("G5", len(rr) == 1 and rr[0][0] == 0x5F3F45 and rr[0][3] == "READ",
-     "runner FUN_005f1394: 1 ref, a READ at 0x5f3f45, 0 stores",
+gate("G5", len(rrall) == 1 and rrall[0][0] == 0x5F3F45
+     and role(rrall[0][1], rrall[0][2]) == "READ" and len(rr) == 1,
+     "runner FUN_005f1394: 1 ref among ALL 97, a READ at 0x5f3f45, 0 stores",
      "MU5 (role() reads the dest-first mov as a source)")
 
 law = {}
+chain_ok = True
 for a, fn, m, o, src in STORE_DETAIL:
     law.setdefault(fn, []).append(src.split()[0])
+    if src.startswith("SELECTED"):
+        w = " | ".join(x[2] for x in INS[POS[a] - 14:POS[a]])
+        chain_ok = chain_ok and "+0x8]" in w and "+0xec]" in w and any(
+            x[1] in ("add", "lea") and x[2].rstrip().endswith(",0x2228") for x in INS[POS[a] - 14:POS[a]])
+    elif src.startswith("RESOLVER"):
+        prev, prev2 = INS[POS[a] - 1], INS[POS[a] - 2]
+        base = o.split("[", 1)[1].split("+")[0]           # the store's receiver register
+        chain_ok = chain_ok and prev2[1] == "call" and prev2[2].split()[0] == hex(RESOLVER)
+        chain_ok = chain_ok and prev[2].split(",")[0] == base
+        w = " | ".join(x[2] for x in INS[POS[a] - 8:POS[a]])
+        chain_ok = chain_ok and "+0x21d0]" in w
 gate("G6", law.get("FUN_005f5759") == ["IMM", "SELECTED", "RESOLVER", "IMM"]
      and law.get("FUN_005f58fa") == ["IMM", "SELECTED", "RESOLVER"]
      and law.get("FUN_005f5a11") == ["SELECTED", "RESOLVER"]
      and [s for _a, _f, _m, _o, s in STORE_DETAIL] ==
      ["IMM 0x0", "SELECTED eax+edx*1+0xec", "RESOLVER", "IMM 0xffffffff",
       "IMM 0x0", "SELECTED edx+ecx*1+0xec", "RESOLVER",
-      "SELECTED eax+edx*1+0xec", "RESOLVER"],
-     "value law: both vmethods publish {0, selected, resolver}; the callback {selected, resolver}; one -1",
+      "SELECTED eax+edx*1+0xec", "RESOLVER"]
+     and chain_ok,
+     "value law: both vmethods publish {0, selected, resolver}; the callback {selected, resolver}; "
+     "one -1; every SELECTED store's [this+0x2228] -> [+8] -> +0xec chain and every RESOLVER call adjacency",
      "MU6 (chase stops at the stack slot -> 3 UNRESOLVED)")
 
-ident = all(a in BYADDR for a in (0x5F13B2, 0x5F3D70, 0x5F3E02, 0x5F3F3F, 0x5F3F45, 0x5F5A17))
-ident = ident and BYADDR[0x5F3D70][2] == "DWORD PTR ds:0x9977f0,ecx" \
-    and BYADDR[0x5F5A17][2] == "eax,ds:0x9977f0" \
-    and BYADDR[0x5F3F45][2] == "eax,DWORD PTR [eax+0xa40]" \
-    and BYADDR[0x5F3F3F][2] == "eax,DWORD PTR [ebp-0x394]"
+LINK = [(0x5F13B2, "DWORD PTR [ebp-0x394],ecx"),     # this saved to the frame local
+        (0x5F3D6A, "ecx,DWORD PTR [ebp-0x394]"),     # that local reloaded into ecx
+        (0x5F3D70, "DWORD PTR ds:0x9977f0,ecx"),     # and PUBLISHED
+        (0x5F3E02, "ds:0x9977f0,eax"),               # restore
+        (0x5F3F3F, "eax,DWORD PTR [ebp-0x394]"),     # the read uses the same local
+        (0x5F3F45, "eax,DWORD PTR [eax+0xa40]"),
+        (0x5F5A17, "eax,ds:0x9977f0"),               # callback receiver
+        (0x5F5A1C, "DWORD PTR [ebp-0x4],eax"),       # bound to the callback's local
+        (0x5F5A9F, "edx,DWORD PTR [ebp-0x4]"),       # and reloaded before each store
+        (0x5F5AC8, "edx,DWORD PTR [ebp-0x4]")]
+ident = all(a in BYADDR and BYADDR[a][2] == t for a, t in LINK)
+ident = ident and POS[0x5F3D6A] == POS[0x5F3D70] - 1 and POS[0x5F5A1C] == POS[0x5F5A17] + 1
+ident = ident and POS[0x5F5AC8] == POS[0x5F5ACB] - 1
+ident = ident and all(any(x[2] == "edx,DWORD PTR [ebp-0x4]" for x in INS[POS[st] - 3:POS[st]])
+                      for st in (0x5F5AA5, 0x5F5ACB))
 gate("G7", ident,
-     "identity: 0x5f3d70 stores the [ebp-0x394] object into ds:0x9977f0, 0x5f3e02 restores, "
-     "0x5f3f45 reads that same local; 5a11 loads ds:0x9977f0",
+     "identity chain (10 links, adjacency included): this -> [ebp-0x394] -> ds:0x9977f0 -> "
+     "callback local -> both callback stores; the read uses the same local",
      "MU7 (drop the identity chain -> 5a11's receiver unexplained)")
 
 cancel = (BYADDR[0x5F581C][2] == "DWORD PTR [edx+0xa40],0xffffffff"
