@@ -1,0 +1,17 @@
+M353 MUTANT HARNESS (baseline gates: 11, all green=True)
+  MU1  -> G1  drop absolute read 0x41a4e0        target=FAIL reddened=G1
+  MU2  -> G2  626597 reclassified abs            target=FAIL reddened=G1,G2
+  MU3  -> G3  payload band moved +4              target=FAIL reddened=G3,G9
+  MU4  -> G4  setter bound 9->8                  target=FAIL reddened=G4
+  MU5  -> G5  caller with literal k=10           target=FAIL reddened=G5
+  MU6  -> G6  625e4b token folded to $NUM        target=FAIL reddened=G6
+  MU7  -> G7  $HEX radix 10->16                  target=FAIL reddened=G7
+  MU8  -> G8  bound added on the `$#` path       target=FAIL reddened=G8
+  MU9  -> G9  numeric base +4                    target=FAIL reddened=G3,G9
+  MU10 -> R1  scaled store counted absolute      target=FAIL reddened=R1
+  MU11 -> R2  publisher gains a ref              target=FAIL reddened=R2
+  MU12 -> G6  token attribution permuted         target=FAIL reddened=G6
+  MU13 -> G7  radix push not 3rd arg             target=FAIL reddened=G7
+  MU14 -> G3  text stride = raw shift            target=FAIL reddened=G3
+
+HARNESS PASS 14/14 mutants redden their named gate  digest fd143532b283b01b
