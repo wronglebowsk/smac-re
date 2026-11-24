@@ -939,7 +939,7 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | pop-first (reading the head AFTER the pop) stamps the NEXT item: on the declared 2-deep fixture it writes 6, the measured order writes 2 — M344's spend→stamp→pop order is load-bearing | `evidence/b31_facoracle.txt:40` | V MU6 (G4d/G6c red) |
 | the writer carries an ARBITRARY bitmap including a LOSS of 8 (the OR-only setter cannot express it): 2-byte diff, reload `[1,4]`, identity build byte-identical, the other 17 records untouched | `evidence/b31_facoracle.txt:46` | V MU8 (write shifted → G5 red) |
 | QUALIFIES `## B30`: B30's setter was ASSUMED; this run measures no positive completion case and one recorded NEGATIVE at a facility-range head, so "a paid queue item becomes a facility" is UNVERIFIED against the game's own run | `evidence/b31_facoracle.txt:35-36` | V MU5 |
-| CLOSED by `## M349` + `## B32`: the unit-id decode is head<0 = negated TYPE and a unit completion stamps its mapper bit (4/4); STILL OPEN: a FACILITY completion stamps nothing on this run (0/2) and which loss is a raze vs an identity change | `evidence/b32_unitoracle.txt:26` | V (B32 MU3) |
+| CLOSED by `## M349` + `## B32`: the unit-id decode is head<0 = negated TYPE and a unit completion stamps its mapper bit (4/4); STILL OPEN: a FACILITY completion stamps nothing on this run (0/2) and which loss is a raze vs an identity change | `evidence/b32_unitoracle.txt:25` | V (B32 MU3) |
 
 ## B22 (s273, BUILD 12/12, zero box; post-Greptile #286: one P1 arithmetic error retracted, the falsifier made load-bearing) - BOTH save record arrays grow in ONE writer call, and the CREATE leg demonstrably reads its ARGUMENTS out of the reloaded image (sim/composedgrowth.py)
 | claim | evidence | conf |
@@ -1523,7 +1523,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | recorded B31 heads ARE 321,-2,-8,2,-3,-6 (4 unit + 1 facility + 1 >=64); `>31` NOT unit-encoded | `:64-71` | V MU9,MU21 |
 | rivals DEAD: -(design-192) -> -4 vs trace -6 (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`), "-39 sentinel", logical shift | `:92-97` | V MU8,MU18,MU22 |
 | ACCEPT `scripts/m349_unit_id.py` `PASS M349: 13/13` `fa2d81797551dae5` x2; harness 22/22, 13/13 | `:101-102`, `evidence/m349_mutate.txt:30` | V MU0 |
-## B32 (s327 BUILD; ACCEPT `python3 -u -m sim.unitoracle` -> **`PASS B32: 10/10`** `e6875c63c8c2f911` x2 (`evidence/b32_unitoracle.txt:54`); harness **13/13** `1dcf0db1e02d1ee6` (`evidence/b32_mutate.txt:16`)) — the UNIT leg on the recorded trace: 4/4 unit heads stamp the mapper bit, 0/2 facility-range do, the post-pop head 0/6. `:N` = a line of the ACCEPT evidence.
+## B32 (s327 BUILD; ACCEPT `python3 -u -m sim.unitoracle` -> **`PASS B32: 10/10`** `e6875c63c8c2f911` x2 (`evidence/b32_unitoracle.txt:53-54`); harness **13/13** `155781675e5086a1` (`evidence/b32_mutate.txt:16`)) — the UNIT leg on the recorded trace: 4/4 unit heads stamp the mapper bit, 0/2 facility-range do, the post-pop head 0/6. NAMED cap: B30 rotated VERBATIM to `docs/named-archive-b32-rows.md:5`, sha1 `7a11114cc0b2ee78ef113acdb95260b5228cffa0`, `--verify` 7/7 (`evidence/b32_named_rotate.txt:9`). `:N` = a line of the ACCEPT evidence.
 
 | claim | evidence | conf |
 |---|---|---|

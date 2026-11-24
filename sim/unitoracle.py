@@ -46,10 +46,13 @@ BIG = 0x40              # the facility leg's item<0x40 gate (M349 G2)
 ROWS_ANCHOR = "e6875c63c8c2f911"
 SCORE_ANCHOR = "59b0b5e3647555b7"
 LEG_ANCHOR = "26d1c63c2861b182"
-MAP_ANCHOR = "9bb77d0bcf3b918e"
+MAP_ANCHOR = "da981620c0e3ef18"
 
-# The six mapper rows M349's derived form pins (evidence/m349_unit_id.txt:99 area).
-MAP_ROWS = ((321, 40, 2), (-3, 0, 32), (-8, -1, 1), (2, 0, 4), (8, 1, 1), (6, 0, 64))
+# The mapper rows G5 pins, in TWO domains: the ITEM domain the measured path passes
+# (-head for a unit, head for a facility) and the RAW domain M349's signed-division rows use.
+# The first five are the recorded boundaries' decoded items; the last two are M349's own pins.
+MAP_ROWS = ((2, 0, 4), (8, 1, 1), (3, 0, 8), (6, 0, 64), (321, 40, 2))
+MAP_NEG = ((-3, 0, 32), (-8, -1, 1))
 
 
 def _sha(rows):
@@ -215,16 +218,18 @@ def main(argv=None):
     p("")
     p("TABLE 3  rivals, scored on the same rows")
     ahits = sum(1 for s in sc_after if s[7])
-    sw = 0
+    sw = sw_n = 0
     for r, s in zip(rows, sc_before):
         item = s[4]
         if item is None or s[6] is None:
             continue
+        sw_n += 1                      # rows the swapped orientation CAN score (321 is off-map)
         sby, smask = mapper_swapped(item)
         if 0 <= sby < FB and sby * 8 + (smask.bit_length() - 1) in r[14]:
             sw += 1
     p("  R1 the AFTER-sample head stamps        -> %d/%d matches" % (ahits, len(sc_after)))
-    p("  R2 swapped orientation (byte=id&7)     -> %d/%d matches" % (sw, len(sc_before)))
+    p("  R2 swapped orientation (byte=id&7)     -> %d/%d matches (%d off-map row excluded)"
+      % (sw, sw_n, len(sc_before) - sw_n))
     p("  R3 the raw head id is the bit (B31)    -> %d/%d matches"
       % (sum(1 for b in bulk if b[3]), len(bulk)))
     p("  R4 a facility-range head stamps too    -> prediction %d/%d, recorded %d/%d"
@@ -243,15 +248,21 @@ def main(argv=None):
     p("")
     p("GATES")
     d_rows, d_sc, d_leg = _sha(rows), _sha(sc_before), _sha((uhits, len(unit), fhits, len(fac)))
-    d_map = _sha([(h,) + head_bit(h) for h, _b, _m in MAP_ROWS])
+    d_map = _sha([(it,) + mapper(it) for it, _b, _m in MAP_ROWS + MAP_NEG])
     heads = [r[4] for r in rows]
     kinds = [r[6] for r in rows]
 
-    g(len(rows) == 6 and len(samples) == 20 and all(r[16] != r[17] for r in rows),
-      "G1 the six changed boundaries are READ with both heads (counts pinned)",
-      "rows=%d samples=%d digest=%s" % (len(rows), len(samples), d_rows))
+    after_heads = [r[5] for r in rows]
+    tie = all(r[6] == decode(r[4])[0] and r[10] == decode(r[5])[0]
+              and (r[8] is None or r[8] == mapper(r[7])[0]) for r in rows)
+    g(len(rows) == 6 and len(samples) == 20 and all(r[16] != r[17] for r in rows)
+      and all(r[4] != r[5] for r in rows) and tie
+      and after_heads == [128, -6, -24, 133, -2, -8],
+      "G1 the six changed boundaries are READ with BOTH heads, each decoded and mapped",
+      "rows=%d samples=%d before=%s after=%s digest=%s"
+      % (len(rows), len(samples), heads, after_heads, d_rows))
     same = all(tbl.decode(h)[:2] == decode(h) for h in tbl.UNIVERSE)
-    g(same and heads == [321, -2, -8, 2, -3, -6]
+    g(same and len(tbl.UNIVERSE) == 30 and heads == [321, -2, -8, 2, -3, -6]
       and kinds.count("UNIT") == 4 and kinds.count("FACILITY") == 1 and kinds.count("BIGITEM") == 1,
       "G2 the decode IS M349's: 30-row universe equal, heads [321,-2,-8,2,-3,-6] = 4 UNIT / 1 FAC / 1 BIG",
       "universe=%d heads=%s" % (len(tbl.UNIVERSE), heads))
@@ -262,25 +273,34 @@ def main(argv=None):
     g(ahits == 0 and len(sc_after) == 6,
       "G4 the AFTER-sample head is the rival: 0/6 - the stamp reads the head BEFORE the pop",
       "after_head_hits=%d/%d" % (ahits, len(sc_after)))
-    map_ok = all(mapper(it) == (ex_by, 1 << (it & 7)) == (ex_by, ex_mask)
-                 for it, ex_by, ex_mask in MAP_ROWS)
+    map_ok = (all(mapper(it) == (ex_by, 1 << (it & 7)) == (ex_by, ex_mask)
+                  for it, ex_by, ex_mask in MAP_ROWS)
+              and all(mapper(it) == (ex_by, 1 << (it & 7)) == (ex_by, ex_mask)
+                      for it, ex_by, ex_mask in MAP_NEG))
     g(map_ok and sw == 0,
-      "G5 the mapper is the DERIVED form on six pinned rows; the swapped orientation fails %d/%d"
-      % (sw, len(sc_before)), "digest=%s" % d_map)
+      "G5 the mapper is the DERIVED form on %d item rows + %d signed-division rows; the swapped "
+      "orientation fails %d/%d" % (len(MAP_ROWS), len(MAP_NEG), sw, sw_n),
+      "digest=%s" % d_map)
     g(exact == 4 and only_byte == 4,
       "G6 the write REPLAYS: before OR mask == the recorded after window at %d/4 unit boundaries, "
       "only the mapper byte moves" % exact)
     v = [x for x in rep if x[2] == "FACILITY"]
     bad_v = sum(1 for x in v if x[4] != x[5])
     g(len(refusals) == 1 and refusals[0][3] == 321 and refusals[0][2] == "BIGITEM"
+      and head_bit(321)[2] == 40
+      and v and v[0][4] == "0400000800000000" and v[0][5] == "1000000000000000"
       and bad_v == len(v) == 1,
       "G7 the facility side is a counter-result: 321 maps to byte 40 (off the eight-byte map, "
       "1 refusal) and the facility stamp misses the recorded bytes at %d/%d" % (bad_v, len(v)))
     losses = sum(len(r[15]) for r in rows)
     uloss = sum(1 for r in rows if r[6] == "UNIT" and r[15])
-    g(losses == 2 and uloss == 0 and all(r[14] == (r[9],) for r in rows if r[6] == "UNIT"),
-      "G8 the two recorded losses sit on the two non-unit rows; every unit row's gain set is "
-      "exactly its mapper bit")
+    nonunit = [r for r in rows if r[6] != "UNIT"]
+    one_each = len(nonunit) == 2 and all(len(r[15]) == 1 for r in nonunit)
+    g(losses == 2 and uloss == 0 and one_each
+      and sorted(r[15][0] for r in nonunit) == [1, 27]
+      and all(r[14] == (r[9],) for r in rows if r[6] == "UNIT"),
+      "G8 the two recorded losses sit one per non-unit row (ids 1 and 27); every unit row's gain "
+      "set is exactly its mapper bit", "nonunit_losses=%s" % [list(r[15]) for r in nonunit])
     rows2 = measure(samples)
     g(_sha(rows2) == d_rows and _sha(score(rows2, 4)) == d_sc,
       "G9 two in-process passes give identical row and score digests")

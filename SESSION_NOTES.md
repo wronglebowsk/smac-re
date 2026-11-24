@@ -576,9 +576,9 @@ whether a facility completion stamps at all.
 ## Session 327 (2026-11-24) — B32: the UNIT leg RUN on the recorded trace (milestone/b32)
 
 - ACCEPT `python3 -u -m sim.unitoracle` -> `PASS B32: 10/10 gates`, rows `e6875c63c8c2f911`,
-  score `59b0b5e3647555b7`, leg `26d1c63c2861b182`, map `9bb77d0bcf3b918e`
+  score `59b0b5e3647555b7`, leg `26d1c63c2861b182`, map `da981620c0e3ef18`
   (`evidence/b32_unitoracle.txt:54`), two runs byte-identical (same file, re-run `diff` clean);
-  harness `python3 -u scripts/b32_mutate.py` -> `PASS HARNESS B32: 13/13` `1dcf0db1e02d1ee6`
+  harness `python3 -u scripts/b32_mutate.py` -> `PASS HARNESS B32: 13/13` `155781675e5086a1`
   (`evidence/b32_mutate.txt:16`).
 - B32 attaches M349's decode to B31's oracle. Heads `[321,-2,-8,2,-3,-6]` = 4 UNIT / 1 FACILITY /
   1 BIGITEM (`:43`). Scored on the BEFORE-sample (pre-pop) head PER LEG: 4/4 unit heads gain

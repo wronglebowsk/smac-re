@@ -53,20 +53,20 @@ def mutate(name):
         declared = {"G10"}
     elif name == "MU2_head_off":            # read the head from the wrong dword
         m.HEAD_OFF = 0x54
-        declared = {"G2", "G3", "G6", "G7", "G10"}
+        declared = {"G1", "G2", "G3", "G6", "G7", "G8", "G10"}
     elif name == "MU3_all_facility":        # the unit decode never happens (B31's reading)
         m.decode = lambda head: ("FACILITY", head) if head >= 0 else ("FACILITY", -head)
-        declared = {"G2", "G3", "G6", "G7", "G10"}
+        declared = {"G2", "G3", "G6", "G7", "G8", "G10"}
     elif name == "MU4_floor_shift":         # divide by 8 with a FLOOR, not truncation
         m.trunc8 = lambda item: item // 8
-        declared = {"G5"}
+        declared = {"G5", "G10"}
     elif name == "MU5_after_head":          # the rival shape becomes the law
         orig = m.score
         m.score = lambda rows, head_col=4: orig(rows, 4)
         declared = {"G4"}
     elif name == "MU6_byte_shift":          # decode the bitmap one byte late
         m.FBASE = 0x8d
-        declared = {"G1", "G6", "G10"}
+        declared = {"G1", "G6", "G7", "G10"}
     elif name == "MU7_swap_mapper":         # swapped byte/mask orientation becomes the law
         m.mapper = m.mapper_swapped
         declared = {"G3", "G5", "G6", "G7", "G8", "G10"}
@@ -110,7 +110,7 @@ def mutate(name):
         def same(samples=None):
             return [r[:17] + (r[16],) for r in orig(samples)]
         m.measure = same
-        declared = {"G1", "G6", "G10"}
+        declared = {"G1", "G6", "G7", "G10"}
     elif name == "MU12_noop":               # the control: nothing is broken
         declared = set()
     else:

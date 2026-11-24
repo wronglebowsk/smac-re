@@ -1,0 +1,9 @@
+ok   archive sha1 line == the block's sha1
+ok   archive body bytes match the header
+ok   NAMED carries the stub, not the block
+ok   one stub row per archived claim (7 == 7)
+ok   archive carries >=10 distinct gate tokens (10)
+ok   no archived gate token is missing from the stub ()
+ok   the stub names the archive
+
+PASS ROTATE B32: 7/7  sha1=7a11114cc0b2ee78ef113acdb95260b5228cffa0
