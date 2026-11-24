@@ -1,0 +1,122 @@
+M385 nine dynamic-mask sites - field = DWORD [pair*4 + 0x94d448]
+
+G0  parse / population
+  insns=781429  dynamic-mask inline sites=9
+  0x4dabe7   test   DWORD PTR [edx*4+0x94d448],edi
+  0x4dac10   test   DWORD PTR [edx*4+0x94d448],edi
+  0x4dacf7   test   DWORD PTR [edx*4+0x94d448],edi
+  0x4dad22   test   DWORD PTR [edx*4+0x94d448],edi
+  0x4db003   test   DWORD PTR [edx*4+0x94d448],edi
+  0x4db01f   test   DWORD PTR [edx*4+0x94d448],edi
+  0x4db063   test   DWORD PTR [edx*4+0x94d448],edi
+  0x4db07f   test   DWORD PTR [edx*4+0x94d448],edi
+  0x574a66   test   DWORD PTR [edx*4+0x94d448],eax
+  ok   G0 insn count 781429 - 781429
+  ok   G0 nine dynamic sites - 9
+
+G1  mask register -> reaching definition (inside the containing function)
+  0x4dabe7   reg=edi func=0x4dabb0   def=0x4dabb5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
+  0x4dac10   reg=edi func=0x4dabb0   def=0x4dabb5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
+  0x4dacf7   reg=edi func=0x4dacc0   def=0x4dacc5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
+  0x4dad22   reg=edi func=0x4dacc0   def=0x4dacc5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
+  0x4db003   reg=edi func=0x4dadd0   def=0x4dafcf   CONST    mov    edi,0x1000
+  0x4db01f   reg=edi func=0x4dadd0   def=0x4dafcf   CONST    mov    edi,0x1000
+  0x4db063   reg=edi func=0x4dadd0   def=0x4db035   CONST    mov    edi,0x2000
+  0x4db07f   reg=edi func=0x4dadd0   def=0x4db035   CONST    mov    edi,0x2000
+  0x574a66   reg=eax func=0x574370   def=0x574a55   ORIMM    or     al,0x20
+  CONST sites: 0x4db003=0x1000, 0x4db01f=0x1000, 0x4db063=0x2000, 0x4db07f=0x2000
+  STACKARG functions: 0x4dabb0, 0x4dacc0
+  ok   G1 four CONST masks - 4
+  ok   G1 const masks are {0x1000 x2, 0x2000 x2} - ['0x1000', '0x1000', '0x2000', '0x2000']
+  ok   G1 four STACKARG sites in two functions - [5090224, 5090496]
+  ok   G1 one ORIMM site 0x574a66 - ['0x574a66']
+  ok   G1 the four literal sites sit in FUN_0x4dadd0 (an early ret ends 0x4dad40) - ['0x4dadd0', '0x4dadd0', '0x4dadd0', '0x4dadd0']
+  ok   G1 no UNKNOWN/NONE row - []
+
+G2  STACKARG functions: call census + address-taken census (whole exe)
+  FUN_0x4dabb0  call-site-insns=0  absolute-dword-occurrences=0
+  ok   G2 FUN_0x4dabb0 address-taken occurrences 0 - 0
+  ok   G2 FUN_0x4dabb0 has ZERO direct callers - 0
+  FUN_0x4dacc0  call-site-insns=4  absolute-dword-occurrences=0
+    call @0x4db099   arg=0x20
+    call @0x4db0a5   arg=0x2000000
+    call @0x4db0b1   arg=0x400
+    call @0x4db0bd   arg=0x40000
+  ok   G2 FUN_0x4dacc0 address-taken occurrences 0 - 0
+  ok   G2 FUN_0x4dacc0 has 4 direct callers - 4
+  ok   G2 its pushed arg masks are {0x20,0x400,0x40000,0x2000000} - ['0x20', '0x2000000', '0x400', '0x40000']
+  ok   G2 every arg is a literal push (no register arg) - [(5091481, '0x20'), (5091493, '0x2000000'), (5091505, '0x400'), (5091517, '0x40000')]
+  ok   G2 the 0x400 mask reaches the pair test: a NEW 0x400-only reader - push 0x400 @0x4db0aa
+  ok   G2 no pushed arg carries 0x800 - ['0x20', '0x2000000', '0x400', '0x40000']
+  ok   G2 no pushed arg carries the 0xc00 PAIR - ['0x20', '0x2000000', '0x400', '0x40000']
+
+G3  site 0x574a66: mask built by `or al,imm` on two converging paths
+  0x574a2a   shl    edx,0x6
+  0x574a2d   add    edx,ebx
+  0x574a2f   lea    eax,[ebx+edx*2]
+  0x574a32   shl    eax,0x4
+  0x574a35   sub    eax,ebx
+  0x574a37   cmp    DWORD PTR [eax*4+0x94d438],0x4
+  0x574a3f   jge    0x574a4e
+  0x574a41   test   BYTE PTR ds:0x985ac4,0x40
+  0x574a48   jne    0x574a4e
+  0x574a4a   xor    eax,eax
+  0x574a4c   jmp    0x574a53
+  0x574a4e   mov    eax,0x10
+  0x574a53   mov    ecx,ebx
+  0x574a55   or     al,0x20
+  0x574a57   shl    ecx,0x6
+  0x574a5a   add    ecx,ebx
+  0x574a5c   lea    edx,[ebx+ecx*2]
+  0x574a5f   shl    edx,0x4
+  0x574a62   sub    edx,ebx
+  0x574a64   add    edx,esi
+  pre-OR eax candidates: ['0x0', '0x10']
+  `or al` immediates: ['0x20']
+  attainable mask set: ['0x20', '0x30']
+  ok   G3 two pre-OR candidates {0x0,0x10} - ['0x0', '0x10']
+  ok   G3 composed set is exactly {0x20,0x30} - ['0x20', '0x30']
+
+G4  VERDICT - attainable mask per site, per 0xc00 bit
+  0x4dabe7   func=0x4dabb0   STACKARG masks=-                            0x400:no    0x800:no    0xc00-pair:no    (zero callers + not address-taken -> never invoked)
+  0x4dac10   func=0x4dabb0   STACKARG masks=-                            0x400:no    0x800:no    0xc00-pair:no    (zero callers + not address-taken -> never invoked)
+  0x4dacf7   func=0x4dacc0   STACKARG masks=0x20,0x400,0x40000,0x2000000 0x400:0x400 0x800:no    0xc00-pair:no    (4 caller pushes; no other reference to the function)
+  0x4dad22   func=0x4dacc0   STACKARG masks=0x20,0x400,0x40000,0x2000000 0x400:0x400 0x800:no    0xc00-pair:no    (4 caller pushes; no other reference to the function)
+  0x4db003   func=0x4dadd0   CONST    masks=0x1000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
+  0x4db01f   func=0x4dadd0   CONST    masks=0x1000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
+  0x4db063   func=0x4dadd0   CONST    masks=0x2000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
+  0x4db07f   func=0x4dadd0   CONST    masks=0x2000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
+  0x574a66   func=0x574370   ORIMM    masks=0x20,0x30                    0x400:no    0x800:no    0xc00-pair:no    (xor/mov + `or al,imm` path set)
+  ok   G4 all nine masks decided (no unknown set) - 9
+  ok   G4 NO site's mask can contain 0x800 - []
+  ok   G4 NO site's mask can contain the 0xc00 PAIR - []
+  ok   G4 exactly TWO sites can ask 0x400 alone (0x4dacf7 0x4dad22) - ['0x4dacf7', '0x4dad22']
+  ok   G4 the 0x400 sites are the SAME logical test, two je paths of FUN_0x4dacc0 - func 0x4dacc0
+
+G5  rivals (each must be refuted by the printed numbers)
+  ok   R1 'some site's mask is a runtime pair word loaded from memory' refuted - every mask is a literal, or an arg pushed as a literal
+  ok   R2 'FUN_0x4dabb0 is live and gets 0xc00 from an unseen caller' refuted - 0 calls, 0 dword occurrences in 3067904 B
+  ok   R3 '0x4dadd0's 0x1000/0x2000 sites inherit the arg' refuted - nearest def is the literal, after the prologue's [ebp+8]
+  ok   R4 '0x574a66's high eax bytes could carry 0xc00' refuted - xor eax,eax / mov eax,0x10 write the whole dword
+  ok   R5 'the generic wrapper admits any mask' refuted - ['0x20', '0x2000000', '0x30', '0x400', '0x40000']
+
+G7  attribution cross-check against ghidra_out/index.csv
+  0x4dabe7   func_of=0x4dabb0   index=FUN_004dabb0
+  0x4dac10   func_of=0x4dabb0   index=FUN_004dabb0
+  0x4dacf7   func_of=0x4dacc0   index=FUN_004dacc0
+  0x4dad22   func_of=0x4dacc0   index=FUN_004dacc0
+  0x4db003   func_of=0x4dadd0   index=FUN_004dadd0
+  0x4db01f   func_of=0x4dadd0   index=FUN_004dadd0
+  0x4db063   func_of=0x4dadd0   index=FUN_004dadd0
+  0x4db07f   func_of=0x4dadd0   index=FUN_004dadd0
+  0x574a66   func_of=0x574370   index=FUN_00574370
+  ok   G7 func_of agrees with index.csv on all nine sites - 9
+  ok   G7 hosts are FUN_004dabb0 / 004dacc0 / 004dadd0 / 00574370 - {5090279: 'FUN_004dabb0', 5090320: 'FUN_004dabb0', 5090551: 'FUN_004dacc0', 5090594: 'FUN_004dacc0', 5091331: 'FUN_004dadd0', 5091359: 'FUN_004dadd0', 5091427: 'FUN_004dadd0', 5091455: 'FUN_004dadd0', 5720678: 'FUN_00574370'}
+  ok   G7 index.csv sizes split the neighbours (0x4dad40 ends before 0x4dadd0) - 0x4dadd0
+
+G6  digest
+  digest=0103209f070e60f7  recomputed=0103209f070e60f7
+  ok   G6 digest stable and pinned - 0103209f070e60f7
+
+M385: 33/33 checks passed
+PASS M385: 33/33  0103209f070e60f7
