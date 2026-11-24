@@ -1006,19 +1006,22 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | ACCEPT 14/14 digest 030a6fc12e4a7cd7 x2 (`evidence/m328_hurry_globals.txt:85-86`,`_rerun.txt:85-86`); harness 38 mutants (37 scored + 1 NO-OP) digest 36259eee0736d9c1 (`evidence/m328_mutate.txt:41-43`); ST 5/5 (`evidence/m328_mutate_selftest.txt:7`) | as cited | V |
 | OPEN: B noun INFERRED 'multi' (menu label script-driven; MULTIMENU 692018 no push); SP-path noun INFERRED (DIFFICULTY/USERULES strings); ~~92bdf8 mode global~~ ANSWERED M332 (the win-INI pref cell "Top Menu"; read/write/pseudocode views agree); ~~+300 upkeep refund~~ ANSWERED M330 (spend accumulator, k=1/2 law V); ~~facprofile+4ec interest~~ ANSWERED M331 (rate%/100 on ENERGY, +508 bit14 gate) | - | lead |
 
-## M332 (s311-chain1, pick (x2), STATIC 9/9) — `ds:0x985aec` is the RUNTIME MIRROR of the game's own `Difficulty` preference; its master `ds:0x92bde8` is the win-INI key `Difficulty`, read by FUN_0058e7f0 and written back by FUN_0058f0d0 (REFINES `## M308`). FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m340-rows.md:5` (sha1 `3ef265e11aca`); this stub governs, one line per claim
-
-| claim | evidence | conf |
-|---|---|---|
-| 68 refs to 0x985aec = 4 store / 40 load / 24 cmp / 0 RMW; cmp arms exactly {1,2,3,4} immediate AND exactly {ebx}, the ebx cmp unique at 0x4f9b5a; a byte-level LE scan of the .text cache finds the SAME 68 and 0 address materialisations. SCOPE (s312/#346 P1): a store through a runtime-computed register pointer is invisible to both scans | `evidence/m332_difficulty_census.txt:101` + G9.1 `:80-81` | V MU1-3,17,21 |
-| store set exact {0x4ddcf1, 0x57c5af, 0x57c7b5, 0x57f006}, every one `a3 ec 5a 98 00` (moffs) | `evidence/m332_difficulty_census.txt:102` | V MU1-3 |
-| 0x4ddcf1 has no fall-in; `jge 0x4ddcf1` at 0x4ddb5a takes callee 0x5f1394's eax (G9.2), 0 eax writes before the jge, 0 jump tables anywhere => M308's "0x4ddcf1 UNATTRIBUTED" CLOSED; 0x5f1394's own semantics OPEN | `:103` + G9.2 `:82-83` | V MU1-3,8,16,18 |
-| clean-copy map among {0x92bde8, 0x985aec, 0x8f0c11, 0x8f0090} = 5 directions over 6 pairs, each pinned to site AND window (G9.4: 0 redefinitions, 0 writes between); no 0x985aec->0x92bde8 copy => direction is master -> runtime | `:104` + G9.4 `:87-93` | V MU2-7,14,19 |
-| the pref table: 11 key-exclusive 6-arg profile reads in FUN_0058e7f0, an INJECTIVE name->field map, `Difficulty`@0x58e8a1 -> 0x92bde8@0x58e8c6, paired with the writeback load@0x58f11d; API identity measured (G9.5): 18 read / 8 write calls through `edi` == Ghidra's counts; 6/6 three-way names agree (s312 P2 correction) | `:105-107` + `:51-53`, `:68`, G9.5 `:94-97` | V MU4-15 |
-| siblings the same map names: 0x92bdf4 = `Map Type`, 0x92bdf8 = `Top Menu`, 0x92bdec = `Faction` (what `## M328` called "92bdf8 mode global") | `:106-107` | V MU9,13 |
-| RIVAL KILLED: 0x92bde8 is BOTH the end of the 4x0xd4 record array at 0x92ba98 (G9.6 reads the loops) AND a scalar pref cell (2 stores, 6 loads) - "sentinel only" fails on 0 stores | `:108` + G9.6 `:98-100` | V MU4,6,10,12,20 |
-| ACCEPT `PASS M332: 9/9` digest(table) `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP, digest `a9a944201849d026` (`evidence/m332_mutate.txt:25`) | both files | V |
-| OPEN: the difficulty INDEX->label order is now ALPHA `#DIFF` file order (M335: 4=Thinker, 5=Transcend); the 0x8f0090 consumer is a player-record difficulty byte (M336); a pref >=6 is ADMITTED verbatim (M340, 7/7). Still open: 0x5f1394's semantics (chain 2), the other writers of the 0x92bde8..0x92bf14 block | - | lead |
+## M332 (s311-chain1, ROTATED VERBATIM to `docs/named-archive-m370-rows.md` sha1 `5c293b16399ed5bce80ea2b34142334bba1c8948`; the block's OPEN lead is ANSWERED by `## M370`) - `ds:0x985aec` is the RUNTIME MIRROR of the INI `Difficulty` pref; one line per claim.
+- 68 refs = 4 store / 40 load / 24 cmp, cmp arms exactly {1,2,3,4}; scope: a store through a runtime-computed pointer is invisible to both scans - V (`:101` + G9.1 `:80-81`)
+- store set exact {0x4ddcf1,0x57c5af,0x57c7b5,0x57f006}, every one a moffs `a3` - V (`:102`)
+- 0x4ddcf1 has no fall-in; `jge` at 0x4ddb5a takes 0x5f1394's eax -> M308's UNATTRIBUTED CLOSED - V (`:103` + G9.2 `:82-83`)
+- clean-copy map = 5 directions over 6 pairs, each pinned to site AND window; master -> runtime - V (`:104` + G9.4 `:87-93`)
+- the pref table: 11 key-exclusive 6-arg reads in FUN_0058e7f0, an INJECTIVE name->field map, `Difficulty`@0x58e8a1 -> 0x92bde8@0x58e8c6 - V (`:105-107` + `:51-53`, `:68`, G9.5 `:94-97`)
+- siblings named by the same map: 0x92bdf4 = `Map Type`, 0x92bdf8 = `Top Menu`, 0x92bdec = `Faction` - V (`:106-107`)
+- RIVAL KILLED: 0x92bde8 is BOTH the end of the 4x0xd4 array at 0x92ba98 AND a scalar pref cell - V (`:108` + G9.6 `:98-100`)
+- ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
+- OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
+## M370 (s336-c3, x6, STATIC 16/16) — every writer of the pref block. ACCEPT `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 16/16`** `2ccee487aea07932` (`evidence/m370_pref_writers.txt:175`); harness 22/22.
+- 85 refs = 43 STORE/39 READ/3 BOUND; (site,cell) text==bytes (rel32 filtered); loader = 11 stores, one per cell, BY CALL SHAPE, backward the only injection - V MU1 MU8 MA1 (`:7,16,86-102`)
+- 11 cells named on BOTH sides (different VAs): Difficulty Faction Map-Type Top-Menu Preferences More-Preferences Announce Rules Semaphore Time-Controls Customize - V MU3 MU4 MU5 (`:104-127`)
+- 32 non-loader stores, 13 fns: 12 copy a 0x985a** bitmap, 4 `&0x1800000`, 4 flip a mirror bit then snapshot, 2 CARRIED - V MA2 MU9 MU14 (`:130-148`)
+- RIVALS: 11 writable cells, 32 extra writers, 0x92bde8=2; 0x92bdfc CMP-ONLY; sweep 0x92bf18..0x92bf30 past the span - V MU7 MU10 MU16 (`:151-160`)
+- INF: 0x92bf0c serialises as `Semaphore` but is always `x&0x1800000`; 0x92bdf0 unreferenced; 0x5f1394 chain-2
 
 ## M331 (s310-chain2, STATIC 14/14, review #345 hardened) - block+2fc/+308 = upkeep INCOME siblings
 

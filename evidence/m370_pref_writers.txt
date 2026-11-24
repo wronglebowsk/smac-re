@@ -1,0 +1,176 @@
+== G0 inputs ==
+  .text cache lines=781429  PE sections=8  fn index=10284  key strings in 0x6926c0..0x6928a0=31
+  loader=0x58e7f0..0x58f002  writeback=0x58f0d0..0x58f3c6  span=[0x92bde8,0x92bf14] inclusive = 76 dwords
+  cell=0x92bdfc (never a ds: operand)  named cells=11
+G0a   ok   cache/index/strings resolve and the four anchor sites exist
+== G1 reference census, span 0x92bde8..0x92bf14 (CELLS + one bound address) ==
+  text-form refs 85  byte-encoded disp32 refs 85  PAIR set-identical True
+  rel32 false positives caught by the filter: []
+  address materialisations OUTSIDE a ds: operand: 5
+    0x48aea9  cmp    eax,0x92bdfc            -> 0x92bdfc
+    0x579a1e  cmp    eax,0x92bdfc            -> 0x92bdfc
+    0x579bc6  cmp    edi,0x92bde8            -> 0x92bde8
+    0x57ab57  cmp    esi,0x92bde8            -> 0x92bde8
+    0x5a8654  cmp    eax,0x92bdfc            -> 0x92bdfc
+  by target: 0x92bde8=2, 0x92bdfc=3
+G1a   ok   the (site,cell) PAIR set is identical in text and bytes with the rel32 filter on
+G1b   ok   all 5 materialisations are cmp loop bounds (no store uses the base)
+== G2 partition ==
+  refs=85  STORE=43  READ=39  BOUND=3  other=0 []
+  BOUND rows (0x92bdfc, cmp only): ['0x48aea9', '0x579a1e', '0x5a8654']
+  named cells=11  with >=1 store=11  without=[]
+  0x92bde8 stores= 2  0x57c7b0 0x58e8c6
+  0x92bdec stores= 2  0x57cdaa 0x58e9ec
+  0x92bdf4 stores= 2  0x57e93d 0x58e922
+  0x92bdf8 stores= 2  0x57f9f7 0x58e98e
+  0x92befc stores=10  0x492464 0x5109a8 0x5109f8 0x515c9a 0x515d97 0x5173c4 0x51740c 0x58eb11 0x5a0ff2 0x5a1006
+  0x92bf00 stores= 8  0x49246f 0x510901 0x51095a 0x515c4e 0x515e03 0x517377 0x517470 0x58ec20
+  0x92bf04 stores= 3  0x48f564 0x49247a 0x58ef00
+  0x92bf08 stores= 5  0x4dc776 0x4dc8bd 0x57cb0c 0x57cc60 0x58ee16
+  0x92bf0c stores= 5  0x4dc77c 0x4dc8c3 0x57cb1e 0x57cc66 0x58ecc9
+  0x92bf10 stores= 2  0x57d276 0x58eff8
+  0x92bf14 stores= 2  0x57c914 0x58ed2a
+G2a   ok   partition closed; all 11 named cells have a store
+  stores with a BYTE/WORD destination: 0 []
+G2b   ok   every store is a full-dword store of a span cell
+  ds: references to 0x92bdfc (the bound address): 0 []
+G2c   ok   0x92bdfc is never addressed as memory (only compared as an immediate)
+== G3 per-store reachability / owner ==
+  0x48f564  0x92bf04 mov  FALL-IN  mov    DWORD PTR ds:0x92bf04,ecx fn=FUN_0048f100 targets=[]
+  0x492464  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=FUN_004923d0 targets=[]
+  0x49246f  0x92bf00 mov  FALL-IN  mov    ds:0x92bf00,eax         fn=FUN_004923d0 targets=[]
+  0x49247a  0x92bf04 mov  FALL-IN  mov    DWORD PTR ds:0x92bf04,ecx fn=FUN_004923d0 targets=[]
+  0x4dc776  0x92bf08 mov  FALL-IN  mov    DWORD PTR ds:0x92bf08,ecx fn=FUN_004dc5f0 targets=[]
+  0x4dc77c  0x92bf0c mov  FALL-IN  mov    ds:0x92bf0c,eax         fn=FUN_004dc5f0 targets=[]
+  0x4dc8bd  0x92bf08 mov  FALL-IN  mov    DWORD PTR ds:0x92bf08,edx fn=FUN_004dc5f0 targets=[]
+  0x4dc8c3  0x92bf0c mov  FALL-IN  mov    DWORD PTR ds:0x92bf0c,ecx fn=FUN_004dc5f0 targets=[]
+  0x510901  0x92bf00 mov  FALL-IN  mov    ds:0x92bf00,eax         fn=SUB_5108f9(GAP-RESOLVED) targets=[]
+  0x51095a  0x92bf00 mov  FALL-IN  mov    ds:0x92bf00,eax         fn=SUB_51094a(GAP-RESOLVED) targets=[]
+  0x5109a8  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=SUB_510998(GAP-RESOLVED) targets=[]
+  0x5109f8  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=SUB_5109e8(GAP-RESOLVED) targets=[]
+  0x515c4e  0x92bf00 mov  FALL-IN  mov    ds:0x92bf00,eax         fn=FUN_00512b40 targets=[]
+  0x515c9a  0x92befc mov  FALL-IN  mov    DWORD PTR ds:0x92befc,edx fn=FUN_00512b40 targets=[]
+  0x515d97  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=FUN_00512b40 targets=[]
+  0x515e03  0x92bf00 mov  FALL-IN  mov    DWORD PTR ds:0x92bf00,edx fn=FUN_00512b40 targets=[]
+  0x517377  0x92bf00 mov  FALL-IN  mov    DWORD PTR ds:0x92bf00,ecx fn=FUN_00516b80 targets=[]
+  0x5173c4  0x92befc mov  FALL-IN  mov    DWORD PTR ds:0x92befc,edx fn=FUN_00516b80 targets=[]
+  0x51740c  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=FUN_00516b80 targets=[]
+  0x517470  0x92bf00 mov  FALL-IN  mov    ds:0x92bf00,eax         fn=FUN_00516b80 targets=[]
+  0x57c7b0  0x92bde8 mov  CARRIED  mov    ds:0x92bde8,eax         fn=FUN_0057c550 targets=['0x57c6f8']
+  0x57c914  0x92bf14 mov  FALL-IN  mov    ds:0x92bf14,eax         fn=FUN_0057c550 targets=[]
+  0x57cb0c  0x92bf08 mov  FALL-IN  mov    DWORD PTR ds:0x92bf08,ecx fn=FUN_0057c550 targets=[]
+  0x57cb1e  0x92bf0c mov  FALL-IN  mov    DWORD PTR ds:0x92bf0c,ecx fn=FUN_0057c550 targets=[]
+  0x57cc60  0x92bf08 mov  FALL-IN  mov    DWORD PTR ds:0x92bf08,edx fn=FUN_0057c550 targets=[]
+  0x57cc66  0x92bf0c mov  FALL-IN  mov    DWORD PTR ds:0x92bf0c,ecx fn=FUN_0057c550 targets=[]
+  0x57cdaa  0x92bdec mov  FALL-IN  mov    DWORD PTR ds:0x92bdec,esi fn=FUN_0057c550 targets=[]
+  0x57d276  0x92bf10 mov  CARRIED  mov    ds:0x92bf10,eax         fn=FUN_0057c550 targets=['0x57d253']
+  0x57e93d  0x92bdf4 mov  FALL-IN  mov    DWORD PTR ds:0x92bdf4,esi fn=FUN_0057e890 targets=[]
+  0x57f9f7  0x92bdf8 mov  FALL-IN  mov    DWORD PTR ds:0x92bdf8,esi fn=FUN_0057f740 targets=[]
+  0x58e8c6  0x92bde8 mov  FALL-IN  mov    ds:0x92bde8,eax         fn=FUN_0058e7f0 targets=[]
+  0x58e922  0x92bdf4 mov  FALL-IN  mov    ds:0x92bdf4,eax         fn=FUN_0058e7f0 targets=[]
+  0x58e98e  0x92bdf8 mov  FALL-IN  mov    ds:0x92bdf8,eax         fn=FUN_0058e7f0 targets=[]
+  0x58e9ec  0x92bdec mov  FALL-IN  mov    ds:0x92bdec,eax         fn=FUN_0058e7f0 targets=[]
+  0x58eb11  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=FUN_0058e7f0 targets=[]
+  0x58ec20  0x92bf00 mov  FALL-IN  mov    ds:0x92bf00,eax         fn=FUN_0058e7f0 targets=[]
+  0x58ecc9  0x92bf0c mov  FALL-IN  mov    ds:0x92bf0c,eax         fn=FUN_0058e7f0 targets=[]
+  0x58ed2a  0x92bf14 mov  FALL-IN  mov    ds:0x92bf14,eax         fn=FUN_0058e7f0 targets=[]
+  0x58ee16  0x92bf08 mov  FALL-IN  mov    ds:0x92bf08,eax         fn=FUN_0058e7f0 targets=[]
+  0x58ef00  0x92bf04 mov  FALL-IN  mov    ds:0x92bf04,eax         fn=FUN_0058e7f0 targets=[]
+  0x58eff8  0x92bf10 mov  FALL-IN  mov    ds:0x92bf10,eax         fn=FUN_0058e7f0 targets=[]
+  0x5a0ff2  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=FUN_005a0fa0 targets=[]
+  0x5a1006  0x92befc mov  FALL-IN  mov    ds:0x92befc,eax         fn=FUN_005a0fa0 targets=[]
+  owners: ['FUN_0048f100', 'FUN_004923d0', 'FUN_004dc5f0', 'FUN_00512b40', 'FUN_00516b80', 'FUN_0057c550', 'FUN_0057e890', 'FUN_0057f740', 'FUN_0058e7f0', 'FUN_005a0fa0', 'SUB_5108f9', 'SUB_51094a', 'SUB_510998', 'SUB_5109e8']
+  span-gap sites resolved to a pad-delimited sub-function: 4
+G3a   ok   every store is reachable (fall-in or branch target)
+G3b   ok   the 0x5108e0 handlers are named through the Ghidra span gap
+== G4 READ side: loader store -> the key of the nearest preceding key CALL ==
+  store 0x58e8c6  cell 0x92bde8 <- 0x692718   API-6PUSH  'Difficulty'       dist=10
+  store 0x58e922  cell 0x92bdf4 <- 0x692724   API-6PUSH  'Map Type'         dist=6
+  store 0x58e98e  cell 0x92bdf8 <- 0x692730   API-6PUSH  'Top Menu'         dist=10
+  store 0x58e9ec  cell 0x92bdec <- 0x69273c   API-6PUSH  'Faction'          dist=7
+  store 0x58eb11  cell 0x92befc <- 0x69274c   API-6PUSH  'Preferences'      dist=7
+  store 0x58ec20  cell 0x92bf00 <- 0x692760   API-6PUSH  'More Preferences' dist=5
+  store 0x58ecc9  cell 0x92bf0c <- 0x692780   API-6PUSH  'Semaphore'        dist=8
+  store 0x58ed2a  cell 0x92bf14 <- 0x69278c   API-6PUSH  'Customize'        dist=8
+  store 0x58ee16  cell 0x92bf08 <- 0x6927a0   API-6PUSH  'Rules'            dist=5
+  store 0x58ef00  cell 0x92bf04 <- 0x6927b0   API-6PUSH  'Announce'         dist=4
+  store 0x58eff8  cell 0x92bf10 <- 0x6927d4   HELPER     'Time Controls'    dist=5
+  loader stores=11  distinct key texts=11  injective=True
+  opposite (fwd) pairing: distinct=2/11 -> not injective (direction measured)
+  RIVAL 'nearest string push': wrong on 1/11 cells: [('0x92befc', 'Laptop', 'Preferences')]
+G4a   ok   read side: one distinct key per cell (11/11)
+G4b   ok   the direction is forced: fwd pairing is not injective
+G4c   ok   the naive nearest-push law is killed on 1 cell(s)
+== G5 WRITE side: writeback load -> the key of the nearest FOLLOWING call ==
+  load  0x58f11d  cell 0x92bde8 -> 0x6927fc   'Difficulty'       dist=18
+  load  0x58f161  cell 0x92bdf4 -> 0x692808   'Map Type'         dist=18
+  load  0x58f1a4  cell 0x92bdf8 -> 0x692814   'Top Menu'         dist=18
+  load  0x58f1ef  cell 0x92bdec -> 0x692820   'Faction'          dist=16
+  load  0x58f22a  cell 0x92befc -> 0x692828   'Preferences'      dist=30
+  load  0x58f294  cell 0x92bf00 -> 0x692834   'More Preferences' dist=30
+  load  0x58f2fe  cell 0x92bf0c -> 0x692848   'Semaphore'        dist=4
+  load  0x58f310  cell 0x92bf04 -> 0x692854   'Announce'         dist=4
+  load  0x58f323  cell 0x92bf08 -> 0x692860   'Rules'            dist=4
+  load  0x58f336  cell 0x92bf14 -> 0x692868   'Customize'        dist=4
+  load  0x58f3aa  cell 0x92bf10 -> 0x692884   'Time Controls'    dist=4
+  cells on both sides=11  TEXT agrees=11/11  shared VA=0 (separate copies)
+  NAMES (read from the PE, never typed):
+    0x92bde8 Difficulty        read 0x692718 API-6PUSH  write 0x6927fc
+    0x92bdec Faction           read 0x69273c API-6PUSH  write 0x692820
+    0x92bdf4 Map Type          read 0x692724 API-6PUSH  write 0x692808
+    0x92bdf8 Top Menu          read 0x692730 API-6PUSH  write 0x692814
+    0x92befc Preferences       read 0x69274c API-6PUSH  write 0x692828
+    0x92bf00 More Preferences  read 0x692760 API-6PUSH  write 0x692834
+    0x92bf04 Announce          read 0x6927b0 API-6PUSH  write 0x692854
+    0x92bf08 Rules             read 0x6927a0 API-6PUSH  write 0x692860
+    0x92bf0c Semaphore         read 0x692780 API-6PUSH  write 0x692848
+    0x92bf10 Time Controls     read 0x6927d4 HELPER     write 0x692884
+    0x92bf14 Customize         read 0x69278c API-6PUSH  write 0x692868
+G5a   ok   two-sided: every cell's key TEXT agrees, no VA is shared
+== G6 writer families (every store, source by a backward def-use walk) ==
+  CALLRET                   2  0x4dc776 0x57cb0c
+  CARRIED                   2  0x57c7b0 0x57d276
+  COPY(0x985ab8)            6  0x5109a8 0x5109f8 0x515c9a 0x515d97 0x5173c4 0x51740c
+  COPY(0x985abc)            3  0x51095a 0x515e03 0x517377
+  COPY(0x985ac0)            1  0x48f564
+  COPY(0x985ac4)            2  0x4dc8bd 0x57cc60
+  DEF(cmp)                  1  0x57f9f7
+  DEF(mov)                  2  0x49246f 0x49247a
+  DEF(or)                   1  0x492464
+  DEF(test)                 3  0x57c914 0x57cdaa 0x57e93d
+  INI-LOADER               11  0x58e8c6 0x58e922 0x58e98e 0x58e9ec 0x58eb11 0x58ec20 0x58ecc9 0x58ed2a 0x58ee16 0x58ef00 0x58eff8
+  MASKED(and    al,0xdf)    1  0x5a1006
+  MASKED(and    eax,0x1800000)  1  0x4dc77c
+  MASKED(and    ecx,0x1800000)  3  0x4dc8c3 0x57cb1e 0x57cc66
+  MASKED(or     ah,0x20)    3  0x510901 0x515c4e 0x517470
+  MASKED(or     al,0x20)    1  0x5a0ff2
+  non-loader stores=32 in 13 functions
+  COPY families name the SOURCE CELL: ['COPY(0x985ab8)', 'COPY(0x985abc)', 'COPY(0x985ac0)', 'COPY(0x985ac4)']
+G6a   ok   every non-loader source is classified
+G6b   ok   the loader stores exactly once per cell (11)
+== G7 rivals ==
+  R1 'only the 3 UI cells are writable' -> 11 cells carry stores (predicted 3) KILLED
+  R2 'the INI loader is the only writer' -> 32 non-loader stores (predicted 0) KILLED
+  R3 '0x92bde8 has ONE store' -> 2 KILLED
+G7a   ok   all three rivals killed on the measured numbers
+== G8 boundary: the 7-dword `Custom World` sweep ==
+  loader: ['esi,0x92bf18'] ... ['esi,0x92bf34']
+  writeback mirrors it: ['0x58f352', '0x58f388']
+  span END 0x92bf14 < sweep start 0x92bf18
+G8a   ok   the block ends at 0x92bf14; the sweep is a separate 7-dword group
+== SUMMARY ==
+  cells=11 stores=43 reads=39 bounds=3 loader=11 writeback=11 non-loader=32 fns=13
+  per cell (stores / writers):
+    0x92bde8 Difficulty         2  0x57c7b0:CARRIED 0x58e8c6:INI-LOADER
+    0x92bdec Faction            2  0x57cdaa:DEF(test) 0x58e9ec:INI-LOADER
+    0x92bdf4 Map Type           2  0x57e93d:DEF(test) 0x58e922:INI-LOADER
+    0x92bdf8 Top Menu           2  0x57f9f7:DEF(cmp) 0x58e98e:INI-LOADER
+    0x92befc Preferences       10  0x492464:DEF(or) 0x5109a8:COPY(0x985ab8) 0x5109f8:COPY(0x985ab8) 0x515c9a:COPY(0x985ab8) 0x515d97:COPY(0x985ab8) 0x5173c4:COPY(0x985ab8) 0x51740c:COPY(0x985ab8) 0x58eb11:INI-LOADER 0x5a0ff2:MASKED(or     al,0x20) 0x5a1006:MASKED(and    al,0xdf)
+    0x92bf00 More Preferences   8  0x49246f:DEF(mov) 0x510901:MASKED(or     ah,0x20) 0x51095a:COPY(0x985abc) 0x515c4e:MASKED(or     ah,0x20) 0x515e03:COPY(0x985abc) 0x517377:COPY(0x985abc) 0x517470:MASKED(or     ah,0x20) 0x58ec20:INI-LOADER
+    0x92bf04 Announce           3  0x48f564:COPY(0x985ac0) 0x49247a:DEF(mov) 0x58ef00:INI-LOADER
+    0x92bf08 Rules              5  0x4dc776:CALLRET 0x4dc8bd:COPY(0x985ac4) 0x57cb0c:CALLRET 0x57cc60:COPY(0x985ac4) 0x58ee16:INI-LOADER
+    0x92bf0c Semaphore          5  0x4dc77c:MASKED(and    eax,0x1800000) 0x4dc8c3:MASKED(and    ecx,0x1800000) 0x57cb1e:MASKED(and    ecx,0x1800000) 0x57cc66:MASKED(and    ecx,0x1800000) 0x58ecc9:INI-LOADER
+    0x92bf10 Time Controls      2  0x57d276:CARRIED 0x58eff8:INI-LOADER
+    0x92bf14 Customize          2  0x57c914:DEF(test) 0x58ed2a:INI-LOADER
+  digest 2ccee487aea07932
+PASS M370: 16/16 gates

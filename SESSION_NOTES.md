@@ -742,3 +742,32 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **RETRACTED mid-fire**: FUN_00551cf0/0x551d70 are 4-arg and the 4th arg selects SET vs CLEAR;
   reading them as clear-writers inverts the 0x20 story (caught before the first commit).
 - **OPEN**: the noun WORD for 0x20; the role of 0x80000000 (set with 0x10).
+
+## Session 336-chain3 (2026-11-24) — M370: the pref block's writers — 11 cells, 43 stores, 14 fns
+
+- **ACCEPT** `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 16/16`** digest
+  `2ccee487aea07932` (`evidence/m370_pref_writers.txt:175`);
+  `scripts/m370_mutate.py` **22/22 killed, NO-OP 0, coverage 16/16**
+  (`evidence/m370_mutate.txt:27`).
+- **CENSUS** (`:7,:16-20`): 85 refs over 76 dwords = 43 STORE / 39 READ / 3 BOUND. Text ==
+  bytes only as (site,cell) PAIRS with a rel32 filter (a call's rel32 false-matches 0x92befc
+  at 0x52732e). 5 materialisations, all cmp (2 on 0x92bde8 = M332's array end, 3 on 0x92bdfc
+  = never a ds: operand).
+- **NAMES, two-sided** (`:104-127`): 11 cells carry an INI key on BOTH the loader
+  FUN_0058e7f0 and the writeback FUN_0058f0d0, same TEXT at DIFFERENT VAs: Difficulty,
+  Faction, Map Type, Top Menu, Preferences, More Preferences, Announce, Rules, Semaphore,
+  Time Controls, Customize.
+- **PAIRING BY CALL SHAPE** (`:86-102`): 10x 6-push GetPrivateProfileString (key at call-2)
+  + helper 0x58e760; backward the only injective direction (forward 2/11). The naive
+  nearest-push law names `Laptop` at 0x92befc — killed (G4c).
+- **THE OTHER WRITERS** (`:130-148`): 32 non-loader stores in 13 fns — 12 copy a 0x985a**
+  bitmap (b8 x6, bc x3, c0, c4 x2), 4 write `x&0x1800000`, 4 flip ONE mirror bit then
+  snapshot, 2 CARRIED. The cell always takes a WHOLE-BITSET mirror; 0x58f0d0 flushes it.
+- **NARROWED** M332: 0x92bde8 has TWO stores (0x57c7b0 in FUN_0057c550, also writes
+  0x985aec), not one.
+- **BOUNDARY** (`:156-160`): 0x92bf18..0x92bf30 is a separate 7-dword `Custom World` group
+  (pointer sweep); the span ends at 0x92bf14.
+- **OPEN**: 0x92bf0c serialises as `Semaphore` but is always `x&0x1800000` (bits 23/24 of
+  0x985ae8) — packed field or reused name, INF; 0x92bdf0 unreferenced; 0x5f1394 chain-2.
+- **PITFALL**: ghidra_out/index.csv ends FUN_00510730 at 0x51080b; four handler stores at
+  0x510901..0x5109f8 need pad-delimited attribution, not the index (`:30-42`).
