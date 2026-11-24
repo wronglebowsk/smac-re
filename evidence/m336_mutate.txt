@@ -1,0 +1,19 @@
+== baseline ==
+  PASS M336: 7/7 gates  digest=38d17175eba142ab  gates seen=7  red=[]
+  NO-OP (unaltered input is green): PASS
+
+== mutant sweep (declared vs MEASURED) ==
+  id   mutant           declared               measured               verdict
+  MU1  drop_reader      G3,G7                  G3,G7                  PASS
+  MU2  stride_175       G2                     G2                     PASS
+  MU3  stride_175b      G3                     G3                     PASS
+  MU4  direct_moved     G1                     G1                     PASS
+  MU5  count7           G2                     G2                     PASS
+  MU6  clamp_hi5        G6                     G6                     PASS
+  MU7  clamp_exclusive  G6                     G6                     PASS
+  MU8  value_src        G4,G6                  G4,G6                  PASS
+  MU9  naive_alias      G3,G4,G7               G3,G4,G7               PASS
+  MU10 table_end_moved  G5                     G5                     PASS
+
+digest=d063bbf83189ff10 mutants=10/10 baseline=green
+PASS HARNESS 10/10

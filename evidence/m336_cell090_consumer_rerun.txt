@@ -1,0 +1,98 @@
+== G1 direct-displacement census of ds:0x8f0090 (1 refs) ==
+  0x48884d W mov     BYTE PTR ds:0x8f0090,dl   [FUN_00487fd0]
+  refs=1 writes=1 loads=0
+
+== G2 frame / stride / record count, read from the operands ==
+  field+0 read disp 0x8eff18   write disp 0x8eff18
+  imul immediates  0x176 (0x4866d2)   0x176 (0x487e57)
+  walk base 0x8eff1a count 8   record-1 pointer 0x8f008e
+  array end cell 0x8f0ac8
+  TARGET - field+2 base = 0x176 = 1.000 * stride
+  record 1 = FRAME + stride = 0x8f008e  (TARGET - record1 = 2)
+  FRAME + 8*stride = 0x8f0ac8   (reset end cell 0x8f0ac8)
+
+== G3 accesses through the field+2 displacement 0x8eff1a ==
+  0x486788 R movsx   edx,BYTE PTR [ecx+0x8eff1a]   [FUN_004865c0]
+  0x487e87 W mov     BYTE PTR [eax+0x8eff1a],cl   [FUN_00487db0]
+  0x4e2490 R mov     eax,0x8eff1a   [?]
+  0x525b83 W mov     BYTE PTR [eax*2+0x8eff1a],cl   [FUN_00525ad0]
+  0x525cb9 W mov     BYTE PTR [edi+0x8eff1a],0x0   [FUN_00525ad0]
+  0x525d28 W mov     BYTE PTR [edi+0x8eff1a],dl   [FUN_00525ad0]
+  loads=['0x486788']  stores=['0x487e87', '0x525b83', '0x525cb9', '0x525d28']  materialisations=['0x4e2490']
+  index chain:
+    0x4865dc mov DWORD PTR [ebp-0x8],0x0   (k=0)
+    0x4865e8 add eax,0x1   (k=k+1)
+    0x4865ee movsx ecx,BYTE PTR ds:0x8f0c10  (bound)
+    0x4865f8 jge 0x4867e8  (exit)
+    0x486782 imul imm=0x176; k=0 -> 0x8eff1a+0x176 = 0x8f0090  equals TARGET: True
+  the byte feeds 0x48678f mov eax,DWORD PTR [edx*4+0x94d2ac] -> table 0x94d2ac
+  row index: 0x486732 shl edx,0x4  [FUN_004865c0]
+  row count: the reset path writes 4 to 0x8f0c10 (0x4e2444) => rows k=0..3, i.e. records 1..4 of 8, so record 1 is row 0
+
+== G4 the pointer walk from 0x4e2490 ==
+  0x4e249c mov   BYTE PTR [eax-0x2],cl
+  0x4e249f mov   BYTE PTR [eax-0x1],cl
+  0x4e24a2 mov   BYTE PTR [eax],cl
+  0x4e24a4 mov   BYTE PTR [eax+0x1],cl
+  0x4e24a7 mov   BYTE PTR [eax+0x2],0x2
+  0x4e24ab add   eax,0x176
+  0x4e24b0 dec   edx
+  0x4e24b1 jne   0x4e249c
+  addresses 0x8eff1a .. 0x8f0954 step 0x176, 8 iterations
+  TARGET is iteration [1] -> the [eax] store writes 0x8f0090 with cl
+  field+2 writers: direct ['0x48884d'] + stride-indexed ['0x487e87', '0x525b83', '0x525cb9', '0x525d28'] + walk 0x4e24a2
+  value source of each stride-indexed store (nearest preceding byte load):
+    0x487e87 <- 0x8f0c11
+    0x525b83 <- 0x8f0c11
+    0x525cb9 <- literal 0
+    0x525d28 <- 0x8f0c11
+
+== G5 the #DIFF table (loader window 0x57ac00-0x57ad80) ==
+  0x57ac74 mov     esi,0x94d2ac
+  0x57ac88 cmp     esi,0x94d2c4
+  base 0x94d2ac end 0x94d2c4 rows=6
+  b=0 -> 0x94d2ac  (first row)
+  b=5 -> 0x94d2c0  (last row)
+  b=6 -> 0x94d2c4  (END POINTER, one past)
+
+== G6 every reference to the difficulty byte ds:0x8f0c11 ==
+  0x484efe W mov     BYTE PTR ds:0x8f0c11,cl   [FUN_00484da0]
+  0x48502e W mov     BYTE PTR ds:0x8f0c11,cl   [FUN_00484da0]
+  0x48549c W mov     BYTE PTR ds:0x8f0c11,cl   [FUN_004853b0]
+  0x486f30 R movsx   eax,BYTE PTR ds:0x8f0c11  <clamp args ['0x6', '0x0']>   [FUN_00486c30]
+  0x487df0 W mov     BYTE PTR ds:0x8f0c11,0x2   [FUN_00487db0]
+  0x487e81 R mov     cl,BYTE PTR ds:0x8f0c11   [FUN_00487db0]
+  0x488828 W mov     BYTE PTR ds:0x8f0c11,dl   [FUN_00487fd0]
+  0x488847 R mov     dl,BYTE PTR ds:0x8f0c11   [FUN_00487fd0]
+  0x4e244b W mov     ds:0x8f0c11,al   [?]
+  0x525b7d R mov     cl,BYTE PTR ds:0x8f0c11   [FUN_00525ad0]
+  0x525d08 R mov     dl,BYTE PTR ds:0x8f0c11   [FUN_00525ad0]
+  0x57eff3 R movsx   eax,BYTE PTR ds:0x8f0c11   [FUN_0057ecf0]
+  writes=6 reads=6 clamp-guarded reads=['0x486f30']
+  FUN_00423af0 (the clamp):
+    0x423afc cmp   eax,DWORD PTR [ebp+0xc]
+    0x423aff jl    0x423b09
+    0x423b04 cmp   ecx,DWORD PTR [ebp+0xc]
+    0x423b07 jge   0x423b0e
+    0x423b11 cmp   edx,DWORD PTR [ebp+0x10]
+    0x423b14 jle   0x423b1b
+    0x423b16 mov   eax,DWORD PTR [ebp+0x10]
+    0x423b1b mov   eax,DWORD PTR [ebp+0x8]
+  inclusive chain (jl/jge/jle)=True  clamp hi pushed=6
+  clamp(6,0,6) = 6 -> [6*4+0x94d2ac] = 0x94d2c4 = the end pointer
+
+== G7 rivals ==
+  R1 'dead cell (1 ref, 1 write, no reader)': direct loads=0; reachable aliased loads=['0x486788'] at k=0 -> KILLED
+  R2 'TARGET is record 1 offset 0': record1=0x8f008e TARGET-record1=2 record1-FRAME=0x176 (stride 0x176), field+0 touched at 0x8eff18 by 0x4866d8/0x487e60 -> KILLED
+
+== gates ==
+  G1: PASS  direct refs=1 (W1/R0)
+  G2: PASS  frame=0x8eff18 stride=0x176 count=8 end=0x8f0ac8 rec1=0x8f008e
+  G3: PASS  only load ['0x486788'] idx=0x176 k0=0x8f0090 feeds table 0x94d2ac
+  G4: PASS  walk_alias_iter=[1] field+2 store sites=6 sources=['0x8f0c11', '0x8f0c11', 'lit0', '0x8f0c11']
+  G5: PASS  table 0x94d2ac..0x94d2c4 rows=6 b6=0x94d2c4
+  G6: PASS  writes=6 reads=6 clamped=['0x486f30'] hi=6 inclusive=True
+  G7: PASS  R1 killed by load(s) ['0x486788']; R2 killed: rec1=0x8f008e, TARGET=rec1+2
+
+digest=38d17175eba142ab gates=7/7
+PASS M336: 7/7 gates
