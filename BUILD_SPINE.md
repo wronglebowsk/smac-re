@@ -1193,3 +1193,49 @@ DECLARED UNMODELED: the unit-id decoding that would map a queue head onto a bitm
 price/income law is B23's recorded fixture (price 9, add 1); which recorded loss is a raze/sale vs a
 record-identity change; the trace's 19-22 bases/sample are tracked by `(idx, name)` - a key that first
 appears mid-run contributes no delta (counted). No box time, no /proc, no gdb, no game-binary load.
+
+**B32 - the UNIT leg of the completion law RUN against the game's own trace: M349's decoder turns
+B31's 0/6 into 4/4 unit-head stamps - each boundary gains EXACTLY the mapper bit - and 0/2
+facility-head stamps, so the shared OR at `0x4f0ec0` is confirmed on the unit path and B30's
+facility setter is CONTRASTED, not merely unobserved** (`sim/unitoracle.py` = the run and its
+gates; s328 authors this rung from main, as B14-B31 did). B31 declared the unit-id decoding
+UNMODELED and scored "the queue head id is the bit that appeared" 0/6 by treating a negative head
+as a bulk id. M349 has since answered the decode (`## M349`): head `< 0` is the NEGATED UNIT TYPE,
+`>= 0` the facility item id, `-38` the sentinel; ONE mapper `FUN_00507410` =
+(byte = id/8 truncating toward zero, mask = `1<<(id&7)`) serves BOTH legs over the SAME
+`0x95da9c + 304*p` record - the unit leg tests the bit (`and al,cl` @0x4ef97a, a duplicate
+refusal), the shared stamp site ORs it (`or BYTE PTR [eax],cl` @0x4f0ec0 off `[ebp-0x30]`, the
+same decoded item). With the decoder attached the six recorded boundaries are re-scorable per
+leg, and they separate cleanly: 4 unit heads, 4 exact bit gains; 2 facility-range heads (321,
+outside the 64-bit map; 2, in-window) with 0 gains at their bit.
+
+`python3 -u -m sim.unitoracle` must print `PASS B32: 10/10 gates` (and `python3 -u -m
+sim.selftest --b32` only relays, so the two entry points cannot print different text) with:
+**G1** the six changed boundaries are READ with BOTH heads - the BEFORE-sample head (the completed
+one) and the AFTER-sample head (the rival shape) - each decoded and mapped, printed beside the
+recorded gain/loss and the before/after bitmap hex, with the row count and a digest pinned; **G2**
+the decode IS M349's - the 30-row `UNIVERSE` table is imported from `scripts/m349_unit_id.py`
+and asserted equal to the local model row-for-row, the six heads are exactly
+`[321,-2,-8,2,-3,-6]` (4 UNIT / 1 FACILITY / 1 BIGITEM), and a divergent table reddens the gate;
+**G3** scored PER LEG on the printed rows - 4/4 unit heads gain the mapper bit, 0/2 facility-range
+heads do, and B31's bulk rule (the raw head as the bit) reproduces 0/6 on the same rows, so the
+improvement is a number, not a re-reading; **G4** the AFTER head is the rival shape and matches
+0/6 - the stamp reads the head BEFORE the pop (M344's spend->stamp->pop), now on all six rows,
+not only B31's declared 2-deep fixture; **G5** the mapper is the DERIVED form, pinned on six
+rows (`321->(40,2)`, `-3->(0,32)`, `-8->(-1,1)`, `2->(0,4)`, `8->(1,1)`, `6->(0,64)`) and the
+swapped-orientation rival (`byte=id&7`, `mask=1<<(id>>3)`) fails at every one of them; **G6** the
+write is REPLAYED: the before window OR the mapper mask at the mapper byte equals the recorded
+after window at 4/4 unit boundaries, and the only changed byte inside the eight-byte bitmap window
+is the mapper byte; **G7** the facility side is a live COUNTER-RESULT, not a null: head 321 maps
+to byte 40, OUTSIDE the eight-byte window (one counted refusal), and stamping facility 2 at Virgin
+Soil predicts `04 00 00 08 00` where the record holds `10 00 00 00 00` - the facility stamp model
+fails on the recorded bytes at that boundary; **G8** the two recorded LOSSES sit on the two
+facility-range rows and none on a unit row, and each unit row's gain set is exactly its mapper bit
+(no extra bit lands); **G9** two in-process passes give identical row and score digests; **G10**
+every anchor (rows, score, per-leg score, mapper rows) is pinned to a literal, so a trace, decode
+or arithmetic drift reddens a gate instead of sliding by.
+DECLARED UNMODELED: WHY a facility-range head does not stamp while its unit twin does (the
+facility path's own branch to the shared OR is not walked here - the rung separates the legs on
+the recorded bytes, it does not disassemble the divergence); which recorded loss is a raze/sale
+vs a record-identity change; the other bits a completion moves (minerals, storage, message). No
+box time, no /proc, no gdb, no game-binary load.

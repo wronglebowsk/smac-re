@@ -1,0 +1,16 @@
+MU1_rows_anchor    declared={G10}                              red={G10}                              rc=1 OK
+MU2_head_off       declared={G1,G10,G2,G3,G6,G7,G8}            red={G1,G10,G2,G3,G6,G7,G8}            rc=1 OK
+MU3_all_facility   declared={G10,G2,G3,G6,G7,G8}               red={G10,G2,G3,G6,G7,G8}               rc=1 OK
+MU4_floor_shift    declared={G10,G5}                           red={G10,G5}                           rc=1 OK
+MU5_after_head     declared={G4}                               red={G4}                               rc=1 OK
+MU6_byte_shift     declared={G1,G10,G6,G7}                     red={G1,G10,G6,G7}                     rc=1 OK
+MU7_swap_mapper    declared={G10,G3,G5,G6,G7,G8}               red={G10,G3,G5,G6,G7,G8}               rc=1 OK
+MU8_nondet         declared={G10,G9}                           red={G10,G9}                           rc=1 OK
+MU9_drop_losses    declared={G10,G8}                           red={G10,G8}                           rc=1 OK
+MU10_selfcheck     declared={G6,G7}                            red={G6,G7}                            rc=1 OK
+MU11_m349_table    declared={G2}                               red={G2}                               rc=1 OK
+MU12_noop          declared={}                                 red={}                                 rc=0 OK
+MU13_same_sample   declared={G1,G10,G6,G7}                     red={G1,G10,G6,G7}                     rc=1 OK
+
+DIGEST 155781675e5086a1 mutants=13
+PASS HARNESS B32: 13/13

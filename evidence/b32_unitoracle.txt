@@ -1,0 +1,55 @@
+B32 - the unit leg of the completion law, scored on the recorded run
+trace: evidence/trace_m56_build_20261026_145157.jsonl
+
+TABLE 1  the six changed boundaries, both heads, both decodes
+  s3  r1  base 4  Sparta Command           headB=321   headA=128    B:BIGITEM  item=321  by=40  bit=None
+      A:BIGITEM  item=128  by=16  bit=None  gain=[4]    loss=[1]     win 0200000000000000 -> 1000000000000000
+  s5  r2  base 7  Morgan Energy Monopoly   headB=-2    headA=-6     B:UNIT     item=2    by=0   bit=2   
+      A:UNIT     item=6    by=0   bit=6     gain=[2]    loss=[]      win 8800000100000000 -> 8c00000100000000
+  s11 r5  base 3  Morgan Industries        headB=-8    headA=-24    B:UNIT     item=8    by=1   bit=8   
+      A:UNIT     item=24   by=3   bit=24    gain=[8]    loss=[]      win 8e00000000000000 -> 8e01000000000000
+  s11 r5  base 14 Virgin Soil              headB=2     headA=133    B:FACILITY item=2    by=0   bit=2   
+      A:BIGITEM  item=133  by=16  bit=None  gain=[4]    loss=[27]    win 0000000800000000 -> 1000000000000000
+  s13 r6  base 13 Morgan Processing        headB=-3    headA=-2     B:UNIT     item=3    by=0   bit=3   
+      A:UNIT     item=2    by=0   bit=2     gain=[3]    loss=[]      win 0000000000000000 -> 0800000000000000
+  s15 r7  base 7  Morgan Energy Monopoly   headB=-6    headA=-8     B:UNIT     item=6    by=0   bit=6   
+      A:UNIT     item=8    by=1   bit=8     gain=[6]    loss=[]      win 8c00000100000000 -> cc00000100000000
+
+TABLE 2  the head->bit rule, scored per leg on the before-sample head
+  base 4  BIGITEM   head=321   item=321  mapper=(40,2) bit=None gain_has_bit=False
+  base 7  UNIT      head=-2    item=2    mapper=(0,4) bit=2    gain_has_bit=True
+  base 3  UNIT      head=-8    item=8    mapper=(1,1) bit=8    gain_has_bit=True
+  base 14 FACILITY  head=2     item=2    mapper=(0,4) bit=2    gain_has_bit=False
+  base 13 UNIT      head=-3    item=3    mapper=(0,8) bit=3    gain_has_bit=True
+  base 7  UNIT      head=-6    item=6    mapper=(0,64) bit=6    gain_has_bit=True
+  unit 4/4   facility-range 0/2   B31 bulk rule 0/6
+
+TABLE 3  rivals, scored on the same rows
+  R1 the AFTER-sample head stamps        -> 0/6 matches
+  R2 swapped orientation (byte=id&7)     -> 0/5 matches (1 off-map row excluded)
+  R3 the raw head id is the bit (B31)    -> 0/6 matches
+  R4 a facility-range head stamps too    -> prediction 2/2, recorded 0/2
+
+TABLE 4  the bitmap write, replayed from the before window
+  base 4  BIGITEM   item=321  pred=refused            recorded=None               changed_bytes=-
+  base 7  UNIT      item=2    pred=8c00000100000000   recorded=8c00000100000000   changed_bytes=[0]
+  base 3  UNIT      item=8    pred=8e01000000000000   recorded=8e01000000000000   changed_bytes=[1]
+  base 14 FACILITY  item=2    pred=0400000800000000   recorded=1000000000000000   changed_bytes=[0]
+  base 13 UNIT      item=3    pred=0800000000000000   recorded=0800000000000000   changed_bytes=[0]
+  base 7  UNIT      item=6    pred=cc00000100000000   recorded=cc00000100000000   changed_bytes=[0]
+
+GATES
+ok   G1 the six changed boundaries are READ with BOTH heads, each decoded and mapped  rows=6 samples=20 before=[321, -2, -8, 2, -3, -6] after=[128, -6, -24, 133, -2, -8] digest=e6875c63c8c2f911
+ok   G2 the decode IS M349's: 30-row universe equal, heads [321,-2,-8,2,-3,-6] = 4 UNIT / 1 FAC / 1 BIG  universe=30 heads=[321, -2, -8, 2, -3, -6]
+ok   G3 scored PER LEG: 4/4 unit heads gain the mapper bit, 0/2 facility-range heads do; B31's bulk rule 0/6
+ok   G4 the AFTER-sample head is the rival: 0/6 - the stamp reads the head BEFORE the pop  after_head_hits=0/6
+ok   G5 the mapper is the DERIVED form on 5 item rows + 2 signed-division rows; the swapped orientation fails 0/5  digest=da981620c0e3ef18
+ok   G6 the write REPLAYS: before OR mask == the recorded after window at 4/4 unit boundaries, only the mapper byte moves
+ok   G7 the facility side is a counter-result: 321 maps to byte 40 (off the eight-byte map, 1 refusal) and the facility stamp misses the recorded bytes at 1/1
+ok   G8 the two recorded losses sit one per non-unit row (ids 1 and 27); every unit row's gain set is exactly its mapper bit  nonunit_losses=[[1], [27]]
+ok   G9 two in-process passes give identical row and score digests
+ok   G10 every anchor is pinned to a literal  rows=e6875c63c8c2f911 score=59b0b5e3647555b7 leg=26d1c63c2861b182 map=da981620c0e3ef18
+
+DIGEST e6875c63c8c2f911 universe=6 gates=10
+PASS B32: 10/10 gates
+ANCHORS rows=e6875c63c8c2f911 score=59b0b5e3647555b7 leg=26d1c63c2861b182 map=da981620c0e3ef18
