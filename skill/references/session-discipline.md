@@ -413,9 +413,9 @@ attribution, which is where decodes drift. Write the audit to its own short note
 - A duplicate-definition check belongs in the same breath as `ast.parse`: `names=[n.name for n in
   ast.parse(src).body if isinstance(n,ast.FunctionDef)]; assert names.count(f)==1`.
 
-### Parallel chains (two model endpoints, one repo)
+### Parallel chains (N lanes, one repo)
 
-A second chain on a different endpoint farms independent ANALYSE picks while the primary drives the
+Two or more chains on one repo farm independent ANALYSE picks while the primary drives the
 build track. Protocol, validated end to end:
 
 - **One cron job per endpoint**, each in its own worktree: `git worktree add ~/reverse/wt-<chain> -b
@@ -449,6 +449,18 @@ build track. Protocol, validated end to end:
   sections through every conflict.
 - **Cross-model review is a feature**: `ai_review.py` resolves the Strata endpoint regardless of the
   author's model, so a second-endpoint author gets genuine reviewer diversity for free.
+- **Scaling beyond two lanes is the same recipe, not a new design — but three or four is the ceiling.**
+  A third lane = one more worktree (`git worktree add --detach ~/reverse/wt-chain3 origin/main` plus the
+  `ghidra_out`/`scratch`/`programs` symlinks) and one more job created with the CLI, because
+  `cronjob_manage` cannot set a model pin: `hermes cron create --name <lane> --workdir <wt> --model <id>
+  --provider <name> --paused --deliver origin "every 1440m" "$(cat <prompt-file>)"`, then trim its
+  toolsets with `cronjob_manage(action='update', enabled_toolsets=['terminal','file'])`. Limits that
+  make 3-4 the practical cap: exactly ONE lane may own the main checkout and the `sim/` build track;
+  every other lane needs a DISJOINT pick from a finite static list, so past ~4 lanes they overlap
+  (a collision, not parallelism) or invent work; and shared-doc merge conflicts grow roughly with the
+  number of lane PAIRS. Add a lane at a round boundary, not mid-round, when the shared docs are being
+  written. Every lane's transient footing must name the other lanes' job/row as NOT a collision — the
+  stored prompts of older lanes know only the lanes that existed when they were written.
 - **Pace**: a free-tier/shared endpoint runs ~2–3× slower per fire (queueing + long generations) but
   completes full milestones including review rounds inside one fire when the unit is bounded. Keep
   it off the critical path; measure the gap with the tok/s recipe in the same hermes-agent reference
@@ -482,6 +494,13 @@ build track. Protocol, validated end to end:
   **GitHub also schedules NO PR run while the PR is dirty**, so `no checks reported` on a conflicting
   branch is the conflict, not an outage: merging origin/main in flips it to MERGEABLE and the run appears
   on the push (`references/git-workflow.md` §A dirty PR).
+  **A cancelled fire reports as a failure.** `cronjob_manage(action='cancel')` ends the run with
+  `status=error` and `FAILED — cancelled on request`, and the completion notice arrives looking like a
+  model crash. Cancel at its first check (~5 API calls, no work lost), and say in the report that YOU
+  cancelled it and why, or the user reads two failures. **Completion notices are not ordered**: a
+  cancelled run's notice can land AFTER its replacement is already running, so match each notice to its
+  delegation/execution id and read `executions.db` before reporting a failure — the live rows are the
+  state, the notice is a delayed event.
   On a metered endpoint, measure the plan windows per round (hermes-agent
   `references/subscription-usage.md`) and stop early when the binding gauge passes the user's ceiling.
 
