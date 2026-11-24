@@ -1488,3 +1488,16 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | no guard; -1 store = the NOT-FOUND branch (je @629331 -> 0x62936b); -1/-2 index BEFORE 0x983a10 (0x983498../0x9831dc..) | `:29-33` | V MU13,MU19 |
 | rivals DEAD: ctor-zero, census (1 plain + 12 [r+r*4+] outside 0x44xxxx), 0-based ids, cap-32, receiver-blind 2/35 | `:34-41` | V MU3,MU14,MU10,MU7,MU15 |
 | ACCEPT `scripts/m347_page_writer.py` `PASS M347: 12/12` `3fadfd6e6d26e64c` x2; harness 20/20, coverage 12/12 | `:55-57` | V MU0 |
+
+## M349 (s326-chain2, 13/13) — M68/M69 `NEG_TYPE`: a negative queue head is the NEGATED UNIT TYPE
+| claim | evidence | conf |
+|---|---|---|
+| `FUN_004ef6d0` slot 0: `cmp 0xffffffda` (-38) -> 0x4ef9b3, `jge 0x4efa2c` facility, `neg ecx` @0x4ef89f -> item = -head = unit type; 19 insns | `evidence/m349_unit_id.txt:4-23` | V MU13 |
+| G4 pins all 30 TABLE-2 rows (bands 39/34/38, 2nd index type-39, sentinel -38, split 0x40) | `:31-62` | V MU2,MU3,MU7,MU17 |
+| facility leg `cmp ebx,0x40` / `jl` -> id<64 stamps; id>=64 sets bit 2 @0x98adb8, stamps only if clear | `:24-30` | V MU16,MU6 |
+| unit cost `imul [0x984d44+48*type]` (= 0x984d38+0xc, stride 0x30; 72-record identity = M337) | `:75` | V MU4 / INF |
+| mapper DERIVED from its 17 insns (masks 7/7, `sar 3`, `shl cl`): byte id/8 truncating, mask 1<<(id&7); 203 calls exact | `:77`,`:98` | V MU19,MU20,MU11,MU12 |
+| both sites: base 0x95da9c, 304 stride; unit leg ANDs @0x4ef97a, facility leg ORs @0x4f0ec0 | `:83-86` | V MU14,MU15,MU5 |
+| recorded B31 heads ARE 321,-2,-8,2,-3,-6 (4 unit + 1 facility + 1 >=64); `>31` NOT unit-encoded | `:64-71` | V MU9,MU21 |
+| rivals DEAD: -(design-192) -> -4 vs trace -6 (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`), "-39 sentinel", logical shift | `:92-97` | V MU8,MU18,MU22 |
+| ACCEPT `scripts/m349_unit_id.py` `PASS M349: 13/13` `fa2d81797551dae5` x2; harness 22/22, 13/13 | `:101-102`, `evidence/m349_mutate.txt:30` | V MU0 |
