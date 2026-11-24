@@ -325,18 +325,7 @@ Acceptance: `python3 scripts/m276_fold_stride.py` -> `ACCEPTANCE M276 PASS 8/8`;
   only; a colony-pod founding leg does not exist in B3.
 - ACCEPTANCE: `python3 scripts/m282_base_founder.py` -> SUMMARY M282: 7/7 gates PASS
   (evidence/m282_base_founder.txt).
-## M283 (s227, PASS 17/17) - decode_save --sections walks 64x64 saves; the coarse-region-map length is dims-derived, not a hardcoded 80x80 128
-- The MAP branch hardcoded the coarse region map at 128 B. That map is
-  ((W+4)/5+1)/2 * (H+4)/5 bytes (FUN_00582000, shard_014.c:27263-27265; same formula as
-  sim/save.py region_len): 128 for 80x80, 91 for 64x64, 338 for 128x128. With 128 hardcoded,
-  every 64x64 save mis-read the count-prefixed section 37 B early and --sections died with
-  "no 52/304 split of a 0-byte region" (rc=1). walk() now reads W,H from the map header
-  struct and computes the length; the section table sums to the file byte on all 17 repo
-  saves (all 64x64) and the count u32 sits at 188,299 on all of them (sim/save.py predicted).
-- Acceptance: `python3 scripts/m283_sections_64x64.py` -> 17/17 gates
-  (`evidence/m283_sections_64x64.txt`). B10's gate that encoded the OLD failure ("rc == rc;
-  --sections fails on both") was updated to require rc 0 == rc 0 plus the grown image showing
-  exactly one more 304-B record (67x52+19x304 vs 67x52+18x304); B8/B9/B10 regressions green.
+## M283 (s227, PASS 17/17) - decode_save --sections walks 64x64 saves; the coarse-region-map length is dims-derived, not a hardcoded 80x80 128 — FULL rows VERBATIM at `docs/named-archive-m380-m283-rows.md` (sha1 `884865b302388a067d768cdb8959d5d7ca439907`, 1106 B); this stub governs.
 ## M284
 - **LIVE HALF INSTRUMENT-INVALID (s240/M293):** the SITE guard
   `if $reg >= 0x1000000` excluded every image-range vtable (the five family
@@ -934,6 +923,13 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
+## M380 (s340-c3, 7/7) — 0x94e48c = MIGHTY/MEEK strength scalar; hub mode-3 refusal; 2/27 rel rewrites DO drop a stamp. **`PASS M380: 7/7`** `5dfd436fe4093015` (`evidence/m380_diplo_power.txt:135`), re-run same; harness 19/19 (`evidence/m380_mutate.txt:23`).
+- block+0x105c: 70 operands (67R/3W); stride 2095 dwords measured 19/19 — V MU1 MU2 MU18 (`:9`)
+- 3 writers; create/reset zero +0x1054..+0x1068/+0x1070, zeroing proved; accumulator @0x5579ea shape 7/7 — V MU3 MU15 MU16 (`:14-26`)
+- **noun**: `cmp field[a],field[b]`@0x54dcf0 `jle`->'MEEK' 0x690f20, else 'MIGHTY' 0x690f18 — V MU4 MU5 MU19 (`:38`)
+- hub on 0x920700: 2->0x53a9c0 (REJPACTMEEK), 3->0x53bb90 (REJTREATYMEEK) — V MU6-8 (`:52`)
+- mode-3 @0x545d4a: validator -> `test eax` -> `test edi` -> call 0x540390; edi = sete(77c==3); 77c!=3 refusal = NO action — V MU9 MU10 MU17 (`:80`)
+- **erasure**: 0x551b1d clears 0x10000, 0x555430 clears 0x8000, both RMW one dword; 11 PRESERVE/14 unknown; M377's "0 provable" RETRACTED — V MU11-14 (`:88-116`)
 ## M377 (s339-c3, 8/8) — 0x8000/0x10000 are DEAL STAMPS: 0x8000 rides WAR (0x8010), 0x10000 the first-contact TRUCE (0x10004). **`PASS M377: 8/8`** `c9e99e3b7e9f0a31` (`evidence/m377_companion_bits.txt:98`), re-run identical; harness 18/18 (`evidence/m377_mutate.txt:20`).
 - carriers: 0x8000 <- 0x8010 only @0x507d1a (host FUN_00507ce0, 80 B); 0x10000 <- 0x10004 @0x54d2e5/0x552680 (0x530640) + @0x5526b3 (FUN_005525d0 x2, FUN_00546800 x1) — V MU1-5 (`:4-34`)
 - 0x8000 UNCONDITIONAL: `test BYTE [pair],0x7` @0x507cff -> FUN_005076d0(a,b,-1) @0x507d0d -> 0x8010 @0x507d1a; 0 edges AND no entry->ret path skips the stamp — V MU6 MU7 MU16 (`:38-48`)

@@ -1,0 +1,135 @@
+G0  the field's address algebra - every 0x94e48c operand image-wide
+  block base 0x94d430, stride 0x20bc B = 0x82f dwords; field offset in block = 0x105c (= 4188 B), relations row base 0x94d448
+  arithmetic: 0x20bc/4 = 0x82f dwords; 0x1044 B past the row base = 0x411 dwords
+  measured multipliers at the 19 scaled sites: [2095] -> stride = [8380] B / [2095] dwords
+  block base 0x94d430 is M295's V constant (170 uses); field is block+0x105c, i.e. 0x1044 B past the relations row base 0x94d448
+  operands 70: scaled [r*4+field] 19, block-relative [r+field] 51, absolute 0
+  19 scaled sites carry the 2095 chain: 19 verified, 0 not
+  reads 67, direct stores 3
+ok  G0 one per-faction dword at block+0x105c: 70 operands, every scaled site indexes 2095 dwords, 3 direct stores
+
+G1  writers - the 3 direct stores and the reset runs around them
+  store sites: 5566d5 5579ea 59efb1
+    FUN_00556690: 0x5566d5 0x5579ea
+    FUN_0059ec90: 0x59efb1
+  create run @0x59efb1: 6 dwords, 6 provably ZEROING: +0x1054 +0x1058 +0x105c +0x1060 +0x1064 +0x1068
+  reset run  @0x5566d5: 8 dwords, 8 provably ZEROING: +0x1054 +0x1058 +0x105c +0x1060 +0x1064 +0x1068 +0x106c +0x1070
+    accumulator load  field              present
+    accumulator imul                     present
+    accumulator add                      present
+    accumulator cdq/and 7 (signed /8)    present
+    accumulator sar 3                    present
+    accumulator store field              present
+    accumulator add-then-store           present
+  => field += (V+i)*(X+6)/8 measured from that shape
+  the dword ABOVE it, +0x1058 = 0x94e488, is the base counter (M282 V)
+ok  G1 the field is the 3rd dword of a contiguous per-faction stats run from +0x1054, zeroed at faction creation (6 dwords) and again in the 8-dword reset; one per-turn accumulator site adds to it
+
+G2  the noun - the one comparison of two factions' field that picks a string
+  loads: 0x54dce3 mov eax,DWORD PTR [edx*4+0x94e48c]
+         0x54dcea mov edx,DWORD PTR [ecx+0x94e48c]
+  gate : 0x54dcf0 cmp eax,edx
+         0x54dcf2 jle   0x54dcfb
+         0x54dcf4 push  0x690f18   -> 'MIGHTY'
+         0x54dcf9 jmp   0x54dd00
+         0x54dcfb push  0x690f20   -> 'MEEK'
+  literals: 0x690f18 = 'MIGHTY', 0x690f20 = 'MEEK'
+  jle target 0x54dcfb; pushes: MIGHTY@0x54dcf4 MEEK@0x54dcfb
+ok  G2 MIGHTY is taken when the first faction's field is GREATER (jle falls through to it); MEEK is the jle target - the field IS the might/might-not scalar
+  neighbour strings WRONGED@0x54dcb0 (0x690f08) / ENEMY@0x690f10 are gated on 0x426d60(rel,0x10), not on the field
+
+G3  FUN_00545c50 - the dispatch on ds:0x920700
+  function body 0x545c50..0x5467dc, 716 instructions
+  reads of ds:0x920700 inside the hub: 2
+  chain stopped at 0x545f1a (cmp edx,0x3)
+  chain of `cmp eax,imm` links; the call shown is the FIRST call in each arm: 0x2->0x53a9c0 0x3->0x53bb90 0x7->0x626634 0xa->0x406720 0x8->0x53cb20
+  ds:0x920700 == 0x02 -> call 0x53a9c0   (measured 0x53a9c0, ok)
+  ds:0x920700 == 0x03 -> call 0x53bb90   (measured 0x53bb90, ok)
+  other arms (cmp present, not asserted): 0x8@0x545eb7 0x9@0x545f96 0x1@0x546032 0x6@0x545fef 0x4@0x545dc0
+ok  G3 the hub dispatches ds:0x920700: 2 -> 0x53a9c0, 3 -> 0x53bb90 (the two proposal validators); 8/9/1/6/4 have their own arms
+  FUN_0053a9c0 pushes 0x6905a8 = 'REJPACTMEEK' at 0x53af29
+  FUN_0053bb90 pushes 0x690644 = 'REJTREATYMEEK' at 0x53bf57
+ok  G3 mode 2 is the PACT validator (REJPACTMEEK), mode 3 the TREATY validator (REJTREATYMEEK) - the two arms the hub fronts
+
+G4  the mode-3 arm - what FUN_00545c50 does with the branch it takes
+  edi = (ds:0x92077c == 3):
+    0x545cd4 mov   edx,DWORD PTR ds:0x92077c
+    0x545cda xor   eax,eax
+    0x545cdc cmp   edx,0x3
+    0x545cdf mov   DWORD PTR ds:0x9207a0,0x1
+    0x545ce9 sete  al
+    0x545cec mov   edi,eax
+  the arm:
+    0x545d43 cmp   eax,0x3
+    0x545d46 jne   0x545d93
+    0x545d48 push  ebx
+    0x545d49 push  esi
+    0x545d4a call  0x53bb90
+    0x545d4f add   esp,0x8
+    0x545d52 test  eax,eax
+    0x545d54 jne   0x545d64
+    0x545d56 test  edi,edi
+    0x545d58 je    0x545d64
+    0x545d5a push  ebx
+    0x545d5b push  esi
+    0x545d5c call  0x540390
+    0x545d61 add   esp,0x8
+    0x545d64 mov   DWORD PTR [ebp-0x5388],0x67164c
+  flag provenance: mov edx,ds:0x92077c / cmp edx,3 / sete al / mov edi,eax -> ok
+  validator call 0x545d4a, abort call 0x545d5c, tests 2: eax,eax edi,edi
+ok  G4 mode 3 calls the TREATY validator with (a,b); the abort caller runs only when the validator returns 0 AND edi == (ds:0x92077c == 3); the other path falls into 0x545d64 (the SEH tail) and takes no action
+  the edi test jumps to 0x545d64 = the SEH tail -> a refusal with 0x92077c != 3 takes NO action
+
+G5  erasure - can any of M377's 27 relations-dword rewrites be SHOWN to drop a stamp?
+  direct stores to the relations dword 0x94d448: 27
+  site    src   pre-value                       field? bit15 bit16  verdict
+  52b9c7 edx  mov edx,DWORD PTR [ebp-0x50]     mem    in   in   unknown (mem)
+  52b9d0 edx  mov edx,DWORD PTR [ebp-0x4c]     mem    in   in   unknown (mem)
+  551b1d edx  and edx,0xfaeef378               field  in   out  DROP 0x10000
+  551d22 edx  or edx,ecx                       field  in   in   PRESERVE
+  552cca edx  and edx,ecx                      field  unk  unk  unknown (field)
+  552cd8 edx  and edx,ecx                      field  unk  unk  unknown (field)
+  552ce6 eax  or al,0x40                       field  in   in   PRESERVE
+  552d6f edx  and edx,ecx                      field  unk  unk  unknown (field)
+  552d7d edx  and edx,ecx                      field  unk  unk  unknown (field)
+  5530c3 eax  and eax,0xfeeffffe               field  in   in   PRESERVE
+  55487f ecx  or ecx,0x40020                   field  in   in   PRESERVE
+  554d42 esi  or esi,0xc0020                   field  in   in   PRESERVE
+  5552d3 eax  and al,0xbf                      field  in   in   PRESERVE
+  555394 ecx  and ecx,0xfffdf3ff               field  in   in   PRESERVE
+  5553f3 edx  or edx,0x840                     field  in   in   PRESERVE
+  55540a eax  or eax,0x20000                   bb     in   in   unknown (bb)
+  555430 eax  and ah,0x7f                      field  out  in   DROP 0x8000
+  5556eb eax  or eax,0x840                     bb     in   in   unknown (bb)
+  555758 eax  and eax,0x7fffffff               bb     in   in   unknown (bb)
+  5557d9 ebx  and ebx,0xfbffffff               field  in   in   PRESERVE
+  55580f eax  and ah,0xdf                      bb     in   in   unknown (bb)
+  5558f5 ecx  and ecx,0xfbffffff               field  in   in   PRESERVE
+  555a45 eax  or ah,0x8                        bb     in   in   unknown (bb)
+  555a60 eax  or ah,0x8                        bb     in   in   unknown (bb)
+  555a6e eax  or ah,0x4                        bb     in   in   unknown (bb)
+  555f39 eax  and ah,0xfd                      bb     in   in   unknown (bb)
+  555f4b edx  and dh,0xfd                      field  in   in   PRESERVE
+  drop 0x551b1d (0x10000) <- and edx,0xfaeef378  @0x551b17
+  drop 0x555430 (0x8000) <- and ah,0x7f  @0x55542d
+  M377's rule (shape algebra over the STORE alone) predicts 0 droppers; def-use finds 2
+ok  G5 exactly 2 of 27 rewrites PROVABLY clear a stamp bit, at the named sites: 0x551b1d masks OUT 0x10000 on the war path; 0x555430 masks OUT 0x8000 under a 0x985afc parity gate - M377's '0 provable clearer' is a shape-only bound and is RETRACTED as a claim about lineage
+
+G6  rivals - each measured against the tables above
+  R1 4-byte per-faction array      killed  (19/19 scaled sites measure 2095*x)
+  R2 the pair is not the field     killed  (cmp operands are the two field loads; jle lands on MEEK)
+  R3 2/3 swapped                   killed  (mode 3 -> 0x53bb90 (REJTREATYMEEK), mode 2 -> 0x53a9c0)
+  R4 abort is unconditional        killed  (2 tests before the abort call, the first on the RETURN register)
+  R5 shape-only erasure bound      killed  (predicts 0 droppers, def-use found 2)
+ok  G6 all five rivals are killed by the printed numbers
+
+G7  digest
+  g0:70,19,19,3
+  g1:6,8,0x105c
+  g2:690f18,690f20,54dcfb,54dcf4
+  g3:2:53a9c0,3:53bb90
+  g4:545d4a,545d5c,2
+  g5:551b1d:0x10000,555430:0x8000:27
+  digest 5dfd436fe4093015
+
+PASS M380: 7/7  5dfd436fe4093015

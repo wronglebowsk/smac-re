@@ -1,0 +1,5 @@
+# M380 re-run proof: the instrument's own printed digest must appear in BOTH runs
+digest_line_1:   digest 5dfd436fe4093015
+digest_line_2:   digest 5dfd436fe4093015
+diff: IDENTICAL (byte-for-byte)
+sha1: 7455c8e2b5767fc9260b0389730db080efcc7c88

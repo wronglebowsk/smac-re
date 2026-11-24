@@ -1,0 +1,23 @@
+BASELINE PASS rc=0
+id     gate  result   detail
+MU1    G0    killed   'scaled sites are not 19/19'
+MU2    G0    killed   'field offset in the block is not 0x105c'
+MU3    G1    killed   'field is not inside the reset runs'
+MU4    G2    killed   'does not select MIGHTY'
+MU5    G2    killed   'does not select MIGHTY'
+MU6    G3    killed   'dispatch arms do not all resolve'
+MU7    G3    killed   'dispatch arms do not all resolve'
+MU8    G3    killed   'does not push REJTREATYMEEK'
+MU9    G4    killed   'edi test does not go straight to the tail'
+MU10   G4    killed   'mode-3 arm is not'
+MU11   G5    killed   'expected 2 provable stamp droppers'
+MU12   G5    killed   'expected 2 provable stamp droppers'
+MU13   G5    killed   'expected 2 provable stamp droppers'
+MU14   G5    killed   'store population is not 27'
+MU15   G1    killed   'accumulator shape is incomplete'
+MU16   G1    killed   'create run is not entirely ZEROING'
+MU17   G4    killed   'edi is not provably sete'
+MU18   G0    killed   'emitted multiplier'
+MU19   G2    killed   'do not decode to MIGHTY/MEEK'
+
+SUMMARY M380: 19/19 killed
