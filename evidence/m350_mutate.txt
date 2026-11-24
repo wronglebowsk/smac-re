@@ -1,4 +1,4 @@
-M350 mutation harness — 14 mutants, 2 no-ops
+M350 mutation harness — 15 mutants, 2 no-ops
   MU1   KILL G1 | Difficulty's key push swapped to the Map Type string
         [FAIL] G1 key 0x692724 (pushed 0x58e8a1) resolves to 'Map Type' in the PE
   MU2   KILL G1 | the Map Type store redirected into Top Menu (cell set no longer 11)
@@ -26,9 +26,11 @@ M350 mutation harness — 14 mutants, 2 no-ops
   MU13  KILL G3 | one PE displacement byte changed: image and objdump now disagree (equivalence off)
         [FAIL] G3 0 text refs are missing from the byte scan (text-only = 1)
   MU14  KILL G6 | ALGO 4: the profile-read probe answers True for every site -> R2 decorative
-        [FAIL] G6 R2 REFUTED: the loader's function is the ONLY one that reads the profile (18 calls), and every co-writer store (33/33) takes a value defined in its own function
+        [FAIL] G6 R2 REFUTED: none of the 11 functions that CO-STORE reads the profile (1089 of the image's 84 `call edi` sites are the loader's), and no loader store has an in-function value (0/11) while 28/33 co-stores do
+  MU15  KILL G6 | ALGO 5: calls made transparent -> the loader's parse-return stores count as locally defined
+        [FAIL] G6 R2 REFUTED: none of the 11 functions that CO-STORE reads the profile (0 of the image's 84 `call edi` sites are the loader's), and no loader store has an in-function value (11/11) while 33/33 co-stores do
   NOOP0 OK   baseline green | {}
   NOOP1 OK   baseline green | {'M350_ALGO': ''}
 
-MUTANTS: 14/14 killed, no-op green
-RESULT: PASS M350: harness 14/14
+MUTANTS: 15/15 killed, no-op green
+RESULT: PASS M350: harness 15/15

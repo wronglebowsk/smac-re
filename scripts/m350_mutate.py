@@ -51,6 +51,8 @@ MUTANTS = [
      "one PE displacement byte changed: image and objdump now disagree (equivalence off)"),
     ("MU14", {"M350_ALGO": "4"}, "G6",
      "ALGO 4: the profile-read probe answers True for every site -> R2 decorative"),
+    ("MU15", {"M350_ALGO": "5"}, "G6",
+     "ALGO 5: calls made transparent -> the loader's parse-return stores count as locally defined"),
 ]
 
 NO_OP = [{}, {"M350_ALGO": ""}]

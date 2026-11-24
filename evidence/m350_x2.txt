@@ -1,4 +1,4 @@
 M350 x2 — two invocations of `python3 -u scripts/m350_pref_cowriters.py`
-run1 rc=0 sha1=dddba30dcff02c6d50fd245766a20b80da39929a RESULT: PASS M350: 6/6 gates
-run2 rc=0 sha1=dddba30dcff02c6d50fd245766a20b80da39929a RESULT: PASS M350: 6/6 gates
+run1 rc=0 sha1=44a184e308934ebaa13582bad4b65af655b198fe RESULT: PASS M350: 6/6 gates
+run2 rc=0 sha1=44a184e308934ebaa13582bad4b65af655b198fe RESULT: PASS M350: 6/6 gates
 stdout byte-identical: True ; diff lines: 0

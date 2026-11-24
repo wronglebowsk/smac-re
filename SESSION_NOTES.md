@@ -622,28 +622,28 @@ whether a facility completion stamps at all.
 - STILL OPEN: which field of a unit DESIGN the chooser negates; which B31 loss is a raze vs a
   record change; whether a completion stamps.
 
-## Session 326 (2026-11-24) — M350: the pref-block co-writers of 0x92bde8..0x92bf34 (milestone/M350)
+## Session 327-chain3 (2026-11-24) — M350: the pref-block co-writers of 0x92bde8..0x92bf34
 
-- **ACCEPT** `python3 -u scripts/m350_pref_cowriters.py` -> **`PASS M350: 6/6 gates`**, table
-  `23794d225859ed83`, census `f9c2b0cc2e5ea7d5`, law `1680ba6459e58100`; x2 byte-identical
-  (`sha1 dddba30dcff02c6d`, `m350_x2.txt:4`; digest `m350_pref_cowriters.txt:16`);
-  `m350_mutate.py` -> **14/14**, NO-OP green (`m350_mutate.txt:34`). Review #373 10/10
-  fixed: R2 MEASURES predecessors (11/11 loader, 33/33 co) + profile reads (18 loader, 0 co),
-  MU14/MU13 added, source sets LOAD/STORE-qualified.
+- **ACCEPT** `python3 -u scripts/m350_pref_cowriters.py` -> **`PASS M350: 6/6 gates`**, digests
+  table `23794d22`, census `f9c2b0cc`, law `1680ba64`; x2 byte-identical (sha1 `44a184e3`,
+  `m350_x2.txt:4`; digest `:16`); `m350_mutate.py` -> **15/15**, NO-OP green (`:36`).
 - **EXTENT (the finding):** the block does NOT end at 0x92bf14. The loader fills 7 more dwords by
   POINTER (`mov esi,0x92bf18 ; call 0x5ea484 ; mov [esi],eax ; add esi,4 ; cmp esi,0x92bf34 ; jl`,
-  key `Custom World` 0x6927c4) and FUN_0058f0d0 re-emits the 7 joined `, ` (0x689bbc). Both are
-  0-displacement forms — why a displacement census (M332's method) stopped at the last scalar.
-- **MAP:** 11 scalar cells (`:4-15`), ONE loader store each, each store's eax from a 0x5ea484/493
-  parse. **Read-side correction:** 0x92befc reads key `Preferences` (0x69274c) — `Laptop`
-  (0x692704) is a default string, not a key. Each block's FIRST read takes its key ptr from
-  `ds:0x6926ec`; reads sum to 18.
-- **CO-WRITERS:** 57 co-refs / 32 scalar co-stores over 14 scalar co-ref fns (10 store + 4
-  read-only, publisher among them) + 1 array co-store at 0x92bf18 (FUN_0057e420). LAW: 24/33 reach
-  apply 0x58f3d0 or persist 0x58f0d0 within 8 insns, 9 go to a shared tail (`:131`). 31 take an
-  outside value; 2 (0x5a0ff2/6) are self-RMW through `al`.
-- **PUBLISHER:** 0x58f3d0 = 3 loads -> 3 stores (0x92befc/bf00/bf04 -> 0x985ab8/abc/c0) = APPLY;
-  0x58f0d0 = persist.
-- **Docs:** M314 4,399 B rotated VERBATIM to `docs/named-archive-m350-rows.md` (sha1
-  `decdd34b21f8dadbb475a7648efdca8bcf00f4d6`, `m350_named_rotate.py --verify` PASS, stub cites
-  `:7`). NEXT_PROMPT +1 line. OPEN: who sets ds:0x6926ec; the 9 tail paths' composition.
+  key `Custom World` 0x6927c4); FUN_0058f0d0 re-reads the loop and joins with `, ` (0x689bbc). Both
+  are 0-displacement forms — why a displacement census (M332's method) stopped at the last scalar;
+  11 scalar cells, ONE loader store each (`:4-15`).
+- **RETRACTION (#374 P1-2):** the earlier "loader 11/11 predecessors" was not a data-flow measure.
+  Treating a call as breaking the def: **0/11 loader vs 28/33 co** (5 call-fed, `:160`) — the
+  loader's value is the parse RETURN.
+- **READS:** loader 18 of the image's 84 `call edi` sites, the 11 co-store fns 0, the writeback 8
+  (its write side, INFERRED). 0x92befc's key is `Preferences` (0x69274c); `Laptop` (0x692704) is a
+  default string.
+- **CO-WRITERS:** 57 co-refs / 32 scalar co-stores in 14 scalar fns (10 store + 4 read-only) + 1
+  array co-store; LAW 24 COMMIT / 9 TAIL-NONE (`:131`); 31 outside, 2 self-RMW (0x5a0ff2/6, one
+  ALU); publisher = 3 direction- AND register-checked stores -> 0x985ab8/abc/c0.
+- **REVIEWS:** #373 (closed, superseded) 10/10 fixed; #374 10/10 triaged — its P1s were real (read
+  census image-wide, the pred measurement, publisher store direction); P2s fixed (EXTENT cite
+  `:157`, key->parse INFERRED, ALU law at 1 op, writeback `add esi,4`, register-matched publisher).
+  MU15 = pred mutant, MU14 = read-probe mutant.
+- **Docs:** NAMED 243,972 B (M314 4,399 B VERBATIM -> `docs/named-archive-m350-rows.md`, sha1
+  `decdd34b`, `--verify` PASS). OPEN: who sets ds:0x6926ec.

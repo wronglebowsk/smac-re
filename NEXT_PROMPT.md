@@ -29,7 +29,7 @@ box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B
 author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
 decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (s326): `NAMED.md` 243,935/250,000 = 6,065 B (M314 -> `docs/named-archive-m350-rows.md`, `m350_named_rotate.py --verify`). NEXT_PROMPT <=12,000.**
+  **DOC CAP (s327): `NAMED.md` 243,972/250,000 = 6,028 B (M314 -> `docs/named-archive-m350-rows.md`, `--verify`). NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
@@ -124,4 +124,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11
 - M347 (s324-chain2): HoF page writer = the +0x5970 child selector, ids 1..7 (page bound 7); 12/12 `3fadfd6e6d26e64c`, 20/20
 - M349 (s326-chain2) MERGED: M68/M69 `NEG_TYPE` ANSWERED — a negative queue head is the NEGATED UNIT TYPE (`neg` @0x4ef89f; `>=0` = facility id, `-38` = sentinel, id<0x40 stamps, `>=0x40` gated by 0x98adb8 bit2, one 0x95da9c+304*p bitmap); 13/13 `4d3c2e4ded19d620`, harness 18/18
-- M350 (s326-chain3): pref block END = 0x92bf34; loader = ONLY profile reader; co-writes = commits. 6/6 `23794d22` x2, 14/14.
+- M350 (s327-chain3): pref block END = 0x92bf34; loader = sole profile-backed init. (0/11 local); co-writes = commits. 6/6 `23794d22` x2, 15/15.

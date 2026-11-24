@@ -1,6 +1,6 @@
 M350 — pref-block co-writers of ds:0x92bde8..0x92bf34 (static, .text 781429 insns)
 
-T1 the loader is the ONLY profile reader and the sole INITIALISER (co-writers: T2-T4)
+T1 the loader is the block's only profile-backed INITIALISER (co-writers: T2-T4)
   cell      name              push      parse     store     block-reads
   0x92bde8 Difficulty        0x58e8a1 0x5ea484 0x58e8c6 2
   0x92bdf4 Map Type          0x58e905 0x5ea484 0x58e922 1
@@ -62,8 +62,8 @@ T2 block EXTENT — the loader's FULL store census
   Custom World key 0x6927c4 = 'Custom World'
   default-value pattern tokens = ['2, ', '1, ']
   [PASS] G2 the 7 stores are parsed from the key `Custom World`
-  writeback: 11 scalar loads, 1 array loads, cursor @['0x58f352'] bound @['0x58f388']
-  [PASS] G2 the writeback mirrors 11 scalars + the same 7-slot loop
+  writeback: 11 scalar loads, 1 array loads, cursor @['0x58f352'] step @['0x58f382'] bound @['0x58f388']
+  [PASS] G2 the writeback mirrors 11 scalars + the same 7-slot loop (cursor, add 4, bound)
   list joiner key 0x689bbc = ', '
   [PASS] G2 the writeback joins the 7 slots with the `, ` string
 
@@ -102,25 +102,25 @@ T4 COMMIT law — every co-store classified by its next apply/persist call
   0x4dc776 0x92bf08 FUN_004dc5f0    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @4dc75b)
   0x4dc77c 0x92bf0c FUN_004dc5f0    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @4dc769)
   0x4dc8bd 0x92bf08 FUN_004dc5f0    COMMIT      PERSIST/site EXTERNAL (load of a different source @4dc8b1)
-  0x4dc8c3 0x92bf0c FUN_004dc5f0    COMMIT      PERSIST/site EXTERNAL (load of a different source @4dc75b)
-  0x510901 0x92bf00 FUN_00510730    COMMIT      PERSIST/site EXTERNAL (load of a different source @5108e0)
+  0x4dc8c3 0x92bf0c FUN_004dc5f0    COMMIT      PERSIST/site EXTERNAL (no local def found)
+  0x510901 0x92bf00 FUN_00510730    COMMIT      PERSIST/site EXTERNAL (no local def found)
   0x51095a 0x92bf00 FUN_00510730    COMMIT      PERSIST/site EXTERNAL (load of a different source @510955)
   0x5109a8 0x92befc FUN_00510730    COMMIT      PERSIST/site EXTERNAL (load of a different source @5109a3)
   0x5109f8 0x92befc FUN_00510730    COMMIT      PERSIST/site EXTERNAL (load of a different source @5109f3)
-  0x515c4e 0x92bf00 FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (load of a different source @515c2d)
+  0x515c4e 0x92bf00 FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (no local def found)
   0x515c9a 0x92befc FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (load of a different source @515c94)
   0x515d97 0x92befc FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (load of a different source @515d92)
   0x515e03 0x92bf00 FUN_00512b40    COMMIT      PERSIST/site EXTERNAL (load of a different source @515dfd)
   0x517377 0x92bf00 FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (load of a different source @517371)
   0x5173c4 0x92befc FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (load of a different source @5173be)
   0x51740c 0x92befc FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (load of a different source @517407)
-  0x517470 0x92bf00 FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (load of a different source @51744f)
+  0x517470 0x92bf00 FUN_00516b80    COMMIT      PERSIST/site EXTERNAL (no local def found)
   0x57c7b0 0x92bde8 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (call boundary @57c7a2)
   0x57c914 0x92bf14 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57c8fe)
   0x57cb0c 0x92bf08 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cafe)
   0x57cb1e 0x92bf0c FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cb12)
   0x57cc60 0x92bf08 FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cc54)
-  0x57cc66 0x92bf0c FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (load of a different source @57cb12)
+  0x57cc66 0x92bf0c FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (no local def found)
   0x57cdaa 0x92bdec FUN_0057c550    TAIL-NONE   no apply/persist call in 8 insns EXTERNAL (call boundary @57cd93)
   0x57d276 0x92bf10 FUN_0057c550    COMMIT      PERSIST/site EXTERNAL (call boundary @57d24c)
   0x57e6cc 0x92bf18 FUN_0057e420    COMMIT      PERSIST/site EXTERNAL (load of a different source @57e6c3)
@@ -142,21 +142,24 @@ T4 COMMIT law — every co-store classified by its next apply/persist call
   TAIL-NONE exceptions: ['0x4dc776', '0x4dc77c', '0x57c7b0', '0x57c914', '0x57cb0c', '0x57cb1e', '0x57cc60', '0x57cc66', '0x57cdaa']
 
 T5 PUBLISHER FUN_0058f3d0
-  stores to 0x985axx: 3
+  stores to 0x985axx (direction-checked): 3
     0x58f3e1 mov    ds:0x985ab8,eax
     0x58f3e6 mov    DWORD PTR ds:0x985abc,ecx
     0x58f3ec mov    DWORD PTR ds:0x985ac0,edx
   block refs: [('0x92befc', 'LOAD', '0x58f3d0'), ('0x92bf00', 'LOAD', '0x58f3d5'), ('0x92bf04', 'LOAD', '0x58f3db')]
   [PASS] G5 FUN_0058f3d0 stores exactly 3 globals (3)
   map: {'0x92befc': '0x985ab8', '0x92bf00': '0x985abc', '0x92bf04': '0x985ac0'}
+  register pairs (cell, load reg, global, store reg): [('0x92befc', 'eax', '0x985ab8', 'eax'), ('0x92bf00', 'ecx', '0x985abc', 'ecx'), ('0x92bf04', 'edx', '0x985ac0', 'edx')]
   [PASS] G5 the publisher map == declared 3 cells -> 3 globals
+  [PASS] G5 each cell's value reaches its global in the SAME register (no order-only pairing)
   [PASS] G5 the publisher touches only those 3 cells (0 other pref refs)
 
 T6 RIVALS (each must FAIL on the numbers above)
   R1 'the block ends at 0x92bf14': loader loop stores = 7 (7 insn x 7 iters), writeback loop loads = 7, and the DISPLACEMENT refs to those 7 slots in either pref function = 0
   [PASS] G6 R1 REFUTED: 7 stores + 7 loads past 0x92bf14 exist and BOTH are pointer forms (0 displacement refs) -- the census that produced the old end could not see them
-  R2 'a co-writer derives the value, so the loader is not authoritative': in-function predecessors loader 11/11, co 33/33 ; profile READS per function: FUN_0058e7f0 = 18, the 11 co-writer functions = 0
-  [PASS] G6 R2 REFUTED: the loader's function is the ONLY one that reads the profile (18 calls), and every co-writer store (33/33) takes a value defined in its own function
+  R2 'a co-writer derives the value, so the loader is not authoritative': in-function value (no call in between) loader 0/11, co 28/33 ; the 5 co-stores WITHOUT one = ['0x57c7b0', '0x57c914', '0x57cdaa', '0x57d276', '0x57e6cc']
+  profile READS (`call edi`): FUN_0058e7f0 = 18 ; the 11 co-STORE functions = 0 ; the other 5 functions that touch the block = {'FUN_0058f0d0': 8} ; image-wide sites = 84
+  [PASS] G6 R2 REFUTED: none of the 11 functions that CO-STORE reads the profile (0 of the image's 84 `call edi` sites are the loader's), and no loader store has an in-function value (0/11) while 28/33 co-stores do
   R3 'the 11 scalars are one struct walked by base+index': materialised bases = 2 ; indexed scalar forms = 0
   [PASS] G6 R3 REFUTED: no base is materialised for a scalar cell (only 2 cmp sentinels)
 

@@ -13,8 +13,8 @@ WHAT THE BYTES SAY (one line): the block is 11 scalar pref cells the loader fill
 one key at a time, PLUS a 7-dword `Custom World` list at 0x92bf18..0x92bf34 the
 same loader fills with 7 parser calls — so the block END is 0x92bf34, not the
 footing's 0x92bf14 — and every non-loader write of a scalar is a preferences-screen
-COMMIT that is followed, at 24 of 33 sites, by the apply (FUN_0058f3d0) and/or the
-INI writeback (FUN_0058f0d0) inside the same basic block.
+COMMIT: 24 of the 33 co-stores reach the apply (FUN_0058f3d0) or the INI writeback
+(FUN_0058f0d0) within 8 instructions, 9 go to a shared tail with neither in-window.
 
 GATES (printed FIRST, then asserted; every VERIFIED row names a mutant in
 scripts/m350_mutate.py):
@@ -31,18 +31,21 @@ scripts/m350_mutate.py):
       BOTH directions; the byte-level displacement scan and the objdump-text scan
       produce the SAME instruction set; zero indexed/materialised-base access to a
       scalar cell (so the scalar census is complete).
-  G4  COMMIT law: each of the 32 co-stores is classified by the first
+  G4  COMMIT law: each of the 32 scalar co-stores is classified by the first
       persist/publish call within 8 instructions at the site, following one jmp to
-      its in-function target; the split (26 / 6) is asserted and the 6 exceptions
-      are LISTED. Plus the value provenance classifier: 31 stores take a value
-      from outside the cell, 1 (0x5a1006) is a self-RMW (`and al,0xdf` on a copy).
+      its in-function target; the measured split (24 COMMIT / 9 TAIL-NONE over all
+      33 co-stores) is asserted and the 9 exceptions are LISTED. Plus the value
+      provenance classifier: 31 stores take a value from outside the cell, 2
+      (0x5a0ff2, 0x5a1006) are a one-ALU self-RMW through a sub-register copy.
   G5  the publisher: FUN_0058f3d0 stores exactly 3 globals (0x985ab8/abc/c0) from
       3 cells (0x92befc/bf00/bf04), 0 other stores, and is called only from
       commit blocks.
   G6  RIVALS, each measured and each FAILING on the printed numbers:
       R1 "the block ends at 0x92bf14" (the footing) -> 7 stores + 7 loads past it.
       R2 "a co-writer is a derived-value writer, so the loader is not authoritative"
-         -> the loader's store is the only one with no in-function predecessor.
+         -> 0/11 loader stores have an in-function value (a call return is not one),
+            28/33 co-stores do, and the 11 co-STORE functions make 0 profile reads
+            (the loader's 18 are the block's reads).
       R3 "the 11 scalars are one struct walked by base+index" -> 0 materialised
          bases, 2 sentinel-only comparisons.
 """
@@ -129,6 +132,8 @@ ALIAS = {"al": "eax", "ah": "eax", "ax": "eax", "bl": "ebx", "bh": "ebx",
 #       classified EXTERNAL (G4's SELF set empties)
 #   3 = the commit walker ignores control flow and widens to 400 insns
 #   4 = the profile-read probe answers True for every site (R2's probe blinded)
+#   5 = has_local_pred() makes calls transparent, so a parse-return store counts as
+#       locally defined (R2's loader 0/11 becomes 11/11)
 ALGO = os.environ.get("M350_ALGO", "")
 
 
@@ -417,7 +422,9 @@ def provenance(a, cell):
     i = POS[a] - 1
     lo = fnof(a)[1]
     ops = 0
-    while i >= 0 and INS[i]["a"] >= lo and ops < 24:
+    # the stated law is "at most ONE ALU op between the same-cell load and the store";
+    # ops > 1 therefore leaves the SELF set instead of being silently accepted.
+    while i >= 0 and INS[i]["a"] >= lo and ops < 2:
         t2 = INS[i]["t"]
         mo = OPS.match(t2)
         if mo:
@@ -448,7 +455,10 @@ def provenance(a, cell):
 
 def has_local_pred(a):
     """True if the register a site stores has a definition inside the same function
-    before the site.  A call boundary is not a definition."""
+    before the site AND nothing transfers control in between: a call return (or a
+    jmp/ret) is NOT a definition here, so a store fed by a parse call's eax scores
+    False -- that is exactly the loader's shape.  ALGO 5 makes calls transparent
+    (the old, weaker rule) and must redden G6."""
     t = INS[POS[a]]["t"]
     m = re.match(r"^mov\s+(?:DWORD PTR )?ds:0x[0-9a-f]+,(\w+)$", t)
     if not m:
@@ -458,6 +468,8 @@ def has_local_pred(a):
     lo = fnof(a)[1]
     j = POS[a] - 1
     while j >= 0 and INS[j]["a"] >= lo:
+        if INS[j]["t"].startswith(("call", "jmp", "ret")) and ALGO != "5":
+            return False
         mo = OPS.match(INS[j]["t"])
         if mo:
             dst = re.sub(r"^(BYTE|DWORD|WORD) PTR ", "", mo.group(2).split(",")[0].strip())
@@ -508,7 +520,7 @@ def main():
     print()
 
     # ---------------- T1: the loader's authoritative writes ----------------
-    print("T1 the loader is the ONLY profile reader and the sole INITIALISER (co-writers: T2-T4)")
+    print("T1 the loader is the block's only profile-backed INITIALISER (co-writers: T2-T4)")
     print("  cell      name              push      parse     store     block-reads")
     t1 = []
     prev = LOADER
@@ -601,10 +613,14 @@ def main():
              INS[POS[a]]["t"] == "mov    esi,0x92bf18"]
     wbbound = [a for a in ADDRS if fnof(a)[0] == "FUN_0058f0d0" and
                INS[POS[a]]["t"] == "cmp    esi,0x92bf34"]
-    print("  writeback: %d scalar loads, %d array loads, cursor @%s bound @%s" % (
-        len(wb), len(wbind), [hex(x) for x in wbcur], [hex(x) for x in wbbound]))
-    chk("G2", len(wb) == 11 and len(wbind) == 1 and bool(wbcur) and bool(wbbound),
-        "the writeback mirrors 11 scalars + the same 7-slot loop")
+    wbstep = [a for a in ADDRS if fnof(a)[0] == "FUN_0058f0d0" and
+              INS[POS[a]]["t"] == "add    esi,0x4"]
+    print("  writeback: %d scalar loads, %d array loads, cursor @%s step @%s bound @%s" % (
+        len(wb), len(wbind), [hex(x) for x in wbcur], [hex(x) for x in wbstep],
+        [hex(x) for x in wbbound]))
+    chk("G2", len(wb) == 11 and len(wbind) == 1 and bool(wbcur) and bool(wbbound)
+        and bool(wbstep),
+        "the writeback mirrors 11 scalars + the same 7-slot loop (cursor, add 4, bound)")
     sep = 0x689BBC
     print("  list joiner key 0x%x = %r" % (sep, cstr(sep)))
     chk("G2", cstr(sep) == ", ",
@@ -709,21 +725,30 @@ def main():
     # ---------------- T5: the publisher ----------------
     print("T5 PUBLISHER FUN_0058f3d0")
     pst = [(a, INS[POS[a]]["t"]) for a in ADDRS if fnof(a)[0] == "FUN_0058f3d0" and
-           INS[POS[a]]["op"] == "mov" and re.search(r"(ds:0x985a|PTR ds:0x985a)", INS[POS[a]]["t"])]
+           INS[POS[a]]["op"] == "mov" and re.search(r"(ds:0x985a|PTR ds:0x985a)", INS[POS[a]]["t"])
+           and store_of(INS[POS[a]]["op"], INS[POS[a]]["by"], INS[POS[a]]["t"]) == "STORE"]
     pread = [(v, a, k, t) for v, a, k, t in loc if fnof(a)[0] == "FUN_0058f3d0"]
-    print("  stores to 0x985axx: %d" % len(pst))
+    print("  stores to 0x985axx (direction-checked): %d" % len(pst))
     for a, t in pst:
         print("    0x%06x %s" % (a, t))
     print("  block refs: %s" % [(hex(v), k, hex(a)) for v, a, k, t in pread])
     chk("G5", len(pst) == 3, "FUN_0058f3d0 stores exactly 3 globals (%d)" % len(pst))
-    pmap = {}
+    pmap, regpairs = {}, []
     loads = [(v, a) for v, a, k, t in pread if k == "LOAD"]
     for (v, a), (sa, t) in zip(loads, pst):
         m = re.search(r"ds:0x([0-9a-f]+),", t) or re.search(r"ds:0x([0-9a-f]+)$", t)
         pmap[v] = int(m.group(1), 16)
+        # the value must travel in ONE register: load reg == store reg
+        lr = re.match(r"^mov\s+(\w+),", [x for x in pread if x[1] == a][0][3])
+        sr = re.search(r",\s*(\w+)$", t)
+        regpairs.append((hex(v), lr.group(1) if lr else "?", hex(pmap[v]),
+                         sr.group(1) if sr else "?"))
     print("  map: %s" % {"0x%06x" % k: "0x%06x" % v for k, v in pmap.items()})
+    print("  register pairs (cell, load reg, global, store reg): %s" % regpairs)
     chk("G5", pmap == PUBLISH_MAP,
         "the publisher map == declared 3 cells -> 3 globals")
+    chk("G5", all(l == s for _, l, _, s in regpairs),
+        "each cell's value reaches its global in the SAME register (no order-only pairing)")
     chk("G5", len(loads) == 3 and len(pread) == 3,
         "the publisher touches only those 3 cells (0 other pref refs)")
     print()
@@ -741,18 +766,33 @@ def main():
     ld_sites = [CELL_KEYS[c][3] for c in CELL_KEYS]
     ld_pred = sum(1 for a in ld_sites if has_local_pred(a))
     co_pred = sum(1 for a in sites if has_local_pred(a))
-    # how many GetPrivateProfileStringA reads does each store's FUNCTION make?
-    fns = {fname(a) for a in ld_sites} | {fname(a) for a in sites}
-    reads = {f: function_profile_reads(f) for f in sorted(fns)}
+    # every function that touches the block, measured: does it call the profile reader?
+    touch = ({fname(a) for a in ld_sites} | {fname(a) for a in sites}
+             | {fname(a) for v, a, k, t in loc if v in CELL_KEYS}
+             | {"FUN_0058f0d0", ARRAY_CO_WRITER})
+    reads = {f: function_profile_reads(f) for f in sorted(touch)}
     ld_prof = reads.get("FUN_0058e7f0", 0)
-    co_prof = sum(v for f, v in reads.items() if f != "FUN_0058e7f0")
+    store_fns = {fname(a) for a in sites}
+    co_prof = sum(v for f, v in reads.items() if f in store_fns and f != "FUN_0058e7f0")
+    elsewhere = {f: v for f, v in reads.items() if v and f not in store_fns
+                 and f != "FUN_0058e7f0"}
+    callfed = [a for a in sites if not has_local_pred(a)]
+    edi_all = [i["a"] for i in INS if i["t"].startswith("call") and
+               i["t"].split()[1:2] == ["edi"]]
+    edi_loader = [a for a in edi_all if fname(a) == "FUN_0058e7f0"]
     print("  R2 'a co-writer derives the value, so the loader is not authoritative':"
-          " in-function predecessors loader %d/%d, co %d/%d ; profile READS per function:"
-          " FUN_0058e7f0 = %d, the 11 co-writer functions = %d" % (
-              ld_pred, len(ld_sites), co_pred, len(sites), ld_prof, co_prof))
-    chk("G6", ld_pred == 11 and co_pred == len(sites) and ld_prof == 18 and co_prof == 0,
-        "R2 REFUTED: the loader's function is the ONLY one that reads the profile (18 calls),"
-        " and every co-writer store (33/33) takes a value defined in its own function")
+          " in-function value (no call in between) loader %d/%d, co %d/%d ; the %d co-stores"
+          " WITHOUT one = %s" % (ld_pred, len(ld_sites), co_pred, len(sites),
+                                 len(callfed), [hex(a) for a in callfed]))
+    print("  profile READS (`call edi`): FUN_0058e7f0 = %d ; the %d co-STORE functions = %d ;"
+          " the other %d functions that touch the block = %s ; image-wide sites = %d"
+          % (ld_prof, len(store_fns), co_prof, len(touch) - 1 - len(store_fns), elsewhere,
+             len(edi_all)))
+    chk("G6", co_pred == 28 and ld_pred == 0 and ld_prof == 18 and co_prof == 0,
+        "R2 REFUTED: none of the %d functions that CO-STORE reads the profile (%d of the"
+        " image's %d `call edi` sites are the loader's), and no loader store has an in-function"
+        " value (%d/11) while %d/%d co-stores do" % (
+            len(store_fns), co_prof, len(edi_all), ld_pred, co_pred, len(sites)))
     print("  R3 'the 11 scalars are one struct walked by base+index': materialised"
           " bases = %d ; indexed scalar forms = %d" % (len(mats), 0))
     chk("G6", len(mats) == 2,
