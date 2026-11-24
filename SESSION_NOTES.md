@@ -722,3 +722,29 @@ whether a facility completion stamps at all.
 - **DOC CAP**: `scripts/m356_named_rotate.py` rotated `## M298` VERBATIM ->
   `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
 - OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.
+
+## Session 331-chain3 (2026-11-24) — M360: the four row-less ids are A/V radio rows + a swapped id in a SEVENTH widget, not a seventh page
+
+- **PICK** (M357's orphans 0x37/0x38/0x39/0x50): "a seventh page nobody builds, or a
+  non-preferences dialog?" -> **neither**.
+- **ACCEPT** `python3 -u scripts/m360_orphans.py` -> **`PASS M360: 22/22 gates`** digest
+  `7689ffdaca3ce03c` (`evidence/m360_orphans.txt:126`), re-run identical (`evidence/m360_x2.txt`);
+  `m360_mutate.py` -> **21/21 killed, coverage 22/22** (`evidence/m360_mutate.txt:24`).
+- **SEVEN widgets** at +0x5974/0x649c/0x6fc4/0x7aec/0x8614/0x913c/0x9c64. Builder 0x48fed0
+  fills **66** rows (8/12/14/8/13/4/7); REBUILD 0x492940 queries **70** (8/12/14/**11**/14/4/7);
+  PAINT 0x4930e0 paints the same 70.
+- **Orphans**: +0x7aec queries 0x37/0x38/0x39, builds none; +0x8614 queries an extra 0x30
+  (built in +0x913c); +0x913c **built 0x30, queries 0x50** — a swapped id.
+- **MISS SEMANTICS (retraction of draft #1)**: `is_checked` 0x6051fa and `set_checked` 0x6050d4
+  start at 0, exit on `jge` at the row count, test `1<<[node+0x14]`. A miss resolves to
+  **bit<count>**, not 0: 8 / 13 / 4.
+- **0x37/0x38/0x39 are RADIO handlers** (jump table 0x4938c4 classes 1/2/3): a4c 0x800, a4c
+  0x400, a50 0x4000; they set a flag and relabel controls 0x4e/0x4c/0x4d via 0x493ec0, and never
+  call set-by-id -> the A/V bit 8 is written by nothing, so their ORs are inert (not aliasing).
+- **0x50 is a checkbox** but its block never reloads a48: it ANDs the stale `[ebp-0x8] =
+  (a48 & 0x1000)` with 0x8000/0x10000/0x20000/0x4000 -> all four states 0; 0x50's write is
+  masked off.
+- **RIVALS refuted** `:112-116`: R1 0 rows into 0x913c -> 4; R2 79 add_item sites, 0 foreign,
+  no `ds:` widget; R3 1 absent-id write exists ((0x913c,0x50)); R4 miss leaves n-1 -> n.
+- **INFERRED**: the 3 unbuilt A/V ids match Script.txt's 3 unconsumed A/V lines (count only).
+- **OPEN**: pre-1.0 builds with those rows; readers of flags [0x14d6c]/[0x14220]/[0x158b8].

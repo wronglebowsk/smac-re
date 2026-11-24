@@ -1559,6 +1559,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
+## M360 (s331-c3, 22/22) — NOT a seventh page: 0x37/0x38/0x39 are A/V RADIO rows (+0x7aec: 8 built, 11 queried), 0x50 the seventh widget's 4th id; a miss resolves to bit<count>, unwritten in A/V. ev `evidence/m360_orphans.txt`
+| claim | ev | conf |
+|---|---|---|
+| 7 widgets +0x5974/649c/6fc4/7aec/8614/913c/9c64; builder 66 rows (8/12/14/8/13/4/7); REBUILD 70 (…/11/14/4/7) | `:12,:43-44` | V MU1,MU3,MU19 |
+| +0x7aec queries 0x37/38/39 unbuilt; +0x8614 queries 0x30; +0x913c built 0x30 (queried vs 0x8614, never painted), queries 0x50 | `:45-48,109` | V MU5-7,18 |
+| miss = bit<count> (scan 0, `jge` at count, shift `<node+0x14>`): 8/13/4 | `:53-68` | V MU8,MU9,MU21 |
+| 0x37/38/39 = RADIO handlers (cls 1/2/3) relabelling ctrl 0x4e/0x4c/0x4d from a4c:11/10, a50:14 | `:86` | V MU11-13 |
+| absent-id writes: only (0x913c,0x50); A/V+0x8614 bits unwritten; 7th block tests STALE a48&0x1000 -> 0 | `:94-95,:103-105` | V MU14-17 |
+| INF: 3 unbuilt A/V ids = Script.txt's unconsumed A/V tail (3=3 count) | `:121` | INF |
+
 ## M357 (s330-c3, 18/18 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
 | claim | ev | conf |
 |---|---|---|
