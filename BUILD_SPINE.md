@@ -1239,3 +1239,57 @@ facility path's own branch to the shared OR is not walked here - the rung separa
 the recorded bytes, it does not disassemble the divergence); which recorded loss is a raze/sale
 vs a record-identity change; the other bits a completion moves (minerals, storage, message). No
 box time, no /proc, no gdb, no game-binary load.
+
+**B33 - the FACILITY leg's branch to `0x4f0ec0` WALKED, and the walk scored on the recorded run:
+the OR is reachable from the UNIT branch only - the block that holds it has one entry edge,
+`0x4f0b80 jg` on the stack local `[ebp-0x30] > 0`, and that local is written at exactly one site,
+the unit branch's `mov [ebp-0x30],ecx` after `neg ecx` at `0x4ef8a4` - so a head `>= 0` takes its
+own spend block at `0x4efed8` and never reaches the stamp** (`sim/facilityleg.py` = the run and
+its gates; s330 authors this rung from main `7d550dc`, as B14-B32 did). B32 separated the legs on
+the recorded bytes and DECLARED the divergence unmodeled; the decode that makes the question
+askable is M349's (`head < 0` = negated unit type, `>= 0` = facility item, `-38` sentinel) and it
+is already applied at `0x4ef88b..0x4ef899` in FUN_004ef6d0, the function that OWNS the OR site.
+This rung disassembles that function into a committed census (every instruction's mnemonic, the
+operands that touch `[ebp-0x..]`, every branch with its target and its fall-through), builds the
+CFG, and asks the CFG - not the prose - which leg can reach the stamp:
+
+`python3 -u -m sim.facilityleg` must print `PASS B33: 12/12 gates` (and `python3 -u -m
+sim.selftest --b33` only relays, so the two entry points cannot print different text) with:
+**G1** the census is READ and it is the WHOLE function - the span `0x4ef6d0..0x4f26da` equals
+Ghidra's own `size=12298` for `FUN_004ef6d0`, with instruction/branch/local-write counts printed
+and a digest pinned; **G2** the CFG is BUILT at instruction granularity (jcc = taken + next,
+`jmp` = taken, `ret` = wall, `call` returns to next; targets outside the span counted, not
+silently dropped) and the block/edge counts are printed; **G3** reachability is COMPUTED from three
+entries - the function entry `0x4ef6d0` reaches the stamp block `0x4f0e90`, the unit branch
+`0x4ef8a4` reaches it, the facility branch `0x4efa2c` does NOT - and the three distinct reachable
+sets are printed with their sizes; **G4** the stamp has exactly ONE entry edge in the whole
+function (`0x4f0d94 je 0x4f0e90`), that block has exactly one entry (`0x4f0b80 jg 0x4f0ca1`), and
+`0x4f0b80` is a `jg` on `[ebp-0x30]` (the census line, not a memory of it); **G5** the gate local
+is written at ONE site anywhere in the function (`0x4ef8a4`, the unit branch) and nowhere in the
+facility region (the blocks reachable from `0x4efa2c`), so the "shared" OR is structurally
+unit-only; **G6** each leg's SPEND is distinct: facility `sub esi,edi` between `[ecx+0x40]` load/store at
+`0x4efed8`/`0x4efedb`/`0x4efedd` and unit the same shape through `[edx+0x40]` at
+`0x4f0ca1`/`0x4f0ca4`/`0x4f0ca6`, both `ds:0x8f0d60`; **G7** the model - unit head stamps the
+mapper byte, facility head does not - is SCORED on the six recorded boundaries from B31/B32's
+trace: 4/4 unit and 0/2 facility-range, 6/6 rows, the model's prediction printed beside each
+recorded before/after window; **G8** the Virgin Soil boundary is the anchor: facility head 2,
+bitmap `00 00 00 08 00 00 00 00` (bit 27) -> `10 00 00 00 00 00 00 00` (bit 4), the head's own
+bit (2 -> byte 0 mask 4) is ABSENT from the gain set, accumulator 2 -> 0 (the round DID move
+the base), and the model's "no stamp" is the only one consistent with the bytes; **G9** the
+rivals FAIL on those numbers: the shared-OR model predicts the stamp window `04 00 00 08 00...`
+at Virgin Soil (recorded `10 00...`) and matches only 4/6 windows, an off-map mapper refusal
+covers 1/6 rows (Virgin Soil's mapper byte is 0, inside the eight-byte map), and the
+after-pop head scores 0/6; **G10** the OR instruction itself is un-reachable from the facility
+entry and IS reachable from the unit entry, and the census line is `or BYTE PTR [eax],cl`;
+**G11** the facility region splits on the head at `0x4efe41` (`cmp ebx,0x40`) / `0x4efe44`
+(`jl` to the spend) and writes the OTHER local (`[ebp-0x20] = 0` at `0x4efed1`) while the
+unit block's read of it (`0x4f0d8f`) is unreachable from the facility entry - the two legs'
+doors do not cross; **G12** the CFG is CLOSED (0 external targets, 0 indirect jumps) so no path
+can leave and re-enter the walk, two in-process passes give identical digests, and every
+anchor (census, CFG, reachable sets, score, Virgin Soil row) is pinned to a literal, so a dump,
+decode or arithmetic drift reddens a gate instead of sliding by.
+DECLARED UNMODELED: whether a facility completion stamps the `+0x8c` bitmap ANYWHERE (M342's
+other OR sites `0x4e4528`/`0x4f3ebc`/`0x4f3f4c` are outside this function and this rung does not
+follow them); the meaning of the 52-byte `0x98adb8 + 0x34*i` row (`+2 == 8`, `+0x2` bit 2) the
+facility leg reads before its spend; which of the recorded losses is a raze/sale. No box time, no
+/proc, no gdb, no game-binary load.

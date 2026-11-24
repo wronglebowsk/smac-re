@@ -1,0 +1,32 @@
+# B33 key sites - raw dump lines (scratch/m574/text.txt), one per address the rung names
+4ef88b  mov    ecx,DWORD PTR [eax+0x50]
+4ef88e  cmp    ecx,0xffffffda
+4ef891  je     0x4ef9b3
+4ef897  test   ecx,ecx
+4ef899  jge    0x4efa2c
+4ef89f  neg    ecx
+4ef8a4  mov    DWORD PTR [ebp-0x30],ecx
+4efa2c  mov    ebx,DWORD PTR [eax+0x50]
+4efadc  lea    edx,[ebx+ebx*2]
+4efed1  mov    DWORD PTR [ebp-0x20],0x0
+4efed8  mov    esi,DWORD PTR [ecx+0x40]
+4efedb  sub    esi,edi
+4efedd  mov    DWORD PTR [ecx+0x40],esi
+4efe41  cmp    ebx,0x40
+4efe44  jl     0x4efed1
+4f0a37  mov    edx,DWORD PTR ds:0x8f0d60
+4f0a3d  cmp    DWORD PTR [edx+0x40],edi
+4f0b7b  mov    eax,DWORD PTR [ebp-0x30]
+4f0b7e  test   eax,eax
+4f0b80  jg     0x4f0ca1
+4f0ca1  mov    esi,DWORD PTR [edx+0x40]
+4f0ca4  sub    esi,edi
+4f0ca6  mov    DWORD PTR [edx+0x40],esi
+4f0d1d  mov    eax,DWORD PTR [ebp-0x30]
+4f0d8f  mov    eax,DWORD PTR [ebp-0x20]
+4f0d94  je     0x4f0e90
+4f0e90  mov    edi,DWORD PTR [ebp-0x30]
+4f0ea2  call   0x507410
+4f0ebd  mov    cl,BYTE PTR [ebp-0x18]
+4f0ec0  or     BYTE PTR [eax],cl
+4f0ec2  cmp    edi,0x8

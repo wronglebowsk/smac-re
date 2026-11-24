@@ -1720,6 +1720,14 @@ def run_b32(sav_path, results):
     return suni.main([])
 
 
+def run_b33(sav_path, results):
+    """Rung B33: the FACILITY leg's branch to the shared OR - sim/facilityleg.py authors every
+    claim (census, CFG, reachability, score), so --b33 and `python3 -m sim.facilityleg` cannot
+    print different text."""
+    from . import facilityleg as sfl
+    return sfl.main([])
+
+
 def run_b30(sav_path, results):
     """Rung B30: the COMPLETION leg - a paid queue item becomes a facility the base HAS; the
     reader's inverse writes ONE bitmap byte through the writer, the RELOAD reads it back, and
@@ -1930,6 +1938,9 @@ def main(argv=None):
     ap.add_argument("--b32", nargs="*", metavar="ARG",
                     help="rung B32: the UNIT leg scored on the recorded run - the M349 decode "
                          "attached to the B31 oracle (no input needed)")
+    ap.add_argument("--b33", nargs="*", metavar="ARG",
+                    help="rung B33: the FACILITY leg's branch to the shared OR - census + CFG "
+                         "reachability + the recorded score (no input needed)")
     ap.add_argument("--b30", nargs="*", metavar="ARG",
                     help="rung B30: the COMPLETION leg - the queue item stamped into the "
                          "base's +0x8c bitmap, carried through the writer (defaults: <SAV>)")
@@ -2032,6 +2043,8 @@ def main(argv=None):
         return run_b31(sav, results)
     if args.b32 is not None:
         return run_b32(None, results)
+    if args.b33 is not None:
+        return run_b33(None, results)
     if args.b30 is not None:
         sav = args.b30[0] if args.b30 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b30(sav, results)

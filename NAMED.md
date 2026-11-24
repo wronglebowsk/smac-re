@@ -138,16 +138,15 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 - M271 32 of the 247 distinct rdata immediates stored through a register are vbtable descriptors (`dword[0]` and `dword[+4]` both |v| < 0x40000, neither a code pointer); their `[+4]` values are 21 virtual-base offsets and every K the delta census found is one of them; `[0x675964]=0,[+4]=0x21a6c` is installed only by FUN_00469650 and `[0x678458+4]=0x23d94` only by FUN_0050aa60, both carrying a delta store at their own K (G3/G9/G10).
 - M270 the `0x678e40` class has ONE 152,856-B stack instance: `0x678e40` and its secondary `0x678e38` (+0x2444) are each stored EXACTLY once image-wide (`0x59bf1c`, `0x59bf26`, both inside FUN_0059bec0) — never heap-allocated; slot 0 of each is its deleting-dtor wrapper (`0x59c380`/`0x59c3b0`); layout `+0` the `0x5e3b80/0x5e3ced` class, `+0x2320` the `0x675964` class, `+0x247a0` M215's `0xb4c` row, virtual base at `+0x23d8c = 0x2320+0x21a6c`, size `0x25318` = the only such immediate in the image (the `_alloca_probe` at `0x59bed1`). **RETRACTS part of M267 (kept here on purpose):** FUN_0059bec0 is NOT a destructor (4 ctors run before it installs `0x678e40`; the same objects die at its tail) and its `0x67194c/0x671944` are the ROW subobject at `+0x247a0`/`+0x247a0+0x444`, never `[this+0]` — the installer of `0x67194c` at `[this+0]` is FUN_005faec0 (M215).
 
-## M272 (s211, PASS 5/5) - `FUN_0057ecf0` does NOT run on a LOAD; the .SAV restore chain is live-proven
-
-| fact | evidence | status |
+## M272 (STUB - block VERBATIM: `docs/named-archive-m357-rows.md`, sha1 `aa685936e83c6e4f`)
+| claim | ev | conf |
 |---|---|---|
-| LOAD window (ROUND sentinel -39 -> 50 read back, counts == m104 image): 0 events at `FUN_005b2970`, its 4 call sites (0x4e1151/0x4e122b/0x57d2a0/0x57f1ec) and all 4 caller entries | `evidence/m272w9.gdblog`, `scripts/m272_acceptance.py` G4 | V |
-| the .SAV opener `FUN_00597ee0` fires INSIDE the load (event prints round=-39, the live sentinel; ret 0x5992f2), then the fread wrapper `FUN_0064cc00` fires at round=50 with dest 0x927590 (8x1436 faction array), ret 0x596edb = inside `FUN_00596850` | same log, lines 52-53; conditional bp design in `scripts/m272_gen_load_watch.py` | V (M106 chain, now LIVE-proven) |
-| entry bps at 0x597ee0 / 0x596850 never fire although the chain runs - entry is reached MID-BODY (or via a twin); a chain is proved by call-site RETs, not entry hits | same log (0 ENT events at both, 2 CTRL rets into their bodies) | V (instrument law) |
-| boot window control: `FUN_005791c0` x7 (ret 0x579eaf) - bps live at process start; GEN 0 at boot is NOT a control (attach ~3.5 s post-launch) | same log, STARTUP window | V |
-| new-game generation and save-load are DISJOINT paths: a LOAD never regenerates the world | G4 + M255 (57ecf0 = new-game caller) | V |
-
+| fact / evidence / status | archive:6 | archived |
+| LOAD window (ROUND sentinel -39 -> 50 read back, counts == m104 image) | archive:7 | archived |
+| the .SAV opener `FUN_00597ee0` fires INSIDE the load (event prints round=-39, the live sentinel | archive:8 | archived |
+| entry bps at 0x597ee0 / 0x596850 never fire although the chain runs | archive:9 | archived |
+| boot window control | archive:10 | archived |
+| new-game generation and save-load are DISJOINT paths | archive:11 | archived |
 ## B6 (s212, PASS 6/6) - `sim/headless.py`: the headless run; R1 DONE
 
 | fact | evidence | status |
@@ -158,17 +157,16 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | economy runs for the 7 base-owning factions every round with the B4 floor (energy >= 0); initial faction energy = 0 is ASSUMED (no pinned .SAV read) and listed in the dump's `assumed` array | dump `schema smac-sim-state/1` | ASSUMED (declared) |
 | units re-charge 6 MP per round (0x51f730 REFRESH, M37) and never move - R1 has no AI; declared in `assumed` | same | ASSUMED (declared) |
 
-## M273 (s213, PASS 7/7) - the row stride 188 is a FIXED 94-slot capacity; no spill on the live map
-
-| fact | evidence | status |
+## M273 (STUB - block VERBATIM: `docs/named-archive-m357-rows.md`, sha1 `22154fba5a8d33fe`)
+| claim | ev | conf |
 |---|---|---|
-| live region count DAT_0092ada4 = 91, stable pre AND post the window, == save-derived ((64+4)/5+1)/2×13 = 91; ad9c=ada0=13 | `evidence/m273w3_proc.json` (written by the live run), `evidence/m273w3.gdblog` window, gate G1 | V (live) |
-| 188 = 2×94 slots is a FIXED capacity: 8380/188 = 44.47 NOT integral (8380 mod 188 = 108) - the per-faction row is NOT derived from the faction block stride; the live count fits its row with 6 B slack, so the M256 "regions 94..127 spill" is UNREACHABLE on the 64×64 map | gate G2 + G6 (below) | V |
-| scaled-indexing identity: 7/7 SCALED events at 0x5584b2 have 2×edi == the loop slot [ebp-0x10] (=1) - the scaled form's index register IS the region counter | `evidence/m273w3.gdblog`, gate G5 | V (live) |
-| the UNSCALED row register is a per-faction TABLE CURSOR (LIVE): row mod 8380 = 2 for all 7 events, every successive delta a whole faction stride 8380, walking with cp=4,5,6,7,...; **M275 (s215) PROVED this contradicts the static fold** (row = 2·region + 130·arg, and 8380 mod 130 = 60 ≠ 0) -> the value at the read site is NOT produced by the fold as written; the writer is an unmodeled ALIAS/other-leg (OPEN, hw-watchpoint pick) | gate G6 + `scripts/m275_rowslot_defuse.py` G4/G7 | V (live), CONTRADICTED (static chain) |
-| the full region loop was NOT exercised in the window: observed s10 stays 1 while cp walks phases (7+7 events, balanced); depth per phase OPEN (new pick) | gate G4 + info line | OPEN (recorded) |
-| acceptance is OFFLINE over the recorded window: `python3 scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog` -> `ACCEPTANCE M273 PASS 7/7` (`evidence/m273_acceptance.txt`); the /proc facts ship in `evidence/m273w3_proc.json` | same | V |
-
+| fact / evidence / status | archive:7 | archived |
+| live region count DAT_0092ada4 = 91, stable pre AND post the window, == save-derived ((64+4)/5+1)/2×13 = 91 | archive:8 | archived |
+| 188 = 2×94 slots is a FIXED capacity | archive:9 | archived |
+| scaled-indexing identity | archive:10 | archived |
+| the UNSCALED row register is a per-faction TABLE CURSOR (LIVE) | archive:11 | archived |
+| the full region loop was NOT exercised in the window | archive:12 | archived |
+| acceptance is OFFLINE over the recorded window | archive:13 | archived |
 ## M274 (s214, PASS 6/6) - the region loop is NEVER clamped to the 94-slot row; the spill lands in the sibling verdict array
 
 | fact | evidence | status |
@@ -1254,16 +1252,15 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | ACCEPT `python3 -u -m sim.selftest --b27` -> **PASS B27: 10/10 gates** (2 runs byte-identical), anchored on THREE literals inside G10: rows `b65e8129b67ba67d`, printed tables `3c134ea70638c12b`, unmutated container `626fec9a35deddba`; harness -> **HARNESS PASS 17/17** digest **181d99d9ac000044**, NO-OP reddens `[]`, `exact-set check: 17 mutant(s), 0 complaint(s), gates reddened 10/10` (each mutant's measured set must equal its frozen `DECLARED` entry, both directions; s309 review F1), `--selftest` 4/4 (ST4 rejects a wrong declaration); `--measure` prints the sets before they are frozen and asserts nothing | `:56` `:79`, `b27_mutate.txt:18-22`, `b27_mutate_selftest.txt:1-4` | V; MU1-MU17 |
 | UNMODELED (printed, spine §B27): `+2fc/+308/+3f8` entry-zeroed but their mid-round writer is OPEN (M330) -> pass-through, the ledger law takes them as DECLARED inputs; the feeder's per-slot `v` — now PRICED from the B29 derived table, not alpha-assumed (B29); income-vs-feeder order unpinned (only settle < snapshot < refund pinned); 48 rows computed, 13 printed | spine §B27, `:54` | lead |
 
-## M333 (s314, STATIC, zero box) — the 34 feeder slots `0x984d48+48*item`: the slot NOUN = a facility the base HAS, and bit5 of faction block+0 is a CARRIED HALF-UNIT exclusive to FUN_004f47f0 (closes M330 G10 "slot noun OPEN")
-- ACCEPT `python3 -u scripts/m333_feeder_slot_census.py` -> **`PASS M333: 8/8 gates`**, digest `70376694feec5815` (post-#348-review; the pre-review run was `b1ca12715e833cc7`), 2 runs byte-identical (`evidence/m333_feeder_slot_census.txt:58-59`); harness `python3 -u scripts/m333_mutate.py` -> **`PASS HARNESS 18/18`** digest `dee04978a5b5dd09` (14 CODE mutants via `M333_PATCH` + 4 EXPECT mutants, every declared gate SET matched exactly; ME1's set GREW to include G7 when the harness found G7's `rowdiff` reads `ITEM_UPKEEP`, and ME3 `0x20BD` was replaced after it scored a true NO-OP — `//4` lands on 2095 either way), `--selftest` 6/6 (`evidence/m333_mutate.txt:20-21`, `evidence/m333_mutate_selftest.txt:8`)
-- G1+G7 (mutants MU1/MU2/MU5/MU6/MU14/ME1): FUN_004f47f0's loop counter `esi` is the ITEM id — init 1 (prologue `0x4f4802`); the TOP test `cmp esi,0x22 / jg 0x4f4a34` SKIPS ids 35..38 (it is NOT the loop exit); the bottom `inc esi / cmp esi,0x27 / jl 0x4f480b` is the back-edge — the loop VISITS ids 1..38 and CHARGES 1..34 (G7 parses BOTH bounds from the cmp immediates; the `0x750` literal occurs 19x in .text but none is tied to this table); the `x48` fold (`lea r,[i+i*2]`+`shl r,4`) is SHAPE-pinned AND the shl dest is tied to the read's own base register (MU14), because the linear value-walker over-proves `48*1` through the back-edge (the defect this milestone exists to fix)
-- G3 (MU8/MU12/ME1): a slot is charged only when its BIT is set in the current base's 304-B record at `base+0x8c` (`304*[ds:0x68cbb0]`) — and the tested bit is the mapper's bit-mask output for THIS item: the bitmap read's index register loads `[ebp-0x8]` and the `and al,cl`'s `cl` loads `[ebp-0xc]`, both mapper out-slots pushed with `esi` (FUN_00507410) — the slot is a facility the base HAS, not a queue position
-- G4 (MU3/MU4/MU10/MU13/ME2): the halving is a CARRIED HALF-UNIT — bit5 of `block[owner]+0` (`0x94d430+8380*own`, `own=BYTE[[ds:0x8f0d60]+4]` read ONCE in the prologue, tied: `own_src` dest == `own_byte` base, `xor ebx,ebx` immediately before, fold leaf == that `ebx`) is extracted (`shr 5`+`and 1`), ADDED to the item cost, the sum's `sar 1` quotient is the charge, and the sum's PARITY is written back into the SAME bit5 (odd remainder survives the round); order read→add→test→set/clr→store→quotient monotonic; only the parity pair touches `ecx`
-- G5+RIVAL-R2 (MU3/MU4/ME2/ME3): def-use census (path-insensitive, stops at calls/function bounds/address discontinuities; the 2 block+0 sites in UNCLAIMED gap regions are measured and printed) — FUN_004f47f0 is the ONLY function in .text that READS bit5 of a block+0 value AND the ONLY one that WRITES it (`or ecx,0x20` → store-back via the lea'd pointer); the 15 near-miss functions' `0x20` ops are on other values — FUN_004dc390 mirrors block+0 bits 30/29/20 into bits 4/5/6 of a DERIVED dword (rival "bit5 is a shared faction flag" dies here)
-- G6 (MU7/MU11): `ds:0x985ba0` has NO writer in .text — ALL operand-text mentions measured (2 loads, 0 stores, no lea-absolute; a computed-address writer is beyond static .text reach — noun INFERRED); the halving fires only when that base's ZERO-EXTENDED owner byte (`xor edx,edx` then `mov dl,[ecx+0x95da14]`, no edx write between) == `ebx`, the current record's owner byte (`cmp`/`sete`/`je`), plus a sign test (`jl`) — 2 distinct skips to full price; `ebx`==the charged base's owner is INFERRED, not measured. **QUALIFIED by B28**: the dword IS carried — it lives in the save's state header at file offset 244 and reads `-1` in `m54b_clean.SAV`, so the halving is measured INERT on that container (`NAMED ## B28`, `evidence/b28_feeder_exec.txt:5`; mutants MU6/MU7 redden the two legs separately)
-- G2 (MU9/ME1): FUN_004f4760(item, faction) is the SAME law standalone — 6 features 1:1 in both bodies, same 48-fold leaf `esi`, both fold the disabled-list record to 1436 B
-- OPEN LEAD (printed, not gated): the same loop body carries a REMOVAL path — second mapper call `0x4f49b6`, bitmap bit-CLEAR `0x4f49e1`, 3 stores to `block+0x220` (`0x4f497f`/`0x4f4999`/`0x4f4a0b`), callees FUN_004e40a0/0x6265a2/0x48f100 — pick (x7)
-
+## M333 (s314, STATIC, zero box) - ROTATED VERBATIM to `docs/named-archive-b33-rows.md` (sha1 `be87f76187588fde4268db6355ba93f44eacc0cd`): the 34 feeder slots `0x984d48+48*item` - the slot NOUN = a facility the base HAS; bit5 of faction block+0 is a CARRIED HALF-UNIT exclusive to FUN_004f47f0. This stub governs, one line per claim.
+- ACCEPT `scripts/m333_feeder_slot_census.py` 8/8 `70376694feec5815`; harness 18/18 `dee04978a5b5dd09`; selftest 6/6 (`evidence/m333_feeder_slot_census.txt:58-59`, `evidence/m333_mutate.txt:20-21`).
+- G1+G7 (MU1/MU2/MU5/MU6/MU14/ME1): the loop counter `esi` IS the item id; the top test skips 35..38, the back-edge charges 1..34; the x48 fold is SHAPE-pinned.
+- G3 (MU8/MU12/ME1): a slot is charged only when its bitmap bit is set - and the bit is the mapper's mask for THIS item, so the slot noun is a facility the base HAS.
+- G4 (MU3/MU4/MU10/MU13/ME2): bit5 of `block[owner]+0` is a CARRIED HALF-UNIT, added to the cost; `sar 1` is the charge and the parity is written back.
+- G5+RIVAL-R2 (MU3/MU4/ME2/ME3): FUN_004f47f0 is the ONLY function reading AND writing bit5 of a block+0 value.
+- G6 (MU7/MU11): `ds:0x985ba0` has no writer in .text (noun INFERRED); QUALIFIED by B28 - the dword IS carried (save header 244, `-1`) so the halving is measured INERT.
+- G2 (MU9/ME1): FUN_004f4760(item, faction) is the SAME law standalone.
+- OPEN LEAD: the removal path (`0x4f49b6`, bit-clear `0x4f49e1`, 3 stores `block+0x220`) - pick (x7).
 ## M334 (s316-chain2, STATIC, zero box) - FUN_004f47f0's upkeep-FAILURE branch = a DIFFICULTY-GATED AUTO-SELL of one facility; ENERGY is ASSIGNED the price, not refunded (closes pick (x7); CORRECTS `docs/named-archive-m32-m84e.md:268`). FULL-LENGTH ROWS VERBATIM at `docs/named-archive-b29-rows.md:5` (sha1 `579f90da7d8c`); this stub governs, one line per claim
 
 - 3-way dispatch after `ENERGY -= cost`: A `cmp [block+0x8],1` -> clamp, B `cmp [base+0x50],neg(item)` -> clamp, C sell; the zero source is `xor eax,eax` @0x4f4960 (`evidence/m334_powershort_census.txt:4-10`) - V MU1-6,MU35,ME2.
@@ -1561,6 +1558,30 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
+
+## M357 (s330-c3, 18/18 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
+| claim | ev | conf |
+|---|---|---|
+| six builders push the VA of their OWN section-name string and read it (0x5ea431); every row = next line (0x5ea448) -> strcpy (0x64b9e0) into the page slot -> add_item(text,id) (0x604fd2); 8/12/14/8/17/7 = 66 | `:13-85` | V MU1(G2a),MU2(G1b),MU3(G2a),MU4(G0a),MU17(G1a),MU18b(G3a) |
+| slots are the table's consecutive dwords 0x68b678..0x68b7cc and end before the next name; 5 of 6 pages match Script.txt, A/V builds 8 of 11 | `:95-108` | V MU3(G2a),MU14(G3b),MU16(G3b) |
+| rebuild 0x492940: 70 ids -> one (field,bit) each, all 66 UI ids present | `:183-184` | V MU18(G4a),MU19(G4b),MU21(G6a) |
+| APPLY dataflow: 0x92befc <- {a20,a30,a38,a40,a4c,a54}; 0x92bf00 <- {a24,a34,a3c,a44,a50,a58}; 0x92bf04 <- a28\|a48 (WARNINGS, own key) | `:192-195` | V MU10(G5c),MU11(G5a),MU12(G5b),MU20(G5d) |
+| row->bit INJECTIVE per cell: 66 rows, 66 distinct (cell,bit), 0 shared | `:266` | V MU7,MU9,MU13(G6b) |
+| Laptop delta = exactly A{7,27,28}+B{19} = "Secret Project movies."/"Interludes."/"Sound effects."/"Monuments." (all A/V) and adds nothing | `:353` | V MU22(G7a) |
+| 0x92befc bit 5 = "Tutorial messages." = M355's Difficulty<2 gate bit; defaults re-appear as the loader's add/and immediates | `:354-355` | V MU5,MU15(G7c),MU23(G7d) |
+| OPEN: ids 0x37/0x38/0x39/0x50 have no row; bits no row writes (A 4,6,13,26; B 1,14,25-31) | - | lead |
+## B33 (s330 BUILD, zero box) — the OR at `0x4f0ec0` is UNIT-ONLY: a facility head (`>= 0`) enters at `0x4efa2c`, spends through `[ecx+0x40]` and never reaches the stamp, whose block's only door is `0x4f0b80 jg` on `[ebp-0x30]` — written at ONE site, the unit branch's `neg`/`mov` @`0x4ef8a4` (`sim/facilityleg.py`; spine §B33). ACCEPT `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** digest `b89b9e6bd940e8d3` (`evidence/b33_facilityleg.txt:65`), rerun byte-identical; harness `scripts/b33_mutate.py` 11/11 (`evidence/b33_mutate.txt:13`).
+
+| claim | cite | conf |
+|---|---|---|
+| census: FUN_004ef6d0 3,164 insns, 12,298 B contiguous, 0x4ef6d0..0x4f26da == Ghidra size | `evidence/b33_facilityleg.txt:52` | V MU9 |
+| CFG closed: 3,482 edges, 0 external targets, 0 indirect jumps | `evidence/b33_facilityleg.txt:53` | V MU10 |
+| stamp 0x4f0e90 reached from entry + unit (3,045), NOT from facility (886), sets nested | `:54` | V MU3 |
+| door: preds(0x4f0e90)={0x4f0d94}, preds(0x4f0ca1)={0x4f0b80 `jg`} | `:10-11` | V MU2 |
+| `[ebp-0x30]` written at `0x4ef8a4` only; none facility-reachable; the census carries the local read | `:16,52` | V MU1 |
+| recorded 4/4 unit stamps, 0/2 facility (model 6/6); Virgin Soil head 2 bit absent | `:40,43` | V MU4,MU5,MU6 |
+| rivals: shared-OR 4/6 windows, off-map refusal 1/6, after-pop head 0/6 | `:47-49` | V MU7,MU8 |
+| OPEN: facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the 0x98adb8 row | - | lead |
 
 ## M356 (s330-chain2, STATIC 17/17) — +0x30 bit 2: 11 setters, 0 AND-clears, ONE XOR-toggler (0x4396f6) -> a STATE BIT, not a latch; +0x24 -> chassis 0x92ae80 (0x90), +0x25 -> offense 0x92b950 (21x0x10), +0x26 -> armor 0x92fd18 (10x0x10); +0x27/+0x28 index none. `:N` = line of `evidence/m356_stamp.txt:1-103`
 | claim | ev | conf/mutant |
