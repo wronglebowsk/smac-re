@@ -1,0 +1,16 @@
+MU1   G0   KILLED    rc=1  the war host's mask loses its companion bit 0x8000
+MU2   G0   KILLED    rc=1  the contact host's setter call loses 0x10000
+MU3   G0   KILLED    rc=1  the dialogue variant's mask loses the truce bit
+MU4   G0   KILLED    rc=1  the mask is read one push off the (a,b,mask) slot
+MU5   G1   KILLED    rc=1  one pair argument is pushed as an immediate
+MU6   G2   KILLED    rc=1  the rel&0x8 gate becomes an unconditional skip
+MU7   G2   KILLED    rc=1  conditional jumps are treated as non-gates
+MU8   G3   KILLED    rc=1  the byte reader tests bit 14 instead of bit 15
+MU9   G3   KILLED    rc=1  only dword tests count, so byte +1 readers vanish
+MU10  G4   KILLED    rc=1  the skipped block logs a different string
+MU11  G5   KILLED    rc=1  one of the two contact-host call sites is retargeted
+MU12  G6   KILLED    rc=1  the store-shape algebra is forced to claim a provable clearer
+MU13  G7   KILLED    rc=1  the gate's source becomes rel&0x4, so the no-contact rival would hold
+MU14  G8   KILLED    rc=1  one digest row is dropped
+
+M377 mutate: 14/14 killed

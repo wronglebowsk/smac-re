@@ -1,0 +1,93 @@
+M377 - the two companion bits of the relations dword 0x94d448: 0x8000, 0x10000
+
+G0  immediate carriers of bit 15/16 - setter calls, other calls, direct stores
+  setter calls 0x551a20 harvested: 49
+  4-push calls 0x530640 harvested: 25
+  0x8000   mask 0x8010 @0x507d1a -> call 0x551a20 (3 pushes)
+  0x10000  mask 0x10004 @0x54d2e5 -> call 0x530640 (4 pushes)
+  0x10000  mask 0x10004 @0x552680 -> call 0x530640 (4 pushes)
+  0x10000  mask 0x10004 @0x5526b3 -> call 0x551a20 (3 pushes)
+  lookalikes: 24 bare pushes of exactly 0x8000/0x10000 image-wide, 24 into a callee that is not a relations setter
+ok  G0 0x8000 <- mask 0x8010 @0x507d1a (1 carrier); 0x10000 <- mask 0x10004 at 0x54d2e5/0x552680 (call 0x530640) and 0x5526b3 (setter) - 3 carriers, 2 hosts
+
+G1  the hosts of the two stamps
+  0x8000  0x507d1a in FUN_00507ce0 (0x507ce0, 80 B)  push run:
+      507d1a: push   0x8010
+      507d1f: push   esi
+      507d20: push   ebx
+      507d21: call   0x551a20
+  0x10000 0x54d2e5 in FUN_00546800 (0x546800, 34550 B)  push run:
+      54d2e5: push   0x10004
+      54d2ea: push   edi
+      54d2eb: push   esi
+      54d2ec: call   0x530640
+  0x10000 0x552680 in FUN_005525d0 (0x5525d0, 642 B)  push run:
+      552680: push   0x10004
+      552685: or     al,0x2
+      552687: push   edi
+      552688: push   ebx
+  0x10000 0x5526b3 in FUN_005525d0 (0x5525d0, 642 B)  push run:
+      5526b3: push   0x10004
+      5526b8: push   edi
+      5526b9: push   ebx
+      5526ba: call   0x551a20
+  mask slot is an immediate and both arg pushes are registers: [True, True, True, True]
+ok  G1 0x8000 lives in ONE 80-byte host (FUN_00507ce0); 0x10000 in TWO (FUN_005525d0 twice + FUN_00546800 once) - every carrier accounted for
+
+G2  essential edges - every condition that MUST hold on the way to a stamp
+  0x8000  store @0x507d21 in FUN_00507ce0: 0 essential edge(s)
+      (none - the stamp is on EVERY path through the function)
+  0x10000 store @0x5526b3 in FUN_005525d0: 4 essential edge(s)
+      jcc @0x5525f2 fall->0x5525f8   gate: test eax,edx
+      jcc @0x552646 fall->0x55264c   gate: test eax,eax   [mov eax,ds:0x920434]
+      jcc @0x5526ad fall->0x5526af   gate: test ecx,eax
+      jcc @0x5526b1 fall->0x5526b3   gate: test edx,edx   [and edx,0x8]
+ok  G2 0x8000 is UNCONDITIONAL: blocking any single jcc inside FUN_00507ce0 still reaches 0x507d21
+ok  G2 0x10000 needs exactly 4 edges: player-bit(a), 0x920434 != 0, player-bit(b), and rel&0x8 == 0 (edx = [pair]&0x8 @0x55261a); the human branch reaches the same join, so a != human is NOT a gate
+
+G3  readers of bit 15/16 - direct byte/dword test + load-then-test-register
+  0x8000  direct 3: [('0x5380f2', '0x8020'), ('0x53bbed', '0x80'), ('0x541c5c', '0x8020')]
+          lift   0: []
+  0x10000 direct 1: [('0x547367', '0x10000')]
+          lift   2: [('0x532fa7', '0x532fb1'), ('0x5468c1', '0x5468cb')]
+ok  G3 0x8000: 3 readers - test DWORD 0x8020 at 0x5380f2/0x541c5c and the BYTE test 0x80 at +1 @0x53bbed (M375 counted 1: RETRACTED); 0x10000: 1 direct (0x547367) + 2 load-then-test-register (0x532fa7, 0x5468c1)
+
+G4  what each reader does with the bit
+  0x53bbed test -> je 0x53bc3a
+    taken-block: 53bc3a:mov DWORD PTR [ebp-0x1c],0x0 | 53bc41:mov eax,ds:0x92077c
+    taken-block compare: [('0x53bc1c', 'cmp edi,DWORD PTR [eax*4+0x94e48c]')]
+  0x547367 test -> jne 0x547626
+    strings pushed on the skipped path: [('0x54738d', '0x690174', 'Sending TREATY OFF'), ('0x547402', '0x690174', 'Sending TREATY OFF'), ('0x5475ab', '0x690b88', 'NOPATIENCEFRIEND'), ('0x547607', '0x690b9c', 'NOPATIENCE')]
+ok  G4 0x8000 gates an AI comparison (flag=0 on the skip path); 0x10000 skips the block that logs 'Sending TREATY OFF'
+
+G5  who calls the two hosts, and the deal event's own words
+  FUN_00507ce0: 4 call site(s)
+    @0x4cfe22 in FUN_004cf4c0 (0x4cf4c0, 2732 B)
+    @0x503885 in FUN_00502cd0 (0x502cd0, 18238 B)
+        nearest pushed string: 0x5037d2 'SURPRISE'
+    @0x5893f2 in FUN_00585720 (0x585720, 22283 B)
+    @0x594c3b in FUN_0058fa40 (0x58fa40, 23925 B)
+  FUN_005525d0: 2 call site(s)
+    @0x5543e6 in FUN_00554350 (0x554350, 412 B)
+    @0x5543ed in FUN_00554350 (0x554350, 412 B)
+ok  G5 4 callers of the war host; the contact host is called TWICE, back to back, from one site (both directions)
+
+G6  can any direct store CLEAR bit 15/16?  (shape algebra, not a guess)
+  direct stores to the +0 dword: 27; shapes that could CLEAR bit 15/16: 0
+  store sites: 52b9c7 52b9d0 551b1d 551d22 552cca 552cd8 552ce6 552d6f 552d7d 5530c3 55487f 554d42 5552d3 555394 5553f3 55540a 555430 5556eb 555758 5557d9 55580f 5558f5 555a45 555a60 555a6e 555f39 555f4b
+ok  G6 all 27 direct stores are register-sourced (opaque): 0 stores PROVE a clear and 0 prove a preserve - both stamps survive only as long as each rewrite's register keeps them; the two stamp sites are OR-shaped and cannot clear
+
+G7  rivals - each prediction is measured against the tables above
+  R1 0x8000 rides the TRUCE bit 0x4                       predicted=False  -> FAILS   (carrier 0x8010 has 0x10, no 0x4)
+  R2 0x10000 rides the WAR bit 0x10                       predicted=False  -> FAILS   (carrier 0x10004 has 0x4, no 0x10)
+  R3 one host stamps both companions                      predicted=False  -> FAILS   (two distinct hosts)
+  R4 the 0x10000 stamp is unconditional on contact        predicted=False  -> FAILS   (an essential gate tests rel&0x8)
+  R5 the 0x8000 stamp is inside FUN_00507ce0's &7 branch  predicted=False  -> FAILS   (no essential edge: it is after the join)
+ok  G7 five rival readings measured and rejected
+
+G8  digest of the printed rows - every digested token must appear in the table above
+  rows 8  digest c9e99e3b7e9f0a31  unprinted tokens []
+ok  G8 all 8 digest rows reproduce from the printed table
+
+M377 8/8
+PASS M377: 8/8 c9e99e3b7e9f0a31

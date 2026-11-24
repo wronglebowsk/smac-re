@@ -712,3 +712,30 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (V, INF noun); 0x40 = 'SET TREATY' + 50-tick window (V, INF noun); 0x100000 = eviction
   grievance (INF); 0x8000/0x10000 = war/truce companions (OPEN). **OPEN**: 0x53bbed's role;
   0x5526b3 / 0x507d21 hosts; 0x4da404's 4th arg.
+
+## Session 339-chain3 — M377: 0x8000 rides the WAR stamp, 0x10000 the first-contact truce
+
+- **ACCEPT** `python3 -u scripts/m377_companion_bits.py` -> **`PASS M377: 8/8`** `c9e99e3b7e9f0a31`
+  (`evidence/m377_companion_bits.txt:93`); re-run byte-identical (`evidence/m377_twice.txt`);
+  `scripts/m377_mutate.py` **14/14 killed** (`evidence/m377_mutate.txt:16`). `:N` = a line of
+  that evidence.
+- **CARRIERS** (`:4-11`): 0x8000 <- the single mask 0x8010 @0x507d1a; 0x10000 <- 0x10004 at
+  0x54d2e5 + 0x552680 (4-push calls into FUN_00530640) and 0x5526b3 (the setter). 24 bare pushes
+  of exactly 0x8000/0x10000 image-wide, ALL into other callees.
+- **HOSTS** (`:14-34`): FUN_00507ce0 is 80 B and only clears status&7 (FUN_005076d0(a,b,-1))
+  then stamps 0x8010 on EVERY path (`:38-39`, 0 essential edges) = "declare war now".
+  FUN_005525d0 stamps 0x10004 twice, FUN_00546800 once; the 4 essential edges (`:40-44`) are
+  player-bit(a), 0x920434!=0, player-bit(b), rel&0x8==0 (`and edx,0x8`@0x55261a) = first contact.
+- **READERS** (`:48-52`): 0x8000 has THREE — `test DWORD,0x8020` @0x5380f2/0x541c5c and the byte
+  test @0x53bbed. **M375's "0x8000 -> 1 reader" is RETRACTED** (its census took the imm from the
+  whole operand, so a register test matched the `0x94d448` displacement itself).
+- **0x53bbed's ROLE** (`:55-58`): in FUN_0053bb90 (only caller FUN_00545c50@0x545d4a, which then
+  optionally calls FUN_00540390): war stamp set -> compare the per-pair scalar at 0x94e48c for
+  (a,b) vs (b,a); the skip path zeroes the flag. **0x10000's reader** (`:60-64`) 0x547367 skips
+  'Sending TREATY OFF' x2 + NOPATIENCE(FRIEND) = "no treaty to cancel". All 27 direct stores to
+  +0 are register-sourced: 0 provable clearer, 0 provable preserver (`:76`).
+- **PITFALLS**: (1) objdump wraps long instructions with NO third column on the continuation;
+  dropping it invents a phantom fall-through (0x507d06) beyond every >7-byte instruction and
+  silently kills reachability; (2) `last_imm(whole operand)` matches the displacement — take the
+  imm from the SOURCE field; (3) a setter call's mask is push[-3].  ROTATED M365+M362 VERBATIM
+  to `docs/named-archive-m365-rows.md` / `-m362-rows.md` (`m377_named_rotate*.py --verify`).

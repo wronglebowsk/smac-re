@@ -47,7 +47,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 
 ## (ARCHIVE) M89-M221: moved VERBATIM to `docs/named-archive-m89-m221.md` (s251 hygiene split - 619 lines, 55 headings; grep there for per-id semantics of M89-M221 incl. UNMERGED M101/M103/M109; git history is the trail)
 ## (ARCHIVE) M227-M245 + B1-B2: moved VERBATIM to `docs/named-archive-m227-m245.md` (s254 hygiene split - 133 lines, 10 headings; grep there for per-id semantics; git history is the trail)
-## M246 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `5fc00420de391631`, 757 B)
+## M246 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `5fc00420de391631`, 757 B)
 ## M247 (s197) — the region map's row stride is `Rw>>1`, not `(Rw+1)/2` — rows in the same archived region; this stub governs.
 - 6 referencing functions; the only element accessors `FUN_00582340`/`FUN_00582360` index `(param_1>>1)+DAT_0092ae18+(DAT_0092ad9c>>1)*param_2`; `(Rw+1)/2` occurs once image-wide (the length) | G4 | V
 - builder `FUN_0058ce00` (y<Rh, x=(y&1) step 2<Rw) writes exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 for odd Rw, else 0 | G5 | V
@@ -74,7 +74,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 | OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
 | instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
 
-## M250-M254 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `a9fc5ea5dbca1673`, 591 B)
+## M250-M254 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `a9fc5ea5dbca1673`, 591 B)
 ## M255-M258 (s201-s202, PASS 8/8) - ROTATED VERBATIM to `docs/named-archive-m255-m258.md`
 Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`, asserted byte-exact by `scripts/m329_named_rotate.py`; the archive holds the full rows, git history is the trail. One line per claim, gates and cites unchanged:
 
@@ -195,7 +195,7 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | deterministic: two runs -> byte-identical 67,790-B dump, sha256 3b62847494b252ad... | `evidence/b7_moveslice.txt:5` (`python3 -m sim.selftest --b7 ...` -> `PASS B7: 6/6 gates`) | V |
 | declared ASSUMED in the dump `smac-sim-move/1`: positions come from the save (load-restore not modeled - M106 kernel write); the gesture is applied to EVERY unit (the trace's 117-120 live in a different save); uniform 3 MP cost | dump `assumed` | ASSUMED (declared) |
 
-## M277 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `6aa8eebae1f0d955`, 513 B)
+## M277 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `6aa8eebae1f0d955`, 513 B)
 ## M278 (s219, PASS 7/7) - block 0 is the player-index-0 real row AND the unowned fallback; no neutral/player slot
 
 | fact | evidence | status |
@@ -738,8 +738,8 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 - BOTH STORES ARE MAX BY POLARITY (`cmp edi,eax`/`jle`; a MIN store needs `jge`), graded with the old loads; last-write / min / owner-blind rivals diverge - V (`evidence/b18_sitegate.txt:8`)
 - ACCEPTANCE `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> PASS B18: 10/10 - V (`evidence/b18_sitegate.txt:11`)
 - LEAD: contents of 0x989ce8 / 0x94eca8 never dumped; the slot's `[+4]` visitor counter; ebx provenance - lead
-## M299 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
-## M300 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
+## M299 — VERBATIM at `docs/named-archive-m377-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
+## M300 — VERBATIM at `docs/named-archive-m377-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
 ## M301 (s256, STATIC, zero box) - the lead "ebx's walked table 0x51de2c-0x51df1d" REFUTED: it is a base_array walk, not a table
 | claim | evidence | conf |
 |---|---|---|
@@ -1005,6 +1005,13 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
+## M377 (s339-c3, 8/8) — 0x8000/0x10000 are DEAL STAMPS: 0x8000 rides WAR (0x8010), 0x10000 the first-contact TRUCE (0x10004). **`PASS M377: 8/8`** `c9e99e3b7e9f0a31` (`evidence/m377_companion_bits.txt:93`), re-run identical; harness 14/14 (`evidence/m377_mutate.txt:16`).
+- carriers: 0x8000 <- 0x8010 only @0x507d1a (host FUN_00507ce0, 80 B); 0x10000 <- 0x10004 @0x54d2e5/0x552680 (0x530640) + @0x5526b3 (FUN_005525d0 x2, FUN_00546800 x1) — V MU1-5 (`:4-34`)
+- 0x8000 UNCONDITIONAL: status&7 cleared via FUN_005076d0(a,b,-1) then 0x8010 on every path — V MU6 MU7 (`:38-39`)
+- 0x10000 needs player-bit(a), 0x920434!=0, player-bit(b), rel&0x8==0 (`and edx,0x8`@0x55261a) = FIRST CONTACT — V MU6 MU13 (`:40-44`)
+- readers 0x8000 3 (`0x8020` @0x5380f2/0x541c5c + byte+1 @0x53bbed), M375's "1" RETRACTED; 0x10000 1 direct + 2 lift — V MU8 MU9 (`:48-52`)
+- 0x53bbed (from FUN_00545c50@0x545d4a) = AI compare of the 0x94e48c pair scalars; the 0x10000 reader skips 'Sending TREATY OFF' x2 + NOPATIENCE(FRIEND); 27 stores register-sourced, 0 provable clearer — V MU10 MU12 (`:55-76`)
+- NOUNS INF: 0x8000 'war declared'; 0x10000 'truce never negotiated'.
 ## M375 (s338-c3, STATIC 8/8) — the five bits B36 left unnamed are DEAL-PROTOCOL terms; 0x40 owns a 50-tick cell. ACCEPT `scripts/m375_relation_bits.py` -> **`PASS M375: 8/8`** `34bcef7ab64b9272` (`evidence/m375_relation_bits.txt:88`), re-run identical (`evidence/m375_twice.txt:4`); harness **13/13** (`evidence/m375_mutate.txt:16`). `:N` = a line of the acceptance file.
 | claim | ev | conf |
 |---|---|---|
@@ -1062,7 +1069,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | ACCEPT 13/13 digest 470d844054b1b101 x2 (`:67-68`,`_rerun.txt:67-68`); 31/31+1 digest cf85092dea6baa93 (`evidence/m330_mutate.txt:36-38`); ST 5/5 (`evidence/m330_mutate_selftest.txt:6`) | cite | V |
 | OPEN: slot; ~~985aec~~ ANSWERED M332 (runtime mirror of the INI pref "Difficulty", master 0x92bde8); ~~+2fc/+308~~ ANSWERED M331 (income siblings); profile+300 | - | lead |
 
-## M326 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `b35a213c4a689285`, 550 B)
+## M326 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `b35a213c4a689285`, 550 B)
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
 | claim | evidence | conf |
@@ -1503,17 +1510,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | rivals refuted ON THE NUMBERS: 3-bit enum (16/19 asks outside 0x7), ordinals, "0x1 is vendetta" (0x1's block carries 0 vendetta keys), "one 16-bit field" (the parsed rows read 2 dwords 8 dwords apart) | `:202-206` | V MU16,15,17,20 |
 | ACCEPT `python3 -u scripts/m364_bitnouns.py` -> 24/24 `f6d006d0281ac189` x2; harness 23/23 (22 gate mutants + MU0 NO-OP control; every gate mutated) | `evidence/m364_bitnouns.txt:208`, `evidence/m364_mutate.txt:25` | V MU0 |
 | INF: nouns of 0x2,0x4,0x10,0x20,0x400,0x1000,0x2000,0x40000,0x2000000 and dword B's 0x8/0x2000 | - | INF |
-## M365 (s334-c3) — `0x94d5dc` = per-(fac,tgt) dword at record **+0x1ac**: zeroed by the writer, ++ on contact, read as a DEADLINE. ev `evidence/m365_pair_slot.txt:142`
-| claim | ev | conf |
-|---|---|---|
-| 23 sites (8W/15R), 7 fns; 4 abs + 19 disp; 0 unclassified | `evidence/m365_pair_slot.txt:3-33` | V MU1,16,17,18 |
-| FUN_004da2c0's 11 stores: 0x94d554 (head) + 5 slots 0x20 apart ending 0x94d5dc = block+0x1ac = mask+0x194 | `:35-41` | V MU8a,8,19 |
-| 12 folded = 4*(fac*0x82f+tgt) B {0x20bc,4}={0x82f,1}; +0xa1c stride/+0xa20 unit swapped; 11 pointer | `:43-76` | V MU9,15,20,22,23,25 |
-| writers: 2 zeros (only constant 0), 2 carried ebx, 3 `++`, 1 `+=2*byte` | `:78-89` | V MU2,24 |
-| 0x94d5bc (+0x18c) moves with it 5/5 | `:91-105` | V MU3,4,21 |
-| consumers: +round/50+1; 4 cmp; 4 add/lea | `:107-129` | V MU5,6,7 |
-| RIVALS refuted: faction scalar, mask array, -1, aliased row | `:132-140` | V MU10,11,12,13 |
-| INFERRED noun (treaty/contact AGE); key 0x54a373 = 4-byte `"a"` | `:130` | INF |
+## M365 - VERBATIM at `docs/named-archive-m377-m365-rows.md` (sha1 `88284d0d000d5d5b`, 1005 B): 0x94d5dc = per-(fac,tgt) dword at record +0x1ac, 23 sites 8W/15R, zeroed by the writer / ++ on contact / read as a DEADLINE; noun INF. ev `evidence/m365_pair_slot.txt:142`
 ## M367 (s335-c3, 27/27) — the 13 relations labels ARE labels.txt lines: element = off/4, line = 10+element. ACCEPT `python3 -u scripts/m367_label_index.py` -> **`PASS M367: 27/27`** `a48d5dd630542166` (`evidence/m367_label_index.txt:104`, digest `:105`); harness 30/30 (`evidence/m367_mutate.txt:36`). `:N` = line of that evidence.
 | claim | ev | conf |
 |---|---|---|
@@ -1525,17 +1522,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | RIVALS refuted: inline strings, no-shift map, ordinals, high=low alias, one page | `:90-101` | V MU20,21,22,23,24 |
 | QUALIFIED M364: bit 0x8's label = `Commlink`; AT WAR came off the vendetta case keys (contact-gate reading INF) | `:75` | OPEN |
 | ANCHORED by M368: 0x2 = Treaty and 0x4 = Truce also have BEHAVIOURAL keys (0x4 posts `ENEMYTRUCE`, 0x2 posts `ENEMYTREATY`) — see `## M368` | - | V |
-## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
-| claim | ev | conf |
-|---|---|---|
-| FUN_004db1b0: ids {8,10,4,2,1,1000,2000,20,2000000,400,40000} <- 0x94d448 + {80000008,80002000} <- 0x94d468; id==mask 11/11, high 2/2 == B rows | `:9-20` | V MU1-3,18 |
-| 13/13 blocks: ONE 6-insn idiom = fac*0x82f+tgt; 12 slots all inside the 0x20bc-B record; 0x94d468 = +8 dwords | `:22-40` | V MU4,5,20 |
-| inline widget +0x15a0: 1 `lea`, 13 `mov ecx,edi`, tail `[eax+0xf0]`; fields 0xa1c/0xa20 only | `:42-47` | V MU6-8 |
-| builder: same 13 ids/order; 13 label slots, each an arg to 0x61482f(0x997b28,[0x997b20+off]); TEXT OPEN | `:49-66` | V MU9,10,17,23 |
-| 4 handlers: id class picks the dword 4/4; 8 writer sites; 2 one-way writers, 1 handler each | `:68-76` | V MU11,12,19 |
-| 6 writers: 4 both-direction, 2 one-way; 0/24 forms unresolved; primary 3 A / 3 B | `:78-88` | V MU13,14,21 |
-| RIVALS refuted: 0x92befc, ordinals, separate array, one-way 4/6 | `:90-98` | V MU15,16,1,22 |
-| OPEN: 13 label strings; bit NOUNS (chain-2); 0x551a20's 3rd slot | - | lead |
+## M362 - VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `014390d79870e3d7`, 1173 B): the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 ## M361 — VERBATIM at `docs/named-archive-m369-rows.md` (sha1 `5b172d91184d78ec`, 1466 B)
 ## M363 — VERBATIM at `docs/named-archive-m369-rows.md` (sha1 `65d68e56dea864c5`, 1616 B)
 ## M357 (s330-c3, 18/18 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
