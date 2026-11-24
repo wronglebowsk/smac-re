@@ -39,12 +39,14 @@ literal so a drift reddens.
 """
 import argparse
 import hashlib
+import json
 import os
 import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.environ.get("SMAC_M354_TEXT") or os.path.join(ROOT, "scratch", "m574", "text.txt")
+STARTS = os.environ.get("SMAC_M354_STARTS") or os.path.join(ROOT, ".func_starts.json")
 MUT = os.environ.get("SMAC_M354_MUTANT", "")
 
 ROW_BASE, ROW_STRIDE = 0x98AD88, 0x34
@@ -124,6 +126,17 @@ class Listing:
                 out.append((a, int(m.group(2), 16)))
         return out
 
+    def extent(self, start, starts):
+        """[start, end): the LAST `ret` inside [start, next Ghidra start) - a
+        parsed bound, not a hand-picked window width.  Multi-exit functions keep
+        all their exits; a trailing embedded jump table stays outside."""
+        nxt = min([s for s in starts if s > start] or [start + 0x800])
+        last = None
+        for a, t in self.window(start, nxt):
+            if t.startswith("ret"):
+                last = a + (3 if " 0x" in t else 1)
+        return start, (last or nxt)
+
 
 def digest_table(rows):
     s = "\n".join("|".join(str(x) for x in r) for r in rows)
@@ -135,6 +148,7 @@ def main():
     ap.add_argument("--digest", action="store_true")
     a = ap.parse_args()
     L = Listing(TEXT, os.environ.get("SMAC_M354_PATCH") or None)
+    starts = json.load(open(STARTS))
     fails, gates = [], []
 
     def gate(gid, ok, msg):
@@ -167,17 +181,21 @@ def main():
 
     # ------------------------------------------------------------------ TABLE 2
     print()
-    print("TABLE 2  who reads which field of the 0x98ad88 row (computed offsets)")
+    print("TABLE 2  who reads which field of the 0x98ad88 row (computed offsets;")
+    print("         extents parsed from .func_starts.json + the last ret before the next start)")
     fns = [("A flags   0x496050", F_A), ("B flags   0x4960f0", F_B),
            ("validator 0x5a73f0", F_VAL), ("weight    0x5ac950", F_W),
            ("info      0x570e90", F_INFO)]
+    ext = {}
     sets = {}
     for name, (lo, hi) in fns:
-        r = L.refs(lo, hi, ROW_BASE, ROW_STRIDE)
-        st = L.strides(lo, hi, 0x34)
+        e = L.extent(lo, starts)
+        ext[name] = e
+        r = L.refs(*e, ROW_BASE, ROW_STRIDE)
+        st = L.strides(*e, 0x34)
         sets[name] = (sorted({o for _a, _t, o in r}), len(r), len(st))
-        print("  %-18s refs=%d offsets=%s stride-0x34 imuls=%d"
-              % (name, len(r), ["0x%02x" % o for o in sets[name][0]], len(st)))
+        print("  %-18s extent 0x%x..0x%x  refs=%d offsets=%s stride-0x34 imuls=%d"
+              % (name, e[0], e[1], len(r), ["0x%02x" % o for o in sets[name][0]], len(st)))
     union = sorted({o for v in sets.values() for o in v[0]} | {o for _a, _t, o in a_row})
     print("  union offsets        %s" % ["0x%02x" % o for o in union])
     print("  any 0x98ad literal in B flags fn: %s"
@@ -288,19 +306,29 @@ def main():
          % (CAND_BASE, prov))
 
     fa_off, fa_n, fa_st = sets["A flags   0x496050"]
+    ext_a = ext["A flags   0x496050"]
     gate("G3", fa_off == [0x2A, 0x30] and fa_n == 2 and fa_st == 2
+         and ext_a == (0x496050, 0x4960C7)
          and "cmp DWORD PTR [ebp+0x8],0x40" in (L.get(0x49605C) or "")
          and "and ecx,0x4" in (L.get(0x49606F) or ""),
-         "A flags fn: %d refs at %s, %d stride sites, guard 0x40, test bit 4"
-         % (fa_n, ["0x%02x" % o for o in fa_off], fa_st))
+         "A flags fn over its PARSED extent 0x%x..0x%x: %d refs at %s, %d stride sites, "
+         "guard 0x40, flags&4 (bit 2)" % (ext_a[0], ext_a[1], fa_n,
+                                          ["0x%02x" % o for o in fa_off], fa_st))
 
     fb_off, fb_n, _fb_st = sets["B flags   0x4960f0"]
-    fb_rets = sorted({int(m.group(1), 16) for _ad, t in L.window(*F_B)
+    ext_b = ext["B flags   0x4960f0"]
+    mem = [t for _a, t in L.window(*ext_b) if "PTR [" in t]
+    stack_or_own = [t for t in mem if "[ebp" in t or "0x4961" in t]
+    calls = [t for _a, t in L.window(*ext_b) if t.startswith("call ")]
+    fb_rets = sorted({int(m.group(1), 16) for _ad, t in L.window(*ext_b)
                       for m in [re.match(r"mov eax,0x([0-9a-f]+)$", t)] if m})
-    gate("G4", fb_n == 0 and not [t for _a, t in L.window(*F_B) if "0x98ad" in t]
-         and set(fb_rets) <= {0, 1, 2, 3},
-         "B flags fn is PURE over the ordinal: %d row refs, returns %s"
-         % (fb_n, fb_rets))
+    gate("G4", fb_n == 0 and ext_b == (0x4960F0, 0x496150)
+         and len(stack_or_own) == len(mem) and not calls
+         and fb_rets == [1, 2, 3]
+         and any(t.startswith("xor eax,eax") for _a, t in L.window(*ext_b)),
+         "B flags fn over 0x%x..0x%x: ALL %d PTR operands are stack slots or its own "
+         "0x4961xx tables (0 data reads, %d calls), returns %s + xor"
+         % (ext_b[0], ext_b[1], len(mem), len(calls), fb_rets))
 
     gate("G5", "or al,0x20" in (L.get(0x495A8D) or "")
          and "or al,0x10" in (L.get(0x495DFF) or "")
@@ -312,10 +340,13 @@ def main():
     ok6 = (band_shift == 6 and split == 0x40 and shared == 0x40 and maps[3][0] == 0
            and maps[3][0x40] == 0xC0 and maps[3][-1] == 0xFF
            and all((v >> 6) == o for o in range(8) for k, v in enumerate(maps[o]) if k >= 0x40)
-           and all(v < 0x40 for o in range(8) for v in maps[o][:0x40]))
+           and all(v < 0x40 for o in range(8) for v in maps[o][:0x40])
+           and "and ebx,0x8000003f" in (L.get(0x596028) or "")
+           and "mov DWORD PTR [ecx*4+0x9267e4],ebx" in (L.get(0x596037) or "")
+           and (0x8000003F & 0x3F) == 0x3F)
     gate("G6", ok6,
-         "builder: k<0x%x -> k ; k>=split -> owner*0x40|(k&0x3f); 64 shared + 64 owner (split=%s)"
-         % (split or 0, split))
+         "builder: cmp 0x%x, shl 6, mask 0x8000003f (&0x3f==0x3f), store to 0x%x; "
+         "64 shared + 64 owner" % (split or 0, CAND_BASE))
 
     stride_ok = ("lea eax,[ebx+ebx*2]" in b_chain[0] and "lea edi,[ebx+eax*4]" in b_chain[1]
                  and "shl edi,0x2" in b_chain[2] and 13 * 4 == ROW_STRIDE)
@@ -343,9 +374,37 @@ def main():
     gate("G9", len(neg_row) == 0 and len(neg_fac) == 1 and len(pos_row) == 5
          and [o for _a, _t, o in neg_fac] == [0x0C]
          and pos_offs.count(0x30) == 2 and 0x2C not in pos_offs
+         and "test ecx,ecx" in (L.get(0x4EF897) or "")
+         and "jge 0x4efa2c" in (L.get(0x4EF899) or "")
+         and (L.get(0x4EF89F) or "").startswith("neg ")
+         and "mov ax,WORD PTR [edx+0x98adb8]" in (L.get(0x4EFE50) or "")
+         and "mov WORD PTR [esi+0x98adb8],ax" in (L.get(0x4EFE60) or "")
          and "cmp ebx,0x40" in (L.get(0x4EFE41) or ""),
-         "decoder: head<0 -> facility cost +0x0c (%d ref, 0 row), head>=0 -> row (%d, %d at +0x30)"
-         % (len(neg_fac), len(pos_row), pos_offs.count(0x30)))
+         "decoder: test/jge/neg pinned; head<0 -> facility cost +0x0c (%d ref, 0 row); "
+         "head>=0 -> row LOAD+STORE at +0x30 (%d refs)" % (len(neg_fac), len(pos_row)))
+
+    # G10: the atlas SEMANTICS that are gated (the rest stay INFERRED)
+    wtxt = [L.get(x) or "" for x in (0x495724, 0x49572C, 0x4957E7, 0x4957FE,
+                                    0x495806, 0x4959C9)]
+    probe = {
+        "name +0x00 -> std::string": ("push edx" in wtxt[0]
+                                      and "call 0x404010" in wtxt[1]
+                                      and "call 0x64b9e0" in (L.get(0x404021) or "")),
+        "weight +0x29 x 0x4e40a0": ("[ecx+0x98adb1]" in wtxt[2]
+                                    and "call 0x4e40a0" in wtxt[3]
+                                    and "imul esi,eax" in wtxt[4]),
+        "class +0x2a == 8": "cmp edx,0x8" in wtxt[5],
+        "pre-req +0x32 WORD -> 0x92fdd4": any(o == 0x32 for _a, _t, o in L.refs(ext["validator 0x5a73f0"][0], ext["validator 0x5a73f0"][1], ROW_BASE, ROW_STRIDE))
+                                          and any("0x92fdd4" in t for _a, t in L.window(ext["validator 0x5a73f0"][0], ext["validator 0x5a73f0"][1])),
+    }
+    print()
+    print("TABLE 7  gated atlas semantics (the rest of TABLE 6 stays INFERRED)")
+    for k, v in probe.items():
+        print("  %-32s %s" % (k, v))
+    pin.append(("X", tuple((name, ext[name]) for name in ext), tuple(probe.values())))
+    gate("G10", all(probe.values()),
+         "semantic probes: %d/%d gated (name, weight, class, pre-req tech)"
+         % (sum(probe.values()), len(probe)))
     dg = digest_table(pin)
     print()
     print("digest=%s" % dg)

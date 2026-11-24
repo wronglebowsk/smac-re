@@ -39,9 +39,15 @@ MUTANTS = [
     ("MU14", 0x5A748B, "[edx+0x98adb2]", "[edx+0x98adb3]", "G7", "validator class field"),
     ("MU15", 0x4EF8ED, "[edx+0x984d44]", "[edx+0x984d40]", "G9", "negative leg cost field"),
     ("MU16", 0x4EFE50, "[edx+0x98adb8]", "[edx+0x98adb4]", "G9", "positive leg stamps the mask byte"),
+    ("MU19", 0x4956DD, "[ebp-0x2c],edx", "[ebp-0x28],edx", "G2", "item slot: cand id no longer reaches the imuls"),
+    ("MU20", 0x49613B, "mov eax,0x1", "mov eax,0x5", "G4", "B flags fn gains a fourth return value"),
+    ("MU21", 0x596044, "shl edi,0x2", "shl edi,0x3", "G6b", "row stride 13*8 instead of 13*4"),
+    ("MU22", 0x4959C9, "cmp edx,0x8", "cmp edx,0x9", "G10", "class probe: 8 -> 9"),
+    ("MU23", 0x4EFE60, "[esi+0x98adb8],ax", "[esi+0x98adb4],ax", "G9", "the stamp store moves to the mask byte"),
+    ("MU24", 0x4957E7, "[ecx+0x98adb1]", "[ecx+0x98adb0]", "G10", "weight probe: +0x29 -> +0x28"),
 ]
-NOOP = ("MU17", 0x4956F9, "add esp,0xc", "add esp,0x10", "NOOP", "an instruction no gate pins")
-MODEL = ("MU18", "band", "G6", "classifier: read the owner band as 5 bits")
+NOOP = ("MU25", 0x4956F9, "add esp,0xc", "add esp,0x10", "NOOP", "an instruction no gate pins")
+MODEL = ("MU26", "band", "G6", "classifier: read the owner band as 5 bits")
 
 
 def run(env_extra):
@@ -68,16 +74,14 @@ def main():
             score = "NO-OP " if (rc == 0 and not red) else "BAD-NOOP"
         else:
             score = "SCORED" if (rc != 0 and gate in red) else "MISSED"
-            if score == "SCORED":
-                cov.add(gate)
+            cov.update(red)
         print("%-5s 0x%06x %-28s -> %-30s gate %-4s %s  reds=%s"
               % (mid, addr, old, new, gate, score, red or "[]"))
         rows.append((mid, gate, score, why, tuple(red)))
     mid, kind, gate, why = MODEL
     rc, red, out = run({"SMAC_M354_MUTANT": kind})
     score = "SCORED" if (rc != 0 and gate in red) else "MISSED"
-    if score == "SCORED":
-        cov.add(gate)
+    cov.update(red)
     print("%-5s model %-24s gate %-4s %s  reds=%s" % (mid, kind, gate, score, red or "[]"))
     rows.append((mid, gate, score, why, tuple(red)))
 

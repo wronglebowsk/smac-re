@@ -41,11 +41,12 @@ def claim_rows(block):
     return rows
 
 
-def stub(rows):
-    out = ["## M312 (s276, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM "
-           "to `docs/named-archive-m354-rows.md` (sha1 `${SHA}`) - the selection check "
-           "(FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is "
-           "UNREACHABLE from every caller; the pair is the cursor-tile neighbour test",
+def stub(rows, header):
+    """Header derived from the archived block's own first line: prefix + the
+    rotation clause + the ORIGINAL tail, so no word is re-typed."""
+    prefix, _, tail = header.partition(" - ")
+    out = [prefix + " - ROTATED VERBATIM to `docs/named-archive-m354-rows.md` "
+           "(sha1 `${SHA}`) - " + tail,
            "", "| claim (one line each; full rows in the archive) | evidence | conf |",
            "|---|---|---|"]
     for c in rows:
@@ -95,10 +96,11 @@ def main():
           % (sha(blk), len(blk.encode()), len(rows)) + blk + "\n")
     with open(ARCHIVE, "w") as f:
         f.write(ar)
-    open(NAMED, "w").write(text[:i] + stub(rows).replace("${SHA}", sha(blk)[:12])
-                           .rstrip("\n") + text[j:])
+    header = blk.splitlines()[0]
+    st = stub(rows, header).replace("${SHA}", sha(blk)[:12])
+    open(NAMED, "w").write(text[:i] + st.rstrip("\n") + text[j:])
     print("rotated M312: %d B -> stub %d B; archive sha1 %s; NAMED now %d B"
-          % (len(blk.encode()), len(stub(rows)), sha(blk)[:16],
+          % (len(blk.encode()), len(st), sha(blk)[:16],
              len(open(NAMED).read().encode())))
     return 0
 

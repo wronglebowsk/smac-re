@@ -652,10 +652,16 @@ whether a facility completion stamps at all.
 
 ## Session 329-chain2 (2026-11-24) — M354: section A's identity = the 0x98ad88 row (M351's OPEN closed; leg NOUNS retracted)
 
-- **ACCEPT** `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 10/10 gates`**,
-  table digest `ee70888f7fb55d69`; two runs byte-identical (`evidence/m354_design_row.txt`,
-  `evidence/m354_x2.txt`). `scripts/m354_mutate.py` -> **17/18 scored, NO-OP ['MU17']**,
-  covered {G1,G3,G5,G6,G7,G9} (`evidence/m354_mutate.txt:22`).
+- **ACCEPT** `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 11/11 gates`**,
+  table digest `dd5e689e8d9af320`; two runs byte-identical (`evidence/m354_design_row.txt`,
+  `evidence/m354_x2.txt:91`). `scripts/m354_mutate.py` -> **23/24 scored, NO-OP ['MU25']**,
+  measured coverage ALL 11 gates (`evidence/m354_mutate.txt:30`).
+- **REVIEW #379 (11 findings, all fixed)**: function extents now PARSED
+  (`.func_starts.json` + the last ret) instead of window widths; G4 proves "no data reads"
+  by classifying every PTR operand; G9 pins `test/jge/neg` and LOAD-vs-STORE; G6 pins the
+  mask+store; G10 gates 4 atlas semantics; harness records ALL reddened gates and adds
+  MU19-MU24 so every gate has a killer; rotation stub header is derived from the archived
+  block (the hardcoded "neighbour test" vs "neighbourhood" was a real byte mismatch).
 - **THE ROW IS A 0x98ad88 RECORD**, stride 0x34, keyed by the A item: three imul sites
   (0x49571b name, 0x4957e2 +0x29 weight, 0x4959be +0x2a class) all read the item from
   [ebp-0x2c], filled from `[ecx*4+0x9267e4]` @0x4956d6. So a +head is a UNIT-TYPE/design

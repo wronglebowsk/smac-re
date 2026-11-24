@@ -1004,7 +1004,7 @@ QUALIFIED BY B24 (s287): `fold()` in this module is now PARAMETERIZED - new hook
 | MATCHER CLAUSES, MEASURED (A8): only the window's RIGHT reach changes results (`0x4e4dd0`'s fold sits 78 B past the store: -24/+32→0, -24/+90→1); the `*8` operand-equality clause and 24 B proximity cap are **DECLARED INERT** — two earlier prose claims that they were load-bearing RETRACTED in the gate text | `evidence/m311_recidx.txt:53-58` | V |
 | UNPROVEN, DECLARED: the index VALUE reaching the fold's 2nd step is not established (no write tracking; a register-name rule would be FALSE at the setter) → claim stops at the arithmetic shape | `evidence/m311_recidx.txt:58` | V |
 | UNMODELED: which entity the index addresses in play; record +48's semantics; `0x68cbb4`'s 19 extra writers; who fills `[ebp-0x8]` behind `0x4f5c36` | - | lead |
-## M312 (s276, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d`) - the selection check (FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is UNREACHABLE from every caller; the pair is the cursor-tile neighbour test
+## M312 (s276, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d`) - the selection check (FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is UNREACHABLE from every caller; the pair is the cursor-tile neighbourhood
 
 | claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
@@ -1549,15 +1549,15 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
 | OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b); twins return 0x3a7168/0x327168 | `:97` | lead |
 
-## M354 (s329-chain2, STATIC 10/10) — SECTION A's identity: the positive chooser rows ARE the 0x98ad88 unit-type/design rows (M351's OPEN closed; the leg NOUNS of M349/M351 retracted)
+## M354 (s329-chain2, STATIC 11/11) — SECTION A's identity: the positive chooser rows ARE the 0x98ad88 unit-type/design rows (M351's OPEN closed; the leg NOUNS of M349/M351 retracted). `:N` = a line of `evidence/m354_design_row.txt:1-91`
 | claim | evidence | conf / mutant |
 |---|---|---|
-| A rows are the 0x98ad88 rows, stride 0x34: three imul sites with the item in [ebp-0x2c] (filled from `[..*4+0x9267e4]`) reach +0x00 name, +0x29 weight, +0x2a class | `evidence/m354_design_row.txt:1-8,71-72` | V MU1,MU2,MU3 |
-| A's flags fn 0x496050 reads EXACTLY +0x2a and +0x30 (2 refs) and gates on item<0x40 / flags bit 4; B's 0x4960f0 reads NO memory and returns {1,2,3} | `:10-18,73-74` | V MU4-MU7 |
-| sign follows the SECTION: A `or al,0x20` @0x495a8d, B `or al,0x10` @0x495dff, modal `and eax,0x20`/`neg` @0x49772a/7c | `:37-41,75` | V MU8-MU10 |
-| builder 0x596000: k<0x40 -> k, k>=0x40 -> owner*0x40\|(k&0x3f) (6-bit band; 64 shared + 64 owner); item*0x34 via 13*i<<2 | `:19-36,76-77` | V MU11,MU12,MU18 |
-| validator 0x5a73f0 reads {+0x24,+0x2a,+0x2c,+0x30,+0x32}; flags bit0 @0x5a7402, class @0x5a748b, mask 1<<owner (`shl ebx,cl`) | `:78` | V MU13,MU14 |
-| field atlas (12 offsets consumed): +0 name, +0x20 abil, +0x24 domain, +0x25..+0x28 components (nouns OPEN), +0x29 weight, +0x2a class, +0x2c owner mask, +0x30 flags, +0x32 pre-req tech | `:55-70,79` | V MU2,MU3 |
-| **RETRACTION (narrows M349/M351):** the tables identify the queue legs — head<0 reads the 0x984d38/0x30 cost +0x0c (M337's `#FACILITIES`), head>=0 indexes the 0x98ad88/0x34 row and stamps +0x30. M349's per-leg nouns (neg=UNIT, +2=FACILITY) and M351's "unit row" for section B are INVERTED; the arithmetic and the sign split stand | `:42-54,80` | V MU15,MU16 |
-| ACCEPT `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 10/10`** `ee70888f7fb55d69`, x2 identical; `scripts/m354_mutate.py` **17/18 scored, NO-OP ['MU17']**, covered {G1,G3,G5,G6,G7,G9} | `evidence/m354_design_row.txt:83`, `evidence/m354_mutate.txt:24` | V MU0 |
-| OPEN: the game noun of +0x25..+0x28; whether the positive leg's +0x30 bit2 stamp is the prototype build (INFERRED); NAMED M312 rotated VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`) | - | lead |
+| A rows are the 0x98ad88 rows, stride 0x34: three imul sites take the item from [ebp-0x2c] (filled from `[..*4+0x9267e4]` @0x4956d6) and reach +0x00 name, +0x29 weight, +0x2a class | `:1-8,72-73` | V MU1,MU2,MU3,MU19 |
+| A's flags fn 0x496050 over its PARSED extent 0x496050..0x4960c7 reads EXACTLY +0x2a and +0x30 (2 refs) and gates on item<0x40 / flags&4 (bit 2); B's 0x4960f0 over 0x4960f0..0x496150 has ALL 10 PTR operands on stack slots or its own 0x4961xx tables, 0 calls, returns {1,2,3}+xor | `:10-18,74-75` | V MU4-MU7,MU20 |
+| sign follows the SECTION: A `or al,0x20` @0x495a8d, B `or al,0x10` @0x495dff, modal `and eax,0x20`/`neg` @0x49772a/7c | `:37-41,76` | V MU8-MU10 |
+| builder 0x596000: `cmp 0x40`, `shl 6`, mask 0x8000003f (&0x3f==0x3f), store to 0x9267e4 — k<0x40 -> k, else owner*0x40\|(k&0x3f) (64 shared + 64 owner); item*0x34 via 13*i<<2 | `:19-36,77-78` | V MU11,MU12,MU21,MU26 |
+| validator 0x5a73f0 reads {+0x24,+0x2a,+0x2c,+0x30,+0x32}; flags bit0 @0x5a7402, class @0x5a748b, owner mask 1<<owner (`shl ebx,cl`) | `:79` | V MU13,MU14 |
+| field atlas (12 offsets consumed): +0 name, +0x20 abil, +0x24 domain, +0x25..+0x28 components, +0x29 weight, +0x2a class, +0x2c mask, +0x30 flags, +0x32 pre-req; the offset SET is gated (G8) and four SEMANTICS are gated (G10: name->std::string 0x64b9e0, weight x 0x4e40a0, class==8, +0x32 WORD -> tech table 0x92fdd4); the component NOUNS stay INFERRED | `:55-70,80,83-88` | V (set+4 semantics) MU3,MU14,MU22,MU24 / INFERRED (nouns) |
+| **RETRACTION (narrows M349/M351):** the decoder legs are identified by their TABLES: `test ecx,ecx`/`jge 0x4efa2c`/`neg ecx` pinned, head<0 reads the 0x984d38/0x30 cost +0x0c (M337 `#FACILITIES`), head>=0 LOADS+STORES the 0x98ad88 row +0x30. M349's per-leg nouns (neg=UNIT, +2=FACILITY) and M351's "unit row" for section B are INVERTED; the arithmetic and the sign split stand | `:42-54,81` | V MU15,MU16,MU23 |
+| ACCEPT `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 11/11`** `dd5e689e8d9af320`, x2 identical (`evidence/m354_x2.txt:91`); `scripts/m354_mutate.py` **23/24 scored, NO-OP ['MU25']**, measured coverage ALL 11 gates {G1,G2,G3,G4,G5,G6,G6b,G7,G8,G9,G10} | `:91`, `evidence/m354_mutate.txt:30` | V MU0 |
+| OPEN: the game noun of +0x25..+0x28; whether the +0x30 bit2 stamp is the prototype build (INFERRED); NAMED M312 rotated VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py --verify` PASS) | - | lead |
