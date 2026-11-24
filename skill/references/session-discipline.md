@@ -431,8 +431,9 @@ build track. Protocol, validated end to end:
   milestone/<id> origin/main`, then symlink the untracked dirs the instruments read (`ghidra_out`,
   `scratch`, `programs`). Pinning quirk (`pinned=true` captures the config default, not the chat
   model) and the jobs.json fix: hermes-agent `references/background-systems.md` §Cron. The live pair
-  (2026-11-24): `smac-re-loop` = job `789931d4b621` in the main checkout, `smac-re-chain2` = job
-  `9a0b613bb1ac` in `~/reverse/wt-chain2`, both pinned to `deepseek/deepseek-v4.1-flash-1017` / `nous`.
+  (2026-11-24 retired): `smac-re-loop` = `789931d4b621` in the main checkout (build track),
+  `smac-re-chain2` = `9a0b613bb1ac` in `~/reverse/wt-chain2`, `smac-re-chain3` = `09a25323e05b` in
+  `~/reverse/wt-chain3` — every lane pinned to the same metered endpoint with `hermes cron edit`.
 - **Name the ownership in BOTH prompts**: which picks each chain owns, and that neither touches the
   other's worktree or `sim/` (the build track). Disjoint picks prevent collisions; the ownership
   check is the backstop.
@@ -551,6 +552,14 @@ build track. Protocol, validated end to end:
   milestone unfinished: branch commits present, acceptance green, but the harness left UNTRACKED and no
   evidence/PR/notes/cursor write. Before reporting done or taking over, read the repo's end state —
   `git status -sb` + `gh pr list --state open` + the top `## Session` + the cursor.
+- **`ok` at the API-call cap almost always means the PR is still OPEN.** The completion block prints the call
+  count: a fire at its cap (150) spent the last calls on the review round and exited with the PR
+  submitted-but-unmerged — acceptance green, gate green, and its own output ending `To finish: python3
+  scripts/milestone.py merge <n>`. The PARENT closes it, not the lane: `gh pr checks <n>` until a real
+  `pass` (not `pending`), read the comment BODIES, patch the title if the post-review counts moved, then
+  `gh pr merge <n> --squash` and confirm with `gh pr view <n> --json state,mergeCommit` — an unmerged
+  round is a blocker, and that lane's next tick is a day out. `--delete-branch` may die on "main is
+  already used by worktree"; the server-side merge already landed, so verify the PR, not the exit status.
 - To finish it, stay on the fire's branch and re-run ITS acceptance (a green already-earned run is re-confirmed,
   never re-derived), then apply the normal closing order; **commit the untracked harness first** so a second
   cut-off cannot lose it. B24 ran twice this way: fire 1 left the instrument green and the harness untracked;
