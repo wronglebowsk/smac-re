@@ -1,0 +1,146 @@
+M386 +0x94d820/+0x94d824 - deadline? counter? (writers, readers, arithmetic)
+
+-- G0 parse
+ok   G0 0x5553a4 parses
+ok   G0 0x5553ac parses
+ok   G0 0x555405 parses
+ok   G0 0x55540a parses
+ok   G0 0x557cf6 parses
+ok   G0 0x557d29 parses
+ok   G0 0x557d43 parses
+ok   G0 0x4e34f0 parses
+ok   G0 0x558e0c parses
+ok   G0 0x55fce0 parses
+ok   G0 0x5552b6 parses
+ok   G0 781429 instructions from text.txt
+ok   G0 field literal builds
+ok   G0 X sits 0x3d8 into a 0x20bc-byte row, Y at 0x3dc
+ok   G0 the halves are adjacent dwords
+
+-- G1 census: every reference, by class
+   class    X / Y
+   load     16 / 14
+   read     7 / 4
+   store    7 / 6
+   RMW      0 / 0
+ok   G1 30 X references and 24 Y references (declared, measured)
+ok   G1 ZERO arithmetic RMW on either half, image-wide (30+24 scanned)
+ok   G1 7 X stores, 6 Y stores
+   X stores: 0x5423da 0x557f86 0x5585c8 0x558e0c 0x55fce0 0x59ed35 0x5a5791
+   Y stores: 0x5423d4 0x557f80 0x5585c0 0x558e12 0x59ed2f 0x5a578a
+   base registers across all references: eax, ebx, ecx, edi, edx, esi
+
+-- G2 writers: the halves move together
+   pairs (X,Y): (0x5423da,0x5423d4) (0x557f86,0x557f80) (0x5585c8,0x5585c0) (0x558e0c,0x558e12) (0x59ed35,0x59ed2f) (0x5a5791,0x5a578a)
+ok   G2 6 of 7 X stores pair with a Y store
+ok   G2 the lone X store is 0x55fce0 (X=-1 alone disables the marker)
+   -1 pairs (X,Y) <- `or reg,0xffffffff`: (0x5423da,0x5423d4)@0x5423d1 (0x557f86,0x557f80)@0x557f7d (0x5585c8,0x5585c0)@0x5585bd (0x59ed35,0x59ed2f)@0x59ed19 (0x5a5791,0x5a578a)@0x5a5786
+ok   G2 5 of 6 pairs write the -1 none-sentinel to BOTH halves
+ok   G2 the lone reset carries the same -1 (0x55fce0)
+   0x558e05  movsx  eax,WORD PTR [eax+0x95da12]
+   0x558dfe  movsx  edx,WORD PTR [eax+0x95da10]
+   0x558dfb  shl    eax,0x4
+   0x558df8  mov    ecx,DWORD PTR [ebp-0xc]
+   0x558df5  lea    eax,[eax+ecx*2]
+   0x558df2  lea    ecx,[eax+eax*8]
+   0x558dec  jl     0x55904a
+   0x558dea  test   eax,eax
+   0x558e0c  mov    DWORD PTR [ecx+0x94d820],edx
+   0x558e12  mov    DWORD PTR [ecx+0x94d824],eax
+ok   G2 one pair (0x558e0c/0x558e12) takes a UNIT's x,y (0x95da10/0x95da12, stride 0x130)
+ok   G2 the stores carry exactly those registers: edx(X<-+0x95da10), eax(Y<-+0x95da12)
+
+-- G3 readers: the pair is fed to map arithmetic
+   ok  0x557cf6  mov    eax,DWORD PTR [ebx+0x94d820]
+   ok  0x557d16  mov    ecx,DWORD PTR [ebx+0x94d824]
+   ok  0x557d1c  push   ecx
+   ok  0x557d1d  push   eax
+   ok  0x557d38  mov    esi,DWORD PTR ds:0x92ae14
+   ok  0x557d29  mov    edx,DWORD PTR [ebx+0x94d820]
+   ok  0x557d2f  imul   ecx,DWORD PTR ds:0x692184
+   ok  0x557d36  sar    edx,1
+   ok  0x557d3e  add    ecx,edx
+   ok  0x557d43  lea    edx,[ecx+ecx*4]
+   ok  0x557d46  lea    ecx,[ecx+edx*2]
+   ok  0x557d4d  mov    dl,BYTE PTR [esi+ecx*4+0x3]
+ok   G3 the tile-index chain parses instruction-for-instruction (clean)
+ok   G3 X,Y are handed to FUN_004e34f0: call   0x4e34f0
+   index = (Y*[0x692184] + (X>>1)) * 11 * 4 + 3  -> tile record 0x2c bytes
+ok   G3 the tile stride is 0x2c, the 0x92ae14 record size
+   0x557a69  cmp    eax,DWORD PTR ds:0x92a37c
+   0x557a75  cmp    ecx,DWORD PTR ds:0x92a378
+ok   G3 the same bounds pair is INLINED at 0x557a69/0x557a75 (a second coordinate reader)
+   0x4e3501  cmp    edi,DWORD PTR ds:0x92a37c
+   0x4e3518  cmp    esi,DWORD PTR ds:0x92a378
+ok   G3 FUN_004e34f0 cmp's arg1(y) vs [0x92a37c] and arg0(x) vs [0x92a378]
+   0x4e3507  jge    0x4e3617
+   0x4e351e  jge    0x4e3617
+ok   G3 both comparisons branch to the same reject exit 0x4e3617 (the `<` bound)
+
+-- G4 the 0x20000 arm's guard reads the PARTNER's row
+   branches into 0x555405: 0x5553ac jge
+ok   G4 exactly one entering branch, and it is jge: (5591980, 'jge', 5592069)
+ok   G4 0x555405 is `or eax,0x20000`
+ok   G4 the compared register is loaded from the field at 0x5553a4
+   0x555308  mov    edx,esi
+   0x555310  shl    edx,0x6
+   0x555313  add    edx,esi
+   0x55531d  lea    ebx,[esi+edx*2]
+   0x555323  shl    ebx,0x4
+   0x555326  sub    ebx,esi
+   0x55532a  shl    ebx,0x2
+   ebx = ((131*esi)<<4 - esi)<<2 = 8380 = 0x20bc
+ok   G4 the ebx chain parses instruction-for-instruction
+ok   G4 the guard's base is 0x20bc*esi (row stride 0x20bc)
+   ebx writes in the region: ['0x555375']; of those reaching the guard: none
+ok   G4 the guard is reachable from the loop entry 0x555266
+ok   G4 no ebx write between the def and the guard lies on ANY path to 0x5553a4
+ok   G4 0x55531d DOMINATES the guard (cutting that node disconnects it from the loop entry)
+   in-range branch targets: 0x555344, 0x555349, 0x55536b, 0x55536b, 0x5553a4
+ok   G4 every entry into the guard region lands after the ebx def (0x55531d)
+   0x555282  shl    eax,cl
+   0x555284  test   BYTE PTR ds:0x985b11,al
+ok   G4 esi is the faction loop variable (presence bitmask ds:0x985b11)
+   => [0x94d820 + 0x20bc*esi] = row(esi)+0x3d8 = the PARTNER faction's marker X
+
+-- G5 rival DEADLINE: refuted on the numbers
+   field loads followed within 6 insns by a turn-counter reference: NONE
+ok   G5 0 loads of either half meet ds:0x985afc within 6 insns
+   0x5552b6  mov    eax,DWORD PTR [edi+0x94d4c8]
+   0x5552c0  dec    eax
+   0x5552c3  mov    DWORD PTR [edi+0x94d4c8],eax
+ok   G5 the REAL per-turn cell is +0x80: loaded, dec'd, stored back five insns from the field
+   0x5552d9  test   BYTE PTR ds:0x985afc,0x1
+   0x5552f0  dec    al
+ok   G5 turn parity gates a per-turn BYTE decrement at 0x5552f0 - the field is not that cell
+   R1 turn-deadline: refuted (0 RMW, 0 turn-counter compares)
+
+-- G6 rival SCALAR GLOBAL: refuted
+ok   G6 0 absolute ds:0x94d820/824 forms (none)
+ok   G6 every one of the 54 references carries a BASE REGISTER (none have none)
+   R3 scalar: refuted (every access is row-relative)
+
+-- G7 0x20000: the request bit behind the guard
+ok   G7 the relations-dword scanner is not blind: 373 inline tests, 22 of them ask 0x400|0x800
+ok   G7 0x20000 has 0 readers ON THE RELATIONS DWORD (0 inline, 0 register-form: [])
+ok   G7 the arm ORs into a fresh load of the relations dword: mov    eax,DWORD PTR [edi+0x94d448]
+ok   G7 the treaty arm is `and edx,0xfffdfbff` - the exact mask that clears 0x20000|0x400
+ok   G7 that mask clears bit 0x20000
+   0x5553e7  and    edx,0xfffdfbff
+   => 0x20000 noun: INFERRED (no reader); the arm's gate is the partner's marker, not a counter
+
+-- G8 rivals
+   R1 turn DEADLINE: needs per-turn arithmetic or a ds:0x985afc compare
+ok   G8 R1 refuted
+   R2 REQUEST COUNTER: needs an inc/dec/add on the field
+ok   G8 R2 refuted (0 arithmetic sites)
+   R3 scalar global: needs an absolute form
+ok   G8 R3 refuted
+   R4 flag pair: would need no coordinate arithmetic
+ok   G8 R4 refuted: the pair indexes the tile array
+
+-- G9 digest
+digest 401580f3c8ad292e
+ok   G9 the printed table hash is the pinned 401580f3c8ad292e
+
+PASS M386: 55/55 gates digest 3e6d87261b7fe88e

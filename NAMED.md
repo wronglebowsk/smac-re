@@ -133,8 +133,6 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 - M270 the `0x678e40` class has ONE 152,856-B stack instance: `0x678e40` and its secondary `0x678e38` (+0x2444) are each stored EXACTLY once image-wide (`0x59bf1c`, `0x59bf26`, both inside FUN_0059bec0) — never heap-allocated; slot 0 of each is its deleting-dtor wrapper (`0x59c380`/`0x59c3b0`); layout `+0` the `0x5e3b80/0x5e3ced` class, `+0x2320` the `0x675964` class, `+0x247a0` M215's `0xb4c` row, virtual base at `+0x23d8c = 0x2320+0x21a6c`, size `0x25318` = the only such immediate in the image (the `_alloca_probe` at `0x59bed1`). **RETRACTS part of M267 (kept here on purpose):** FUN_0059bec0 is NOT a destructor (4 ctors run before it installs `0x678e40`; the same objects die at its tail) and its `0x67194c/0x671944` are the ROW subobject at `+0x247a0`/`+0x247a0+0x444`, never `[this+0]` — the installer of `0x67194c` at `[this+0]` is FUN_005faec0 (M215).
 
 ## M272 (STUB - block VERBATIM: `docs/named-archive-m357-rows.md`, sha1 `aa685936e83c6e4f`)
-| claim | ev | conf |
-|---|---|---|
 | fact / evidence / status | archive:6 | archived |
 | LOAD window (ROUND sentinel -39 -> 50 read back, counts == m104 image) | archive:7 | archived |
 | the .SAV opener `FUN_00597ee0` fires INSIDE the load (event prints round=-39, the live sentinel | archive:8 | archived |
@@ -152,8 +150,6 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | units re-charge 6 MP per round (0x51f730 REFRESH, M37) and never move - R1 has no AI; declared in `assumed` | same | ASSUMED (declared) |
 
 ## M273 (STUB - block VERBATIM: `docs/named-archive-m357-rows.md`, sha1 `22154fba5a8d33fe`)
-| claim | ev | conf |
-|---|---|---|
 | fact / evidence / status | archive:7 | archived |
 | live region count DAT_0092ada4 = 91, stable pre AND post the window, == save-derived ((64+4)/5+1)/2×13 = 91 | archive:8 | archived |
 | 188 = 2×94 slots is a FIXED capacity | archive:9 | archived |
@@ -532,8 +528,6 @@ HUBFOUND tile, 2 walked pods, own-flag law 29/29.
 Instrument: scripts/m292_pod_movement.py.
 
 ## M293 (STUB - block VERBATIM: `docs/named-archive-m355-rows.md`, sha1 `e548f949cfd953c8`)
-| claim | ev | conf |
-|---|---|---|
 | D1 hub dispatch (the M290/B13 correction above | archive:1 | archived |
 | D1b read-only /proc probe (pid 4087359, TracerPid 0) | archive:2 | archived |
 | D2 sim/hubfound.py:94 legs (distant/msg/found) | archive:3 | archived |
@@ -669,8 +663,6 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | S3 finding (documented FAIL, floor unweakened): strict live law 2102/2321 exact, lazy 0, misses 219 = bit4-flips 134 (117 flip-attested) + nibble 85 (84 change-attested), 201 machine-attested / 18 not; end-window snapshots grade only the last turn; bit4 flips are val-INVISIBLE (M296 S3b under-attests); s250 instrument fix: attestation = a grading event LATER on the same tile (drift_taxonomy), A0 shipped-verify 25/25, A6 amends the S8 starttime token | evidence/s249_live_census.txt S3, addendum A2/A0/A6 | V |
 
 ## M298 (STUB - block VERBATIM: `docs/named-archive-m356-rows.md`, sha1 `a7e25e645e556118`)
-| claim | ev | conf |
-|---|---|---|
 | 0x582cc0 does NOT mutate edi | archive:1 | archived |
 | [ebp-0xc] has NO caller writer (M294 question REFUTED) | archive:2 | archived |
 | M294 phrasing FIXED | archive:3 | archived |
@@ -924,8 +916,6 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
 ## M383 (s341-c3, 9/9) — 0x94e48c = a per-UNIT military sum; 12 of M380's 14 rewrites resolve. **`PASS M383: 9/9`** 1d419b65323aec6c (`evidence/m383_composition.txt:154`); harness 29/29 (`evidence/m383_mutate.txt:33`); re-run identical (`evidence/m383_twice.txt:5`). `:N` = acceptance-file line; NOUNS INF (s341).
-| claim | ev | conf |
-|---|---|---|
 | addend = (OFF+ARM)*(FACTOR+6)>>3 added to the loaded FIELD @0x5579ea; 1 ADDer of 3 stores | `:53`, `:51` | V MU2-MU4 MU15 A2-A5 |
 | leaves read type rec 0x98ad88: +0x25 -> 0x92b950, +0x26 -> 0x92fd18, index 13*4 = 52*type | `:59-63` | V MU5 MU6 MU17 A6 |
 | each callee indexes a BYTE 16*id table; the bases differ | `:68` | V MU9 MU16 A6 |
@@ -961,8 +951,6 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - 0x53bbed (host FUN_0053bb90, only caller FUN_00545c50@0x545d4a) compares the 0x94e48c pair scalars on the bit-set path @0x53bc1c, skip zeroes the flag; the 0x10000 reader skips 'Sending TREATY OFF' x2 + NOPATIENCE(FRIEND); 27 stores all register-sourced, 0 provable clearer — V MU10 MU15 MU17 MU12 (`:62-90`)
 - NOUNS INF: 0x8000 'war declared'; 0x10000 'truce never negotiated'.
 ## M375 (s338-c3, STATIC 8/8) — the five bits B36 left unnamed are DEAL-PROTOCOL terms; 0x40 owns a 50-tick cell. ACCEPT `scripts/m375_relation_bits.py` -> **`PASS M375: 8/8`** `34bcef7ab64b9272` (`evidence/m375_relation_bits.txt:88`), re-run identical (`evidence/m375_twice.txt:4`); harness **13/13** (`evidence/m375_mutate.txt:16`). `:N` = a line of the acceptance file.
-| claim | ev | conf |
-|---|---|---|
 | +0 dword: 658 refs = 378 test/253 load/**27 stores**; byte literals only +0/+1; 45 DWORD tests carry bits 16-31 | `:4-6` | V MU1 A2 |
 | readers: 0x800000 -> 0x53f863 only; 0x8000 -> **byte +1** `[..+0x94d449],0x80` @0x53bbed (a `94d448` grep misses it); 0x40 -> 0x508ebd/0x508ef9/0x547fd0 | `:10-19` | V MU2 MU3 A2 |
 | set vocab (94 calls, 76 push-run + 18 via-jcc): 0x800000 only as the bare mask (3x); 0x8000 only 0x8010; 0x10000 only 0x10004; 0x100000 once | `:23-30` | V MU4 MU9 |
@@ -974,8 +962,6 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | NOUNS (the words themselves, not the bytes): 0x800000 'TREATY ON'; 0x40 'SET TREATY'+50-tick window; 0x100000 eviction grievance; 0x8000/0x10000 war/truce companions - every one INF/OPEN, the mechanism rows above carry the V | `:78-83` | INF |
 
 ## M372 (s337-c3 SEMAPHORE 8/8). ACCEPT `scripts/m372_semaphore_cell.py` -> **`PASS M372: 8/8`** `b699a30c05573575` (`evidence/m372_semaphore_cell.txt:89`); harness **20/20, cov 8/8** (`evidence/m372_mutate.txt:34`).
-| claim | ev | conf |
-|---|---|---|
 | 8 refs text==byte; 5 STORE/3 READ; 4 stores `x&0x1800000`, 0 shifts | `:19,:55` | V MU7 A1 A2 |
 | BINARY string: 0x58f030 flag=1 loops 31..0 min 8; emulation == INI `Semaphore=00000000` | `:28` | V MU1 MU2 A3 |
 | parse: 5 base-2 / 6 base-16 (0x628720/0x62876b); counts GATED; round-trip | `:46` | V MU3 MU13 A4 |
@@ -986,8 +972,6 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | OPEN: the bits' NOUNS; 4dc77c/57cb1e=zero | - | INF |
 
 ## M370 (s336-c3, x6, STATIC 19/19). ACCEPT `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 19/19`** `2fa7ea3c1bf74394` (`evidence/m370_pref_writers.txt:197`); harness 25/25 (`evidence/m370_mutate.txt:30`).
-| claim | ev | conf |
-|---|---|---|
 | 85 refs = 43 STORE/39 READ/3 BOUND; (site,cell) text==bytes (rel32 filtered); loader 11 stores/cell, BY CALL SHAPE, backward the only injection | `:7,16,87-103` | V MU1 MU2 MU8 |
 | 11 cells named BOTH sides (diff VAs): Difficulty Faction Map-Type Top-Menu Preferences More-Preferences Announce Rules Semaphore Time-Controls Customize | `:105-130` | V MU3 MU4 MU5 |
 | 32 non-loader stores, 13 fns: 12 copy 0x985a** bitmaps, 5 flip one mirror bit, 4 `&0x1800000`, 5 call-return, 2 CARRIED | `:131-150` | V MU9 MU14 MU15 MU18 |
@@ -1262,19 +1246,16 @@ ROTATED VERBATIM to `docs/named-archive-b28-feeder-rows.md` (sha1 `bd196a95e56c8
 | ladder endpoints MEASURED (`0x94d2ac..0x94d2c4`), 6 rows from `cmp esi,0x6`; k=5 -> `0x94d2c0`, k=6 -> `0x94d2c4` | `:61-65` | V MU8 |
 | the three pref-fed readers (`0x48678f`/`0x44a1c8`/`0x599405`) index TABLE at scale 4 from a memory-loaded index, def-use gap 0/0/2 insns with no branch | `:67-76` | V MU6 |
 | OPEN: what `0x94d2c4` holds at runtime (box read); whether `0x57c7b0`'s paired write supplies a bounded value | - | lead |
-## M342 (s322-chain1, ANALYSE, static, zero box; ACCEPT `python3 -u scripts/m342_completion_setter.py` -> **`PASS M342: 7/7 gates`**, table digest `2b88df5da5aeafe1` (PINNED, G7), 2 runs identical (`evidence/m342_completion_setter.txt:200,:218`); harness `scripts/m342_mutate.py` -> **9/9**, NO-OP `[]`, baseline green (`evidence/m342_mutate.txt:2,:12`)) — pick (x9) ANSWERED: the `base+0x8c` bit is SET by `or` through the mapper's mask at **11 addresses**, the API `FUN_004e44f0` first; the queue-pop is a NON-writer. (M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5`, sha1 `ccee72a56f16b4b4`.)
-
-| claim | evidence | conf |
-|---|---|---|
-| the record array base is DERIVED as `0x95da10` from the owner site `0x440dbc` (`imul r,r,0x130` then a BYTE read of `0x95da14` = field +4), so `0x95da9c` = record+0x8c and is byte-identical to the charge routine's own read at `0x4f4837` (rival `+0x88` fails) | `evidence/m342_completion_setter.txt:4-8` | V MU1 |
-| the field has exactly 2 writer idioms: **11 direct constant-form stores** in exactly 2 Ghidra functions (`FUN_0041cf20` 1 whole-byte copy, `FUN_004e47d0` 7 `or` + 3 copies) and **9 pointer-form `lea` sites, 9/9 resolved to a store through that register** (2 copy / 4 `or` / 3 `and`) | `:9-72`,`:86`,`:204` | V MU2/MU8 |
-| SET = 11 `or` addresses (`4e4528 4e4b5a 4e4b87 4e4bec 4e4c16 4e4c3d 4e4c83 4e4d81 4f0ec0 4f3ebc 4f3f4c`); CLEAR = 3 `and` (`4e4546 4f38bb 4f49e1`, the last inside the charge routine `FUN_004f47f0`) | `:210-216` | V MU2/MU8 |
-| the API `FUN_004e44f0` (92 B) is the first SET address: `or BYTE PTR [eax],cl` @`0x4e4528` after the 304-fold (`0x4e4512-0x4e451e`), index = mapper out1 slot `[ebp+0x8]`, mask = out2 slot `[ebp-0x4]`; its AND twin @`0x4e4546` clears | `:99-113`,`:205` | V MU3 |
-| 27 call sites in 8 functions: 16 push set=1, **8 set=0, 3 variable** — M344 re-derived this with a 16-insn push window; the shipped 16/7/4 read `0x40dd3c` as '?' because its `push 0x0` sits 7 instructions back | `:129-158`,`:206`; `evidence/m344_completion_caller.txt:36-38` | V MU4 (M344 MU1/MU2) |
-| the queue-pop `FUN_004ef5d0` (244 B, 3 direct callers all inside `FUN_004ef6d0`) has 0 references to `0x95da9c` and 0 API calls: the pop does not stamp | `:160-177`,`:207` | V MU5 |
-| inline grant `FUN_004e47d0`: 7 ORs + 3 copies, 7/7 OR masks loaded from a stack slot the mapper filled | `:180-191`,`:208` | V MU6 |
-| the printed digest is PINNED by G7 - the ACCEPT anchor cannot drift silently | `:200`,`:209` | V MU7 |
-| OPEN: which of the 27 API call sites is the production-completion call; 3 pointer writers (`0x4f38b0`, `0x4f3eb1`, `0x4f3f3e`) sit in regions the Ghidra index does NOT name (semantics unidentified); projects 39..71 unmeasured | - | lead |
+## M342 (s322-chain1, ANALYSE) - ROTATED VERBATIM to `docs/named-archive-m342-rows.md` (sha1 `fbfee250470112cfd37526d6d65b4c60fdc229b6`): the `base+0x8c` bit is SET by `or` through the mapper's mask at 11 addresses, the API `FUN_004e44f0` first; the queue-pop is a NON-writer. One line per claim, full rows in the archive.
+- RECORD BASE `0x95da10` derived from 0x440dbc (`imul 0x130`); `0x95da9c` = rec+0x8c, matches the charge read 0x4f4837 - V MU1 (`evidence/m342_completion_setter.txt:4-8`)
+- 2 writer idioms: 11 const-form stores in `FUN_0041cf20`/`FUN_004e47d0`, 9 `lea` sites 9/9 resolved - V MU2/MU8 (`evidence/m342_completion_setter.txt:9-72`, `evidence/m342_completion_setter.txt:86`, `evidence/m342_completion_setter.txt:204`)
+- SET 11 `or` (4e4528 4e4b5a 4e4b87 4e4bec 4e4c16 4e4c3d 4e4c83 4e4d81 4f0ec0 4f3ebc 4f3f4c); CLEAR 3 `and` (4e4546 4f38bb 4f49e1) - V MU2/MU8 (`evidence/m342_completion_setter.txt:210-216`)
+- API `FUN_004e44f0` = first SET 0x4e4528 (304-fold, out1 slot/out2 mask); AND twin 0x4e4546 - V MU3 (`evidence/m342_completion_setter.txt:99-113`, `evidence/m342_completion_setter.txt:205`)
+- 27 call sites / 8 fns: 16 set=1, 8 set=0, 3 variable (M344 16-insn window) - V MU4 (`evidence/m342_completion_setter.txt:129-158`, `evidence/m342_completion_setter.txt:206`, `evidence/m344_completion_caller.txt:36-38`)
+- queue-pop `FUN_004ef5d0`: 0 refs to `0x95da9c`, 0 API calls - V MU5 (`evidence/m342_completion_setter.txt:160-177`, `evidence/m342_completion_setter.txt:207`)
+- inline grant `FUN_004e47d0`: 7 ORs + 3 copies, 7/7 masks from a stack slot - V MU6 (`evidence/m342_completion_setter.txt:180-191`, `evidence/m342_completion_setter.txt:208`)
+- digest PINNED by G7; ACCEPT `scripts/m342_completion_setter.py` 7/7 `2b88df5da5aeafe1` x2, harness 9/9, NO-OP [] - V MU7 (`evidence/m342_completion_setter.txt:200`, `evidence/m342_completion_setter.txt:209`, `evidence/m342_mutate.txt:2`, `evidence/m342_mutate.txt:12`)
+- OPEN: the production-completion call site; 3 pointer writers 0x4f38b0/0x4f3eb1/0x4f3f3e; projects 39..71 unmeasured - lead
 
 ## M339 (s320-chain2, STATIC 7/7, review #359 hardened) — 0x5f1394 = the modal SCREEN RUNNER; its return is the screen OBJECT's `+0xa40` result cell, and the difficulty dialog writes that return into `ds:0x985aec` + all 8 faction blocks. FULL TABLE VERBATIM at `docs/named-archive-m339-rows.md` (`9a93e8acca0a99ac0779babaa63a94ae5afca934`); this stub governs, one line per claim; every `:<line>` below is `evidence/m339_modal_runner.txt:<line>`
 
@@ -1365,8 +1346,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 
 
 # M350 (STUB — rows VERBATIM: `docs/named-archive-m352-rows.md`; `:N` = a line of `evidence/m350_pref_cowriters.txt:1-162`)
-| claim | ev | conf |
-|---|---|---|
 | FUN_0058e7f0 = the block's only profile-backed INITIALISER | `:3-16,162` | V MU1,2,14,15 |
 | EXTENT | `:54-69,157` | V MU3-5 |
 | 57 co-refs / 32 scalar co-stores in 14 scalar fns (10 store + 4 read-only) | `:70-95` | V MU8,11,12,13 |
@@ -1435,8 +1414,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 
 ## M355 — VERBATIM at `docs/named-archive-m368-rows.md` (sha1 `55fb00f1153bf459`, 1004 B)
 ## M364 (s334-chain2, STATIC 24/24) — the faction-relations bits have NOUNS: 0x1 = PACT, 0x8 = AT WAR (V, string-keyed); the other 11 are standing flags (INF). ev `evidence/m364_bitnouns.txt:131`
-| claim | ev | conf |
-|---|---|---|
 | 13 ids = 11 single bits of rel[fac][tgt]+0x18 + 2 of +0x38; only 0x8/0x2000 repeat (directional A/B copies); the sync block's index chain EMULATES to fac*0x82f+tgt, x4 == the predicate's imul 0x20bc | `:3-22` | V MU1,2,3,4,18 |
 | `FUN_00426d60(fac,tgt,mask)` = `(rel & mask)!=0`: 17 insns (window count), `imul 0x20bc`, 0 stores; 232 call sites, 214 constant, 18 unresolved | `:24-44,:46-88` | V MU5,6,7,ALG |
 | 19 single-bit asks + 16 composites, each composite an OR of bits also asked alone (0x800 alone: never); 0x1 = 53 sites / 14 fns = the maximum | `:52-88,:175` | V MU8,9,12 |
@@ -1447,8 +1424,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | INF: nouns of 0x2,0x4,0x10,0x20,0x400,0x1000,0x2000,0x40000,0x2000000 and dword B's 0x8/0x2000 | - | INF |
 ## M365 - VERBATIM at `docs/named-archive-m377-m365-rows.md` (sha1 `88284d0d000d5d5b`, 1005 B): 0x94d5dc = per-(fac,tgt) dword at record +0x1ac, 23 sites 8W/15R, zeroed by the writer / ++ on contact / read as a DEADLINE; noun INF. ev `evidence/m365_pair_slot.txt:142`
 ## M367 (s335-c3, 27/27) — the 13 relations labels ARE labels.txt lines: element = off/4, line = 10+element. ACCEPT `python3 -u scripts/m367_label_index.py` -> **`PASS M367: 27/27`** `a48d5dd630542166` (`evidence/m367_label_index.txt:104`, digest `:105`); harness 30/30 (`evidence/m367_mutate.txt:36`). `:N` = line of that evidence.
-| claim | ev | conf |
-|---|---|---|
 | `0x997b20` = heap LINE-POINTER array; one body (0x614681) runs count(0x997b24) -> `shl 2` -> alloc -> store, and 0x997b24 takes the 0x5ea484 return (atoi of the line read) | `:3-14` | V MU1,2,3,25,26 |
 | element i = labels.txt line 10+i (count 1089 == the 1089 following lines; elem 0 = `Mission Year`; 3 lines past it unread) | `:16-23` | V MU4,5,6 |
 | builder FUN_004db480: 13 add_item rows = 13 of 18 clamp sites, ids = the sync's 13 in order; 0x61482f VALIDATES (arg read by mov/cmp only, 1 compare) | `:24-60` | V MU7,9,10,12,13,14 |
@@ -1461,8 +1436,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 ## M361 — VERBATIM at `docs/named-archive-m369-rows.md` (sha1 `5b172d91184d78ec`, 1466 B)
 ## M363 — VERBATIM at `docs/named-archive-m369-rows.md` (sha1 `65d68e56dea864c5`, 1616 B)
 ## M357 (s330-c3, 18/18 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
-| claim | ev | conf |
-|---|---|---|
 | six builders push the VA of their OWN section-name string and read it (0x5ea431); every row = next line (0x5ea448) -> strcpy (0x64b9e0) into the page slot -> add_item(text,id) (0x604fd2); 8/12/14/8/17/7 = 66 | `:13-85` | V MU1(G2a),MU2(G1b),MU3(G2a),MU4(G0a),MU17(G1a),MU18b(G3a) |
 | slots are the table's consecutive dwords 0x68b678..0x68b7cc and end before the next name; 5 of 6 pages match Script.txt, A/V builds 8 of 11 | `:95-108` | V MU3(G2a),MU14(G3b),MU16(G3b) |
 | rebuild 0x492940: 70 ids -> one (field,bit) each, all 66 UI ids present | `:183-184` | V MU18(G4a),MU19(G4b),MU21(G6a) |
@@ -1559,8 +1532,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 - INF: the noun WORD for 0x20; 0x80000000's role - INF - - - archive:15
 
 ## M368 (s336-chain1, STATIC 34/34, review #399 hardened) — relations bits 0x2 = TREATY, 0x4 = TRUCE (V); the peace ladder is truce < treaty < pact and FUN_005076d0's classifier is an ordered EQUALITY test, not a rank. ACCEPT `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 34/34`** `6f4b692777cc3549` x2 (`evidence/m368_peace_ladder.txt:94`); harness 32/32 NO-OP `[]`, 34/34 gates covered (`evidence/m368_mutate.txt:36`). `:N` = line of that evidence.
-| claim | ev | conf |
-|---|---|---|
 | BEHAVIOUR is the discriminating axis: FUN_005537d0 pushes a bare mask to FUN_00551a20 and the immediately preceding POSTER call (0x483470) carries the key — 0x553c41/0x4 -> 0x691144 `ENEMYTRUCE`, 0x553f10/0x2 -> 0x691150 `ENEMYTREATY`, 0x554165/0x1 -> no poster | `:37-45` | V MU7,8,9,30 |
 | LABELS: labels.txt element 643/644/645 -> lines 653/654/655 = Truce/Treaty/Pact (consecutive, after `Clock`; control 866 = `Diplomacy for`); bit value runs AGAINST friendship | `:65-72` | V MU15-18,28 |
 | pact IMPLIES treaty: `test bl,0x1 -> or ebx,0x2` (0x551abc, FUN_00551a20) is the only such upgrade in 781,429 insns; the reverse occurs 0x | `:47-50` | V MU10,11 |
@@ -1571,8 +1542,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | PE section table parsed (not `vma-0x400000`): .data va 0x289000 raw 0x289000; every key string resolves through it | `:2` | V MU7 |
 | OPEN: what FUN_0053f9f0 @0x53fcb3 (mask 0x2, no poster) and FUN_00523b20 @0x523f4c (mask 0x1) transact | - | lead |
 ## M369 (s336-chain2, STATIC 23/23) — relations bit **0x8 = COMMLINK** (contact); M364's AT WAR **RETRACTED**. ACCEPT `python3 -u scripts/m369_commlink.py` -> **`PASS M369: 23/23`** `475fdceda961ef2d` x2 (`evidence/m369_commlink.txt:141`); harness 39/39 (`evidence/m369_mutate.txt:47`).
-| claim | ev | conf |
-|---|---|---|
 | builder row 1 = id 0x8 -> element 875 -> labels.txt:886 `Commlink`; 13/13 id->text (0x10 `Vendetta`, 0x1 `Pact`) | `:3-38` | V MU15,17,19-21,29 |
 | vendetta block (0x442cd3..0x442e42) READS mask 8 both ways — fac operands 0xa24/0xa28 — and jumps FORWARD (0x442d40/0x442d5c->0x442d7d); 0 parsed stores into either relations dword; case 7 runs the same guard for a non-war option | `:40-62` | V MU1-6,36,37 |
 | `FUN_00551a20`: `or ebx,0x80000108` is in the `test bl,0x10` branch (0x551abf->0x551b11), NOT 0x7 (M364 ev `:184` mislabel); the 0x7 peace branch clears exactly 0x10|0x40|0x8000|0x10000|0x100000; all 5 branch tests known, every and-mask keeps bit 8, mask 8 = symmetric OR (reload 0x551bea) | `:58-79` | V MU7-12,33,34 |
@@ -1582,8 +1551,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | INF: is 0x8 also the AI's "can address them" predicate inside the 0x18/0x88000008 war writes? | - | INF |
 
 ## B36 (s337-chain1, BUILD 10/10, zero box; 14 mutants, review #402 hardened) — the relations STATE MACHINE: FUN_00551a20 extracted and RUN. ACCEPT `python3 -u -m sim.relations` -> `PASS B36: 10/10` `b20f5818dee2d861` x2 (`evidence/b36_relations.txt:82`); harness 14/14 NO-OP `[]` (`evidence/b36_mutate.txt:16`).
-| claim | ev | conf |
-|---|---|---|
 | WRITER: SIX blocks — predicates 0x7/1/0x10/0x17/0x1f on the CURRENT ebx then an UNCONDITIONAL tail @0x551bc7; the flat op list equals the pinned 10-entry address table; 8 stores == the 8 stored ops (one per direction), 161 insns | `evidence/b36_relations.txt:14,28` | V MU1,2,10,11,12 |
 | TRANSITIONS: pact=0x3; truce-after-war=0x8000010c (0x8/0x100 survive); war on a pre-state carrying 0x7|commlink=0x80000118; combined 0x11=0x8000011b (the tail OR re-adds the mask) — each equals BOTH the dump program and its literal | `evidence/b36_relations.txt:40` | V MU4,11 |
 | PARITY: setter == dump program on 40,960 (state,mask) pairs, 0 dis; a FLAT address-ordered executor (no block grouping) agrees on 8,192 more | `evidence/b36_relations.txt:29-31` | V MU2,3,5,6,12 |
@@ -1624,8 +1591,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | ACCEPT `PASS M371: 18/18 digest 4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`), twice byte-identical (`evidence/m371_twice.txt:4`); harness 27/27 (`evidence/m371_mutate.txt:35`); OPEN: 0x88000008 bits 27/31 (INF), 24 carried sites, 0x100 | as cited | V |
 
 ## M374 (s338-c2, STATIC 23/23). ACCEPT `scripts/m374_semaphore_bits.py` -> **`PASS M374: 23/23`** `705bd8cd7ed3f705` (`evidence/m374_semaphore_bits.txt:76`); harness **20/20, cov G1-G5** (`evidence/m374_mutate.txt:23`).
-| claim | ev | conf |
-|---|---|---|
 | 0x92bf0c bits 23/24 <- 0x985ae8 <- `test eax,0x10000/0x20000`@0x4dc88b/9e -> `or ecx,0x800000/0x1000000`@0x4dc892/a5; mask 0x1800000; eax=ds:0x99aa38 | `:9-13,44` | V MU1 MU2 MU3 MU11 MU12 |
 | RULES word = 18 bits: 0x985ac4 bits 0..15 (one ecx load @0x4dc5f6) + stage 16/17; clear 0xfe7fffff@0x4dc604; INI Semaphore=00000000 | `:15-21,47` | V MU4 MU5 MU13 MU14 |
 | #RULES 18 items = 18 bits (#AIEDITOR 11/11, contiguous 0..10); tail items = "Randomize faction leader personalities"/"...social agendas" | `:22-27` | V MU6 MU15 ALGO1 |
@@ -1633,8 +1598,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | script keys are PE strings RULES/AIEDITOR/AIEDITOR2/SCENRULES; FUN_004dc5f0 pushes RULES @0x4dc6fb | `:43-49` | V MU18 |
 | OPEN: the 12 slots' identity (SE-choice/agenda grid, INF); bit position 23/24 cause | - | INF |
 ## M376 (s339-c2, STATIC 29/29) — `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix; bit-24's "12 slots" = 11 effect columns + a 12-dword used-pair registry. ACCEPT `scripts/m376_socio_grid.py` -> **`PASS M376: 29/29`** `f22d2b46cc7e9507` (`evidence/m376_socio_grid.txt:115`, x2 sha1 `ac23fc9540f7715`); harness **33/33** (`evidence/m376_mutate.txt:36`). `:N` = acceptance line.
-| claim | ev | conf |
-|---|---|---|
 | GEOMETRY (emu of 0x5a11ca..f3): `0x92babc + 0xd4*a + 0x2c*b`; cell = 11 dwords (@0x52b822/0x5a1203/0x57ab94); rows `0x350/0xd4`=4, cells `0xb0/0x2c`=4 (exact `add esi,0x..` shape + divisibility); header `lea-0x92ba98`=0x24 | `:14-33` | V MU1-MU9 MU30 MU31 |
 | SOURCE FUN_0057a070 = alpha `#SOCIO`: 11 keywords into 0x9270c0 (capacity `(0x927538-0x9270c0)/0x68` from the compare/stride insns), 4 categories, 16 choices; col i = `strcmp(token,0x9270c0+i*0x68)`, +/- count ADDED (@0x57abd2/d6, 0x57abf8). Grid is **BSS**: 0x92babc is past .data's file-backed end 0x6a9000 => parser-built | `:29,79` | V MU10-MU12 MU32 MU26 |
 | COMPUTED: 4 EMPTY cells = choice 0 (Frontier/Simple/Survival/None); the other 12 each have a first POSITIVE column (Police State -> SUPPORT) | `:38-41` | V MU11 MU12 ALGO1 |
@@ -1643,8 +1606,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | RIVALS FAIL: 11 columns != 7 #FACTIONS `:81`; cell stride 0x2c = 11 dwords, not 12 `:82`; row 3 (Future Society) never sampled `:83` | `:81-83` | V MU7 MU13 MU25 |
 | OPEN: rows 0..2 only (INF: agendas are Politics/Economics/Values); 8th write 0x92a7fc is 0x58c past block end 0x92a270; +0x594 consumption | `:60-61` | OPEN |
 ## M373 (s338-chain1, STATIC 19/19) — the PENDING-VENDETTA consumer: FUN_005551e0 clears 0x80000000 under a bit-13 exception; **bit 27 is not a gate there** (the pick's premise refuted). ACCEPT `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19` `4fd02c603e36c69c` x2 (`evidence/m373_pending_vendetta.txt:165`); harness 16/16 (`evidence/m373_mutate.txt:20`). `:N` = a line of the evidence.
-| claim | ev | conf |
-|---|---|---|
 | CONSUMER: 6 bit-31 touch points — READ 0x55573c, CLEAR 0x555750 + store 0x555758 (own), CLEAR 0x55578a + store 0x555792 (mirror), ARM `push 0x80000000`@0x5558da -> setter 0x551a20 @0x5558e1 (target AND call site asserted) | `:12-19` | V MU1,5,13,14 |
 | GUARD: conditional — `je 0x555809`@0x555741 (not pending) and `jne 0x555809`@0x55574a (bit13 set) both reach `and ah,0xdf`@0x555809, a ONE-SHOT protector that scrubs bit 13 in the same pass; **M381 pins the pair**: the bit-13 read is the byte form `test ah,0x20`@0x555747, the skipped clear is `and eax,0x7fffffff`@0x555750 | `:35-43` | V MU2,3,15,16 |
 | BIT 27: ZERO immediates inside the pass; 5 word-form `test` reads in 4 fns (0x5230f0/0x532a2c/0x54687b/0x5526ce+0x55278f); STICKY — set only by request mask 0x88000008, cleared by no setter mask | `:48-55,73` | V MU8 |
@@ -1662,8 +1623,6 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | nouns: 0x800 V, 0x20000/0x400 INFERRED | `:15-50` | INF |
 ## M379 (s340-c2, 31/31) — +0x594 has 2 readers (AI SE scorers); 0x92a7fc is a POINTER — M376 OPEN RETRACTED.
 ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (`evidence/m379_field594.txt:85`, x2 cmp-identical).
-| claim | ev | conf |
-|---|---|---|
 | READERS: 2 loads `[k*0x59c+0x927b24]` — 0x5a1eac (>0 adds `[0x94e488+k*0x82f*4]`, <0 rejects) / 0x54696c (`[0x94d67c+..]`, neg -> msg 0x546983) | `:63-70` | V MU7 MU8 MU11 MU12 |
 | NO static +0x594 store (RMW-inclusive classifier); 0x4ffff2 `[reg+0x594]` = malloc'd dword array (ds:0x997b20) | `:60-62` | V MU15 MU22 |
 | LOOP: CFG interpreter over 0x5a1160..0x5a121c => 7 bodies, 6 back-edges, stores 0x9280b0..0x92a268 | `:72-74` | V MU1-MU6 MU19 MU21 |
@@ -1681,3 +1640,12 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | the ask: `(pair & mask) != 0` = an accord standing -> veto hostile action (0x4ec9c3 -> 0x4ed94e; 0x5859ae -> 0x587078) or cooperative selector (0x563165, 0x56a8a2, 0x523a7c) | `:75` | V MU16 MU23 MU11 / INF for the action nouns |
 | hosts: the 15 span 8 functions (5 for the named 6); AI hub FUN_0055f650 holds 5 of 15; 2095-fold proved at all 5 inline sites (seed mov + register used as the index) | `:107` `:100` | V MU12 MU14 MU15 MU19 |
 | OPEN: 9 dynamic-mask inline sites (`test [mem],reg`) unread; register-through-copy / stack-copy readers and uses beyond the 8-insn window unwalked | `:9` | OPEN |
+## M386 (s342-c4, 55/55) — +0x94d820 = X of a per-faction PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's guard reads the PARTNER row. ACCEPT `scripts/m386_marker_pair.py` `401580f3c8ad292e` (`evidence/m386_marker_pair.txt:143`), 15 mutants (`evidence/m386_mutate.txt:19`). `:N` = same file.
+| claim | ev | conf |
+|---|---|---|
+| PAIR: 6 paired writers (5 -1 both, 1 copies a UNIT x,y) + lone X=-1 0x55fce0 | `:35-51` | V MU1 MU2 MU10 MU11 MU15 |
+| MAP COORDS: (Y*0x692184+X>>1)*44+3 tile 0x92ae14; FUN_004e34f0 bounds x/y vs 0x92a378/7c | `:69-75` | V MU3 MU9 |
+| 0x20000 arm's only entry `jge 0x5553ac` tests [ebx+0x94d820], ebx=0x20bc*esi = PARTNER row | `:98` | V MU4 MU8 |
+| NOT deadline/counter: 0 RMW, 0 0x985afc compares, 0 absolute forms | `:108-120` | V MU5 MU6 MU12 MU14 |
+| 0x20000: 0 readers on the RELATIONS dword (control: 373 tests); clear `and 0xfffdfbff`; gate = partner marker | `:125-127` | V MU7 MU13 |
+| marker noun INF = "unit-of-interest" tile; PARTNER gate why = OPEN | `:51` | INF/lead |
