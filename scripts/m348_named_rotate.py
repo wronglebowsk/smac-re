@@ -30,17 +30,17 @@ BLOCKS = [
                  "`705a4520c08c4062`, harness `scripts/b28_mutate.py` -> **18/18** `3974d739da3af55f`."),
         "rows": [
             ("`ds:0x985ba0` CARRIED in the state header (file offset 244), reads -1 in m54b_clean; "
-             "the 4f48dc sign skip fires, halving runs 0 times", "`evidence/b28_feeder_exec.txt:5`", "V"),
+             "the 4f48dc sign skip fires, halving runs 0 times", "`evidence/b28_feeder_exec.txt:5`", "V MU6"),
             ("the container's own `+300` octet = the feeder's full-price total 8/8; the no-list rival "
-             "is exactly 7/8, miss `[own_player=3]`", "`:8`", "V"),
+             "is exactly 7/8, miss `[own_player=3]`", "`:8`", "V MU5/MU9/MU10/ME3"),
             ("bounds are the parsed immediates 1 / 0x22 / 0x27: VISITS 1..38, CHARGES 1..34, upkeep "
-             "dword at row+0x10", "`:3`", "V"),
+             "dword at row+0x10", "`:3`", "V MU4/ME2"),
             ("charged only when the base's own `+0x8c` bitmap bit is set (18/18); ids 32..38 inert "
-             "here (0/18 vs 14/18 control)", "`:4`", "V; width past +0x8f OPEN"),
+             "here (0/18 vs 14/18 control)", "`:4`", "V MU5/MU9/ME6; width past +0x8f OPEN"),
             ("charge = `trunc((cost+carry)/2)` (cdq/sub/sar), parity written back into bit5; "
-             "full-price leaves the carry", "`:6`", "V"),
+             "full-price leaves the carry", "`:6`", "V MU1/MU2/MU3/MU8"),
             ("FIXTURE-ONLY persistence: no carry in the save's own run; honest run touches `[]` and "
-             "rewrites bit5 unchanged", "`:7`", "V (fixture-only)"),
+             "rewrites bit5 unchanged", "`:7`", "V MU3/MU7/MU8/MU11/MU12/ME4/ME5 (fixture-only)"),
             ("the NOUN of `ds:0x985ba0`; `ebx` == the charged base's owner", "M333 G6", "INFERRED"),
         ],
     },
@@ -60,6 +60,8 @@ BLOCKS = [
              "and both stores reach it (10 links, adjacency asserted)", "`:79-88`", "V MU7,MU10"),
             ("value law: each writer publishes {0, `[this+0x2228]->[+8]->+0xec`, "
              "`FUN_005fdcf7(+0x21d0)`}; the -1 @0x5f581c needs arg==-2 and `[+0x30a8]&0x40`", "`:89-99`", "V MU6,MU8,MU11"),
+            ("ACCEPT `scripts/m343_a40_writer.py` -> `PASS M343: 9/9` `bcdace84a0352b4a` x2; "
+             "harness 12/12 `[]`", "`:118`, `evidence/m343_mutate.txt:25`", "V MU0"),
             ("OPEN: dispatcher of the +0x64 slot (19 `call [reg+0x64]`, 0 direct); the container "
              "past +0xec; consumers of `[this+0x3100]`", "-", "lead"),
         ],
@@ -79,7 +81,31 @@ BLOCKS = [
              "`:18-57,:86-89`", "V MU6,MU10"),
             ("arity {0:3,1:5,5:8,6:3}: 5 fit ret 4 = 3 MEMBER + 2 self, none a dialog", "`:59-65,:100`", "V MU8,MU9"),
             ("module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64`", "`:67-77,:102`", "V MU7,MU10"),
+            ("ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 `[]`",
+             "`:104`, `evidence/m345_mutate.txt:25`", "V MU0"),
             ("OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped", "-", "lead"),
+        ],
+    },
+    {
+        "head": "## M344 ",
+        "archive": "named-archive-m344-rows.md",
+        "note": ("acceptance `scripts/m344_completion_caller.py` -> **`PASS M344: 8/8 gates`** "
+                 "`034bf0e1a1606d2c` x2; harness 10/10 `[]`."),
+        "rows": [
+            ("all 27 item args resolve (imm 18 / callret 3 / clamped 2 / loopctr 2 / param 2); split "
+             "16 set=1 / 8 set=0 / 3 variable; 0x40dd3c is the only divergent row", "`:4-38`", "V MU1,MU2,MU3"),
+            ("0/27 items' resolved class is QUEUE; 0/8 caller fns calls the pop", "`:34`,`:40-49`,`:141`", "V MU4"),
+            ("the 4 register-item set=1 sites: 0x41c6f8, 0x41d8fc, 0x508c85/0x508cee", "`:127-131`", "V MU5"),
+            ("stamp = `or BYTE PTR [eax],cl` @0x4f0ec0 in FUN_004ef6d0; 0x86 precedes the pop @0x4f0f46",
+             "`:51-70`,`:143`", "V MU6,MU8"),
+            ("the block spends `[edx+0x40]` by edi then reads `[edi*48+0x984d38]`, edi unwritten between",
+             "`:112-124`", "V MU7"),
+            ("the build-finished posts go to the text bank whose consumer M348 found (Script.txt "
+             "`#PRODUCEXQ/G`); FUN_00636b1e is the Create Session dialog", "`evidence/m348_slot_template.txt:63-69`", "V MU12 (M348)"),
+            ("the 8 caller ROLES; `edx` at 0x4f0ca1 = the base record; +0x40 = accumulated minerals; "
+             "edi = the completed item", "`:40-50`", "INFERRED"),
+            ("ACCEPT `scripts/m344_completion_caller.py` 8/8 `034bf0e1a1606d2c` x2; harness 10/10 `[]`",
+             "`:148`, `evidence/m344_mutate.txt:14`", "V MU0"),
         ],
     },
 ]

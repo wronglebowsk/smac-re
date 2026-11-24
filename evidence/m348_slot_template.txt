@@ -72,16 +72,16 @@ TABLE 10 - M346's 'drainer' FUN_00636b1e re-read
   G3   PASS setter A resolves a LABEL ID through table 0x997b28; setter B copies a literal  [0x997b28 + call 0x61482f only in A]
   G4   PASS two posts in the completion window, kind 1 then kind 2  [2 posts; pop 0x4ef5d0]
   G5   PASS slot-1 argument = dword at 0x984d38 + edi*48  [factor 48 base 0x984d38]
-  G6   PASS slot-2 argument = 0x927894 + ebx*1436  [stride 1436 factor 359]
-  G7   PASS key = PRODUCEX + Q|G (PRODUCE fallback) appended in 0x997120; voice name PROJECT|FAC + idx  [13 strcat sites]
+  G6   PASS slot-2 argument = 0x927894 + ebx*1436  [root ebx: lea [ebx+ebx*4] then sub eax,ebx; stride 1436 factor 359]
+  G7   PASS key = PRODUCEX + Q|G (PRODUCE fallback) appended in 0x997120; voice name PROJECT|FAC + idx  [5 literal->0x997120 strcat triples asserted]
   G8   PASS display call 0x48f100 gets 0x997120; it sets slot 0 = [0x8f0d60]+0x13  [display calls ['4f122a', '4f1319']; slot0 setter ['48f20f']]
-  G9   PASS #PRODUCEXQ reads slot 1 ($ITEM1/$NUM1); #PRODUCE2 reads slot 2  [XQ slots ['0', '1']; P2 has FACTIONADJ2=True]
-  G10  PASS no .rdata string carries a $< token; only the vocabulary $LINK<  [1 '$' strings, 0 '$<' ]
-  G11  PASS exactly 7 sites build 0x99a01c+(k<<8): 4 in FUN_00625b20, 2 in the setters, 1 in the modal screen  [7 pairs; 30 functions read 0x99a01c; 0x5f12ee in FUN_005f0583]
+  G9   PASS #PRODUCEXQ/XG read slot 1 only; #PRODUCE2/3 read slot 2 ($FACTIONADJ2)  [XQ ['0', '1'] XG ['0', '1']; P2 True P3 True]
+  G10  PASS no .rdata string carries a $< token; exactly one '$' literal = $LINK< @0x673330  [1 '$' strings [('673330', '$LINK<')]]
+  G11  PASS exactly 7 sites build 0x99a01c+(k<<8): 4 expander / 2 setters / 1 modal screen  [7 pairs; dist {'FUN_005f0583': 1, 'FUN_00625b20': 4, 'FUN_006265a2': 1, 'FUN_00626634': 1}; 30 functions read 0x99a01c]
   G12  PASS FUN_00636b1e pushes the three session-field labels and loops on strlen(slot1)>0x10  [labels ['63727a', '6372af', '6372c9']; cmp 0x10 -> jmp 0x63724e]
 
 R1 RIVAL .rdata template   -> REFUTED
 R2 RIVAL alert-private bank-> REFUTED
 R3 RIVAL slot2 same popup  -> REFUTED
 
-RESULT PASS: 12/12 gates  digest 35afb622edfa6bdc
+RESULT PASS: 12/12 gates  digest a3d46c017673526a

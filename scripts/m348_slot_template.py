@@ -41,6 +41,7 @@ import csv
 import hashlib
 import os
 import re
+import struct
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -308,7 +309,22 @@ for key in ("PRODUCEXQ", "PRODUCEXG", "PRODUCEQ", "PRODUCEG", "PRODUCE2", "PRODU
 # 8. no .rdata template
 say("")
 say("TABLE 8 - is the template an .rdata string?")
-RD_LO, RD_HI = 0x271000, 0x286B53   # .rdata RVA span from the PE header
+def pe_sections():
+    pe = struct.unpack_from("<I", binbuf, 0x3c)[0]
+    nsec = struct.unpack_from("<H", binbuf, pe + 6)[0]
+    opt = struct.unpack_from("<H", binbuf, pe + 20)[0]
+    out = []
+    for i in range(nsec):
+        o = pe + 24 + opt + i * 40
+        name = bytes(binbuf[o:o + 8]).rstrip(b"\0").decode("latin1")
+        vs, va, rs, ro = struct.unpack_from("<IIII", binbuf, o + 8)
+        out.append((name, va, vs, ro, rs))
+    return out
+
+
+SECT = {n: (va, vs, ro) for n, va, vs, ro, rs in pe_sections()}
+RD_VA, RD_VS, RD_RO = SECT[".rdata"]
+RD_LO, RD_HI = RD_RO, RD_RO + RD_VS   # FILE offsets, read from the PE header
 hits = []
 i = RD_LO
 while i < RD_HI:
@@ -408,12 +424,16 @@ gate("G4", "two posts in the completion window, kind 1 then kind 2",
 
 # G5 item argument = edi*48 + 0x984d38
 gate("G5", "slot-1 argument = dword at 0x984d38 + edi*48",
-     item_factor == 48 and item_base == 0x984D38 and ins(0x4F0F6F)["mn"] == "mov",
+     item_factor == 48 and item_base == 0x984D38
+     and ins(0x4F0F65)["ops"] == "ecx,[edi+edi*2]"
+     and ins(0x4F0F6A)["ops"] == "ecx,0x4" and ins(0x4F0F6F)["ops"].startswith("edx,DWORD PTR [ecx+"),
      "factor %d base 0x%06x" % (item_factor, item_base or 0))
 
 # G6 base argument = ebx*1436 + 0x927894
 gate("G6", "slot-2 argument = 0x927894 + ebx*1436",
-     base_stride == (0x927894, 1436) and base_factor == 359,
+     base_stride == (0x927894, 1436) and base_factor == 359
+     and ins(0x4F0F7D)["ops"] == "eax,[ebx+ebx*4]" and ins(0x4F0F8A)["ops"] == "eax,ebx",
+     "root ebx: lea [ebx+ebx*4] then sub eax,ebx; "
      "stride %s factor %d" % (base_stride[1], base_factor))
 
 # G7 key literals and appends
@@ -422,8 +442,16 @@ gate("G7", "key = PRODUCEX + Q|G (PRODUCE fallback) appended in 0x997120; voice 
      and cstr(0x68CFD0) == "Q" and cstr(0x68CFD4) == "G"
      and cstr(0x68CF8C) == "PROJECT" and cstr(0x68CF94) == "FAC"
      and cstr(0x68CFB0) == "voices\\fac" and cstr(0x68CFBC) == ".mp3"
-     and len(key_appenders) >= 4,
-     "%d strcat sites" % len(key_appenders))
+     and all((ins(a)["mn"], ins(a)["ops"]) == ("push", src) and
+             (ins(b)["mn"], ins(b)["ops"]) == ("push", "0x997120") and
+             ins(c)["mn"] == "call" and ins(c)["ops"] == "0x64b9e0"
+             for a, b, c, src in (
+                 (0x4F1052, 0x4F1057, 0x4F105C, "0x68cf8c"),
+                 (0x4F11B2, 0x4F11B7, 0x4F11C3, "0x68cfc4"),
+                 (0x4F11E0, 0x4F11E5, 0x4F11EA, "0x68cfd0"),
+                 (0x4F1208, 0x4F120D, 0x4F1212, "0x68cfd4"),
+                 (0x4F125F, 0x4F1264, 0x4F1270, "0x68cfe8"))),
+     "5 literal->0x997120 strcat triples asserted")
 
 # G8 block hands the key to 0x48f100; 0x48f100 sets slot 0
 gate("G8", "display call 0x48f100 gets 0x997120; it sets slot 0 = [0x8f0d60]+0x13",
@@ -435,33 +463,42 @@ gate("G8", "display call 0x48f100 gets 0x997120; it sets slot 0 = [0x8f0d60]+0x1
 
 # G9 Script records consume slot 1 (PRODUCEX*) and slot 2 (PRODUCE2/3)
 xq = " ".join(script_body("PRODUCEXQ"))
-xq_slots = set(SLOT_TOKEN.findall(xq))
+xg = " ".join(script_body("PRODUCEXG"))
 p2 = " ".join(script_body("PRODUCE2"))
-gate("G9", "#PRODUCEXQ reads slot 1 ($ITEM1/$NUM1); #PRODUCE2 reads slot 2",
-     "$ITEM1" in xq and "$NUM1" in xq and ("2" not in xq_slots)
-     and "$FACTIONADJ2" in p2,
-     "XQ slots %s; P2 has FACTIONADJ2=%s" % (sorted(xq_slots), "$FACTIONADJ2" in p2))
+p3 = " ".join(script_body("PRODUCE3"))
+xq_slots = set(SLOT_TOKEN.findall(xq))
+xg_slots = set(SLOT_TOKEN.findall(xg))
+gate("G9", "#PRODUCEXQ/XG read slot 1 only; #PRODUCE2/3 read slot 2 ($FACTIONADJ2)",
+     "$ITEM1" in xq and "$NUM1" in xq and "2" not in xq_slots
+     and "$ITEM1" in xg and "2" not in xg_slots
+     and "$FACTIONADJ2" in p2 and "$FACTIONADJ2" in p3,
+     "XQ %s XG %s; P2 %s P3 %s" % (sorted(xq_slots), sorted(xg_slots),
+                                    "$FACTIONADJ2" in p2, "$FACTIONADJ2" in p3))
 
 # G10 no .rdata template: zero '$<' strings
-gate("G10", "no .rdata string carries a $< token; only the vocabulary $LINK<",
-     sum(1 for _, s in hits if "$<" in s) == 0
-     and all(a == 0x673330 for a, _ in hits),
-     "%d '$' strings, %d '$<' " % (len(hits), sum(1 for _, s in hits if "$<" in s)))
+gate("G10", "no .rdata string carries a $< token; exactly one '$' literal = $LINK< @0x673330",
+     len(hits) == 1 and hits[0][0] == 0x673330 and hits[0][1] == "$LINK<"
+     and sum(1 for _, s in hits if "$<" in s) == 0,
+     "%d '$' strings %s" % (len(hits), [(("%06x" % a), t[:8]) for a, t in hits]))
 
 # G11 expander is the only structured reader; bank is global
-gate("G11", "exactly 7 sites build 0x99a01c+(k<<8): 4 in FUN_00625b20, 2 in the setters, 1 in the modal screen",
+dist = {}
+for a in pairs:
+    dist[fn_of(a)] = dist.get(fn_of(a), 0) + 1
+gate("G11", "exactly 7 sites build 0x99a01c+(k<<8): 4 expander / 2 setters / 1 modal screen",
      pairs == [0x5F12EE, 0x625DA9, 0x625F08, 0x6261B0, 0x62637C, 0x62661C, 0x6266A9]
-     and fn_of(0x5F12EE).startswith("FUN_005f")
+     and dist == {"FUN_00625b20": 4, "FUN_006265a2": 1, "FUN_00626634": 1, "FUN_005f0583": 1}
      and len(rfns) > 10,
-     "%d pairs; %d functions read 0x99a01c; 0x5f12ee in %s" % (
-         len(pairs), len(rfns), fn_of(0x5F12EE)))
+     "%d pairs; dist %s; %d functions read 0x99a01c" % (len(pairs), dist, len(rfns)))
 
 # G12 retraction: 0x636b1e is the Create Session dialog
 gate("G12", "FUN_00636b1e pushes the three session-field labels and loops on strlen(slot1)>0x10",
      {int(INS[a]["ops"], 16) for a in dlg} == {0x6998B0, 0x6998C0, 0x6998D4}
      and cstr(0x6998B0) == "Session Name:" and cstr(0x6998C0) == "Maximum Players:"
      and cstr(0x6998D4) == "Session Password (Optional):"
-     and ins(0x637358)["ops"] == "eax,0x10" and ins(0x63735D)["mn"] == "jmp"
+     and ins(0x63734B)["ops"] == "0x99a11c" and ins(0x637350)["ops"] == "0x64c460"
+     and ins(0x637355)["mn"] == "add" and ins(0x637358)["ops"] == "eax,0x10"
+     and ins(0x63735D)["mn"] == "jmp"
      and ins(0x63735D)["ops"] == "0x63724e",
      "labels %s; cmp 0x10 -> jmp 0x63724e" % ["%06x" % a for a in dlg])
 

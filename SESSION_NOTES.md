@@ -523,12 +523,20 @@ whether a facility completion stamps at all.
   63 sites in 30 functions reference 0x99a01c, 7 sites build `k<<8+0x99a01c` (4 expander, 2
   setters, 1 modal @0x5f12ee).
 - **Acceptance:** `python3 -u scripts/m348_slot_template.py` -> **`PASS M348: 12/12 gates`**
-  digest `35afb622edfa6bdc`, two runs byte-identical (`evidence/m348_slot_template.txt:87`);
+  digest `a3d46c017673526a`, two runs byte-identical (`evidence/m348_slot_template.txt:87`);
   harness `scripts/m348_mutate.py` -> **13/13**, NO-OP `[]` (`evidence/m348_mutate.txt:14`).
   Pitfall: the instrument originally wrote its evidence on EVERY run, including mutants — a
   mutant clobbered the acceptance file; it now refuses to write when `M348_PATCH_*` is set.
-- **Docs:** NAMED 248,866 B = 1,134 B headroom; B28 (2,955 B), M343 (1,963 B), M345 (1,021 B)
-  rotated VERBATIM (`scripts/m348_named_rotate.py --verify` PASS: sha1 bd196a95 / a7f9573e /
-  907d0705). M346 + M344 patched in place (alert framing / drainer retraction). NEXT_PROMPT
+- **Docs:** NAMED 249,052 B = 948 B headroom; B28 (2,955 B), M343 (1,963 B), M345 (1,021 B),
+  M344 (1,991 B) rotated VERBATIM (`scripts/m348_named_rotate.py --verify` PASS: sha1 bd196a95 /
+  a7f9573e / 907d0705 / e7b59fa3). M346 + M344 patched in place (alert framing / drainer retraction). NEXT_PROMPT
   11.9 KB. Archive-name collisions hit twice (b28-rows, m343-rows already held other blocks) —
   check `docs/` before naming a rotation target.
+- **Review #371 (local Strata, 10 findings — 3 P1 / 7 P2):** all fixed, none dismissed. The P1s
+  were registry debt: the B28/M343/M345/M344 stubs carried `V` without their mutants (now each row
+  names MU/ME), and M344's row cited M346 evidence for an M348 retraction (now cites
+  `evidence/m348_slot_template.txt:63-69`). The P2s were gates claiming more than they read: G10 is
+  no longer vacuous (exactly one `$` literal, `$LINK<` @0x673330), G7 asserts the five
+  literal->0x997120 strcat triples, G5/G6 assert the edi/ebx roots, G9 gates XG and PRODUCE3, G11
+  asserts the per-function distribution, G12 reads push 0x99a11c -> call 0x64c460 -> cmp eax,0x10,
+  and the .rdata scan now reads the PE section table instead of hardcoded offsets.

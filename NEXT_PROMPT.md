@@ -29,7 +29,7 @@ box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B
 author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
 decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (`wc -c` s326, post-M348): `NAMED.md` 248,866/250,000 = 1,134 B - ROTATE BEFORE ANY ADDITION (`scripts/m348_named_rotate.py --verify` PASS: B28 `bd196a95`, M343 `a7f9573e`, M345 `907d0705` VERBATIM). Archive names collide: check `docs/` first. NEXT_PROMPT <=12,000.**
+  **DOC CAP (`wc -c` s326, post-M348): `NAMED.md` 249,052/250,000 = 948 B - ROTATE BEFORE ANY ADDITION (`scripts/m348_named_rotate.py --verify` PASS: B28 `bd196a95`, M343 `a7f9573e`, M345 `907d0705`, M344 `e7b59fa3`). Archive names collide: check `docs/` first. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
@@ -121,7 +121,7 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar note:
 `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`, `--verify`); the per-id
 `NAMED ## <id>` blocks GOVERN.
-- M348 (s326) MERGED: slots 1/2 -> Script.txt `#PRODUCEXQ/G` (`$ITEM1`/`$NUM1`), key PRODUCEX+Q|G -> FUN_0048f100; .rdata 0 `$<` templates; M346 `drainer` RETRACTED. 12/12 `35afb622edfa6bdc`, harness 13/13. NEXT: writers of 0x999fa4.
+- M348 (s326) MERGED: slots 1/2 -> Script.txt `#PRODUCEXQ/G` (`$ITEM1`/`$NUM1`), key PRODUCEX+Q|G -> FUN_0048f100; .rdata 0 `$<` templates; M346 `drainer` RETRACTED. 12/12 `a3d46c017673526a`, harness 13/13. NEXT: writers of 0x999fa4.
 - M334-M340 (s316-s320, all MERGED): M334 = the 0x4f47f0 upkeep-FAILURE is a difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded) 7/7 5b5ece39af02baba, 45/45; M335 ladder = alpha #DIFF 6 rows @0x94d2ac, idx = ds:0x985aec 7/7 fb58bdc3307d6258, 20/20; M336 ds:0x8f0090 = PLAYER RECORD 1's difficulty byte, ONE unclamped reader 7/7 f4ca00c55c833539, 14/14; M337 item row order = alpha #FACILITIES (rec i = alpha i-1) 8/8 39d82f0771690e15, 13/13; M338 the last two #DIFF readers (loop counter / HoF rec +0x20) 8/8 1ae1563d47d0039e, 16/16; M339 0x5f1394 = the modal SCREEN RUNNER 7/7 d76a5e83770b77bb, 13/13; M340 a `Difficulty` pref >=6 is ADMITTED 7/7 1cc44d0146a8b419, 12/12. Per-id `NAMED ## <id>` GOVERN.
 M342 (x9) MERGED: +0x8c `or` x11, `and` x3; pop NON-writer. 7/7 2b88df5da5aeafe1, 9/9.
 - M339 MERGED: 0x5f1394 = the modal SCREEN RUNNER; return = the screen obj's +0xa40 cell; FUN_004ddaa0 writes it to ds:0x985aec + 8 faction blocks. 7/7 d76a5e83770b77bb, harness 13/13.
