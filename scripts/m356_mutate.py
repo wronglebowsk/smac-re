@@ -45,8 +45,12 @@ MUTANTS = [
     ("MU21", 0x4EFE7E, "call 0x572800", "call 0x572810", "G5", "decoder's 0->1 follow-up call retargeted"),
     ("MU22", 0x595EF3, "[eax+0x92ae80]", "[eax+0x92ae00]", "G8", "one chassis-table read leaves the table"),
     ("MU23", 0x595E8C, "[esi+0x98adad]", "[esi+0x98adaf]", "G13", "+0x25 read becomes a +0x27 read"),
+    ("MU25", 0x4396E6, "xor dx,0x4", "xor dx,0x8", "G2", "the one bit-2 toggler moves to bit 3"),
+    ("MU26", 0x4393BB, "and cl,0xfd", "and cl,ch", "G2", "an immediate AND becomes a REGISTER mask"),
+    ("MU27", 0x4EFE50, "[edx+0x98adb8]", "[edx+0x98adb4]", "G1b", "setter loses its flags-word load provenance"),
+    ("MU28", 0x5732CA, "cmp dl,BYTE PTR [eax+0x98adb0]", "mov dl,BYTE PTR [eax+0x98adb0]", "G16", "+0x28 cmp becomes a load (reference census shifts)"),
 ]
-NOOP = ("MU24", 0x4F05BD, "or BYTE PTR [eax+0x98adb9],0x1", "or BYTE PTR [eax+0x98adb9],0x2", "NOOP",
+NOOP = ("MU29", 0x4F05BD, "or BYTE PTR [eax+0x98adb9],0x1", "or BYTE PTR [eax+0x98adb9],0x2", "NOOP",
         "a +0x31 write no gate pins")
 
 
@@ -55,7 +59,7 @@ def run(env_extra):
     env.update(env_extra)
     p = subprocess.run([sys.executable, "-u", SCRIPT], capture_output=True,
                        text=True, env=env)
-    red = sorted(set(re.findall(r"^FAIL (G\d+)\b", p.stdout, re.M)))
+    red = sorted(set(re.findall(r"^FAIL (G\d+[a-z]?)\b", p.stdout, re.M)))
     return p.returncode, red, p.stdout + p.stderr
 
 
@@ -91,7 +95,7 @@ def main():
     lines.append("scored %d/%d, missed %s, noop_bad %s"
                  % (scored, len(MUTANTS), [m[0] for m in missed] or "none", noop_bad or "none"))
     lines.append("MEASURED gate coverage: %s (%d gates)"
-                 % (sorted(cov, key=lambda s: int(s[1:])), len(cov)))
+                 % (sorted(cov, key=lambda s: (int(re.sub(r"[a-z]","",s[1:])), s)), len(cov)))
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w") as f:
         f.write("\n".join(lines) + "\n")

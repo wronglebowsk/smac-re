@@ -1562,14 +1562,14 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## M356 (s330-chain2, STATIC 15/15) — +0x30 bit 2 = a ONE-WAY LATCH (11 setters, 0 bit-2 AND-clears, both latches band-guarded 0x40); +0x24 -> chassis 0x92ae80 (0x90), +0x25 -> offense 0x92b950 (21x0x10), +0x26 -> armor 0x92fd18 (10x0x10); +0x27/+0x28 index none. `:N` = line of `evidence/m356_stamp.txt:1-92`
+## M356 (s330-chain2, STATIC 17/17) — +0x30 bit 2: 11 setters, 0 AND-clears, ONE XOR-toggler (0x4396f6) -> a STATE BIT, not a latch; +0x24 -> chassis 0x92ae80 (0x90), +0x25 -> offense 0x92b950 (21x0x10), +0x26 -> armor 0x92fd18 (10x0x10); +0x27/+0x28 index none. `:N` = line of `evidence/m356_stamp.txt:1-103`
 | claim | ev | conf/mutant |
 |---|---|---|
-| flags census by instruction SHAPE: 45 writes; the 11 bit-2 setters are listed in the table at `:3-49`; 0 ANDs clear bit 2 | `:3-49` | V MU1,2,6,15-17 |
-| one-shot latch 0x4d2ff9 test->OR->store->`call 0x584520`; 0x4efe60 stores `al\|4` then tests the OLD bit, `call 0x572800` only on 0->1 | `:57,60` | V MU3-5,21 |
-| finalizer 0x595e80: flags 1/0x105/0x115; +0x2b from `cmp al,bl` (weapon vs armor) | `:79` | V MU7,8,12,18-20 |
-| feeds: +0x24->0x92ae80 (188 chains), +0x25->0x92b950 21 recs (181), +0x26->0x92fd18 10 recs (47), exclusive | `:64-77` | V MU9-11,22,23 |
-| rival refuted: +0x27/+0x28 reach no 0x10-stride table; +0x28 writer 0x595d1c only | `:82,85` | V MU13,23 |
-| **RETRACTION (M354):** +0x24 = the CHASSIS ORDINAL, not "domain"; the offset set and stride 0x34 stand | `:64,76` | V MU11,22 |
-| ACCEPT `scripts/m356_prototype_stamp.py` 15/15 `2f83dbf542b5a238` x2; harness 23/23, NO-OP MU24, all gates covered | `:92` | V MU0 |
-| OPEN: nouns of +0x27/+0x28; bit2's UI reading INFERRED | `:88` | lead |
+| flags census by SHAPE (last write to the stored register + flags-word load provenance): 46 writes, 11 bit-2 setters, 0 AND-clears, 1 XOR-toggler, 0 unresolved register masks, 16 ANDs all immediate | `:3-50` | V MU1,2,6,14,15,16,25,26 |
+| two 0->1 guards: 0x4d2ff9 load->test->jne-skips-store->OR->store->`call 0x584520`; 0x4efe60 stores `al\|4` then tests the OLD bit, `call 0x572800` only on 0->1; band guard `cmp idx,0x40` | `:56-62` | V MU3-5,21,27 |
+| finalizer 0x595e80: flags 1/0x105/0x115 (`:41-43`); +0x2b mode from `cmp al,bl` (weapon vs armor) | `:90` | V MU7,8,12,18-20 |
+| feeds: +0x24->0x92ae80 (188 chains), +0x25->0x92b950 21 recs (181), +0x26->0x92fd18 10 recs (47), exclusive; reference census 238/227/11, 94/88/6 (0 non-load refs name a table) | `:66-78,87-88` | V MU9-11,22,23,28 |
+| rival refuted: +0x27/+0x28 reach no 0x10-stride table; +0x28 writer 0x595d1c only | `:93,96` | V MU13 |
+| **RETRACTIONS:** (M354) +0x24 is the CHASSIS ORDINAL, not "domain", and (this draft) "one-way latch" is FALSE — 0x4396e6 `xor dx,0x4` toggles bit 2 | `:50,66` | V MU11,22,25 |
+| ACCEPT `python3 -u scripts/m356_prototype_stamp.py` -> 17/17 `c1a2beb794cec9f8`; harness 27/27, NO-OP MU29, all 17 gates covered | `:103`, `evidence/m356_mutate.txt:32` | V MU0 |
+| OPEN: nouns of +0x27/+0x28; bit2's UI reading (prototype) INFERRED; alpha.txt 21/10/9 corroboration printed only | `:99` | lead |

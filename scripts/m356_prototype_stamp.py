@@ -6,9 +6,11 @@ whether the +0x30 bit-2 stamp is a prototype/design mark.  This milestone
 answers both from the objdump listing alone (static; no box, no Wine, no gdb):
 
   census   every write to the row flags word (row+0x30 == absolute 0x98adb8)
-           is classified SET / ASSIGN / CLEAR-BIT2 from the INSTRUCTION SHAPE,
-           not from a name table.  The printed table is the answer: bit 2 has
-           N setters and 0 AND-clears -- a one-way latch.
+           is classified SET / ASSIGN / CLEAR-BIT2 / TOGGLE-BIT2 / UNRESOLVED
+           from the INSTRUCTION SHAPE (last write to the stored register, with
+           load provenance), not from a name table.  The printed table is the
+           answer: 11 setters, 0 AND-clears and exactly ONE XOR-toggler
+           (0x4396f6) -- bit 2 is a state bit, not a monotone latch.
   latch    the queue decoder (0x4efe50) saves the OLD bit into a bool, ORs it
            in, STORES, and only on a 0->1 transition calls 0x572800.
   guard    two setters are guarded `cmp idx,0x40 / jl` -- owner-band rows only.
@@ -65,10 +67,20 @@ REGS = {"eax": 0, "ecx": 1, "edx": 2, "ebx": 3, "esp": 4, "ebp": 5, "esi": 6, "e
 R8 = {"al": "eax", "ah": "eax", "cl": "ecx", "ch": "ecx", "dl": "edx", "dh": "edx",
       "bl": "ebx", "bh": "ebx", "sil": "esi", "dil": "edi",
       "ax": "eax", "bx": "ebx", "cx": "ecx", "dx": "edx", "si": "esi", "di": "edi"}
+WRITES = {"mov", "movsx", "movzx", "or", "and", "xor", "add", "adc", "sub", "sbb",
+          "shl", "shr", "sar", "imul", "lea", "inc", "dec", "not", "neg", "pop"}
 
 
 def norm(s):
     return re.sub(r"\s+", " ", s.strip())
+
+
+def dest_reg(t):
+    """First operand of a 2-operand instruction, widened to its 32-bit register."""
+    m = re.match(r"\w+\s+([a-z0-9]+)[,\s]", t)
+    if not m:
+        return None
+    return R8.get(m.group(1), m.group(1))
 
 
 class Listing:
@@ -137,23 +149,42 @@ def census(L, starts):
                 cls = "ASSIGN"
             rows.append((a, fn_of(a, starts), width, k, imm, cls, t))
             continue
-        # store of a register previously OR'd in the same block (0x4efe59 form)
+        # store of a register: classify by the LAST write to that register (the
+        # mask op) and prove provenance by an earlier load FROM the flags word
         if op == "mov" and width == "WORD" and re.match(r"mov WORD PTR \[[^\]]+\],\w+$", t):
-            reg = t.rsplit(",", 1)[1].strip()
-            reg = R8.get(reg, reg)
-            for pa, pt in L.prev(a, 10):
-                pm = re.match(r"(or|and|mov) (\w+),(0x[0-9a-f]+|\w+)$", pt)
-                if pm and R8.get(pm.group(2), pm.group(2)) == reg:
-                    imm = pm.group(3)
-                    po = pm.group(1)
-                    if imm.startswith("0x"):
-                        imm = int(imm, 16)
-                        cls = "SET" if (po == "or" and imm & 4) else (
-                            "CLEAR-BIT2" if (po == "and" and (imm & 4) == 0) else "rmw-other")
-                    else:
-                        cls = "rmw-other"
-                    rows.append((a, fn_of(a, starts), width, "store<-" + po, imm, cls, t + "  // " + pt))
+            reg = R8.get(t.rsplit(",", 1)[1].strip(), t.rsplit(",", 1)[1].strip())
+            mask, prov, why = None, False, ""
+            for pa, pt in reversed(L.prev(a, 24)):
+                if re.match(r"(jmp|call|ret|push|pop)\b", pt):
                     break
+                d = dest_reg(pt)
+                is_mov = pt.startswith("mov")
+                if d != reg or pt.split()[0] not in WRITES:
+                    continue
+                if is_mov and "PTR [" in pt:
+                    if "0x98adb8]" in pt:
+                        prov = True
+                    break
+                if mask is None:
+                    pm = re.match(r"(or|and|xor|mov) (\w+),(0x[0-9a-f]+|\w+)$", pt)
+                    mask = (pm.group(1), pm.group(3)) if pm else ("other", "")
+                    why = pt
+                else:
+                    break
+            if mask is None:
+                rows.append((a, fn_of(a, starts), width, "store<-?", "", "rmw-other", t))
+                continue
+            kind, imm = mask
+            if kind in ("or", "and", "xor", "mov") and str(imm).startswith("0x"):
+                v = int(imm, 16)
+                cls = "SET" if (kind == "or" and v & 4) else (
+                    "CLEAR-BIT2" if (kind == "and" and (v & 4) == 0) else (
+                        "TOGGLE-BIT2" if (kind == "xor" and v & 4) else "rmw-other"))
+                rows.append((a, fn_of(a, starts), width, "store<-" + kind, v, cls,
+                             t + "  // " + why + ("  [prov]" if prov else "  [NO-PROV]")))
+            else:
+                rows.append((a, fn_of(a, starts), width, "store<-" + kind, "reg:" + str(imm),
+                             "UNRESOLVED", t + "  // " + why + "  [NO-PROV]"))
     return rows
 
 
@@ -259,18 +290,32 @@ def main():
 
     setters = {r[0] for r in rows if r[5] == "SET"}
     clears = [r for r in rows if r[5] == "CLEAR-BIT2"]
+    toggles = {r[0]: r[4] for r in rows if r[5] == "TOGGLE-BIT2"}
+    unresolved = [r for r in rows if r[5] == "UNRESOLVED"]
     assigns = {r[0]: r[4] for r in rows if r[5] == "ASSIGN"}
     bit2_assign = {a: v for a, v in assigns.items() if isinstance(v, int) and v & 4}
+    ands = [r for r in rows if r[3] in ("and", "store<-and")]
     print("\n measured: %d flag-word writes, %d bit-2 setters, %d bit-2 AND-clears, "
-          "%d ASSIGNs (%d with bit 2)" % (len(rows), len(setters), len(clears), len(assigns), len(bit2_assign)))
+          "%d bit-2 XOR-toggles, %d ASSIGNs (%d with bit 2), %d UNRESOLVED, "
+          "%d ANDs (all immediate masks: %s)"
+          % (len(rows), len(setters), len(clears), len(toggles), len(assigns), len(bit2_assign),
+             len(unresolved), len(ands), all(isinstance(r[4], int) for r in ands)))
 
     gate("G1 setter census", setters == SETTERS,
          "measured %d == declared %d%s" % (len(setters), len(SETTERS),
                                            "" if setters == SETTERS else "  diff " + str(sorted(map(hex, setters ^ SETTERS)))))
-    gate("G2 no bit-2 clearer (latch)", len(clears) == 0,
-         "%d AND instructions clear bit 2" % len(clears))
-    gate("G3 init constants carry bit 2", bit2_assign == {a: v for a, v in ASSIGN_INIT.items() if v & 4},
-         "bit-2 ASSIGNs " + str(sorted(map(hex, bit2_assign))))
+    rmw = [r for r in rows if r[5] == "SET" and r[3].startswith("store<-")]
+    gate("G1b setter provenance", all("[prov]" in r[6] for r in rmw),
+         "%d/%d register-RMW setters OR the register loaded from the flags word; "
+         "%d direct memory ORs" % (sum(1 for r in rmw if "[prov]" in r[6]), len(rmw),
+                                   len(setters) - len(rmw)))
+    gate("G2 one toggler, no clearer", len(clears) == 0 and toggles == {0x4396F6: 0x4}
+         and not unresolved,
+         "%d AND-clears, togglers %s, %d register-mask (unresolved) writes"
+         % (len(clears), {hex(k): hex(v) for k, v in toggles.items()}, len(unresolved)))
+    gate("G3 init constants 1/0x105/0x115", assigns == ASSIGN_INIT,
+         "ASSIGNs %s (bit-2 %s)" % ({hex(k): hex(v) for k, v in sorted(assigns.items())},
+                                    sorted(map(hex, bit2_assign))))
 
     # --- guard: the two owner-band guards -------------------------------
     def guard_of(addr):
@@ -287,29 +332,46 @@ def main():
     gate("G4 owner-band guard == 0x40", g_ee[1] == 0x40 and g_fe[1] == 0x40,
          "cmp imm %s / %s" % (hex(g_ee[1] or 0), hex(g_fe[1] or 0)))
 
-    # --- second latch 0x4d2ff9: test-BEFORE-store, follow-up call --------
+    # --- second latch 0x4d2ff9: load -> test -> skip-store -> call ------
     one = dict(L.window(0x4D2FEC, 0x4D3008))
     one_seq = " | ".join("%s" % one[a] for a in sorted(one))
     print("\n latch2: " + one_seq)
     call2 = next((one[a] for a in sorted(one) if one[a].startswith("call")), "")
-    ok_one = (one.get(0x4D2FF3, "") == "test al,0x4" and one.get(0x4D2FF5, "") == "jne 0x4d3016"
-              and one.get(0x4D2FF7, "") == "or al,0x4" and call2 == "call 0x584520")
-    gate("G15 second one-way latch", ok_one,
-         "test-before-store + on-0->1 %r" % call2)
+    load2 = one.get(0x4D2FEC, "")
+    jne2 = one.get(0x4D2FF5, "")
+    tgt2 = int(jne2.split()[-1], 16) if jne2.startswith("jne ") else 0
+    ok_one = (load2 == "mov ax,WORD PTR [ebx+0x98adb8]"       # the OLD flags value
+              and one.get(0x4D2FF3, "") == "test al,0x4"      # tests it
+              and tgt2 > 0x4D2FF9                             # jumps OVER the store
+              and one.get(0x4D2FF7, "") == "or al,0x4"        # OR on the same reg
+              and one.get(0x4D2FF9, "").startswith("mov WORD PTR [ebx+0x98adb8],ax")
+              and call2 == "call 0x584520")
+    gate("G15 0->1 transition guard", ok_one,
+         "old-value load -> test -> jne 0x%x (skips store) -> OR -> store -> %r" % (tgt2, call2))
 
-    # --- decoder latch: store precedes the was-set test, call on 0->1 ----
+    # --- decoder latch: EXACT old-bit sequence, call strictly conditional -
     dec = L.window(*DEC)
     txt = [(a, t) for a, t in dec]
-    store_i = next((i for i, (a, t) in enumerate(txt) if a == 0x4EFE60), None)
-    test_i = next((i for i, (a, t) in enumerate(txt) if a == 0x4EFE6A), None)
-    call = next((t for a, t in dec if a > 0x4EFE6A and t.startswith("call")), "")
-    seq = " | ".join(t for a, t in txt if a <= 0x4EFE6F)
-    print("\n decoder: " + seq)
-    ok_latch = (store_i is not None and test_i is not None and store_i < test_i
-                and call == "call 0x572800")
+    want = [
+        (0x4EFE50, "mov ax,WORD PTR [edx+0x98adb8]"),   # load flags (old)
+        (0x4EFE57, "mov dl,al"),                        # SAVE the old bit
+        (0x4EFE59, "or al,0x4"),                        # new value
+        (0x4EFE5B, "not dl"),
+        (0x4EFE5D, "and edx,0x4"),
+        (0x4EFE60, "mov WORD PTR [esi+0x98adb8],ax"),   # STORE before the test
+        (0x4EFE67, "shr edx,0x2"),
+        (0x4EFE6A, "test edx,edx"),
+    ]
+    seq_ok = all(dict(txt).get(a) == t for a, t in want)
+    je = dict(txt).get(0x4EFE6F, "")
+    je_tgt = int(je.split()[-1], 16) if je.startswith("je ") else 0
+    call_addr = next((a for a, t in txt if a > 0x4EFE6A and t.startswith("call")), 0)
+    call = dict(txt).get(call_addr, "")
+    print("\n decoder: " + " | ".join(t for a, t in txt if a <= 0x4EFE6F))
+    ok_latch = (seq_ok and je_tgt > call_addr > 0x4EFE6C and call == "call 0x572800")
     gate("G5 decoder latch + 0->1 call", ok_latch,
-         "store@%s < test@%s, on-fall-through %r" % (hex(txt[store_i][0]) if store_i is not None else "-",
-                                                    hex(txt[test_i][0]) if test_i is not None else "-", call))
+         "8-instruction old-bit sequence: %s; je 0x%x skips the call at 0x%x (%r)"
+         % (seq_ok, je_tgt, call_addr, call))
 
     # --- component feeds -------------------------------------------------
     print("\n== component byte -> rule table (row0-anchored literal + base within 6 insns)")
@@ -334,20 +396,50 @@ def main():
     gate("G8 +0x24 -> 0x92ae80", feeds[0x24][1] == {CHAS: 188},
          "measured %s" % {hex(k): v for k, v in sorted(feeds[0x24][1].items())})
 
-    # table extents, parsed from the scan loops
-    def cmp_imm(addr):
-        t = L.at.get(addr, "")
-        m = re.search(r"cmp \w+,0x([0-9a-f]+)$", t)
-        return int(m.group(1), 16) if m else None
+    # --- reference census: the load tracer covers EVERY reference --------
+    REFS = {0x24: (417, 408, 9), 0x25: (238, 227, 11), 0x26: (94, 88, 6),
+            0x27: (135, 127, 8), 0x28: (12, 10, 2)}
+    refc = {}
+    for off in REFS:
+        lit = "0x%x" % (ROW + off)
+        refs = [(a, t) for a, t in L.window(0, 0x800000) if lit in t]
+        loads = [r for r in refs if re.match(r"mov(?:sx|zx)? \w+,(?:BYTE|WORD) PTR", r[1])]
+        other = [r for r in refs if r not in loads]
+        tbl = [r for r in other if any(_tbl(int(h, 16)) for h in LIT.findall(r[1]))]
+        refc[off] = (len(refs), len(loads), len(other), len(tbl))
+    print("\n reference census (refs / mov-loads / others / others naming a table base): %s"
+          % {hex(o): v for o, v in sorted(refc.items())})
+    gate("G16 tracer covers every reference",
+         all(refc[o][:3] == REFS[o] and refc[o][3] == 0 for o in REFS),
+         "measured %s" % {hex(o): v for o, v in sorted(refc.items())})
 
-    we = cmp_imm(0x5745CC)
-    ae = cmp_imm(0x5746B3)
-    nw = (we - WEAP) // 0x10 if we else 0
-    na = (ae - ARM) // 0x10 if ae else 0
-    print("\n extents: offense 0x%x..0x%x = %d records; armor 0x%x..0x%x = %d records"
-          % (WEAP, we or 0, nw, ARM, ae or 0, na))
-    gate("G9 offense table = 21 recs", we == WEAP_END and nw == 21, "bound %s -> %d" % (hex(we or 0), nw))
-    gate("G10 armor table = 10 recs", ae == ARM_END and na == 10, "bound %s -> %d" % (hex(ae or 0), na))
+    # table extents, DERIVED from each scan loop (init -> stride -> bound)
+    def loop_derivation(base, init_addr, add_addr, cmp_addr):
+        init = L.at.get(init_addr, "")
+        add = L.at.get(add_addr, "")
+        cmp_t = L.at.get(cmp_addr, "")
+        mi = re.search(r"mov DWORD PTR \[ebp-0x\d+\],0x([0-9a-f]+)$", init)
+        ma = re.search(r"add (\w+),0x([0-9a-f]+)$", add)
+        mc = re.search(r"cmp (\w+),0x([0-9a-f]+)$", cmp_t)
+        if not (mi and ma and mc):
+            return None, None, None, (init, add, cmp_t)
+        same = ma.group(1) == mc.group(1)
+        return (int(mi.group(1), 16), int(ma.group(2), 16),
+                int(mc.group(2), 16) if same else None, (init, add, cmp_t))
+
+    wi, ws, we, wtxt = loop_derivation(WEAP, 0x5744C1, 0x5745C8, 0x5745CC)
+    ai, as_, ae, atxt = loop_derivation(ARM, 0x5745E4, 0x5746AF, 0x5746B3)
+    nw = (we - wi) // ws if (wi == WEAP and we and ws) else 0
+    na = (ae - ai) // as_ if (ai == ARM and ae and as_) else 0
+    print("\n extents DERIVED: offense init 0x%x stride 0x%x bound 0x%x -> %d records; "
+          "armor init 0x%x stride 0x%x bound 0x%x -> %d records"
+          % (wi or 0, ws or 0, we or 0, nw, ai or 0, as_ or 0, ae or 0, na))
+    for t in wtxt + atxt:
+        print("   %s" % t)
+    gate("G9 offense table = 21 recs", wi == WEAP and ws == 0x10 and we == WEAP_END and nw == 21,
+         "init %s stride %s bound %s -> %d" % (hex(wi or 0), hex(ws or 0), hex(we or 0), nw))
+    gate("G10 armor table = 10 recs", ai == ARM and as_ == 0x10 and ae == ARM_END and na == 10,
+         "init %s stride %s bound %s -> %d" % (hex(ai or 0), hex(as_ or 0), hex(ae or 0), na))
 
     # chassis stride from the lea/shl chain (9*16), not authored
     chain = [L.at.get(0x595EED, ""), L.at.get(0x595EF0, "")]
@@ -402,7 +494,7 @@ def main():
     print("\n DIGEST %s" % digest)
     if args.digest:
         return 0
-    print("\n%s M356: %d/%d gates" % ("PASS" if not fails else "FAIL", 15 - len(fails), 15))
+    print("\n%s M356: %d/%d gates" % ("PASS" if not fails else "FAIL", 17 - len(fails), 17))
     if fails:
         print(" failing: " + ", ".join(fails))
         return 1

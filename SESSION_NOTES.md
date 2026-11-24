@@ -702,27 +702,29 @@ whether a facility completion stamps at all.
   VERBATIM (block sha1 `e548f949`) to `docs/named-archive-m355-rows.md`.
 - **OPEN**: the option NAME of each set bit; whether another path re-derives 0x92befc/0x92bf00.
 
-## Session 330-chain2 (2026-11-24) — M356: +0x30 bit 2 = one-way latch; +0x24/+0x25/+0x26 feed three rule tables
+## Session 330-chain2 (2026-11-24) — M356: +0x30 bit 2 = state bit (11 setters, 1 toggler); +0x24/+0x25/+0x26 feed three rule tables
 
-- **ACCEPT** `python3 -u scripts/m356_prototype_stamp.py` -> **`PASS M356: 15/15 gates`**,
-  digest `2f83dbf542b5a238`, x2 identical (`evidence/m356_x2.txt:92`); `m356_mutate.py` ->
-  **23/23 scored, NO-OP ['MU24'], MEASURED coverage ALL 15 gates** (`evidence/m356_mutate.txt:26`).
-- **CENSUS** (shapes, not an `or` grep): 45 writes to the flags word (+0x30 = 0x98adb8);
-  **11 bit-2 setters** (`evidence/m356_stamp.txt:3-49`); **0 ANDs clear bit 2** (they clear
-  bits 0,1,3,7,11 only) -> bit 2 is monotone.
-- **TWO ONE-SHOT GUARDS**: 0x4d2ff9 `test al,0x4` -> OR -> store -> `call 0x584520`; 0x4efe60
-  stores `al|4` then tests the OLD bit, calling 0x572800 only on 0->1 (store PRECEDES the
-  test); 0x4eed18/0x4efe60 sit behind `cmp idx,0x40 / jl`.
-- **FEEDS** (`trace_base` tracer): **+0x24 -> 0x92ae80** chassis, stride 0x90, 188 chains;
-  **+0x25 -> 0x92b950** 21 recs (bound 0x5745cc), 181 chains; **+0x26 -> 0x92fd18** 10 recs
-  (bound 0x5746b3), 47 chains — both exclusive. alpha.txt corroborates 21/10/9 (printed only).
+- **ACCEPT** `scripts/m356_prototype_stamp.py` -> **`PASS M356: 17/17 gates`**,
+  digest `c1a2beb794cec9f8`, x2 same (`evidence/m356_x2.txt:103`); `m356_mutate.py` ->
+  **27/27, NO-OP ['MU29'], coverage ALL 17 gates** (`evidence/m356_mutate.txt:32`).
+- **CENSUS** (instruction shapes; last write to the stored register + flags-word load
+  provenance): 46 writes to +0x30 (= 0x98adb8); **11 bit-2 setters**, **0 AND-clears**,
+  **1 XOR-toggler 0x4396f6** (`xor dx,0x4` @0x4396e6), 0 unresolved register masks, 16 ANDs
+  all carrying immediates. First draft said "one-way latch" — the toggler REFUTES it.
+- **TWO 0->1 GUARDS**: 0x4d2ff9 load->test->jne-skips-store->OR->store->`call 0x584520`;
+  0x4efe60 stores `al|4` then tests the OLD bit, `call 0x572800` only on 0->1; both behind
+  `cmp idx,0x40 / jl` (owner band).
+- **FEEDS** (`trace_base`): **+0x24 -> 0x92ae80** chassis, stride 0x90, 188 chains; **+0x25 ->
+  0x92b950** 21 recs, 181 chains; **+0x26 -> 0x92fd18** 10 recs, 47 chains — exclusive; extents
+  DERIVED from each loop (init/stride/bound). Reference census 238/227/11, 94/88/6: every
+  non-load reference is a `cmp`, none names a table base.
 - **FINALIZER 0x595e80** compares weapon `[0x92b950][+0x25]` with armor `[0x92fd18][+0x26]`
-  (`cmp al,bl`) and assigns the +0x2b mode (3/1/4/5/10): the code-side proof of the roles.
-- **RIVAL REFUTED**: "+0x27/+0x28 are 0x10-stride ordinals" — 0 table chains either (127 / 10
-  read sites); +0x28 has ONE writer (0x595d1c), 10 mov loads (+1 cmp at 0x5732ca).
-- **RETRACTION (M354)**: +0x24 is the CHASSIS ORDINAL (indexes 0x92ae80), not "domain".
-- **PITFALL**: a fixed 6-insn window bleeds the previous field's table literal into the next
-  field's attribution; follow the loaded register (`lea` is not a deref).
-- **DOC CAP**: NAMED 245,616 B (4,384 B < 5 KB) -> `scripts/m356_named_rotate.py` rotated
-  `## M298` VERBATIM to `docs/named-archive-m356-rows.md` (sha1 `a7e25e645e556118`).
-- OPEN: nouns of +0x27/+0x28; bit2's UI reading (prototype) INFERRED.
+  (`cmp al,bl`) and assigns the +0x2b mode (3/1/4/5/10); flags init 1/0x105/0x115.
+- **RIVAL REFUTED**: "+0x27/+0x28 are 0x10-stride ordinals" — 0 table chains either; +0x28 has
+  ONE writer (0x595d1c).
+- **RETRACTIONS**: (M354) +0x24 is the CHASSIS ORDINAL, not "domain"; (this draft) bit 2 is
+  not monotone. A fixed backwards window had attributed a guard `and` to a later store —
+  classify by the LAST write to the register (0x4399c5 vs the 0x4399d8 reload).
+- **DOC CAP**: `scripts/m356_named_rotate.py` rotated `## M298` VERBATIM ->
+  `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
+- OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.

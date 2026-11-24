@@ -22,7 +22,11 @@ PASS MU20 -> G3 init constant 0x1 gains bit 2
 PASS MU21 -> G5 decoder's 0->1 follow-up call retargeted
 PASS MU22 -> G8 one chassis-table read leaves the table
 PASS MU23 -> G13 +0x25 read becomes a +0x27 read
-PASS MU24 -> NO-OP stayed green (a +0x31 write no gate pins)
+PASS MU25 -> G2 the one bit-2 toggler moves to bit 3
+PASS MU26 -> G2 an immediate AND becomes a REGISTER mask
+PASS MU27 -> G1b setter loses its flags-word load provenance
+PASS MU28 -> G16 +0x28 cmp becomes a load (reference census shifts)
+PASS MU29 -> NO-OP stayed green (a +0x31 write no gate pins)
 
-scored 23/23, missed none, noop_bad none
-MEASURED gate coverage: ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12', 'G13', 'G14', 'G15'] (15 gates)
+scored 27/27, missed none, noop_bad none
+MEASURED gate coverage: ['G1', 'G1b', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12', 'G13', 'G14', 'G15', 'G16'] (17 gates)
