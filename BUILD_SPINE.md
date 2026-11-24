@@ -1152,3 +1152,44 @@ the message and the `0x45`-handler side effects); the bitmap bytes `+0x90..+0x93
 which this rung neither sets nor reads for ids past 31 (id 39's guard is a refusal, not a claim);
 whether a completed PROJECT (ids 39..71) shares the same field. No box time, no /proc, no gdb,
 no game-binary load.
+
+**B31 - the completion law TESTED AGAINST THE GAME'S OWN RUN: the recorded 10-boundary trace is
+the oracle, every facility-bit GAIN and LOSS is enumerated from the record bytes at `+0x8c..+0x8f`,
+the rule "the queue head id is the bit that appeared" is SCORED on those numbers and FAILS, and the
+one boundary B23 parity-verified (Korolev Center r0) is replayed WITH the stamp attached: the head
+id 2 is inside the facility window, the spend lands at 0 exactly as recorded, and the recorded bitmap
+does NOT move - so a completion cannot be assumed to stamp** (`sim/facoracle.py` = the run and its
+gates; s324 authors this rung from main, as B14-B30 did). B30 ASSUMED that a paid queue item becomes
+a facility the base HAS, taking the reader's inverse as the setter because no completion routine was
+in its evidence. That assumption is now measurable: `evidence/trace_m56_build_20261026_145157.jsonl`
+carries the FULL 304-B base record hex at every `round_before`/`round_after` sample, so the bitmap,
+the queue head `+0x50`, the pending count `+0x4c` and the accumulator `+0x40` can be decoded from the
+RECORDED BYTES at each of the 20 samples - the game's own run, not a model of it.
+
+`python3 -u -m sim.facoracle` must print `PASS B31: 16/16 gates` (and `python3 -u -m sim.selftest
+--b31` only relays, so the two entry points cannot print different text) with: **G1** the oracle is
+READ - 10 before + 10 after samples, 407 base-records, every bitmap decoded from its own four bytes,
+the sample/record counts and the oracle digest printed and PINNED; **G2** every bit change is
+enumerated per base per boundary with the queue head, pending and accumulator beside it, and the
+symmetric difference of every changed sample is fully accounted by the gain/loss lists - the recorded
+bitmap is NOT monotonic (6 gains, 2 losses), which a completion can never explain; **G2b** every
+changed BYTE lies inside `+0x8c..+0x8f` and the decoded delta equals the RAW XOR popcount at every
+changed sample; **G3** the rule "the head id is the bit that appeared" is
+SCORED over all 6 gains: 0 matches, 5 heads are unit-encoded (negative or far outside 0..31) and the
+one in-window head did not stamp - so the rule fails on printed numbers, not on commentary; **G4** the
+recorded transaction is replayed with the stamp attached: G4a the spend is B23's parity-verified
+arithmetic (`st 8 + add 1 - price 9 = 0` == the recorded after), G4b the head 2 IS inside the facility
+window (the negative is not vacuous), G4c the recorded bitmap does not move at that boundary while a
+stamp would move it, G4d a DECLARED 2-deep fixture (pending 2, slots `[2,6,..]`) shows the pop-first
+rival stamping the NEXT item (6) and missing the head (2), G4e the no-stamp replay leaves the recorded
+bitmap unchanged, G4f the anchor IS the r0 sample (`r==0`, st 8, head 2, pending 1, price 9, add 1); **G5** the oracle drives the WRITER: an ARBITRARY target bitmap (a LOSS included,
+which the OR-only setter cannot express) goes into the save's own record through `base_writes`, the
+reload reads it back, the diff is exactly the two bitmap bytes, the identity build is byte-identical
+and the LOSS of id 8 is asserted and the other 17 records are untouched; **G6** the rivals are scored on the printed numbers and two
+passes give identical digests; **G7** every anchor (rows, oracle, score, written image) is pinned to a
+literal, so a trace, decode or arithmetic drift reddens a gate instead of sliding by.
+DECLARED UNMODELED: the unit-id decoding that would map a queue head onto a bitmap id (M68/M69's
+`NEG_TYPE` mapping rule is OPEN - this rung measures the mismatch, it does not resolve it); the
+price/income law is B23's recorded fixture (price 9, add 1); which recorded loss is a raze/sale vs a
+record-identity change; the trace's 19-22 bases/sample are tracked by `(idx, name)` - a key that first
+appears mid-run contributes no delta (counted). No box time, no /proc, no gdb, no game-binary load.

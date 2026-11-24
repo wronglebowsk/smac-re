@@ -25,10 +25,13 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B30 MERGED** (B26 #328, B27 #344, B28 #351, B29 #356, B30 s321; per-rung cmds `NAMED`
 §CHAIN-BUILDS, `## B25`-`## B30` govern; B26's ACCEPT+LAW at `docs/pick-archive.md` §trim-s308-chain1 (a)).
-**B30 = the COMPLETION leg** (`## B30`). **Next build B31**: the spine ends at B30 - author its rung
-text in `BUILD_SPINE.md` BEFORE probing.
+**B30 = the COMPLETION leg** (`## B30`). **B31 MERGED = the recorded-run ORACLE** (`## B31`: 6 gains/2
+losses, head->bit 0/6, Korolev r0 spend 8+1-9=0 with NO stamp - so B30's setter is UNVERIFIED against
+the game's own run; 16/16 `ce7688c0cb3b5f9d`, harness 12/12 `087e1d0228debbe9`). **Next build B32**:
+author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
+decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (`wc -c` s323): `NAMED.md` 244,995/250,000 = 5,005 B (M340 rotated to `docs/named-archive-m340-rows.md`, `scripts/m344_named_rotate.py --verify`); M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5` (sha1 `ccee72a56f16b4b4`, `scripts/m342_named_rotate.py --verify`) - rotate again BEFORE adding once <5 KB. NEXT_PROMPT <=12,000.**
+  **DOC CAP (`wc -c` s324, post-B31): `NAMED.md` 247,676/250,000 = 2,324 B (B24 rotated VERBATIM to `docs/named-archive-b31-rows.md:5`, sha1 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `scripts/b31_named_rotate.py --verify`; M340/M329 archives stand) - ROTATE BEFORE adding: headroom is under the 5 KB trigger. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
@@ -121,7 +124,6 @@ Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar not
 - M334-M340 (s316-s320, all MERGED): M334 = the 0x4f47f0 upkeep-FAILURE is a difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded) 7/7 5b5ece39af02baba, 45/45; M335 ladder = alpha #DIFF 6 rows @0x94d2ac, idx = ds:0x985aec 7/7 fb58bdc3307d6258, 20/20; M336 ds:0x8f0090 = PLAYER RECORD 1's difficulty byte, ONE unclamped reader 7/7 f4ca00c55c833539, 14/14; M337 item row order = alpha #FACILITIES (rec i = alpha i-1) 8/8 39d82f0771690e15, 13/13; M338 the last two #DIFF readers (loop counter / HoF rec +0x20) 8/8 1ae1563d47d0039e, 16/16; M339 0x5f1394 = the modal SCREEN RUNNER 7/7 d76a5e83770b77bb, 13/13; M340 a `Difficulty` pref >=6 is ADMITTED 7/7 1cc44d0146a8b419, 12/12. Per-id `NAMED ## <id>` GOVERN.
 M342 (x9) MERGED: +0x8c `or` x11, `and` x3; pop NON-writer. 7/7 2b88df5da5aeafe1, 9/9.
 - M339 MERGED: 0x5f1394 = the modal SCREEN RUNNER; return = the screen obj's +0xa40 cell; FUN_004ddaa0 writes it to ds:0x985aec + 8 faction blocks. 7/7 d76a5e83770b77bb, harness 13/13.
-- M341 MERGED 185c394: HoF record window = 5*n-5+s at THREE sites (0x449793, 0x44af9b, 0x44b5a7); 35 records = 7 blocks x 5 rows, index 35 = terminator 0x984d34. 11/11 1cfdea39295dadce, harness 19/19 e1c003e81552f53f. NAMED ## M341.
 - M343 (s323-chain2) MERGED: `[obj+0xa40]` writer = 3 dialog methods (FUN_005f5759 +0xa8 x4, FUN_005f58fa +0x64 x3, FUN_005f5a11 ds:0x9977f0 x2). 9/9 bcdace84a0352b4a, harness 12/12. NAMED ## M343.
 
 - M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11
