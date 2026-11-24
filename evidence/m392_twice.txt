@@ -1,0 +1,5 @@
+M392 twice-run check: two invocations of scripts/m392_uninit_census.py, stdout diffed
+0b8f6ae4a3ca705ec4f9392e0e76748973e7b7ac0448ad02d14ecdefcecb25ee  evidence/m392_caller_census.txt
+0b8f6ae4a3ca705ec4f9392e0e76748973e7b7ac0448ad02d14ecdefcecb25ee  scratch/m392_run3.txt
+--- diff (empty = byte-identical) ---
+diff_rc=0

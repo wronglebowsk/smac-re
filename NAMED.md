@@ -1657,3 +1657,14 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | 106 callers, 95 masks resolve: 5 set 0x400 (0x41b2d2 0x4cd6f6 0x5470d6 0x59aef0; 0x594cf7 0x420), 2 clear (0x4db11b 0xc20, 0x519bb5 0xc00) | `:199` `:210` | V MU4 MU5 MU6 MU15 |
 | FUN_00551a20: one arm ANDs `0xfaeef378` (~0x05110c87 carries bit 10 -> wipes 0x400), then ORs `mask\|0x80000108` | `:87` | V MU20 |
 | OPEN: 7 runtime mask args (0x4dadxx, `[ebx+0x18]`), 4 passthrough; FUN_004dacc0 is a caller-mask SET/CLEAR gate whose 0x400 caller is M385 `:55` (8th setter, behind the arg) | `:215` | OPEN |
+
+## M392 (s343-c5 10/10) — UNINIT leg LIVE: 1/65 callers passes the zero guard, id record-sourced. **`PASS M392: 10/10`** `561a7a59cbf081e4` (`m392_caller_census.txt:143`; twice `m392_twice.txt:3`; 15/15 mutants)
+
+| claim | ev | conf |
+|---|---|---|
+| 65 direct calls (22 fns + unindexed 0x5844b6), 0 dword pointers -> no indirect; `ret 0x1c` = 7 slots, msg = movsx WORD [ebp+8], guard [ebp+0x1c] 15R | `:2-21` | V MU0 MU0b MU1 MU9 |
+| 64 push guard=1, ONE (0x52d873) pushes 0; 65/65 decode, pinned sample pushes | `:86-99` | V MU2 MU3 MU1b |
+| 49 literal ids; 0x16 once (0x58459d, live FUN_00584580, caller 0x5355eb), pushes 1; 1 expression id | `:101-107` | V MU4 MU4b |
+| joint: 0 close, 1 open (0x52d873): ebx single def 0x52bd33 <- [ebp+8], entered only on record word 0x1101/0x4101, block 18 instrs, 0 +0x10 tests | `:109-123` | V MU5 MU6 MU7 MU8 MU10 |
+| verdict 64 PRESERVE + 0 closed + 1 LIVE-UNINIT | `:133` | V MU5 |
+| OPEN: the record's +0x10 writer (does a 0x1101/0x4101 record carry 0x16?) | `:139` | OPEN |

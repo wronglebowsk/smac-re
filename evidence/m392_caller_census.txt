@@ -1,0 +1,143 @@
+G0  the caller population: every direct call, and the proof no indirect one exists
+  direct `call 0x52a720` instructions in the linear sweep: 65
+  attributed to index.csv functions: 64; outside every function: ['0x5844b6']
+  distinct caller functions: 22
+  dword occurrences of 0x52a720 in the image (indirect-call payloads): 0
+  index.csv n_callers for FUN_0052a720: 64
+  references to the orphan wrapper 0x5844b0: 0
+  ok  G0 65 direct sites (22 functions + 1 unreferenced wrapper), 0 indirect
+
+G1  the callee frame: seven stack dwords, and which slot the guard is
+  ret sites: ['0x52b889', '0x52b8c9', '0x52b8e3', '0x52b8fd', '0x52ba00', '0x52ba18']
+  ret operands: ['0x1c']  -> 7 stack dwords cleaned by the callee
+  reads per stack slot: [('0x8', 7), ('0xc', 3), ('0x10', 4), ('0x14', 1), ('0x18', 2), ('0x1c', 15), ('0x20', 1)]
+  msg slot [ebp+8] read as: eax,WORD PTR [ebp+0x8]
+  guard [ebp+0x1c] first test: ecx,DWORD PTR [ebp+0x1c] @52a741, ecx,ecx @52a778
+  ok  G1 stdcall ret 0x1c = 7 dwords; guard [ebp+0x1c] read 15x, arg8 [ebp+0x20] 1x
+
+G2  decode: seven pushes per site, resolved to a value or an expression
+  sites with exactly 7 pushes and no stack-form args: 65/65
+  4dd99c FUN_004dd560   msg=0x7                    guard=0x1                    arg8=0x2101
+  510fe0 FUN_00510bd0   msg=0x85                   guard=0x1                    arg8=0x2101
+  519902 FUN_005198e0   msg=0x25                   guard=0x1                    arg8=0x2101
+  519935 FUN_005198e0   msg=0x12                   guard=0x1                    arg8=0x2101
+  519968 FUN_005198e0   msg=0x26                   guard=0x1                    arg8=0x2101
+  51999b FUN_005198e0   msg=0x14                   guard=0x1                    arg8=0x2101
+  5217e7 FUN_00521070   msg=0x0                    guard=0x1                    arg8=0x2101
+  52181e FUN_00521070   msg=0x24                   guard=0x1                    arg8=0x2101
+  52187c FUN_00521070   msg=0x6                    guard=0x1                    arg8=0x2101
+  5218b2 FUN_00521070   msg=0x7                    guard=0x1                    arg8=0x2101
+  5218e8 FUN_00521070   msg=0xf                    guard=0x1                    arg8=0x2101
+  521951 FUN_00521070   msg=0x1002                 guard=0x1                    arg8=0x2101
+  521988 FUN_00521070   msg=0x5                    guard=0x1                    arg8=0x2101
+  5219e3 FUN_00521070   msg=0x25                   guard=0x1                    arg8=0x2101
+  521a1a FUN_00521070   msg=0x12                   guard=0x1                    arg8=0x2101
+  521a75 FUN_00521070   msg=0x26                   guard=0x1                    arg8=0x2101
+  521aac FUN_00521070   msg=0x14                   guard=0x1                    arg8=0x2101
+  521b03 FUN_00521070   msg=0x30                   guard=0x1                    arg8=0x2101
+  5262fa FUN_005262e0   msg=0x0                    guard=0x1                    arg8=0x2101
+  52633a FUN_005262e0   msg=0x2                    guard=0x1                    arg8=0x2101
+  52637a FUN_005262e0   msg=0x4                    guard=0x1                    arg8=0x2101
+  5263ba FUN_005262e0   msg=0x5                    guard=0x1                    arg8=0x2101
+  5263ff FUN_005262e0   msg=0x6                    guard=0x1                    arg8=0x2101
+  52643e FUN_005262e0   msg=0x7                    guard=0x1                    arg8=0x2101
+  52647d FUN_005262e0   msg=0xf                    guard=0x1                    arg8=0x2101
+  5264cd FUN_005262e0   msg=0x29                   guard=0x1                    arg8=0x2101
+  52650f FUN_005262e0   msg=0x12                   guard=0x1                    arg8=0x2101
+  52654f FUN_005262e0   msg=0x14                   guard=0x1                    arg8=0x2101
+  52658f FUN_005262e0   msg=0x19                   guard=0x1                    arg8=0x2101
+  5265d8 FUN_005262e0   msg=0x20                   guard=0x1                    arg8=0x2101
+  526618 FUN_005262e0   msg=0x21                   guard=0x1                    arg8=0x2101
+  526661 FUN_005262e0   msg=0x22                   guard=0x1                    arg8=0x2101
+  5266a1 FUN_005262e0   msg=0x24                   guard=0x1                    arg8=0x2101
+  5266e1 FUN_005262e0   msg=0x15                   guard=0x1                    arg8=0x2101
+  526e2d FUN_00526e10   msg=0x80                   guard=0x1                    arg8=0x2101
+  526e70 FUN_00526e10   msg=0x81                   guard=0x1                    arg8=0x2101
+  526eb3 FUN_00526e10   msg=0x82                   guard=0x1                    arg8=0x2101
+  526ef6 FUN_00526e10   msg=0x83                   guard=0x1                    arg8=0x2101
+  526f39 FUN_00526e10   msg=0x84                   guard=0x1                    arg8=0x2101
+  526f7c FUN_00526e10   msg=0x85                   guard=0x1                    arg8=0x2101
+  526fbf FUN_00526e10   msg=0x86                   guard=0x1                    arg8=0x2101
+  527002 FUN_00526e10   msg=0x87                   guard=0x1                    arg8=0x2101
+  527045 FUN_00526e10   msg=0x88                   guard=0x1                    arg8=0x2101
+  527088 FUN_00526e10   msg=0x89                   guard=0x1                    arg8=0x2101
+  5270cb FUN_00526e10   msg=0x8a                   guard=0x1                    arg8=0x2101
+  52710e FUN_00526e10   msg=0x8b                   guard=0x1                    arg8=0x2101
+  527151 FUN_00526e10   msg=0x8c                   guard=0x1                    arg8=0x2101
+  527194 FUN_00526e10   msg=0x8d                   guard=0x1                    arg8=0x2101
+  52d873 FUN_0052bce0   msg=PARTIAL:word ptr [ebx+0x10] guard=0x0                    arg8=0x2101
+  58436b FUN_00584350   msg=0x11                   guard=0x1                    arg8=0x2101
+  58439b FUN_00584380   msg=0x13                   guard=0x1                    arg8=0x2101
+  5843cb FUN_005843b0   msg=0xb                    guard=0x1                    arg8=0x2101
+  5843fb FUN_005843e0   msg=0xa                    guard=0x1                    arg8=0x2101
+  58442b FUN_00584410   msg=0x6                    guard=0x1                    arg8=0x2101
+  58445b FUN_00584440   msg=0x8                    guard=0x1                    arg8=0x2101
+  58448b FUN_00584470   msg=0x9                    guard=0x1                    arg8=0x2101
+  5844b6 ORPHAN         msg=0x1                    guard=0x1                    arg8=0x2101
+  5844db FUN_005844c0   msg=0xc                    guard=0x1                    arg8=0x2101
+  58450b FUN_005844f0   msg=0xd                    guard=0x1                    arg8=0x2101
+  58453b FUN_00584520   msg=0xe                    guard=0x1                    arg8=0x2101
+  58456b FUN_00584550   msg=0x10                   guard=0x1                    arg8=0x2101
+  58459d FUN_00584580   msg=0x16                   guard=0x1                    arg8=0x2101
+  5845cb FUN_005845b0   msg=0x17                   guard=0x1                    arg8=0x2101
+  5845fb FUN_005845e0   msg=0x18                   guard=0x1                    arg8=0x2101
+  58462b FUN_00584610   msg=0x23                   guard=0x1                    arg8=0x2101
+  ok  G2 65/65 sites decode as 7 straight-line pushes
+
+G2b pinned push provenance: the sample sites the mutants patch
+  5262fa slot 5: CONST 1 from 0x5262ec (want 0x5262ec, value 1) ok
+  5262fa slot 0: CONST 0 from 0x5262f8 (want 0x5262f8, value 0) ok
+  52d873 slot 5: CONST 0 from 0x52d855 (want 0x52d855, value 0) ok
+  52d873 slot 0: PARTIAL word ptr [ebx+0x10] from 0x52d86a (want 0x52d86a) ok
+  ok  G2b 0x5262ec/0x5262f8/0x52d855/0x52d86a carry the printed operands
+
+G3  the guard census (pushed[5] = [ebp+0x1c])
+  guard == 0 : 1  ['0x52d873']
+  guard == 1 : 64
+  guard other/expression: 0 []
+  ok  G3 64 sites push 1, exactly ONE (52d873) pushes 0, nothing unresolved
+
+G4  the message census (pushed[0] = [ebp+8], read movsx WORD)
+  distinct literal ids: 49
+  literals: 0x00x2 0x01x1 0x02x1 0x04x1 0x05x2 0x06x3 0x07x3 0x08x1 0x09x1 0x0ax1 0x0bx1 0x0cx1 0x0dx1 0x0ex1 0x0fx2 0x10x1 0x11x1 0x12x3 0x13x1 0x14x3 0x15x1 0x16x1 0x17x1 0x18x1 0x19x1 0x20x1 0x21x1 0x22x1 0x23x1 0x24x2 0x25x2 0x26x2 0x29x1 0x30x1 0x80x1 0x81x1 0x82x1 0x83x1 0x84x1 0x85x2 0x86x1 0x87x1 0x88x1 0x89x1 0x8ax1 0x8bx1 0x8cx1 0x8dx1 0x1002x1
+  expression-sourced ids: 1 [('0x52d873', 'PARTIAL', 'word ptr [ebx+0x10]', '0x52d86a')]
+  literal 0x16 sites: ['0x58459d']
+  the 0x16 wrapper: owner FUN_00584580 (36 B), 1 caller(s) ['0x5355eb']
+  ok  G4 49 literal ids; 0x16 exactly once (live wrapper); 1 expression id
+
+G5  the joint the milestone asks about: guard==0 crossed with the id
+  guard==0 AND literal 0x16 (statically closed UNINIT leg): 0
+  guard==0 AND expression id (leg open to any id): 1 ['0x52d873']
+  ok  G5 no caller closes the leg; exactly one (52d873) leaves it open
+
+G6  the open site: where its id word comes from, and what guards the block
+  enclosing function: FUN_0052bce0 [52bce0,52fc4e) size 16238
+  backward-reachable instruction set over explicit edges: 95
+  writes to ebx inside that set: [('0x52bd33', 'mov', 'ebx,DWORD PTR [ebp+0x8]')]
+  last write to ebx before 52d873: 52bd33 mov ebx,DWORD PTR [ebp+0x8]
+  (ebx is also written out of path, in SEH epilogues: ['0x52c30e', '0x52fc40'])
+  the id operand: ax,WORD PTR [ebx+0x10] (16-bit store into ax; the callee takes movsx WORD)
+  jumps into the block 52d840: [('0x52be38', 'je', '0x52d840'), ('0x52d7b4', 'je', '0x52d840')]
+  instructions in the block: 18; head 0x52d849 = mov edx,0x1
+  instructions in the block that test/compare +0x10: 0 []
+  ok  G6 ebx = arg record (52bd33); 2 entries on record word 0x1101/0x4101; no +0x10 test
+
+G7  the verdict
+  guard!=0 (PRESERVE: the snapshot runs, the store copies the pair dword): 64
+  guard==0, literal id            : 0
+  guard==0, expression id (UNINIT): 1  <- reachable, id unconstrained
+  legs killed by arithmetic like M387's count==0: 0 for this axis
+  So the UNINIT leg is LIVE: one callsite opens it, the id there is a 16-bit record
+  field with no static filter, and 0x16 is a live id in this same dispatcher
+  (0x58459d, one caller at 0x5355eb). A runtime witness needs a box run (out of scope).
+  ok  G7 64 PRESERVE + 0 closed + 1 LIVE-UNINIT (52d873) = 65
+
+G8  rivals, measured against the printed numbers
+  R1 every caller pushes a non-zero guard           -> REFUTED (guards: 1 zero, 64 one, 0 other)
+  R2 the zero-guard site's id is the literal 0x16   -> REFUTED (closed=0, open=1)
+  R3 the 0x584xxx wrapper family relays runtime ids  -> REFUTED (all literal: False)
+  R4 the record id is bounded to the game's own ids  -> OPEN (no code constrains it; producer census is the next pick)
+  ok  G8 2 rivals REFUTED, R4 left OPEN
+
+  table 65 sites | sha1 561a7a59cbf081e4
+PASS M392: 10/10  561a7a59cbf081e4

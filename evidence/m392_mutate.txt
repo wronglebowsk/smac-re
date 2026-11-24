@@ -1,0 +1,19 @@
+BASELINE PASS rc=0
+id    kind  gate  result   detail
+MU0   code  G0    killed   'G0 population != 65'
+MU0b  algo  G0    killed   'G0 population != 65'
+MU1   code  G1    killed   'G1 frame != ret 0x1c'
+MU9   code  G1    killed   'G1 frame != ret 0x1c'
+MU2   code  G2    killed   'G2 1 sites did not decode'
+MU3   code  G3    killed   'G3 guard census != 1 zero'
+MU5   code  G7    killed   'G7 verdict counts != 64/0/1'
+MU1b  algo  G3    killed   'G3 guard census != 1 zero'
+MU4   code  G4    killed   'G4 msg census != 49 literals'
+MU4b  algo  G4    killed   'G4 msg census != 49 literals'
+MU6   code  G5    killed   'G5 joint != 0 closed'
+MU7   code  G6    killed   'G6 ebx lineage != single def'
+MU8   code  G6    killed   'G6 entries into 52d840 changed'
+MU10  code  G6    killed   'G6 the block now filters +0x10'
+MU11  algo  G8    killed   'G8 every rival survived'
+
+SUMMARY M392: 15/15 killed
