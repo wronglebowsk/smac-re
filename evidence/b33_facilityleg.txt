@@ -1,0 +1,67 @@
+B33 - the facility leg's branch to the shared OR, walked and scored on the recorded run
+census: evidence/fixtures/b33_fun4ef6d0_census.txt  (3164 instructions, 0x4ef6d0..0x4f26da)
+
+TABLE 1  the three entries and what each can reach (instruction addresses)
+  function entry 0x4ef6d0  reachable=3164  stamp_0x4f0e90=True  spend_site=3/3
+  unit branch    0x4ef8a4  reachable=3045  stamp_0x4f0e90=True  spend_site=3/3
+  facility branch 0x4efa2c reachable= 886  stamp_0x4f0e90=False  spend_site=3/0
+
+TABLE 2  the stamp block's door
+  preds(0x4f0e90) = ['0x4f0d94']
+  preds(0x4f0ca1) = ['0x4f0b80']
+  0x4f0b7b  mov    eax,DWORD PTR [ebp-0x30]
+  0x4f0b7e  test   eax,eax
+  0x4f0b80  jg     0x4f0ca1
+  0x4f0ec0  or     BYTE PTR [eax],cl
+  writes to [ebp-0x30] anywhere in the function: ['0x4ef8a4']
+  of those reachable from the facility branch: none
+
+TABLE 3  the two spend sites (both on ds:0x8f0d60 + 0x40)
+  facility 0x4efed8  mov    esi,DWORD PTR [ecx+0x40]
+  facility 0x4efedb  sub    esi,edi
+  facility 0x4efedd  mov    DWORD PTR [ecx+0x40],esi
+  unit     0x4f0ca1  mov    esi,DWORD PTR [edx+0x40]
+  unit     0x4f0ca4  sub    esi,edi
+  unit     0x4f0ca6  mov    DWORD PTR [edx+0x40],esi
+
+TABLE 4  the model scored on the six recorded boundaries
+  base 4  Sparta Command         head=321   BIGITEM   item=321  mapper=(40,2) -> no stamp    gain=[4]    loss=[1]     0200000000000000 -> 1000000000000000
+       predicted window 0200000000000000   recorded 1000000000000000  
+  base 7  Morgan Energy Monopoly head=-2    UNIT      item=2    mapper=(0,4) -> stamp       gain=[2]    loss=[]      8800000100000000 -> 8c00000100000000
+       predicted window 8c00000100000000   recorded 8c00000100000000  
+  base 3  Morgan Industries      head=-8    UNIT      item=8    mapper=(1,1) -> stamp       gain=[8]    loss=[]      8e00000000000000 -> 8e01000000000000
+       predicted window 8e01000000000000   recorded 8e01000000000000  
+  base 14 Virgin Soil            head=2     FACILITY  item=2    mapper=(0,4) -> no stamp    gain=[4]    loss=[27]    0000000800000000 -> 1000000000000000
+       predicted window 0000000800000000   recorded 1000000000000000  
+  base 13 Morgan Processing      head=-3    UNIT      item=3    mapper=(0,8) -> stamp       gain=[3]    loss=[]      0000000000000000 -> 0800000000000000
+       predicted window 0800000000000000   recorded 0800000000000000  
+  base 7  Morgan Energy Monopoly head=-6    UNIT      item=6    mapper=(0,64) -> stamp       gain=[6]    loss=[]      8c00000100000000 -> cc00000100000000
+       predicted window cc00000100000000   recorded cc00000100000000  
+  unit 4/4   facility-range 2/2   model 6/6
+
+TABLE 5  the Virgin Soil anchor
+  base 14 Virgin Soil head=2 FACILITY item=2  bitmap 0000000800000000 -> 1000000000000000  gain=[4] loss=[27]  st 2 -> 0
+  a stamp of item 2 would predict 0400000800000000
+
+TABLE 6  rivals on the same printed numbers
+  R1 the OR is shared (every head stamps)   -> windows match 4/6; Virgin Soil predicts 0400000800000000
+  R2 an off-map mapper refusal explains it  -> rows it can refuse 1/6; Virgin Soil off-map=False
+  R3 the stamp reads the AFTER-pop head     -> bit in gains 0/6
+
+GATES
+ok   G1 the census is the WHOLE function: 3164 instructions, span 0x4ef6d0..0x4f26da == Ghidra size 12298  digest=f8442b847c68016d
+ok   G2 the CFG is BUILT at instruction granularity - 3164 nodes, 3482 edges, 0 external targets, 0 indirect jumps: the graph is CLOSED, so reachability is complete  digest=e1304fc33c09e349
+ok   G3 reachability: stamp 0x4f0e90 reached from entry (3164) and unit (3045), NOT from facility (886)  digest=cead75d5e443057d
+ok   G4 the stamp has one entry edge (0x4f0d94) inside a block with one entry (0x4f0b80 jg), and that branch tests [ebp-0x30]
+ok   G5 [ebp-0x30] is written at ONE site (['0x4ef8a4']), in the unit branch and nowhere in the facility region
+ok   G6 the two legs SPEND at different sites: facility 0x4efed8/0x4efedb/0x4efedd, unit 0x4f0ca1/0x4f0ca4/0x4f0ca6
+ok   G7 the model scores 6/6: unit 4/4 stamp the mapper bit, facility-range 2/2 do not  digest=6000c87277dcb198
+ok   G8 Virgin Soil: facility head 2, 0000000800000000 -> 1000000000000000 (bit 2 absent, bit 4 gained, 27 lost), st 2 -> 0, a stamp would predict 0400000800000000
+ok   G9 rivals FAIL: shared OR matches 4/6 windows, an off-map refusal covers 1/6 rows (Virgin Soil in-window), after-pop head 0/6
+ok   G10 the OR instruction itself is unreachable from the facility entry, reachable from the unit entry, and reads as `or BYTE PTR [eax],cl`
+ok   G11 the facility region writes [ebp-0x20] at 0x4efed1 and the unit block's read of it (0x4f0d8f) is unreachable from the facility entry
+ok   G12 the CFG is CLOSED, two passes agree, every anchor is pinned to a literal  census=f8442b847c68016d cfg=e1304fc33c09e349 reach=cead75d5e443057d score=6000c87277dcb198 vs=462f20b2da918c6b
+
+DIGEST f8442b847c68016d gates=12
+PASS B33: 12/12 gates
+ANCHORS census=f8442b847c68016d cfg=e1304fc33c09e349 reach=cead75d5e443057d score=6000c87277dcb198 vs=462f20b2da918c6b

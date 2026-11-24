@@ -1,0 +1,12 @@
+B33 MUTANT HARNESS (baseline gates: 12, all green=True)
+ok   M1   the single write of [ebp-0x30] renamed to [ebp-0x34] reddens G5  also=G12
+ok   M2   0x4f0d94 re-pointed past the stamp block (a second door) reddens G4  also=G3,G10,G12
+ok   M3   the facility path re-pointed into the unit spend+stamp block reddens G3  also=G4,G10,G11,G12
+ok   M4   one unit completion relabelled FACILITY (the score's premise) reddens G7  also=-
+ok   M5   the Virgin Soil after-window doctored to the stamp prediction reddens G8  also=G9
+ok   M6   the Virgin Soil gain set given the head's own bit reddens G7  also=G8
+ok   M7   Virgin Soil's mapper byte moved off the eight-byte map reddens G9  also=-
+ok   M8   the after-pop head counted as a hit    reddens G9  also=-
+ok   M9   the census truncated by one instruction reddens G1  also=G12
+ok   M10  a branch target outside the function span (open CFG) reddens G2  also=G12
+MUTANTS 10/10
