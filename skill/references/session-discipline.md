@@ -453,6 +453,27 @@ build track. Protocol, validated end to end:
   and fix its pointer. Archive-section numbers (`§trim-s<N>`) are a shared namespace — check which
   the other chain took before naming yours; a duplicate block is measured (size + sha1) and deleted,
   never guessed away.
+- **Assign each lane's milestone ID from the PARENT, one per lane, in the run context.** Lanes that
+  each "take the next number" collide: two lanes both claimed M348 and their branches differed only
+  by case (`milestone/m348` vs `milestone/M348`), so both PRs existed and both registry blocks would
+  have carried the same `## M348` heading. Put `Your milestone ID is exactly M<n> — do not pick
+  another` plus `your branch is milestone/m<n>` in every transient footing, and allocate N+1, N+2,
+  N+3 per round. When a collision happens anyway, the FIRST-OPENED PR owns the ID and the other lane
+  is a bounded finish unit: commit its pending review edits, `git mv scripts/<id>_* scripts/<newid>_*`
+  plus the evidence files, sed the ID inside contents/NAMED heading/session entry/NEXT_PROMPT result
+  line, re-run its acceptance from the WORKING TREE (the pre-rename numbers no longer describe the
+  tree), push a NEW branch and PR titled with the new ID, close the old PR as superseded, and merge
+  only on a verified CI PASS. Never merge the duplicate and promise to fix the numbers later — two
+  `## M<n>` headings make every later grep ambiguous.
+  **The BUILD lane is the exception**: its ID comes from `track_mode.py` (`B<n>`), so assign M-numbers
+  only to the analysis lanes and never let a build fire take an M-number (or an analysis fire take a
+  B-number). Read `track_mode.py` immediately before allocating the round's IDs.
+- **Only the PRIMARY checkout may sit on `main`.** A linked worktree left on `main` blocks the
+  primary: `git checkout main` there fails with `fatal: 'main' is already used by worktree at
+  <primary>`, and the next `milestone.py start` fails with it. Before each round park every
+  non-primary lane on `git checkout --detach origin/main` (or its own milestone branch); `git
+  worktree list` should show `main` in the branch column exactly once. The lane that owns the primary
+  also owns `main` and the `sim/` build track; every other lane works detached/worktree-local.
 - **Landing**: rebase onto origin/main before merge; force-push is blocked in cron → absorption
   merge (hermes-agent background-systems.md §Cron-mode git constraints). Keep BOTH chains' doc
   sections through every conflict.
@@ -517,6 +538,10 @@ build track. Protocol, validated end to end:
   state, the notice is a delayed event.
   On a metered endpoint, measure the plan windows per round (hermes-agent
   `references/subscription-usage.md`) and stop early when the binding gauge passes the user's ceiling.
+  **Close the batch with a SET SUMMARY, not just the last round**: every unit merged (ID, PR, commit,
+  acceptance line), which questions actually closed, what remains OPEN, velocity and failure count,
+  doc-cap trajectory, and total tokens/cost/gauge movement from the batch baseline. A per-round table
+  is not a set summary — the user asks for the arc, and it is the one item a long batch forgets.
 
 ## Taking over a cut-off fire (s287, B24)
 
