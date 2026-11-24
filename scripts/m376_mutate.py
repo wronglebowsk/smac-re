@@ -48,6 +48,8 @@ MUT = [
     ("MU22", "code", "0x4a66d9|imul   eax,eax,0x2c", "G4"),
     ("MU23", "code", "0x4a66ff|mov    ecx,DWORD PTR [edx+eax*4+0x92ba98]", "G4"),
     ("MU24", "code", "0x4a667b|cmp    DWORD PTR [edx+eax*4+0x927b18],0x0", "G3"),
+    # file lever
+    ("MU25", "alpha", "factions=11", "G5"),
 ]
 
 
@@ -77,7 +79,18 @@ def main():
             dst = os.path.join(tmpd, "alpha.txt")
             lines = open(BASE, "r", errors="replace").read().splitlines()
             i = lines.index("#SOCIO")
-            lines[i + 5] = lines[i + 5].replace("++POLICE", "--POLICE")
+            if payload.startswith("factions="):
+                n = int(payload.split("=")[1])
+                f = [k for k, l in enumerate(lines) if l.strip().startswith("#FACTIONS")][0]
+                e = f + 1
+                while e < len(lines) and lines[e].strip() and not lines[e].strip().startswith("#"):
+                    e += 1
+                rows = lines[f + 1:e]
+                while len(rows) < n:
+                    rows.append("X%d, X%d" % (len(rows), len(rows)))
+                lines[f + 1:e] = rows[:n]
+            else:
+                lines[i + 5] = lines[i + 5].replace("++POLICE", "--POLICE")
             open(dst, "w").write("\n".join(lines) + "\n")
             env["M376_ALPHA"] = dst
         rc2, red2 = run(env)

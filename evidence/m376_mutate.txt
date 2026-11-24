@@ -23,5 +23,6 @@ MU21  2                                                    expect=G3   rc=1 red=
 MU22  0x4a66d9|imul   eax,eax,0x2c                         expect=G4   rc=1 red=G4         KILLED
 MU23  0x4a66ff|mov    ecx,DWORD PTR [edx+eax*4+0x92ba98]   expect=G4   rc=1 red=G4         KILLED
 MU24  0x4a667b|cmp    DWORD PTR [edx+eax*4+0x927b18],0x0   expect=G3   rc=1 red=G3         KILLED
+MU25  factions=11                                          expect=G5   rc=1 red=G5         KILLED
 
-HARNESS PASS 24/24 killed, cov=True G1-G4, 1 declared NO-OP (G0 anchors)
+HARNESS PASS 25/25 killed, cov=True G1-G4, 1 declared NO-OP (G0 anchors)

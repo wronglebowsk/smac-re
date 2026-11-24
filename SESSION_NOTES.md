@@ -716,8 +716,8 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 - **ACCEPT** `python3 -u scripts/m376_socio_grid.py` -> **`PASS M376: 27/27`** `0d23d4d394dde133`
   (`evidence/m376_socio_grid.txt:105`; re-run identical, `evidence/m376_twice.txt`, sha1
-  `09c186c4e0cabfe5`); `scripts/m376_mutate.py` **24/24 killed, cov G1-G4**
-  (`evidence/m376_mutate.txt:27`). Static only, zero box.
+  `09c186c4e0cabfe5`); `scripts/m376_mutate.py` **25/25 killed, cov G1-G4**
+  (`evidence/m376_mutate.txt:28`). Static only, zero box.
 - **GEOMETRY** (a tiny insn emulator over 0x5a11ca..f3): cell = `0x92babc + 0xd4*a + 0x2c*b`;
   cell = **11 dwords**; 4 rows / 4 cells; row header 0x24 (name, 4 tech, 4 names).
 - **SOURCE** `FUN_0057a070` parses alpha.txt `#SOCIO` (line 746 = the 11 keywords

@@ -36,6 +36,13 @@ Gates
       Future Society choice (row 3 is unreachable by the consumer).
 
 M376_PATCH='addr|new text;...'  rewrites one instruction line (mutation lever).
+The gated instruction lines (each named by a mutant in scripts/m376_mutate.py):
+  0x5a11f3 / 0x5a11e3 / 0x5a11ea  cell address, row coefficient, cell coefficient
+  0x5a118e / 0x5a1193 / 0x5a119d  a modulus, its idiv, b modulus
+  0x5a11a7 / 0x5a1160 / 0x5a1203 / 0x52b822 / 0x57ab94 / 0x52b82c / 0x52b84d
+  0x5a1213 / 0x5a120d / 0x5a1171 / 0x5a11fd
+  0x4a66d9 / 0x4a66ff / 0x4a667b
+  0x57abe0 / 0x57abf8
 M376_ALGO=n  1 = flip the sign law ('-' counts +1); 2 = sample 4 rows.
 M376_ALPHA=<path>  alternate rule file.
 """
