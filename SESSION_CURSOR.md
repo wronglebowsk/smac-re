@@ -1,1 +1,1 @@
-M358 | accept `python3 -u scripts/m358_row_layout.py` -> PASS 10/10 `1af1dcb6fcd4a4b6` (`evidence/m358_row_layout.txt:98`), harness 15/16 NO-OP MU13 | MERGED #386 `19393db` | next: (x6) pref-block writers; B34 = facility `+0x8c` / the 24-record 0x1c table
+B34 | accept `python3 -u -m sim.facstamp` -> PASS 10/10 `5296fdad6d26caa3` (`evidence/b34_facstamp.txt:99`), harness 13/13 `c9b43904f9bcd028` (`evidence/b34_mutate.txt:16`) | MERGED #___ `___` (fill at merge) | next: (x6) pref-block writers; B35 = the grant family's caller (`FUN_0059ce10`'s 11 literal items)

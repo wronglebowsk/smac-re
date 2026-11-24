@@ -1293,3 +1293,56 @@ other OR sites `0x4e4528`/`0x4f3ebc`/`0x4f3f4c` are outside this function and th
 follow them); the meaning of the 52-byte `0x98adb8 + 0x34*i` row (`+2 == 8`, `+0x2` bit 2) the
 facility leg reads before its spend; which of the recorded losses is a raze/sale. No box time, no
 /proc, no gdb, no game-binary load.
+
+**B34 - WHERE a FACILITY completion stamps `+0x8c`: NOWHERE, proved twice - the leg
+contains no writer, and the game's own paid facility completions leave the bitmap byte-
+identical** (`sim/facstamp.py` = the run and its gates; s333 authors this rung from main
+`f80c01e`, as B14-B33 did). B33 walked the base screen's facility branch and found the
+shared OR `0x4f0ec0` unreachable from it, leaving M342's other setter sites
+(`0x4e4528` = the API `FUN_004e44f0`, `0x4f3ebc`/`0x4f3f4c` in Ghidra's unnamed
+`0x4f38xx-0x4f49xx` region) unexplained. This rung asks the DUMP and the RECORDED BYTES
+together: which writer can a completion reach, and does one fire when a facility is paid
+for? It censuses every `+0x8c` store in the whole dump, splits them into the three
+families (set/clear API, inline grant, whole-word COPY), and then scores the completion
+law on the 20-sample recorded run instead of asserting it.
+
+`python3 -u -m sim.facstamp` must print `PASS B34: 10/10 gates` (and `python3 -u -m
+sim.selftest --b34` only relays, so the two entry points cannot print different text) with:
+**G1** the census is the WHOLE dump - instruction and `call` counts printed, the 27 call
+sites of the set/clear API resolved to 8 host functions by ADDRESS RANGE (Ghidra index),
+a digest pinned; **G2** EVERY reference to the four bitmap bytes is classified (194 in this dump = 11 direct
+stores + 183 address loads, 9 `lea` and 174 `mov`-immediate, of which 10 feed a store through
+the register), so the census cannot be a `BYTE PTR`-only sample; the 21 stores then split into
+API 2 / GRANT 11 / SET 1 / COPY 7 with their addresses listed;
+**G3** the COMPLETION LEG is writer-free: the queue-pop `FUN_004ef5d0` has 0 references to
+`0x95da9c` and 0 API call sites, and the base screen `FUN_004ef6d0` - the pop's ONLY
+caller, MEASURED from the call sites - has 0 API calls and exactly two bitmap stores
+(`4f0d60 mov`, `4f0ec0 or`), both inside the unit-only blocks B33 walked (the copy at
+`4f0d60` is M342's miss: its lea-window was shorter than the distance to the store); **G4** the API's host set and the pop's host set are DISJOINT (set arithmetic on
+the printed tables), so no function both pops and stamps; **G5** the COPY family (a `mov`
+of the bitmap word, the only writer that can express a LOSS) is exactly seven sites: two in
+`FUN_0041cf20`, one in the base screen (`4f0d60`), three in the unnamed `0x4f3xxx` region
+(`4f38bb`/`4f3ebc`/`4f3f4c`) and one in the charge routine `FUN_004f47f0`;
+**G6** on the recorded run, the paid boundaries with a FACILITY head (0 < head < 0x40)
+are printed with their before/after bitmaps - every one is UNCHANGED, so the completion
+model (delta `{}`) scores 6/6 and the "head stamps its bit" rival 0/6, and the run is
+scored for VACUITY too: 3 of the 6 already had the completed bit set (the stamp would be
+unobservable there), 3 are DISCRIMINATING; **G7** the five
+gains at PAID boundaries all have a unit-encoded before-head (outside the facility
+window), so no completion can explain them - they are attributed to G2/G5's grant/copy
+families, and the one no-pay boundary with both a gain and a loss (Virgin Soil) is the
+COPY signature 1/1; **G8** the negative control is LIVE, not vacuous: replaying the six
+facility completions through `sim.facoracle`'s transaction WITH the stamp attached
+produces bytes that differ from the recorded ones at exactly the three discriminating
+completions (1 byte each: Korolev Center `[8]`->`[2,8]`, Virgin Soil s1/s9 `[27]`->`[2,27]`),
+so the rival is falsified on BYTES rather than on a count; **G9** the model's OWN coverage is printed as
+a defect - it explains 6/6 facility completions and 0/5 gains, and a model that scored
+5/5 would be one that stamps where the game does not; **G10** every anchor is a literal
+(insn count, call count, the store-census digest, the run digest, the six completion heads
+`[1,1,1,2,2,2]`) and the recorded-run score is recomputed on a SECOND fresh decode of the
+trace, whose digest must equal the first, and each gate has a named mutant in
+`scripts/b34_mutate.py`.
+DECLARED UNMODELED: which of the grant/copy call sites actually fired in the recorded run
+(the trace records no call stack - the attribution is family-level, not site-level); the
+role of `FUN_0059ce10`'s 11 literal-item sites; whether a facility completion ever stamps
+under a different rule (scenario grant, capture). No box time, no /proc, no gdb.

@@ -622,3 +622,23 @@ whether a facility completion stamps at all.
 - **ROTATION**: `scripts/m362_named_rotate.py` moved M250-M254/M277/M326/M246 VERBATIM to
   `docs/named-archive-m362-rows.md` (sha1 4/4, 2nd run a no-op); NAMED 246,262 B.
 - **OPEN**: the 13 labels (0x997b20 heap); bit NOUNS (chain-2 lane); 0x94d5dc.
+## Session 333-chain1 (2026-11-24) — B34: a FACILITY completion stamps NOTHING (no writer on the leg; the recorded bytes falsify the stamp at 3 discriminating completions)
+
+`python3 -u -m sim.facstamp` -> **`PASS B34: 10/10 gates  5296fdad6d26caa3`** (`evidence/b34_facstamp.txt:99`,
+re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Answer to B33's gap: nowhere.
+- **21 stores, and M342's 20 is SHORT BY ONE** (`:14,:88`): all 194 bitmap references are classified
+  (11 direct + 183 address loads: 9 `lea`, 174 `mov`-imm, 10 feeding a store) -> API 2 / GRANT 11 /
+  SET 1 / COPY 7. The miss is the screen's byte COPY at `4f0d60` (`mov [esi+eax*1],dl`); M342's lea-window was too
+  short to reach it. COPY is the only LOSS-capable family.
+- **Leg is writer-free, measured**: pop `FUN_004ef5d0` 88 insns, 0 bitmap refs, 0 API calls; the base screen
+  (its only caller) 0 API calls, its only bitmap store the unit-only OR. API hosts ∩ pop hosts = ∅ (`:87-88`).
+- **6 facility completions in the recorded run** (`:54-59`), not B31's 1: Korolev r0, Virgin Soil s1/s9 (head 2),
+  New Jerusalem s1/s9 + Training Camp s15 (head 1). PAY = `st+1 >= 9` — testing `st >= price` misses Korolev.
+- **3 discriminate, 3 are vacuous (bit already set)**; all 3 discriminating falsify the stamp ON BYTES
+  (`:70-76,:92`): model `[8]`→`[2,8]` (Korolev), `[27]`→`[2,27]` (Virgin Soil) vs the recording's no-bit-2.
+- **The 5 gains are not completions** (`:61-67`): before-heads 321/-2/-8/-3/-6 (unit-encoded); Virgin Soil s11
+  (gain 4 + LOSS 27, no pay) is the COPY signature.
+- **B31 QUALIFIED**: its single negative is real but is 3 boundaries, and it did not flag the vacuous rows.
+- **Pitfalls**: `lea`-form writers need register-follow (`mov BYTE PTR [eax],cl` has no bitmap constant — a
+  constant-only grep finds 11 of 20); `4f49e1` is a `mov` here (M342 said `and`); head 0 = empty queue, not item 0.
+- NAMED 247,680 → 245,677 B by rotating `## B22` verbatim (`scripts/b34_named_rotate.py`, sha1 `524f63de`).
