@@ -27,7 +27,7 @@ box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B
 branch's `0x4ef8a4`); facility heads spend at `0x4efed8` and never stamp (`## B33`). **B34**:
 author its rung in `BUILD_SPINE.md` BEFORE probing - does a facility completion stamp `+0x8c`
 anywhere (0x4f3ebc/0x4f3f4c)? The 52-byte row is ANSWERED (`## M358`). **DOC CAP (s332): NAMED
-246,657/250,000 - rotate a settled block before the next add.**
+246,657/250,000 - rotate before the next add.**
 
 ## THE LEDGER
 
