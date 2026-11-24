@@ -1,0 +1,18 @@
+baseline: PASS gates=8 digest=1ae1563d47d0039e
+MU1   FAIL declared=measured=['G2'] digest=3d01b53226c2c4be
+MU2   FAIL declared=measured=['G1', 'G3'] digest=e47020697c21e76e
+MU3   FAIL declared=measured=['G3'] digest=52193f88fb7ac435
+MU4   FAIL declared=measured=['G4'] digest=fda72de145d2ea39
+MU5   FAIL declared=measured=['G4'] digest=feb32e7b40d5a9aa
+MU6   FAIL declared=measured=['G5'] digest=686aac83abb0c0db
+MU7   FAIL declared=measured=['G5', 'G8'] digest=4e38593ec8af411d
+MU8   FAIL declared=measured=['G6'] digest=5fe8c723747cfd7f
+MU9   FAIL declared=measured=['G6'] digest=075016135b7309a0
+MU10  FAIL declared=measured=['G7'] digest=bef2bee45d7e1c2f
+MU11  FAIL declared=measured=['G1'] digest=02009f014d07d42f
+MU12  FAIL declared=measured=['G1'] digest=02009f014d07d42f
+ALG1  FAIL declared=measured=['G1'] digest=02009f014d07d42f
+MU13  FAIL declared=measured=['G4'] digest=368399b36c3f12d7
+MU14  FAIL declared=measured=['G7'] digest=6c940e4ebc4b3e24
+MU15  FAIL declared=measured=['G3'] digest=52193f88fb7ac435
+HARNESS PASS: 16/16 scored, 0 MISMATCH, 0 CRASH, digest(rows)=56455db0eadbedd7

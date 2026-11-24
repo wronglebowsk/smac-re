@@ -301,6 +301,47 @@ printers of measured values need the same None-guard as the gate.
   MU12 table base, MU13 chain slot, MU14 SECOND alias load INSERTED; the digest hashes PASS bits.
 - PITFALL: displacement-keyed censuses miss strength-reduced forms; an O(n) replay per site needs
   a bisect index (180 s).
+## Session 319-chain2 (2026-11-24) — M338: the last two #DIFF readers' index provenance
+
+- **ANSWER (pick (x6), final clause):** the seven scaled loads of `0x94d2ac` are now all
+  sourced. `0x57c606` (`mov eax,[esi*4+0x94d2ac]`, FUN_0057c550) is a UI list builder: the
+  index is the loop counter `esi` — `xor esi,esi` at 0x57c604, the body's only esi write is
+  `inc esi` 0x57c6ca, `cmp esi,6`/`jl 0x57c606` -> 0..5, one label per row.
+- `0x44a1c8` (FUN_004495e0) indexes with `dl = BYTE[eax+0x20]` (`xor edx,edx` + `mov dl`,
+  0 instructions between the load and the index). `eax = [ebp-0x1c]` is a record of the
+  **35 x 0x8c buffer at `0x983a10`**, which is **`hallfame.jhh`**: PE strings `rb`@0x689f3c /
+  `hallfame.jhh`@0x689f40, `push 0x1324` read, zero-init `5 x 0x8c` per `0x2bc` to `0x984d34`;
+  (0x984d34-0x983a10)/0x8c = 35 and 35*0x8c = 0x1324. The record index decodes as
+  `(8-1)*(1+4)*4 = 0x8c`.
+- **field +0x20 has exactly two writers** in the module: 0x44b15b fills it from
+  `BYTE[0x94d438 + 8380*faction]` (fold `shl 6/add/lea*2/shl 4/sub` decoded = 0x20bc; cell =
+  faction base 0x94d430 + 8) and 0x44b612 copies it struct-to-struct. `block+8` is the faction's
+  **EFFECTIVE DIFFICULTY**: creation 0x59eed6 = `ds:0x985aec` unless the `ds:0x985b10` bit
+  selects imm 3; save-load 0x57ef57 stores the save's byte through the same 8380 fold. So the
+  reader prints the difficulty NAME of a hall-of-fame entry.
+- ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8 gates`, digest
+  `1ae1563d47d0039e`, 2 runs `diff`-identical (sha256 `288a0edc`; `evidence/m338_diff_readers.txt`
+  + `_rerun.txt`, 67 lines). Harness `python3 -u scripts/m338_mutate.py` -> **16/16 scored, 0
+  MISMATCH, 0 CRASH**, digest `56455db0eadbedd7` (now hashes the MEASURED rows, not the label
+  map), incl. REMOVAL/INSERTION/ALGORITHM and the review's MU13-MU15; `--selftest` 3/3
+  (`evidence/m338_mutate_selftest.txt:4`).
+- **REVIEW (#357, Strata): 10 findings (3 P1/7 P2), all accepted, none dismissed — fixed IN the
+  gates**: G4 now asserts the store's SOURCE is eax and no eax clobber before it (MU13); G6's
+  module is MEASURED as the 7 functions addressing 0x983a10 (not a typed window); G7 asserts the
+  exact 6-instruction branch incl. `jne 0x59eed6` (MU14); G2 reads the loader's base/step/bound
+  instead of constants; G5 asserts the fopen/read windows and the exact zero-init sequence; G3
+  asserts the full window and no eax clobber (MU15); the esi write classifier is broad
+  (lea/pop/xchg/cmov); the harness digest hashes measured outcomes.
+- **OPEN:** the +0x20 index is UNCLAMPED (unlike 0x486f40's `FUN_00423af0(0,6)`) — a HoF record
+  byte >=6 would read past `0x94d2c4`; whether the INI reader admits a pref >=6 is still open
+  (M336). Also OPEN: is 0x44a1c8's big function the HoF screen itself or another list view.
+- **Docs:** NAMED cap 247,758 -> **245,265** by rotating `## M326` VERBATIM to
+  `docs/named-archive-m338-rows.md:7` (sha1 `a882ee40851d`, pinned in
+  `scripts/m338_named_rotate.py --verify`), then +M338 -> 248,542. NEXT_PROMPT got one appended
+  result line (chain 1's file is append-only for chain 2).
+- PITFALL: a fold decoder keyed on the exact disassembly string crashes on the mutant that
+  changes one immediate — decode the immediates and let the gate FAIL instead of asserting the
+  text shape.
 
 ## Session 319-chain1 (2026-11-24) — B29: the item table DERIVED through M337's loader law
 

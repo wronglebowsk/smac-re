@@ -1,0 +1,67 @@
+== G1 table census: 7 scaled loads of 0x94d2ac ==
+   0x44a1c8 eax,DWORD PTR [edx*4+0x94d2ac]
+   0x484cc9 eax,DWORD PTR [edx*4+0x94d2ac]
+   0x485426 eax,DWORD PTR [edx*4+0x94d2ac]
+   0x48678f eax,DWORD PTR [edx*4+0x94d2ac]
+   0x486f40 ecx,DWORD PTR [eax*4+0x94d2ac]
+   0x57c606 eax,DWORD PTR [esi*4+0x94d2ac]
+   0x599405 edx,DWORD PTR [ecx*4+0x94d2ac]
+   base materialisations: ['0x4ddafa', '0x57ac74']   stores: []
+   loader: mov esi,0x94d2ac @0x57ac74 ; bound cmp esi,0x94d2c4
+== G2 0x57c606: literal loop index ==
+   loader read from 0x57ac74/0x57ac85/0x57ac88: mov esi,0x94d2ac ; add esi,0x4 ; cmp esi,0x94d2c4 -> 6 rows
+   0x57c604 xor esi,esi
+   0x57c606 mov eax,DWORD PTR [esi*4+0x94d2ac]
+   esi definitions in body: ['0x57c6ca']   bound=6   back-edge=jl 0x57c606
+   rows: loader (end-base)/step = 6 == loop bound 6
+== G3 0x44a1c8: the index is BYTE[rec+0x20] ==
+   0x44a1b4 mov eax,DWORD PTR [ebp-0x1c]
+   0x44a1b7 xor edx,edx
+   0x44a1b9 mov BYTE PTR ds:0x997120,0x0
+   0x44a1c0 mov ecx,0x997b28
+   0x44a1c5 mov dl,BYTE PTR [eax+0x20]
+   0x44a1c8 mov eax,DWORD PTR [edx*4+0x94d2ac]
+   instructions between the byte load and the table load: 0   eax clobbers before it: []
+== G4 [ebp-0x1c] holds a 0x983a10 record ==
+   0x44979a lea eax,[ecx*8+0x0]
+   0x4497a1 sub eax,ecx
+   0x4497a3 lea edx,[eax+eax*4]
+   0x4497a6 mov cl,BYTE PTR [edx*4+0x983a10]
+   0x4497ad lea eax,[edx*4+0x983a10]
+   stores to [ebp-0x1c]: ['0x4497b7', '0x44aa33', '0x44acd1']   bracket crossings: []
+   0x4497b7 DWORD PTR [ebp-0x1c],eax ; eax clobbers in (0x4497ad,0x4497b7): []
+   index math: edx = 35*ecx -> lea [edx*4+0x983a10] => stride 0x8c == 0x8c
+== G5 0x983a10 = the hallfame.jhh buffer ==
+   fopen window 0x44b694..: [('push', '0x689f3c'), ('push', '0x689f40'), ('call', '0x64c980')]
+   sub-checks: strs=True fopen=True rd=True zero=True sib=True
+   read window 0x44b6ca..: [('push', 'esi'), ('push', '0x1'), ('push', '0x1324'), ('push', '0x983a10'), ('mov', 'DWORD PTR ds:0x753c9c,0x0'), ('call', '0x64cc00')]
+   PE strings: 'rb' 'hallfame.jhh'
+   zero-init 0x44b6ac: [('mov', 'eax,0x983a10'), ('mov', 'ecx,0x5'), ('mov', 'BYTE PTR [eax],0x0'), ('add', 'eax,0x8c'), ('dec', 'ecx'), ('jne', '0x44b6b6'), ('cmp', 'eax,0x984d34'), ('jl', '0x44b6b1')]
+   sibling FUN_0044adc0 nests 5 per 0x2bc: True
+   (0x984d34-0x983a10)/0x8c = 35 records; 35*0x8c = 0x1324
+== G6 the +0x20 field's writers ==
+   module = the 7 functions that address 0x983a10: ['0x4495e0', '0x44adc0', '0x44aeb0', '0x44b450', '0x44b690', '0x44b7b0', '0x44b7d0']
+   stores to [reg+0x20] in their union: ['0x44b15b', '0x44b612']  (scope: a store through a computed pointer outside them is not excluded)
+   fold: mov edx,eax ; shl edx,0x6 ; add edx,eax ; lea ecx,[eax+edx*2] ; shl ecx,0x4 ; sub ecx,eax -> coeff 8380 == 0x20bc
+   source cell 0x94d438 == faction base 0x94d430 + 8
+   copy: 0x44b60f cl,BYTE PTR [edi+0x20] / 0x44b612 BYTE PTR [esi+0x20],cl
+== G7 0x94d438 = the faction's effective difficulty ==
+   creation 0x59eec3..0x59eed6: [('mov', 'al,ds:0x985b10'), ('test', 'dl,al'), ('mov', 'eax,ds:0x985aec'), ('jne', '0x59eed6'), ('mov', 'eax,0x3'), ('mov', 'DWORD PTR [esi+0x94d438],eax')]
+   save-load 0x57ef33..0x57ef57 ecx chain=[('mov', 'ecx,eax'), ('shl', 'ecx,0x6'), ('add', 'ecx,eax'), ('lea', 'ecx,[eax+ecx*2]'), ('shl', 'ecx,0x4'), ('sub', 'ecx,eax')] -> 8380 ; store DWORD PTR [ecx*4+0x94d438],edx
+== G8 rivals, measured ==
+   R1 'index is ds:0x985aec': loads of 0x985aec in the 0x44a1b4..0x44a1c8
+      chain: 0 (the chain has exactly one load: BYTE[eax+0x20])
+   R2 'buffer = faction array': decoded buffer stride 0x8c (35 recs, 0x1324 bytes) vs
+      decoded faction stride 8380 -> different arrays
+   R3 '0x57c606 index stored': instructions between xor esi,esi and the load: []
+
+G1   PASS loads==declared=True bases=['0x4ddafa', '0x57ac74'] stores=[]
+G2   PASS pre=xor esi,esi body-defs=['0x57c6ca'] bound=6 rows=6
+G3   PASS window exact=True disp=0x94d2ac gap=0
+G4   PASS slots=['0x4497b7', '0x44aa33', '0x44acd1'] cross=[] stride=140 base=eax,[edx*4+0x983a10]
+G5   PASS file='hallfame.jhh' size=0x1324 count=35
+G6   PASS writers=['0x44b15b', '0x44b612'] fold=8380 cell=0x94d438
+G7   PASS creation=[('mov', 'al,ds:0x985b10'), ('test', 'dl,al'), ('mov', 'eax,ds:0x985aec'), ('jne', '0x59eed6'), ('mov', 'eax,0x3'), ('mov', 'DWORD PTR [esi+0x94d438],eax')] fold=8380 store=DWORD PTR [ecx*4+0x94d438],edx
+G8   PASS r1_refs=0 strides=('0x8c', '0x20bc') r3=[]
+digest=1ae1563d47d0039e gates=8 pass=8
+PASS M338: 8/8 gates
