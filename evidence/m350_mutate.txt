@@ -1,0 +1,36 @@
+M350 mutation harness — 15 mutants, 2 no-ops
+  MU1   KILL G1 | Difficulty's key push swapped to the Map Type string
+        [FAIL] G1 key 0x692724 (pushed 0x58e8a1) resolves to 'Map Type' in the PE
+  MU2   KILL G1 | the Map Type store redirected into Top Menu (cell set no longer 11)
+        [FAIL] G1 store 0x58e922 is `mov    ds:0x92bdf8,eax` in FUN_0058e7f0
+  MU3   KILL G2 | the Custom World loop bound collapsed to 0 iterations
+        [FAIL] G2 the array loop is `esi=0x92bf18 ; add 4 ; cmp 0x92bf34 ; jl`
+  MU4   KILL G2 | the Custom World pointer never advances (7 stores -> 1)
+        [FAIL] G2 the array loop is `esi=0x92bf18 ; add 4 ; cmp 0x92bf34 ; jl`
+  MU5   KILL G2 | ALGO 1: the pointer store is not counted as a store
+        [FAIL] G2 ONE indirect store insn executes 7 times = (0x92bf34-0x92bf18)/4
+  MU6   KILL G4 | ALGO 2: the alias table is dropped -> the self-RMW sites read EXTERNAL
+        [FAIL] G4 self-RMW sites == declared ['0x5a0ff2', '0x5a1006']
+  MU7   KILL G4 | ALGO 3: no ret/jmp stop + 400-insn window -> TAIL-NONE becomes COMMIT
+        [FAIL] G4 verdict split == declared {'COMMIT': 24, 'TAIL-NONE': 9}
+  MU8   KILL G3 | a Faction co-ref re-pointed at Difficulty (per-cell census wrong)
+        [FAIL] G3 per-cell total refs == the declared census
+  MU9   KILL G4 | the PERSIST call after the Laptop commit deleted
+        [FAIL] G4 verdict split == declared {'COMMIT': 24, 'TAIL-NONE': 9}
+  MU10  KILL G5 | the publisher's first target global moved off 0x985ab8
+        [FAIL] G5 the publisher map == declared 3 cells -> 3 globals
+  MU11  KILL G3 | the Custom World[0] co-writer moved to slot 1
+        [FAIL] G3 Custom World[0] has exactly one co-writer [] (RMW + persist)
+  MU12  KILL G3 | a 0x92bde8 sentinel comparison re-pointed (materialised-address census wrong)
+        [FAIL] G3 the ONLY materialised scalar address is the 0x92bde8 sentinel (2 cmp bounds)
+  MU13  KILL G3 | one PE displacement byte changed: image and objdump now disagree (equivalence off)
+        [FAIL] G3 0 text refs are missing from the byte scan (text-only = 1)
+  MU14  KILL G6 | ALGO 4: the profile-read probe answers True for every site -> R2 decorative
+        [FAIL] G6 R2 REFUTED: none of the 11 functions that CO-STORE reads the profile (1089 of the image's 84 `call edi` sites are the loader's), and no loader store has an in-function value (0/11) while 28/33 co-stores do
+  MU15  KILL G6 | ALGO 5: calls made transparent -> the loader's parse-return stores count as locally defined
+        [FAIL] G6 R2 REFUTED: none of the 11 functions that CO-STORE reads the profile (0 of the image's 84 `call edi` sites are the loader's), and no loader store has an in-function value (11/11) while 33/33 co-stores do
+  NOOP0 OK   baseline green | {}
+  NOOP1 OK   baseline green | {'M350_ALGO': ''}
+
+MUTANTS: 15/15 killed, no-op green
+RESULT: PASS M350: harness 15/15

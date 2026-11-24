@@ -1030,20 +1030,20 @@ Acceptance `python3 -u scripts/m312_goal_callers.py` -> **27/27**, digest 8751c5
 | PUMPB ENTRY: FUN_005186b0 has 0 call/jmp refs and exactly ONE stored u32 (imm32 of `push 0x5186b0` at 0x51892d in FUN_00518820, from init FUN_00580260) | `evidence/m313_event_map.txt:20,21` + `evidence/m313_mutate.txt:22-24` | V census / INFERRED install |
 | CLOSED by M314: the 'dialog-family' census and FUN_004d3f70's band calls (exactly 1 band member, FUN_0050cab0 x2); GOAL game-meaning still open (M310) | `evidence/m314_tour_family.txt` | V |
 this stub governs: one line per claim. Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de426d127, x2 identical; `scripts/m313_mutate.py` -> **23/23**.
-## M314 (s282, STATIC, zero box; mutation-tested 27/27) - pick (i'') CLOSED: FUN_004c5d60 = the token-keyed tour/dialog dispatcher; its "family" = 4 coordinate-wrapper thunks + 4 tour drivers + 2 registration legs; the 0x4c2e90-0x4c3760 "thunks" = result handlers calling pane methods through the M269 +0x444 secondary delta
+## M314 (s282, STATIC, 27/27) — FUN_004c5d60 = the token-keyed tour/dialog dispatcher (pick (i'') CLOSED).
 
-| claim | evidence | conf |
+FULL BLOCK VERBATIM at `docs/named-archive-m350-rows.md:7` (sha1 `decdd34b21f8dadbb475a7648efdca8bcf00f4d6`); these stubs govern nothing the archive does not carry — one line per claim, labels cut mechanically, evidence and confidence copied:
+
+| claim (first clause) | evidence | conf |
 |---|---|---|
-| DISPATCHER: FUN_004c5d60 (1483 B) has EXACTLY 31 instr call sites (all imm32-pinned in PE bytes); token-keyed: 28 distinct tokens = EXACTLY 24 quoted literals (TOUR*/DEST*/SOC*/DRONE*/SOCWIN/DESWIN/TOURMENU...) + 2 named .data strings s_BASECONTROL_00689a18 / s_DRONERIOTS_00689a24 + 5 forwarded params (param_1 x1, param_2 x4) | `evidence/m314_tour_family.txt:1,2` + `evidence/m314_mutate.txt:2,3,4` | V |
-| WRAPPERS 0x4c2e90/f00/f70/fe0 (112 B each): exactly one call to its PINED producer {0x4c3f90, 0x4c3f20, 0x4c4000, 0x4c4070} (coord extractors - the two inspected = center + FUN_0045dbf0 clamp) then one dispatcher call; dialog `this` = DAT_007cdecc + [*DAT_007cdecc + 4] in all 4 = static main view + its secondary delta (M269 mechanism, M265 [desc+4]) | `evidence/m314_tour_family.txt:3,4` + `evidence/m314_mutate.txt:5,6` | V (census) / INFERRED (clamp role) |
-| RESULT HANDLERS 0x4c5c40/ca0/cf0: PINNED BYTES, entry-relative: cmp [ebp+0xc],0 at +0x9/+0x9/+0x29, je at +0xD/+0xD/+0x2D landing exactly 10 B before the single `add eax,0x444`, which sits 3 B after `mov eax,[ebp+0xc]`, then tail-call {0x4c1220, 0x54f790, 0x5510f0}; 0x4c5cf0's abs(c+2) = an 11-instruction sequence pinned to the byte incl. jl/jmp targets (Ghidra's -(c+2) understates); 0x4c1220 = tail to FUN_0046a610(this2,0,...); the two pane fns read the 304-B array via reg+disp 0x95da12 (reg = rec*0x130-2, stride INFERRED, M311); 0x444 = secondary delta, NOT a menu id (mid-run misread recorded and rejected) | `evidence/m314_tour_family.txt:5,6,7,8,9` + `evidence/m314_mutate.txt:7,8,9,10,11,12,13` | V (bytes) / INFERRED (pane roles) |
-| REGISTRATION: all 6 push-immediates of the 3 result thunks lie INSIDE the dispatcher, exactly 2 per thunk, 3+3 as two legs in the same order (pre-paint + post-paint); no push-immediate of pumpA exists image-wide (pumps reached by call only, 3 call sites) | `evidence/m314_tour_family.txt:10,11` + `evidence/m314_mutate.txt:14,15,16,17,25,26` | V |
-| TOUR DRIVERS 0x4c3050/0x4c32f0/0x4c3540/0x4c3760: continue-a-tour loops step a token sequence while the dispatcher result != 0 (result 0 ends the tour) | `evidence/m314_tour_family.txt` (A2 family window) | INFERRED (semantics) |
-| PUMP CORRECTION: pumpB FUN_00516b80 calls FUN_004d3f70 (activate_at_tile, off-band) directly at 0x517858 - 6th off-band callee; all 5 M313-cited pumpB off-band callees re-verified; pumpA FUN_00512b40 does NOT call it; activate_at_tile's ONLY band-member callee is FUN_0050cab0 (thunk owner) x2, all other 22 distinct callees off-band (lead's "15 band members" REFUTED); its 4 log tokens read real at .data: Console ACTIVATE / VEH ORDERS / Activate AWAKEN / Activate AWAKENING | `evidence/m314_tour_family.txt:12,13,14,15,16,17` + `evidence/m314_mutate.txt:18,19,20,21,22,23,24,27,28` | V |
+| DISPATCHER… | `evidence/m314_tour_family.txt:1,2` + `evidence/m314_mutate.txt:2,3,4` | V |
+| WRAPPERS 0x4c2e90/f00/f70/fe0 (112 B each)… | `evidence/m314_tour_family.txt:3,4` + `evidence/m314_mutate.txt:5,6` | V (census) / INFERRED (clamp role) |
+| RESULT HANDLERS 0x4c5c40/ca0/cf0… | `evidence/m314_tour_family.txt:5,6,7,8,9` + `evidence/m314_mutate.txt:7,8,9,10,11,12,13` | V (bytes) / INFERRED (pane roles) |
+| REGISTRATION… | `evidence/m314_tour_family.txt:10,11` + `evidence/m314_mutate.txt:14,15,16,17,25,26` | V |
+| TOUR DRIVERS 0x4c3050/0x4c32f0/0x4c3540/0x4c3760… | `evidence/m314_tour_family.txt` (A2 family window) | INFERRED (semantics) |
+| PUMP CORRECTION… | `evidence/m314_tour_family.txt:12,13,14,15,16,17` + `evidence/m314_mutate.txt:18,19,20,21,22,23,24,27,28` | V |
 
-Acceptance `python3 -u scripts/m314_tour_family.py` -> **18/18**, digest cf54a7ca907344c6, x2 identical; `scripts/m314_mutate.py` -> **27/27** (MERGED as #299, main e638772; the squash title's "20/20" is the pre-review harness - this line governs).
-REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k=full check name vs detail=short keys -> every lookup empty) -> now hashes name+verdict+detail; A4b pump check was decorative (`parse_text` keeps mnemonic separate, so the `^push 0x..$` regex on ops matched nothing -> `all([])` true) -> bare-operand push census + pumpA x3 / pumpB x1 call-site counts pinned; A3 claimed a `je` it never read -> now entry-relative pins (cmp +0x9/+0x9/+0x29, je +0xD/+0xD/+0x2D, je-target = add-10, mov = add-3); A3b inferred abs() from neg/sub COUNTS -> 11-instruction sequence pinned with jl/jmp targets; A6b de-duplicated owners so a 6th call in a listed fn stayed green -> 5 call-site addresses pinned; token row said 26 quoted where evidence said 24 quoted + 2 named + 5 forwarded -> A1b now pins the exact 24+2+5 breakdown (the 2 unexplained entries were `param_1`/`param_2` forwards). New mutants MU2b/MU5/MU5b/MU5c/MU5d/MU7j/MU9*/MU15b/MU18* cover each repaired fact.
-
+ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_mutate.py` 27/27 (merged #299).
 ## M321 (s297, hardened at review #324) - pick (vi) CLOSED: the 2 unnamed memo owners are base STATUS-ICON emitters; the arrival test gates base_array field 56 bit 6
 
 | claim | evidence | conf / mutant |
@@ -1487,6 +1487,17 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | key = `PRODUCEX`(0x68cfc4)+`Q`/`G` into 0x997120 (fallback `PRODUCE` 0x68cfe8) -> FUN_0048f100 @0x4f122a, which sets slot 0 = `[0x8f0d60]+0x13` @0x48f20f | `:29-44` | V MU7,MU8 |
 | consumer = Script.txt: `#PRODUCEXQ/XG` read slot 1 (`$ITEM1`, XQ also `$NUM1`), no slot-2; `#PRODUCE2/3` read `$<M1:$FACTIONADJ2>`; .rdata has 0 `$<` (only `$LINK<`) | `:46-55` | V MU9,MU10 |
 | RETRACTION: FUN_00636b1e = multiplayer Create Session dialog (labels 0x6998b0/c0/d4, strlen(slot1)<=0x10, jmp 0x63724e); M346's 'drainer' withdrawn | `:63-69` | V MU12 |
+
+
+## M350 (s326-chain3, ANALYSE, static; ACCEPT `scripts/m350_pref_cowriters.py` -> **`PASS M350: 6/6`** `23794d22`, x2 (`m350_pref_cowriters.txt:16` + `m350_x2.txt:4`); harness 15/15 (`m350_mutate.txt:36`)) — pref block = 11 scalars + a 7-dword `Custom World` list, END **0x92bf34**; co-writes are screen COMMITs. `:N` = a line of the ACCEPT's evidence file.
+| claim | ev | conf |
+|---|---|---|
+| FUN_0058e7f0 = the block's only profile-backed INITIALISER: 11 stores, 1/cell, eax from a 0x5ea484/93 parse with no eax write between; the 11 co-STORE fns make 0 profile reads (loader 18 of 84 image-wide). Parse consumed the PUSHED key = INFERRED | `:3-16,162` | V MU1,2,14,15 |
+| EXTENT: 7 dwords by POINTER (`esi=0x92bf18`,`add esi,4`,`cmp 0x92bf34`) under `Custom World`; writeback re-reads the loop; 0 disp refs -> why the old census ended at 0x92bf14 | `:54-69,157` | V MU3-5 |
+| 57 co-refs / 32 scalar co-stores in 14 scalar fns (10 store + 4 read-only); +1 at Custom World[0]; byte scan 88 == 82 text + 6 materialisations | `:70-95` | V MU8,11,12,13 |
+| LAW: 24 COMMIT / 9 TAIL-NONE of 33; in-function value 0/11 loader vs 28/33 co (5 call-fed); 31 outside, 2 self-RMW | `:96-133,160` | V MU6,7,9,15 |
+| publisher 0x58f3d0: 3 direction-checked, register-matched stores 0x92befc/bf00/bf04 -> 0x985ab8/abc/c0 | `:144-155` | V MU10 |
+| OPEN: who sets ds:0x6926ec; which API the writeback's 8 `call edi` use | `:162` | lead |
 
 ## M347 (s324-chain2, STATIC 12/12) — M341's OPEN `+0x59f4` WRITER: the `+0x5970` child selector; the page bound IS 7
 
