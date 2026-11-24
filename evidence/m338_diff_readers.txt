@@ -44,8 +44,8 @@
 == G8 rivals, measured ==
    R1 'index is ds:0x985aec': loads of 0x985aec in the 0x44a1b4..0x44a1c8
       chain: 0 (the chain has exactly one load: BYTE[eax+0x20])
-   R2 'buffer = faction array': buffer stride 0x8c (35 recs, 0x1324 bytes) vs
-      faction stride 0x20bc -> different arrays
+   R2 'buffer = faction array': decoded buffer stride 0x8c (35 recs, 0x1324 bytes) vs
+      decoded faction stride 8380 -> different arrays
    R3 '0x57c606 index stored': instructions between xor esi,esi and the load: []
 
 G1   PASS loads==declared=True bases=['0x4ddafa', '0x57ac74'] stores=[]

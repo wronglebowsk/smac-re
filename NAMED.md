@@ -1366,6 +1366,6 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | buffer = `hallfame.jhh`: PE strings `rb`@0x689f3c + name@0x689f40, read 0x1324 = 35x0x8c to 0x984d34, zero-init 5x0x8c per 0x2bc | `:32-35` | V MU6,MU7 |
 | field +0x20 has exactly 2 writers: 0x44b15b from `BYTE[0x94d438+8380*faction]` (fold decoded = 0x20bc, cell = faction base 0x94d430+8), 0x44b612 a struct copy | `:36-40` | V MU8,MU9 |
 | 0x94d438 = the faction's EFFECTIVE DIFFICULTY: create 0x59eed6 (`ds:0x985aec` unless `ds:0x985b10` bit -> imm 3), save-load 0x57ef57 (same 8380 fold) | `:41-43` | V MU10 |
-| rivals dead: index is NOT `ds:0x985aec` (0 refs in the chain); 0x983a10 is NOT the faction array (0x8c vs 0x20bc); 0x57c606's index is NOT stored | `:44-58` | V |
-| ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8`, digest `1ae1563d47d0039e`, 2 runs diff-identical (sha256 70f90b79); harness 13/13 `a0b1fb4d4b427324` (`evidence/m338_mutate.txt:15`), ST 3/3 | `:59-60` | V |
+| rivals dead: index is NOT `ds:0x985aec` (0 refs in the chain); 0x983a10 is NOT the faction array (decoded 0x8c vs 0x20bc); 0x57c606's index is NOT stored | `:44-58` | V MU7 |
+| ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8`, digest `1ae1563d47d0039e`, 2 runs diff-identical (sha256 32cca5f0); harness 13/13 `409b8389f1ee1401` (`evidence/m338_mutate.txt:15`), ST 3/3 | `:59-60` | V |
 | OPEN: the +0x20 index is UNCLAMPED — a HoF record byte >=6 reads past `0x94d2c4`; whether FUN_0058e7f0 admits a pref >=6 is still open (M336); whether 0x44a1c8's window is the HoF screen or another list | - | lead |

@@ -26,7 +26,7 @@ DECL = {
     "MU4": {"G4"},          # the record pointer goes to [ebp-0x20]
     "MU5": {"G4"},          # buffer base 0x983a10 -> 0x983a14
     "MU6": {"G5"},          # read size 0x1324 -> 0x1320
-    "MU7": {"G5"},          # zero-init stride 0x8c -> 0x90
+    "MU7": {"G5", "G8"},    # zero-init stride 0x8c -> 0x90 (G8 decodes this stride)
     "MU8": {"G6"},          # source cell 0x94d438 -> 0x94d43c
     "MU9": {"G6"},          # fold shl 4 -> shl 3 (8380 -> 4190)
     "MU10": {"G7"},         # AI default 3 -> 4

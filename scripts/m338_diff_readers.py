@@ -423,20 +423,22 @@ def main():
     # ---- G8 rivals --------------------------------------------------------
     g3chain = window(ins, 0x44A1B4, 0x44A1C8)
     r1 = [i for i in g3chain if "0x985aec" in i["ops"]]
-    r2 = (HOF_STRIDE, FACTION_STRIDE, n)
+    # both strides decoded from the instruction stream, not the script's constants
+    r2 = (imm(site(ins, 0x44B6B9)), coeff6, n)
     r3 = [i["a"] for i in window(ins, 0x57C605, 0x57C606) if re.match(r"^(mov|xor)", i["mn"])]
-    ok8 = (len(r1) == 0 and r2[0] != r2[1] and r2[0] * r2[2] == 0x1324
+    ok8 = (len(r1) == 0 and r2[0] is not None and r2[1] is not None
+           and r2[0] != r2[1] and r2[0] * r2[2] == 0x1324
            and r3 == [] and site(ins, 0x57C604)["ops"].replace(" ", "") == "esi,esi")
     print("== G8 rivals, measured ==")
     print("   R1 'index is ds:0x985aec': loads of 0x985aec in the 0x44a1b4..0x44a1c8")
     print("      chain: %d (the chain has exactly one load: BYTE[eax+0x20])" % len(r1))
-    print("   R2 'buffer = faction array': buffer stride 0x%x (%d recs, 0x%x bytes) vs"
-          % (r2[0], r2[2], r2[0] * r2[2]))
-    print("      faction stride 0x%x -> different arrays" % r2[1])
+    print("   R2 'buffer = faction array': decoded buffer stride 0x%x (%d recs, 0x%x bytes) vs"
+          % (r2[0], r2[2], (r2[0] or 0) * (r2[2] or 0)))
+    print("      decoded faction stride %s -> different arrays" % r2[1])
     print("   R3 '0x57c606 index stored': instructions between xor esi,esi and the load: %s"
           % r3)
     gate("G8", bool(ok8), "r1_refs=%d strides=%s r3=%s" %
-         (len(r1), (hex(r2[0]), hex(r2[1])), r3))
+         (len(r1), (hex(r2[0] or 0), hex(r2[1]) if r2[1] is not None else None), r3))
 
     # ---- verdict ----------------------------------------------------------
     blob = "\n".join("%s %s %s" % r for r in rows)

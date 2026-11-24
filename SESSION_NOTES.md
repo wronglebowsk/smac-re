@@ -337,9 +337,9 @@ printers of measured values need the same None-guard as the gate.
   selects imm 3; save-load 0x57ef57 stores the save's byte through the same 8380 fold. So the
   reader prints the difficulty NAME of a hall-of-fame entry.
 - ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8 gates`, digest
-  `1ae1563d47d0039e`, 2 runs `diff`-identical (sha256 `70f90b79`; `evidence/m338_diff_readers.txt`
+  `1ae1563d47d0039e`, 2 runs `diff`-identical (sha256 `32cca5f0`; `evidence/m338_diff_readers.txt`
   + `_rerun.txt`, 60 lines). Harness `python3 -u scripts/m338_mutate.py` -> **13/13 scored, 0
-  MISMATCH, 0 CRASH**, digest `a0b1fb4d4b427324`, incl. a REMOVAL, an INSERTION and an
+  MISMATCH, 0 CRASH**, digest `409b8389f1ee1401`, incl. a REMOVAL, an INSERTION and an
   ALGORITHM mutant; `--selftest` 3/3 (`evidence/m338_mutate_selftest.txt:4`).
 - **OPEN:** the +0x20 index is UNCLAMPED (unlike 0x486f40's `FUN_00423af0(0,6)`) — a HoF record
   byte >=6 would read past `0x94d2c4`; whether the INI reader admits a pref >=6 is still open
