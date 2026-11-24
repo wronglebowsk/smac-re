@@ -1736,6 +1736,14 @@ def run_b34(sav_path, results):
     return sfs.main([])
 
 
+def run_b36(sav_path, results):
+    """Rung B36: the faction-relations state machine - sim/relations.py authors every claim
+    (the dump-extracted writer program, the parity sweep, the classifier chain), so --b36 and
+    `python3 -m sim.relations` cannot print different text."""
+    from . import relations as srel
+    return srel.main([])
+
+
 def run_b35(sav_path, results):
     """Rung B35: WHO calls the grant family - sim/grantcall.py authors every claim (the site
     census, the item decode, the mapper law, the recorded births), so --b35 and
@@ -1960,6 +1968,9 @@ def main(argv=None):
     ap.add_argument("--b34", nargs="*", metavar="ARG",
                     help="rung B34: where a facility completion stamps +0x8c - the store census + "
                          "the recorded-run score (no input needed)")
+    ap.add_argument("--b36", nargs="*", metavar="ARG",
+                    help="rung B36: the faction-relations state machine - writer parity, "
+                         "classifier chain, action layer (no input needed)")
     ap.add_argument("--b35", nargs="*", metavar="ARG",
                     help="rung B35: who calls the grant family - the caller census, the 11/10 item "
                          "sites and the recorded births (no input needed)")
@@ -2069,6 +2080,8 @@ def main(argv=None):
         return run_b33(None, results)
     if args.b34 is not None:
         return run_b34(None, results)
+    if args.b36 is not None:
+        return run_b36(None, results)
     if args.b35 is not None:
         return run_b35(None, results)
     if args.b30 is not None:
