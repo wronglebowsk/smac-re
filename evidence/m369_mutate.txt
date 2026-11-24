@@ -1,0 +1,47 @@
+CONTROL  unbiased run: PASS (PASS M369: 23/23 gates digest 475fdceda961ef2d)
+M369 mutation harness - 39 mutants
+  mutant gate   verdict   claim
+  MU1    G4a    KILLED    the mask hits jump FORWARD to the accept label; flipped, the guard would disable the option
+  MU2    G3a    KILLED    the second ask is mask 8 (the reverse direction)
+  MU3    G3a    KILLED    the first ask is mask 8, not the war bit
+  MU4    G3b    KILLED    the block stores nothing into the relations dword
+  MU5    G4b    KILLED    the both-zero fall-through goes to 0x442cf5 (next candidate)
+  MU6    G4c    KILLED    the non-war option (case 7) pairs the same two mask-8 reads
+  MU7    G5a    KILLED    the 0x80000108 OR is gated by test bl,0x10
+  MU8    G5a    KILLED    the war write sets bit 8 through 0x80000108
+  MU9    G5b    KILLED    the 0x7 (peace) branch never sets 0x8
+  MU10   G5c    KILLED    8 is disjoint from the clear-branch masks (7/1/0x10/0x17)
+  MU11   G6a    KILLED    the second OR reloads the index from the other register (the reverse direction)
+  MU12   G6a    KILLED    the setter ORs twice, one per direction
+  MU13   G10a   KILLED    the declare path's setter call carries mask 0x10
+  MU14   G10a   KILLED    both exits of the declare path use mask 0x10
+  MU33   G5b    KILLED    the peace branch's clear mask is exactly 0x10|0x40|0x8000|0x10000|0x100000
+  MU34   G5c    KILLED    no and-mask in the setter clears bit 8 (0xfaeef378 keeps it)
+  MU35   G8a    KILLED    the pod's pinned site carries the EXACT mask 8, not merely some bit-8 mask
+  MU36   G3a    KILLED    the two mask-8 asks use the two different faction operands (one per direction)
+  MU37   G3b    KILLED    the store classifier sees a relations write if one is planted
+  MU38   G9a    KILLED    the pod's guard jne jumps PAST the setter call (so the set happens only where the bit was clear)
+  MU15   G2a    KILLED    id 0x8 -> element 875 -> 'Commlink'
+  MU16   G2b    KILLED    id 0x10 -> element 646 -> 'Vendetta' (a different noun)
+  MU17   G2a    KILLED    id 0x1 -> element 645 -> 'Pact'
+  MU18   R2     KILLED    the high-dword id 0x80000008 reads 'Fight to the death', not 0x8's text
+  MU19   G2a    KILLED    id 0x80002000 -> element 894 -> 'Fix current status as permanent'
+  MU20   G1a    KILLED    the first builder row's id is 8
+  MU21   G2a    KILLED    id 8 reads element 875 (0xdac/4)
+  MU22   G7a    KILLED    the checkbox commit writes bit 8
+  MU23   G7a    KILLED    the pod first-contact write is bit 8
+  MU24   G9a    KILLED    the pod sets the bit through the (uVar13, uVar9) pair it just tested
+  MU25   G7a    KILLED    the AI war path writes 0x18 (8 and 0x10 together)
+  MU26   G9b    KILLED    the council loop sweeps all 7 rivals
+  MU27   G7b    KILLED    the council sets the CONTACT bit 8, not the war bit
+  MU39   G9b    KILLED    the council's loop body actually calls the setter (a removed call reddens the source half of G9b)
+  MU28   G9a    KILLED    the first-contact writer is the goody-pod handler
+  MU29   G2a    KILLED    the label line is 11+elem (line 10 is the count) - the tracer itself is mutated
+  MU30   G7a    KILLED    the census filter selects bit 8 out of the literal mask
+  MU31   G4a    KILLED    the accept label is 0x442d7d
+  MU32   G8a    KILLED    the pod's byte site is 0x56f5ad
+  MU0           NO-OP     the NO-OP control: target absent, nothing may change
+
+killed 39/39 scored (1 NO-OP control reported, never counted)
+
+PASS M369-MUT: 39/39
