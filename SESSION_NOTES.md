@@ -792,3 +792,29 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   every `jne`); keep the tracked set closed (eax/ax/[ebp-0x28]) or the loop state space
   explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
 - **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).
+
+## Session 342-chain6b — M393: the second agenda pair (+0x588/+0x590) has NO producer; two of its three reads are inert
+
+- **ACCEPT** `python3 -u scripts/m393_pair2_writer.py` -> **`PASS M393: 26/26`** `b0a0eb22422c2db1`
+  (`evidence/m393_pair2.txt:97`), x2 identical (`evidence/m393_twice.txt:1`); **15/15**
+  (`evidence/m393_mutate.txt:19`); zero box.
+- **GEOMETRY** (`:19-23`): the SCORER's own multiply `0x522dd3..de` = stride **0x59c**; anchors
+  `0x927b14/18/1c/20`; slot0 `0x927590`, size `0x2ce0` = 8*stride; slot0's pair2 =
+  `0x927b18`/`0x927b20`.
+- **NO PRODUCER, three censuses**: naive disp32 (`:24-26`: 0 at 0x588/0x590, 2 in-block at `+0`);
+  **offset-folded** tracker (`:28-44`): 8 absolute hits, all record 1, 6 the randomizer's
+  `+0x584/+0x58c/+0x594` stores = POSITIVE CONTROL (`0x5a1180/83/85`, `0x5a11d1/d4`, `0x5a120a`),
+  **0** on cat2/choice2; 12 window candidates (`:45-59`) all in functions with 0 block refs; pair
+  pointer seeds **0** (`:62`).
+- **IMAGE** (`:13`): past `.data`'s file-backed end (`0x6a9000`) -> loader-zero, no static init.
+  **ONLY BYTE WRITER = TRANSPORT** (`:63-69`): `FUN_00596540` de-obfuscates `fread` (`0x596578`) into
+  `[ebp+0x8]` (`0x5965de`); caller passes `(0x927590,0x2ce0,1,file)` -> **producers 0**.
+- **READS INERT** (`:70-92`): 8 refs, 4 per field, all mov/cmp, 0 stores. The picker's
+  `candidate==pair2` skip needs a comparable choice 0, but `and ecx,0x3` is zero-skipped (`:84-85`);
+  the scorer's match needs a NONZERO grid cell equal to `choice2==0` (`:91`); the mirror branch
+  `A.pair1==B.pair2` reduces to **`A.pair1==(0,0)`** (`:92`) - TRUE for slot 0, the one live read.
+  Reserved: its unset 0 is a VALID category.
+- **PITFALLS**: seed `mov reg,imm` ABSOLUTELY (what makes `[edi-8]` visible; resetting on `add`
+  finds no writer); exclude `ebp/esp` bases (8 `esp+1388` false positives); `disp==0x588` cannot
+  see `0x927b18` - key the census on the AGGREGATE address.
+- **NEXT**: the masked-agenda reader set (which callers reach slot 0), or `+0x594`'s readers.

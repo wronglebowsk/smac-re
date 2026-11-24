@@ -1,0 +1,18 @@
+clean run rc=0  PASS M393: 26/26  b0a0eb22422c2db1
+MU1  field map shifted (+8 store -> +0x590)          rc=1 red=True  named=1/1 same=False  KILLED
+MU2  the block byte copy counts as a producer        rc=1 red=True  named=1/1 same=False  KILLED
+MU3  naive census only (no offset folding)           rc=1 red=True  named=1/1 same=False  KILLED
+MU4  the image carries static init bytes             rc=1 red=True  named=2/2 same=False  KILLED
+MU5  the roll keeps no +1 (choice1 0..2)             rc=1 red=True  named=1/1 same=False  KILLED
+MU6  the picker's zero-choice skip is dropped        rc=1 red=True  named=1/1 same=False  KILLED
+MU7  choice2 inherits pair1's 1..3 range             rc=1 red=True  named=1/1 same=False  KILLED
+MU8  a reader's cat2 becomes cat1                    rc=1 red=True  named=2/2 same=False  KILLED
+MU9  the scorer's zero-cell guard is inverted        rc=1 red=True  named=1/1 same=False  KILLED
+MU10 the load transfer becomes the save transfer     rc=1 red=True  named=1/1 same=False  KILLED
+MU11 the transfer is handed the pair, not the block  rc=1 red=True  named=1/1 same=False  KILLED
+MU12 an anonymous store is aimed at cat2             rc=1 red=True  named=2/2 same=False  KILLED
+MU13 the picker's zero-choice skip is nop'ed         rc=1 red=True  named=1/1 same=False  KILLED
+MU14 a reader's choice2 becomes choice1              rc=1 red=True  named=1/1 same=False  KILLED
+MU15 the block size push is wrong (4 slots)          rc=1 red=True  named=1/1 same=False  KILLED
+
+M393 MUTANTS: 15/15 killed
