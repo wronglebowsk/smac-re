@@ -73,7 +73,7 @@ def main():
     out, rc = run(src, "noop")
     red = {g for g, v in GATE.findall(out) if v == "FAIL"}
     noop = (rc == 0 and not red and "PASS  M364: 24/24 gates" in out)
-    print(f"NO-OP  rc={rc} red={sorted(red) or 'none'}  -> {'PASS' if noop else 'BAD'}")
+    print(f"MU0   NO-OP rc={rc} red={sorted(red) or 'none'}  -> {'PASS' if noop else 'BAD'}")
     ok += noop
     bad += not noop
     for mid, gate, old, new in MUTANTS:

@@ -1542,7 +1542,7 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | **0x1 = PACT**: the end-pact case block asks mask 1 -> "DONTHAVEPACT"/"REALLYENDPACT" -> `FUN_00530af0(...,1)`; **0x8 = AT WAR**: the declare-vendetta block asks mask 8 -> "DIPLOVENDETTA"/"DIPLONOVENDETTA"; the blocks share 0 literals | `:131-134,:172-174` | V MU10,11,ALG2 |
 | writers: `test 0x7 -> or 0x1100000`, `test 0x10 -> or 0x8040` (`0x5518f0`); apply bulk masks 0x1f={1,2,4,8,10}, 0x1f89={1,8,0x400,0x1000}, 0x2043c20, 0xdd9bc3c0 | `:177-193` | V MU13,14 |
 | rivals refuted: 3-bit enum (16/19 asks outside 0x7), ordinals, "0x1 is vendetta", "one 16-bit field" | `:201-205` | V MU15-17 |
-| ACCEPT `python3 -u scripts/m364_bitnouns.py` -> 24/24 `f6d006d0281ac189` x2; harness 20/20, 0 NO-OP | `evidence/m364_bitnouns.txt:207`, `evidence/m364_mutate.txt:21` | V MU0 |
+| ACCEPT `python3 -u scripts/m364_bitnouns.py` -> 24/24 `f6d006d0281ac189` x2; harness 20/20 (MU0 NO-OP control green) | `evidence/m364_bitnouns.txt:207`, `evidence/m364_mutate.txt:21` | V MU0 |
 | INF: nouns of 0x2,0x4,0x10,0x20,0x400,0x1000,0x2000,0x40000,0x2000000 and dword B's 0x8/0x2000 | - | INF |
 
 ## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
