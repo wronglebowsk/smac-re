@@ -1,1 +1,1 @@
-B36 | accept `python3 -u -m sim.relations` -> PASS 10/10 `b20f5818dee2d861` (`evidence/b36_relations.txt:75`), harness 11/11 (`evidence/b36_mutate.txt:13`) | PR pending | next: B37 — `track_mode.py` decides; spine ends at B36, so author the next rung (the 0x94d5dc slot and the 0x800000 noun are the OPEN leads this model exposes)
+M373 | accept `python3 -u scripts/m373_pending_vendetta.py` -> PASS 19/19 `162f8833a8a831f0` (`evidence/m373_pending_vendetta.txt:161`) | PR pending | next: the OPEN shortlist (§THE PICK in NEXT_PROMPT.md) — B37 is the next BUILD rung, not this fire

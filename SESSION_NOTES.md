@@ -697,3 +697,38 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   reds; cache regenerated).
 - **PITFALLS**: objdump prints `DWORD PTR ds:0x..`, so `startswith("ds:")` misses a bitset
   load; a break-test ordered before the hit-test loses the reader.
+
+## Session 338-chain1 — M373: the pending-vendetta consumer (STATIC 19/19, zero box)
+
+- **ACCEPT**: `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19 gates
+  digest 162f8833a8a831f0` (`evidence/m373_pending_vendetta.txt:161`), rerun byte-identical.
+- **THE PICK'S PREMISE IS REFUTED.** `FUN_005551e0` (3,853 B, 1,167 insns) has **ZERO
+  immediates of bit 27** (`:54`). Bit 27 is not a decision input there; the gate that
+  actually governs the pending-vendetta pass is **bit 13 = 0x2000**.
+- **THE CONSUMER** (`:15-19`): six touch points on bit 31 — `test eax,0x80000000`@0x55573c,
+  `and eax,0x7fffffff`@0x555750 + store 0x555758 (own), `and ecx,0x7fffffff`@0x55578a +
+  store 0x555792 (mirror), and `push 0x80000000`@0x5558da -> setter 0x551a20 @0x5558e1 (the
+  ARM). The clear is conditional: `je 0x555809`@0x555741 (not pending) and `jne
+  0x555809`@0x55574a (bit13 set) both jump to `and ah,0xdf`@0x555809 — a ONE-SHOT
+  protector that scrubs bit13 in the same pass (`:35-43`).
+- **BIT 27** is a sticky relations-word bit: 56 exact `0x08000000` immediates image-wide, 5
+  of them word-form reads in 4 functions (0x5230f0 FUN_00522b70, 0x532a2c FUN_00531df0,
+  0x54687b FUN_00546800, 0x5526ce+0x55278f FUN_005525d0) (`:48-55`).
+- **SETTER ARITHMETIC** (`:58-74`): 14 masks, none clears bit 31 AND none clears bit 27;
+  0x88000008 is the only mask that SETS bit 27. G4c pins the three sim masks to the dump's
+  immediates (0xffee7faf/0xfaeef378/0xff7fffff), so G4a/G4b compute on measured bytes.
+- **41 WORD STORES** (`:76-121`): 33 keep bit 31, **2 literal clears** (0x555758/0x555792),
+  3 take a caller mask, 3 opaque. `draft claim retracted in-round`: I first read bit 27 as a
+  one-write pulse; the executed replay shows it survives 0x80000008, 0x10 and 0x1 (`:139`).
+- **THE SECOND CLEARER** (`:124-130`): FUN_005518f0 (`not edx`@0x55196e then AND) clears the
+  caller's 3rd arg; FUN_00551cf0 does the same when its 4th arg is 0. 66 call sites, 37
+  literal masks, only TWO carry bit 31: `0x9000ff48`@0x59f176 = a CLEAR inside
+  FUN_0059ec90 (faction-elimination sweep), and `0xdd9bc3c0`@0x4da404 whose flag is the
+  caller's ebx (`pop ebx`@0x4da3a8) — **OPEN**, not asserted away.
+- **HARNESS** `python3 -u scripts/m373_mutate.py`: 16 mutants, each names its gate; MU11/MU12
+  target G4c (the dump<->sim literal link), not G4a, because G4a computes on the sim.
+- **PITFALLS**: (1) operand fields in the dump EXCLUDE the mnemonic — a regex written as
+  `and ah,0xdf` never matches `by[a]`; (2) `push 0x..` has no comma, so a `,imm$` helper
+  silently loses every arm; (3) a byte mask on `ah` names bit 13 — `test al,0x20`@0x5556a7 is
+  bit 5 and a DIFFERENT guard (R3); (4) a mutation address must be the INSTRUCTION's address,
+  not the call site's (`push`@0x59f16f, call@0x59f176).

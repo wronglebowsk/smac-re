@@ -482,16 +482,17 @@ def main():
     digest = hashlib.sha256(("\n".join(out)).encode()).hexdigest()[:16]
     say("DIGEST   %s" % digest)
     text = "\n".join(out)
-    print(text)
-    os.makedirs(os.path.dirname(EVID), exist_ok=True)
-    open(EVID, "w").write(text + "\n")
     if npass == len(gates):
-        print("\nPASS M373: %d/%d gates digest %s  (evidence %s)"
-              % (npass, len(gates), digest, os.path.relpath(EVID, ROOT)))
-        return 0
-    bad = [g for g, ok in gates if not ok]
-    print("\nFAIL M373: %d/%d gates failed %s digest %s" % (len(bad), len(gates), bad, digest))
-    return 1
+        final = "PASS M373: %d/%d gates digest %s  (evidence %s)" % (
+            npass, len(gates), digest, os.path.relpath(EVID, ROOT))
+    else:
+        bad = [g for g, ok in gates if not ok]
+        final = "FAIL M373: %d/%d gates failed %s digest %s" % (len(bad), len(gates), bad, digest)
+    print(text)
+    print("\n" + final)
+    os.makedirs(os.path.dirname(EVID), exist_ok=True)
+    open(EVID, "w").write(text + "\n\n" + final + "\n")
+    return 0 if npass == len(gates) else 1
 
 
 if __name__ == "__main__":
