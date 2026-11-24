@@ -288,12 +288,29 @@ printers of measured values need the same None-guard as the gate.
   (24 json / 25 md before this). Added here; no claim changes, no re-measure needed (the instrument
   and its digests `5b5ece39af02baba` / `a5a5091e533f7883` are untouched).
 
+## Session 316 (s316-chain1, B28 BUILD rung, zero box) — the UPKEEP FEEDER made EXECUTABLE; the container's own `+300` octet IS its full-price total
+
+- track_mode said MODE=BUILD next_rung=B28 and the spine ended at B27, so §B28 was authored in `BUILD_SPINE.md` BEFORE implementation (commit de6a0ee), then built: `sim/feeder.py` = the law, `sim/composedfeeder.py` = the run + gates, `--b28` relays.
+- ACCEPT `python3 -u -m sim.selftest --b28` -> **`PASS B28: 8/8 gates`** digest(rows) `705a4520c08c4062`, print_digest `8c87e05ffa2b80cc`, final container `38bba29ab857654b`, 2 runs byte-identical (`evidence/b28_feeder_exec.txt:18-19`); harness `python3 -u scripts/b28_mutate.py` -> **`HARNESS PASS 16/16`** digest `a2ba49fb9dd1056b` (12 CODE + 4 EXPECT, exact-set check 0 complaints, gates reddened 8/8, dead mutants [], NO-OP `[]`), `--selftest` 4/4 (`evidence/b28_mutate.txt:19-21`).
+- THE FINDING: `ds:0x985ba0` is not a loose runtime pointer — it is CARRIED in the save's state header (`mem2file` → file offset 244) and reads **-1** in `m54b_clean.SAV`, so the 4f48dc sign skip fires and the halving runs 0 times. Executing the loop over the save's own 18 base records reproduces the container's own `+300` octet `[0,1,1,0,1,0,1,1]` **8/8** — but only once the own faction's recorded disabled id (8, parsed out of `docs/named-archive-m32-m84e.md:272`, never retyped) is applied: **7/8 without it**, and the single miss is faction 3 = `own_player`, whose only cost-1 facility IS item 8. Rivals measured: forced-halved 3/8, charge-every-row differs at 18/18 bases.
+- The carry is live here: 6 of 8 factions have an odd full-price total; with the gate dword pointed at a base the charged faction owns, bit5 survives round 1 at 5 of 7 fixture factions and moves round 2's charge by exactly 1 at those and only those (`:7`). `block+0` is now a modeled span for this call; `savewriter.modeled_spans()` with no overrides still returns exactly the pre-B27 list and the unmutated build stays the identity.
+- PITFALL (the rung's own defect class, caught by the harness): the first G4/G7 computed the price path and the totals with INLINE re-typings of the law (`sel >= 0 and owners[sel] == f`), so MU6/MU7/MU10 reddened ONLY the digest gate — a gate that re-derives the law instead of CALLING it measures nothing. Fixed by routing every number through `feeder.price_path` and adding two ties: run-vs-law (8/8) and "in a one-base fixture every OTHER faction stays at full price" (0 pairs).
+- PITFALL: `owner_bytes[-1]` is Python's LAST element, not "nothing selected" — a dropped sign skip silently reads the last base's owner instead of failing (now measured, MU6).
+- PITFALL: a printed-table digest that hashes the line printing its own anchor can never be re-pinned — the G8 line is excluded from the hashed region.
+- DOCS: NAMED rotation `scripts/b28_named_rotate.py` (M246+M247+M248/M249, 3,507 B → `docs/named-archive-b28-rows.md:10` §rotation-1, sha1 `fcd4989fdf15`, own terminator, `--verify` byte-exact); NAMED 246,245 → 245,488 B BEFORE the `## B28` add — still under the 5 KB trigger, rotate again next fire. NEXT_PROMPT 11,798/12,000 (added (x8) = the item-table row-order lead; paid by trimming the stale §trim-s269(b) pointer, the CLOSED-enumeration sentence and the BOX last-touch parenthetical).
+
+## Session 317 (s316-chain1, REVIEW ROUND on PR #351 / B28, zero box)
+
+- All 10 findings (3 P1 / 7 P2) answered IN THE GATES; no threshold weakened, none dismissed. P1(a)'s premise was half wrong (the full-price path never reads the carry) — the zero-carry baseline is now MEASURED by an all-ones carry-seed tie.
+- ACCEPT `python3 -u -m sim.selftest --b28` → **PASS B28: 8/8 gates**, digest(rows) `705a4520c08c4062`, print `99c52201f073499d` (pre-review `8c87e05ffa2b80cc`), container `38bba29ab857654b`, 2 runs byte-identical (`evidence/b28_feeder_exec.txt:9`); harness `python3 -u scripts/b28_mutate.py` → **HARNESS PASS 18/18** digest `3974d739da3af55f`, 8/8 gates, NO-OP `[]`, dead `[]` (`evidence/b28_mutate.txt:20-23`); `--selftest` 4/4; both evidence files re-captured, diffed byte-identical.
+- G4 ASSERTS the dword from container bytes (offset 244, value -1, offset < block A), not a derived path property; G3 asserts the inert window and runs the SAME scan as a CONTROL over `+0x8c..+0x8f` (nonzero 14/18); G7 asserts the no-list rival at exactly 7/8 with miss `[own_player=3]`; G6 measures exactness over the differing set and measures the HONEST run (touch set `[]`, bit5 unchanged).
+- RETRACTION in place: "the carry persists through the writer" is **FIXTURE-ONLY** (`NAMED ## B28` row + spine §B28 qualified); this save's run writes no carry.
+- New mutants ME5 (full-price reads the carry-in → G6,G8), ME6 (control window moved → G3,G8); MU6 grew to {G4,G6,G7,G8}. PITFALL: every prose edit re-pins the print digest (`434b…` then `99c5…`).
+- Merge: origin/main `c0f5e2a` (M334) merged; BOTH chains' sections kept; main did not touch `sim/feeder.py`, digests unchanged post-merge.
+- DOCS: NAMED **248,734 B** (1,266 under the fail line) — headroom UNDER 5 KB: next fire ROTATES M250-M254 before adding a block.
+
 ## Session 317-chain2 (2026-11-23) — M335: the difficulty ladder's INDEX->LABEL order
 
-- **Doc-cap rotation first** (NAMED.md was 249,465 B vs the 250,000 FAIL line = 535 B headroom):
-  `python3 scripts/m335_named_rotate.py` moved `## M246..## M254` (90 lines, 12,804 B) VERBATIM to
-  `docs/named-archive-m246-m254.md`, sha1 `8c4762cc7523`; `--verify` re-hashes it byte-exact and
-  prints `NAMED.md 243833 B (headroom 6167)`. Compressed stubs keep every claim's numerals+gates.
 - **ANSWER (pick (x6), first clause):** the six difficulty names are alpha.txt's `#DIFF` rows,
   loaded at `0x57ac56` (`push "DIFF"` -> `call 0x5ea431`) into `0x94d2ac`, one dword per row,
   `add esi,4` up to the hard-coded `cmp esi,0x94d2c4` => 6 rows, file order
@@ -303,35 +320,24 @@ printers of measured values need the same None-guard as the gate.
   seeding the dialog with `ds:0x985aec` before `call 0x5f1394`.
 - **M330 refined, not retracted:** the refund's cmps are `cmp eax,3/jle` (none at <=3) and
   `cmp eax,4/jne` => k=1 at exactly 4 (Thinker), k=2 at >=5 -- with six rows that arm is
-  TRANSCEND (index 5), i.e. live, not a hypothetical. "cmps top out at 4" is a 6-row ladder's
-  five boundaries minus the top one.
-- **New measured oddity:** the only clamp on the index is `FUN_00423af0(lo=0,hi=6)` at
-  `0x486f30-0x486f40`, and its hi is INCLUSIVE while equal to the array's END ADDRESS -- a
-  difficulty of 6 would read `0x94d2c4`, outside the 6-entry table. Reachability is OPEN.
+  TRANSCEND (index 5), i.e. live, not a hypothetical.
+- **New measured oddity:** the only `0x8f0c11`-fed clamp on the index is `FUN_00423af0(lo=0,hi=6)`
+  at `0x486f30-0x486f40` (1 of the 169 `call 0x423af0` sites); its hi is INCLUSIVE and equals the
+  array LENGTH (`hi*4 == end-base` read out of the bytes), so a difficulty of 6 would read
+  `0x94d2c4`, one row past the table. Reachability is OPEN.
 - ACCEPT `python3 -u scripts/m335_difficulty_ladder.py` -> `PASS M335: 7/7 gates`, digest
   `fb58bdc3307d6258`; re-run diff-identical (`evidence/m335_difficulty_ladder.txt:9-10`).
-  Harness `python3 -u scripts/m335_mutate.py` -> `PASS HARNESS 13/13`, digest `45509023afada03b`;
-  `--selftest` 3/3. Two declared sets were CORRECTED to measured truth before submit
-  (MU1 {G2,G7}->{G2,G3}; MU13 gained G2 once G2 began asserting the fill loop's init immediate).
+  Harness `python3 -u scripts/m335_mutate.py` -> `PASS HARNESS 20/20`, digest `6e0e05a8ffb388d8`
+  (includes an ALGORITHM mutant); `--selftest` 3/3 (`evidence/m335_mutate_selftest.txt:4`).
+- **REVIEW ROUND (Strata, PR #353): 10 findings (3 P1 / 7 P2), 10 accepted, 0 dismissed.** Fixes:
+  G4 became an ORDERED fragment walk (edi starts at 0, seed before `call 0x5f1394`); G2 reads the
+  loader's actual store; G3 uses token-boundary matching (+ MU20 algorithm mutant); G5 proves both
+  readers are counting loops; G6 READS base/bound/clamp-hi out of the code instead of comparing to
+  the script's constants and censuses all 169 clamp sites. MU1's declared set corrected to
+  {G2,G3,G6}. Two P2s were about MY doc-cap rotation -- **which is now moot: chain 1 landed the
+  same M246-M254 rotation on main as `docs/named-archive-b28-rows.md` (sha1 fcd4989fdf15)**, so the
+  duplicate archive and `scripts/m335_named_rotate.py` were dropped in the merge; the P1 rotation
+  cite bug it exposed (a key that ate a digit on `## M248/M249`) is recorded above as a finding.
 - PITFALL: this census's `gates()` originally wrapped all seven checks in ONE try/except, so a
   vanished site reddened every gate (MU6 measured {G1..G7} instead of {G3,G5}). Per-gate
   try/except is what makes a declared mutant SET measurable at all.
-- **REVIEW ROUND (Strata, PR #353): 10 findings (3 P1 / 7 P2), 10 accepted, 0 dismissed.** Each
-  fix is a measurement or a stronger assertion plus a mutant: the rotation's placeholder key ate a
-  digit on `## M248/M249` (`ARC_M24` + `8` => a false `:218` cite) and the substring guard passed it
-  -- fixed, and `scripts/m335_named_rotate.py --check-stubs` now proves 9/9 stubs cite their own
-  block head by EXACT line; two stub prose drifts repaired (ADJUSTING WORLD CLIMATE, "y ONLY
-  bounded"); G4 became an ORDERED fragment walk (edi starts at 0, seed before `call 0x5f1394`);
-  G2 reads the loader's actual store; G3 uses token-boundary matching (+ an ALGORITHM mutant, MU20);
-  G5 proves both readers are counting loops; G6 now READS the geometry out of the code (base, bound,
-  clamp hi) instead of comparing against the script's constants, and measures that exactly 1 of the
-  169 `call 0x423af0` sites is fed by `0x8f0c11`. Harness 13 -> 20 mutants (`6e0e05a8ffb388d8`);
-  MU1's declared set corrected to the measured {G2,G3,G6} (G6 reads the loader bound).
-
-- **MERGE BLOCKED (infra, not the work):** after the review-round fixes were pushed, GitHub Actions
-  created NO run for the new head (`gh api .../actions/runs?head_sha=<ea16d16>` -> total_count 0;
-  newest run in the repo is 01:06Z, before the fixes). Pushes, a close+reopen and an empty re-push
-  all failed to trigger; `workflow_dispatch` is not a trigger of `gate.yml` (HTTP 422). Local
-  `gate.py --base main` is GREEN at the head and `review_lint --id M335` PASS, but PR #353 was NOT
-  merged: the law requires `gh pr checks` PASS on the post-review head. NEXT FIRE: if a run exists
-  for PR #353's head, merge #353; otherwise re-push to trigger one.

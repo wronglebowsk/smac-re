@@ -1692,6 +1692,35 @@ def run_b27(sav_path, results):
     return 0
 
 
+def run_b28(sav_path, results):
+    """Rung B28: FUN_004f47f0's per-item upkeep charge, EXECUTABLE - the loop runs on the
+    save's own base records, the price-path gate is read out of the container, and the carried
+    half-unit is persisted through the writer. All claims are the module's -
+    sim/composedfeeder.py authors them and this hook only relays them, so --b28 and
+    `python3 -m sim.composedfeeder` can never print different text."""
+    import os as _os
+    import hashlib as _hl
+    from . import composedfeeder as scf
+    if not _os.path.exists(sav_path):
+        return fail("B28: missing input: %s" % sav_path)
+    m = scf.measure_full(sav_path)
+    table = scf.render(m)
+    for line in table:
+        print(line)
+    m["print_digest"] = _hl.sha256("\n".join(l for l in table
+                                             if not l.startswith("G8 ")).encode()).hexdigest()[:16]
+    scf.acceptance(m, results)
+    bad = [n for n, ok in results if not ok]
+    for name, ok in results:
+        print(("  ok   " if ok else "  BAD  ") + name)
+    if bad:
+        return fail("B28: %d/%d gates failed: %s" % (len(bad), len(results), "; ".join(bad)))
+    print("PASS B28: %d/%d gates" % (len(results), len(results)))
+    print("digest(rows)=%s print_digest=%s final_sha=%s"
+          % (m["digest"], m["print_digest"], m["final_sha"]))
+    return 0
+
+
 
     """Rung B24: the queue leg visiting a base FOUNDED BY THE FOUNDER LEG in the
     written container - op stream applied to the image's base array, fold
@@ -1847,6 +1876,9 @@ def main(argv=None):
                     help="rung B26 (save/load boundary); optional SAV MAP LOG TRACE")
     ap.add_argument("--b27", nargs="*", metavar="ARG",
                     help="rung B27: the ENERGY round, executable and carried (defaults: <SAV>)")
+    ap.add_argument("--b28", nargs="*", metavar="ARG",
+                    help="rung B28: the UPKEEP FEEDER executable, the carried half-unit "
+                         "persisted through the writer (defaults: <SAV>)")
     ap.add_argument("--b25", nargs="*", metavar="ARG",
                     help="rung B25: the MOVE leg made PERSISTENT - the press reads its "
                          "start tile out of the container and the moved tiles go back "
@@ -1935,6 +1967,9 @@ def main(argv=None):
     if args.b27 is not None:
         sav = args.b27[0] if args.b27 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b27(sav, results)
+    if args.b28 is not None:
+        sav = args.b28[0] if args.b28 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b28(sav, results)
     if args.b25 is not None:
         sav = args.b25[0] if args.b25 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         mp = args.b25[1] if len(args.b25) > 1 else os.path.join(

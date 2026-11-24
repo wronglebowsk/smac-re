@@ -1,6 +1,11 @@
-# M246..M254 rows, moved VERBATIM out of NAMED.md by scripts/m335_named_rotate.py
-# (doc-cap rotation, s317-chain2/M335; NAMED.md was at 249465 B).
-# sha1 of the moved region: 8c4762cc7523c39204872a1de412637fffd45094
+# named-archive-b28-rows.md — NAMED rows rotated out of the registry
+
+Rotations append here VERBATIM; each region carries its own `§rotation-N` marker and its own
+terminator line, so a later rotation never re-hashes an earlier region (the s312 lesson).
+`scripts/b28_named_rotate.py --verify` re-derives the marker line, the archived block's header
+line and the full sha1 of the region between marker and terminator.
+
+§rotation-1 (M246, M247, M248/M249, s316-chain1 headroom rotation)
 
 ## M246 (s197) — the save's last 4 B are a `timeGetTime()` save-CREATION stamp
 
@@ -30,19 +35,9 @@
 | +3 < 0x40 on every land tile, >= 0x41 on every water tile, 0x40 unused (0 exceptions, 19 files); land ids 18/25/62 at 64/80/128; used as index into a per-faction array at DAT_0094eda8 (stride 0x20bc) shard_012.c:2681-2683 and split at 0x40 shard_012.c:7336 | G5 | V (census), OPEN (what names the partition; ids repeat across disconnected groups: 25 ids / 47 components, 130/16626 adjacencies differ) |
 | instrument: `scripts/m248_region_values_census.py` -> `evidence/m248_region_values.txt` | rc=0 | H |
 
-## B3 (s199, BUILD track, PASS 6/6) — `sim/turn.py`: M30's turn engine, executable, replays the recorded trace 67/67
+(§rotation-1 ends; anything below belongs to a later rotation.)
 
-| claim | evidence | conf |
-|---|---|---|
-| parity rule: the recorded rows are an ORDERED SUBSEQUENCE of the engine's emissions, because the trace is a 0.2 s change-set sample (`turn_trace.py:59`) | `sim/selftest.py::run_replay`; matched=67/67, 220 emitted, 154 collapsed, 11/cycle — `evidence/b3_turn_replay.txt:2` | V |
-| the engine walks the 8 faction slots ASCENDING; our slot is 3 and is the only slot at which tf==0 is ever seen (21 rows, all cur==3; own==3 in 67/67) | G1/G2 — `evidence/b3_turn_replay.txt:1-2` | V |
-| the YEAR fires on the 7→0 edge while `cur` is still 7 (witness row 22 = t 88.631, cur 7, tf 2, year 2221); the other 7 edges score 22, 22, 10, 0, 0, 0, 6 /66 | G3 — `evidence/b3_turn_replay.txt:3` | V |
-| `tf` is cleared ONE STEP AFTER `cur_player` is written to 3 (merge them and parity is 5/66); the 4 (3,2) rows are 5, 14, 23, 40 | G4 — `evidence/b3_turn_replay.txt:4` | V |
-| 48 of 322,560 candidate models (cyclic order × year edge) reproduce the trace = 6 cyclic orders × 8 rotations; all 48 share 0→1, 1→2, 2→3, 7→0 and year@7; only {4,5,6}'s internal order is free | G5 — `evidence/b3_turn_replay.txt:5` | V |
-| 20 presses = 20 year bumps = 20 tf clears, year 2213→2233, final (3,0,2233) == last row | G6 — `evidence/b3_turn_replay.txt:6` | V |
-| OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
-| instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
-
+§rotation-2 (M250-M254, s316-chain1 review-round headroom rotation)
 ## M250 (s200, PASS 7/7) — the region generator: 3 callers, and the coarse map is built LAST inside it
 
 | claim | evidence | conf |
@@ -92,3 +87,5 @@
 | `FUN_00531bf0(facA, facB, region, mode)` (505 B, 10 call sites, 2 inside `FUN_00556690`) walks the unit array over terrain records at `DAT_0092ae14`, keeps a facA unit whose record byte +3 (the region label, M249) == the region, then seeks a facB unit in the same region and calls `FUN_0058b1b0` (route) / `FUN_0058cfc0`; returns 1 iff a route is found | G5, `:5` + shard_013 body | V (shape), INFERRED (route) |
 | so **bit 1 = contact -> 2 = CONTESTED (blocks the pick)**, **bit 2 = no contact -> 0 = OPEN (the +1000 candidate)** | G4+G5 pairing | INFERRED (named) |
 | `FUN_0055f650`'s only store promotes **8 -> 7** at `0x564ad7` under `cmp DWORD PTR [ebp-0x8c],0x8`, in the same window as `add WORD PTR [eax+0x94eaa8],0xfff6` (-10) and `or BYTE PTR [eax+0x94e7a8],0x9` — the auto-manager clears the not-worth verdict when it acts in the region | G4, `:4` | V (code), INFERRED (why) |
+
+(§rotation-2 ends; anything above belongs to §rotation-1.)
