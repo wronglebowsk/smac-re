@@ -1,0 +1,205 @@
+M342 - the COMPLETION SETTER (base+0x8c bit writers), static census
+dump text.txt: 790695 instructions; 10284 functions indexed
+
+TABLE 0 - field arithmetic (derived)
+  stride sites (imul reg,reg,0x130): 220  first 0x440dbc
+  owner-byte reads at 0x95da14: 410 (field +4 of the same array)
+  array base = 0x95da14-4 = 0x95da10 ; bitmap constant 0x95da9c -> record+0x8c
+
+TABLE 1 - direct byte stores into the record-array window (0x95d800..0x961000): 73
+  41d34a mov    BYTE PTR [esi+edx*1+0x95da9c],cl                    mov+0x8c
+  4742f6 mov    BYTE PTR [edx+0x95da1a],cl                          mov+0xa
+  4cdb39 mov    BYTE PTR [esi+0x95da18],dl                          mov+0x8
+  4e48b1 mov    BYTE PTR [esi+0x95da15],bl                          mov+0x5
+  4e48b7 mov    BYTE PTR [esi+0x95da14],bl                          mov+0x4
+  4e48bd mov    BYTE PTR [esi+0x95da18],0x0                         mov+0x8
+  4e48c4 mov    BYTE PTR [esi+0x95da17],0x0                         mov+0x7
+  4e48cb mov    BYTE PTR [esi+0x95da19],0x0                         mov+0x9
+  4e48fa mov    BYTE PTR [esi+0x95da16],al                          mov+0x6
+  4e4926 mov    BYTE PTR [esi+0x95da1a],cl                          mov+0xa
+  4e4ab2 mov    BYTE PTR [esi+eax*1+0x95da9c],cl                    mov+0x8c
+  4e4ac9 mov    BYTE PTR [esi+0x95da16],0x3                         mov+0x6
+  4e4aef mov    BYTE PTR [esi+0x95da16],0x4                         mov+0x6
+  4e4b31 mov    BYTE PTR [esi+eax*1+0x95da9c],cl                    mov+0x8c
+  4e4b5a or     BYTE PTR [esi+eax*1+0x95da9c],dl                    or+0x8c
+  4e4b87 or     BYTE PTR [esi+eax*1+0x95da9c],dl                    or+0x8c
+  4e4bc6 mov    BYTE PTR [esi+0x95da16],dl                          mov+0x6
+  4e4bec or     BYTE PTR [esi+eax*1+0x95da9c],cl                    or+0x8c
+  4e4c16 or     BYTE PTR [esi+eax*1+0x95da9c],cl                    or+0x8c
+  4e4c3d or     BYTE PTR [esi+eax*1+0x95da9c],cl                    or+0x8c
+  4e4c83 or     BYTE PTR [esi+eax*1+0x95da9c],dl                    or+0x8c
+  4e4cb7 mov    BYTE PTR [esi+edi*1+0x95da1b],al                    mov+0xb
+  4e4d2a mov    BYTE PTR [eax+esi*1+0x95da9c],cl                    mov+0x8c
+  4e4d81 or     BYTE PTR [eax+esi*1+0x95da9c],cl                    or+0x8c
+  4e4f22 mov    BYTE PTR [esi+0x95da16],0x0                         mov+0x6
+  4e4fdf mov    BYTE PTR [esi+0x95da14],0xff                        mov+0x4
+  4e50c2 mov    BYTE PTR [edx+0x95da14],al                          mov+0x4
+  506929 mov    BYTE PTR [esi+0x95da16],dl                          mov+0x6
+  50698a mov    BYTE PTR [esi+ebx*1+0x95da1b],al                    mov+0xb
+  5069d6 mov    BYTE PTR [esi+0x95da16],cl                          mov+0x6
+  5069fc mov    BYTE PTR [esi+0x95da16],al                          mov+0x6
+  508814 mov    BYTE PTR [edi+0x95da16],al                          mov+0x6
+  50884c mov    BYTE PTR [edi+0x95da14],bl                          mov+0x4
+  50886f mov    BYTE PTR [edi+0x95da18],0x0                         mov+0x8
+  508880 mov    BYTE PTR [edi+0x95da15],dl                          mov+0x5
+  508886 mov    BYTE PTR [edi+0x95da17],0x32                        mov+0x7
+  50888f mov    BYTE PTR [edi+0x95da17],0x0                         mov+0x7
+  508ba3 mov    BYTE PTR [edx+0x95da14],0xff                        mov+0x4
+  508bba mov    BYTE PTR [edx+0x95da14],bl                          mov+0x4
+  51a51d mov    BYTE PTR [esi+0x95da16],al                          mov+0x6
+  51b554 mov    BYTE PTR [esi+0x95da16],al                          mov+0x6
+  51c07d mov    BYTE PTR [edi+0x95da16],dl                          mov+0x6
+  51c14f mov    BYTE PTR [edi+0x95da17],0x5                         mov+0x7
+  5439d0 mov    BYTE PTR [eax+0x95da14],bl                          mov+0x4
+  5439ed mov    BYTE PTR [edx+0x95da14],cl                          mov+0x4
+  543ac5 mov    BYTE PTR [ecx+0x95da14],bl                          mov+0x4
+  543b6d mov    BYTE PTR [eax+0x95da18],0x0                         mov+0x8
+  543b85 mov    BYTE PTR [eax+0x95da15],cl                          mov+0x5
+  543b8b mov    BYTE PTR [eax+0x95da17],0x32                        mov+0x7
+  543b94 mov    BYTE PTR [eax+0x95da17],0x0                         mov+0x7
+  543ba9 mov    BYTE PTR [eax+0x95da17],0x0                         mov+0x7
+  543bb0 mov    BYTE PTR [eax+0x95da15],bl                          mov+0x5
+  556a75 mov    BYTE PTR [esi+0x95da19],al                          mov+0x9
+  55a26a mov    BYTE PTR [edi+0x95da19],0x2                         mov+0x9
+  58253c mov    BYTE PTR [esi+0x95da16],cl                          mov+0x6
+  5825a5 mov    BYTE PTR [esi+0x95da16],al                          mov+0x6
+  582798 mov    BYTE PTR [esi+0x95da16],0x1                         mov+0x6
+  594075 mov    BYTE PTR [ecx+0x95da17],al                          mov+0x7
+  594399 sub    BYTE PTR [eax+0x95da16],cl                          sub+0x6
+  59ceee mov    BYTE PTR [ebx+0x95da16],cl                          mov+0x6
+  59cef8 mov    BYTE PTR [ebx+0x95da16],cl                          mov+0x6
+  59d8b4 mov    BYTE PTR [edi+0x95da16],al                          mov+0x6
+  59dc16 mov    BYTE PTR [esi+0x95da16],al                          mov+0x6
+  5a2b02 mov    BYTE PTR [eax+0x95da1a],cl                          mov+0xa
+  5a2b0e mov    BYTE PTR [eax+esi*1+0x95da1b],cl                    mov+0xb
+  5a2ead mov    BYTE PTR [eax+0x95da1a],cl                          mov+0xa
+  5a2eb9 mov    BYTE PTR [eax+esi*1+0x95da1b],cl                    mov+0xb
+  5a3d83 mov    BYTE PTR [eax+0x95da1a],dl                          mov+0xa
+  5a3d8f mov    BYTE PTR [eax+esi*1+0x95da1b],dl                    mov+0xb
+  5a4243 mov    BYTE PTR [esi+0x95da1a],dl                          mov+0xa
+  5a424f mov    BYTE PTR [esi+ecx*1+0x95da1b],dl                    mov+0xb
+  5a4f3b mov    BYTE PTR [eax+0x95da1a],cl                          mov+0xa
+  5a4f47 mov    BYTE PTR [eax+esi*1+0x95da1b],cl                    mov+0xb
+  -> into +0x8c (0x95da9c): 11 instructions in 2 function(s)
+     FUN_0041cf20     1  41d34a:mov
+     FUN_004e47d0     10  4e4ab2:mov 4e4b31:mov 4e4b5a:or 4e4b87:or 4e4bec:or 4e4c16:or 4e4c3d:or 4e4c83:or 4e4d2a:mov 4e4d81:or
+  references to 0x95da9c in the whole dump: 194 (11 writes above, 183 reads/leas)
+  the charge routine's bit test FUN_004f47f0 @0x4f4837: 'mov    al,BYTE PTR [ecx+edx*1+0x95da9c]'
+
+TABLE 2 - the API FUN_4e44f0 (92 B, 36 insns): FUN_004e44f0
+  4e44f7 lea    eax,[ebp-0x4]
+  4e44fa lea    ecx,[ebp+0x8]
+  4e4500 call   0x507410
+  4e450b test   eax,eax
+  4e4510 je     0x4e452e
+  4e4512 lea    ecx,[eax+eax*8]
+  4e4515 lea    edx,[eax+ecx*2]
+  4e4521 lea    eax,[edx+eax*1+0x95da9c]
+  4e4528 or     BYTE PTR [eax],cl
+  4e4531 lea    edx,[eax+eax*8]
+  4e4534 lea    eax,[eax+edx*2]
+  4e453f lea    eax,[eax+ecx*1+0x95da9c]
+  4e4546 and    BYTE PTR [eax],dl
+  index register <- [ebp+0x8] (mapper arg slot 1); mask <- [ebp-0x4] (slot 2)
+
+TABLE 2b - witness ids: mapper decomposition and the two rivals' target offsets
+  item  idx=item>>3  mask=1<<(item&7)  setter->  swapped(idx<->mask)->
+     1        0             1<<1  +0x8c     +0x8e
+     2        0             1<<2  +0x8c     +0x90
+     3        0             1<<3  +0x8c     +0x94
+     8        1             1<<0  +0x8d     +0x8d
+    23        2             1<<7  +0x8e     +0x10c
+    26        3             1<<2  +0x8f     +0x90
+    31        3             1<<7  +0x8f     +0x10c
+    32        4             1<<0  +0x90     +0x8d
+    38        4             1<<6  +0x90     +0xcc
+    39        4             1<<7  +0x90     +0x10c
+  ids 0..39 with idx inside the 5-byte window: 40/40 ; with mask-as-index inside: 15/40
+
+TABLE 3 - every call site of the set/clear API FUN_4e44f0: 27 in 8 functions
+  site    function          item    base    set?
+  40dcba  FUN_0040d7a0     edx     edi     0x0
+  40dd3c  FUN_0040d7a0     edx     ecx     ?
+  41c6d1  FUN_0041c4d0     esi     eax     ebx
+  41c6f8  FUN_0041c4d0     esi     edx     0x1
+  41d8fc  FUN_0041d480     esi     eax     0x1
+  5085ca  FUN_00507ef0     0x1     esi     0x1
+  5085d7  FUN_00507ef0     0x1     edx     0x0
+  508a14  FUN_00507ef0     esi     edi     edx
+  508a2c  FUN_00507ef0     0x1     edi     0x0
+  508a40  FUN_00507ef0     0x6     edi     0x0
+  508a4a  FUN_00507ef0     0x3     edi     0x0
+  508c85  FUN_00507ef0     eax     ecx     0x1
+  508cee  FUN_00507ef0     eax     edx     0x1
+  582542  FUN_005823c0     0x1a    edi     0x1
+  589157  FUN_00585720     esi     ebx     0x0
+  593dc2  FUN_0058fa40     ecx     edi     0x0
+  59d015  FUN_0059ce10     0x6     ecx     0x1
+  59d022  FUN_0059ce10     0x3     edx     0x1
+  59d03c  FUN_0059ce10     0x7     eax     0x1
+  59d056  FUN_0059ce10     0x1b    ecx     0x1
+  59d070  FUN_0059ce10     0x8     edx     0x1
+  59d0a2  FUN_0059ce10     0x4     0x1     edx
+  59d8c1  FUN_0059ce10     0x6     esi     0x1
+  59d8d7  FUN_0059ce10     0x3     esi     0x1
+  59dc21  FUN_0059ce10     0x6     edi     0x1
+  59dc2b  FUN_0059ce10     0x3     edi     0x1
+  59dc35  FUN_0059ce10     0x1b    edi     0x1
+  literal set=1: 16 ; literal set=0: 7 ; variable: 4
+
+TABLE 4 - the queue-pop FUN_4ef5d0 (244 B, 88 insns): the completion leg's own executable piece
+  4ef5e4 mov    eax,DWORD PTR [esi+0x95da5c]
+  4ef5fa mov    ecx,DWORD PTR [esi+0x95da60]
+  4ef61a dec    BYTE PTR [ecx]
+  4ef622 lea    eax,[esi+0x95da60]
+  4ef62e mov    edx,DWORD PTR [esi+0x95da5c]
+  4ef63b mov    edx,DWORD PTR [esi+0x95da5c]
+  4ef642 mov    DWORD PTR [esi+0x95da5c],edx
+  4ef648 mov    eax,DWORD PTR [esi+0x95da60]
+  4ef655 call   0x5a73f0
+  4ef66a call   0x5a6e70
+  4ef676 mov    eax,DWORD PTR [esi+0x95da5c]
+  4ef68a ret
+  4ef68b cmp    DWORD PTR [esi+0x95da60],0xffffffd9
+  4ef696 call   0x446250
+  4ef6b2 call   0x473760
+  4ef6c3 ret
+  references to the bitmap (0x95da9c): 0 ; calls to the API: 0 ; calls out: 4
+  callers of the pop: 3, all in ['FUN_004ef6d0']
+
+TABLE 5 - the inline family FUN_4e47d0 (1600 B): or-stores 7, mov-copies 3, mapper calls 10
+  4e4b5a or     BYTE PTR [esi+eax*1+0x95da9c],dl
+  4e4b87 or     BYTE PTR [esi+eax*1+0x95da9c],dl
+  4e4bec or     BYTE PTR [esi+eax*1+0x95da9c],cl
+  4e4c16 or     BYTE PTR [esi+eax*1+0x95da9c],cl
+  4e4c3d or     BYTE PTR [esi+eax*1+0x95da9c],cl
+  4e4c83 or     BYTE PTR [esi+eax*1+0x95da9c],dl
+  4e4d81 or     BYTE PTR [eax+esi*1+0x95da9c],cl
+  4e4ab2 mov    BYTE PTR [esi+eax*1+0x95da9c],cl
+  4e4b31 mov    BYTE PTR [esi+eax*1+0x95da9c],cl
+  4e4d2a mov    BYTE PTR [eax+esi*1+0x95da9c],cl
+  or-stores whose mask slot was filled by the mapper within 12 insns: 7/7
+
+RIVALS - each must FAIL on the numbers printed above
+  RIV1 'the field is +0x88 (array base 0x95da14)': computed offset +0x88; the charge routine's
+       read constant 0x95da9c and the writers' constant are the SAME address -> differs by 4
+  RIV2 'the queue-pop stamps the completion bit': pop bitmap refs 0, API calls 0 -> FALSIFIED
+  RIV3 'the mask is the byte index': mask-as-index stays inside the 5-byte window for 15/40 ids vs 40/40 for item>>3 -> FALSIFIED
+  RIV4 'FUN_4e47d0 is the only writer': direct +0x8c stores 11 == grant 7 + copies 3 + screen copy 1 -> FALSIFIED
+
+GATES
+ok   G1 array base 0x95da10 + stride 0x130 puts the bitmap constant 0x95da9c at +0x8c (rival +0x88)
+ok   G2 direct byte stores into +0x8c: 11, in exactly ['FUN_0041cf20', 'FUN_004e47d0'] (screen copy 1 + grant 10)
+ok   G3 API FUN_4e44f0 writes the field twice (or@0x4e4528 sets, and@0x4e4546 clears); index slot [ebp+0x8], mask slot [ebp-0x4]
+ok   G4 API call sites 27 in 8 functions; literal set=1 16, set=0 7 (both paths reachable)
+ok   G5 queue-pop FUN_4ef5d0: 0 bitmap refs, 0 API calls, 4 calls out, callers ['FUN_004ef6d0'] -> the pop is a NON-writer
+ok   G6 inline grant FUN_4e47d0: 7 or-stores + 3 copies, all 7 or masks from the mapper, 10 mapper calls
+
+ANSWER: the base+0x8c bit is SET by FUN_4e44f0(item, base, set=1) - mapper FUN_507410's out1 is the
+  byte index, out2 the mask, and the store is ONE `or BYTE PTR [304*base+idx+0x95da9c], mask` at
+  0x4e4528; its AND twin at 0x4e4546 clears.  A second, inline writer family FUN_4e47d0 ORs the same field
+  at 10 sites (7 or + 3 copy).  The queue-pop FUN_4ef5d0 - B30's completion piece - never touches
+  the field: the bit is stamped by whoever calls the API, not by the pop.  OPEN next: which of the
+  27 call sites is the production-completion call (the pop's own caller is the base screen).
+
+PASS M342: 6/6 gates
