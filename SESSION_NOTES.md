@@ -660,6 +660,6 @@ whether a facility completion stamps at all.
 - CONSUMERS (V): in FUN_00625b20 — `$NUMBER`@625c2c, `$NUM`@625cec, `$HEX`@625e4b, each `__itoa(v,buf,10)`; arg3 of `0x64f980` IS the radix (`cmp [ebp+0x10],0xa`, then forwards it), so **`$HEX` prints DECIMAL** (`:80-81`).
 - The 4th read `0x626091` is the `$#k` PREDICATE: k = char-0x30, `cmp numeric[k],1`, `setne`; that path has NO k bound while `$k` does (`cmp k,0xa`) (`:82`). Arithmetic: k=10 -> owner[0], 20 -> payload[0], 30 -> text[0] (`:83,:70`).
 - OPEN: what the `$#` flag gates; numeric[0] is DUAL-USE (cheat clamp `0x442642` vs ENERGY read `0x4e032c`/`0x4e0336`); `0x64c460`'s semantic.
-- CAP: NAMED headroom was 4,204 B (<5 KB trigger) -> `## B25` rotated VERBATIM to `docs/named-archive-m353-rows.md`, sha1 `dd4991b77b2528c9d3bf011d226165c14277c19d`, verify 7/7 (`evidence/m353_named_rotate.txt:9`).
+- CAP: NAMED headroom was 4,204 B (<5 KB trigger) -> `## B25` rotated VERBATIM to `docs/named-archive-m353-rows.md`, sha1 `dd4991b77b2528c9d3bf011d226165c14277c19d`, verify 7/7 (`evidence/m353_named_rotate.txt:8`).
 - PITFALLS: (a) a rotation stub gate written as `... or True` is vacuous — replaced with a real set-intersection check; (b) a PE section walk must read ImageBase at `pe+24+28`, not at the section-table base.
 

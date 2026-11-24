@@ -1553,7 +1553,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 
 ## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 11/11, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
 
-ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`** digest `86a07168fa9aa476`, two renders identical (`evidence/m353_numeric_band.txt:87`); harness `python3 -u scripts/m353_mutate.py` -> **`HARNESS PASS 11/11`** digest `3bf05a54ea23037b` (`evidence/m353_mutate.txt:14`). `:N` = a line of `evidence/m353_numeric_band.txt`.
+ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`** digest `86a07168fa9aa476`, two renders identical (`evidence/m353_numeric_band.txt:87`); harness `python3 -u scripts/m353_mutate.py` -> **`HARNESS PASS 11/11`** digest `3bf05a54ea23037b` (`evidence/m353_mutate.txt:14`). `:N` = a line of the ACCEPT evidence (`evidence/m353_numeric_band.txt:75-87`).
 
 | claim | evidence | conf / mutant |
 |---|---|---|
