@@ -369,3 +369,29 @@ printers of measured values need the same None-guard as the gate.
   row patched in place (the row order is alpha's).
 - PITFALL: a value-only rival does NOT discriminate on the five pinned rows (upkeeps 0,0,1,1,1);
   the NAME is the discriminator and G4 prints the rival's 3/5 so the gap is measured, not hidden.
+
+## Session 320-chain2 (2026-11-24) — pick (x6): `0x5f1394` = the modal SCREEN RUNNER
+
+- **ANSWER:** `FUN_005f1394` (11,207 B / 2,235 insns, `ret 0x8`, args = only
+  `[ebp+0x8]`/`[ebp+0xc]`) is a modal-screen runner: SEH `0x66f786`, `sub esp,0x38c`, first
+  `call [vtbl+0x170]`@0x5f13c6, 0 -> `or eax,-1`; then CREATESTRUCT + `0x5e3ed9` window
+  create, whose error is returned VERBATIM (0x5f1779).
+- **RETURN (7 exits, one `ret 0x8`):** -1 x2, 0 x1 (0x5f15d3), passthrough x2, `ds:0x698d0c`
+  x1 (0x5f3f38), and **`[obj+0xa40]` x1** (0x5f3f45) — the only value-carrying exit. `+0xa40`
+  is READ once and WRITTEN zero times in 2,235 insns: the runner passes a cell through.
+- **PAYOFF (closes M308's `0x4ddcf1` UNATTRIBUTED / M332's row):** `FUN_004ddaa0` loads
+  `ds:0x985aec` into obj+0xa44 (0x4ddb3e/4d, frame -0x5390), calls the runner (0x4ddb53),
+  `jge 0x4ddcf1`; there `mov ds:0x985aec,eax` then `[ecx]=eax; add ecx,0x20bc; cmp
+  0x95da18` from 0x94d438 = **8 factions**. The result cell IS the new difficulty.
+- **CENSUS:** 94 direct thiscall sites — 76 `lea ecx,[ebp-…]` (caller frame local), 17
+  pointer/register slots, 1 global 0x9210a8. **RIVAL killed:** "chooser" — 0 refs to
+  0x94d2ac/0x985aec inside vs 3 in the caller; "dialog ID" — immediate returns only -1/0.
+- ACCEPT `m339_modal_runner.py` -> **`PASS M339: 6/6`** `3162322afffbe406`, 2 runs
+  byte-identical (sha256 `c38d28dd`, `evidence/m339_modal_runner.txt:38-45`); `m339_mutate.py`
+  -> **9/9** `ff7d68a9a7e3151a`, ALG_A1 scores, `--selftest` 3/3.
+- **OPEN:** who writes `[screen+0xa40]` (not the runner, not FUN_004ddaa0); site 0x57dd45
+  pushes ONE dword against `ret 0x8` (frame restore hides it); MFC `DoModal` INFERRED.
+- NAMED: `## M308` rotated VERBATIM to `docs/named-archive-m339-rows.md:7` (sha1
+  `07cec1770614`, `scripts/m339_named_rotate.py --verify`): 249,287 -> 243,834, +M339 245,774.
+- PITFALL: objdump prints both `[ebp-0x4]` and `DWORD PTR [ebp-0x4]` — normalise
+  `DWORD PTR ` in a receiver classifier or every frame slot bins as "other".

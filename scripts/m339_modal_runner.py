@@ -161,8 +161,6 @@ def main():
     lo, hi = func_bounds(ins)
     body = [i for i in ins if lo <= i["a"] <= hi]
     rets = [i for i in body if i["mn"] == "ret"]
-    if ALG == "A1":          # classifier mutant: ignore the fallthrough exit
-        rets = rets[:1]
 
     # ---- G1 prologue ------------------------------------------------------
     pro = window(ins, RUNNER, 0x5F13D4)
@@ -212,7 +210,7 @@ def main():
                 if "ds:0x698d0c" in src:
                     return "GLOBAL_698d0c"
                 if re.search(r"\+0xa40\]$", src):
-                    return "CELL_a40"
+                    return "PASSTHRU" if ALG == "A1" else "CELL_a40"
                 if re.search(r"\[ebp-0x40\]$", src):
                     return "PASSTHRU"
                 return "OTHER:" + src
@@ -221,6 +219,8 @@ def main():
     # the fallthrough exit: the mov eax,[eax+0xa40] that falls into the epilogue
     fall = [i for i in ins if i["a"] < lbl and lbl - i["a"] <= 0x20
             and i["mn"] == "mov" and re.search(r"\+0xa40\]$", i["ops"] or "")]
+    if ALG == "A1":       # algorithm mutant: a classifier that only counts jmp exits
+        fall = []
     kinds = sorted([k for _, k in cls] + (["CELL_a40"] if fall else []))
     want = ["CELL_a40", "GLOBAL_698d0c", "IMM_0", "IMM_NEG1", "IMM_NEG1",
             "PASSTHRU", "PASSTHRU"]

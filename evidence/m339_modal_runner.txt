@@ -1,0 +1,45 @@
+== G1 shape: SEH + 0x38c + first call [vtbl+0x170] -> -1 ==
+   prologue [('push', 'ebp'), ('mov', 'ebp,esp'), ('push', '0xffffffff'), ('push', '0x66f786'), ('mov', 'eax,fs:0x0'), ('push', 'eax'), ('mov', 'DWORD PTR fs:0x0,esp'), ('sub', 'esp,0x38c'), ('mov', 'DWORD PTR [ebp-0x394],ecx')]
+   frame esp,0x38c ; first call DWORD PTR [edx+0x170] @0x5f13c6 ; -1 path [('0x5f13d0', 'or', 'eax,0xffffffff')]
+   vtable slots called: ['0x15c', '0x160', '0x164', '0x16c', '0x170', '0x3094']
+== G2 exit census: 6 jmp + 1 fallthrough, one ret ==
+   jmp 0x5f13d3 -> IMM_NEG1
+   jmp 0x5f15b2 -> PASSTHRU
+   jmp 0x5f15d5 -> IMM_0
+   jmp 0x5f177c -> PASSTHRU
+   jmp 0x5f3f36 -> IMM_NEG1
+   jmp 0x5f3f3d -> GLOBAL_698d0c
+   fallthrough eax,DWORD PTR [eax+0xa40] -> CELL_a40 ; ret 0x8 ; passthrough feeders ['DWORD PTR [edx+0x15c]', '0x5e3ed9']
+== G3 the runner passes +0xa40 through, computes nothing ==
+   +0xa40 refs: [('0x5f3f45', 'mov', 'eax,DWORD PTR [eax+0xa40]')]
+   +0xa44 refs: 0 ; 0x94d2ac/0x985aec refs: 0
+== G4 callers: 94 direct thiscall sites, receiver object census ==
+   lea_local                : 76 sites
+   ptr_local:[ebp-0x3824]   : 5 sites
+   ptr_local:[ebp-0x4]      : 3 sites
+   reg                      : 3 sites
+   global                   : 1 sites
+   ptr_local:[ebp-0x8]      : 1 sites
+   ptr_local:[ebp-0x18]     : 1 sites
+   ptr_local:[ebp-0x10]     : 1 sites
+   ptr_local:[ebp-0x5c]     : 1 sites
+   ptr_local:[ebp-0x40]     : 1 sites
+   ptr_local:[ebp-0x1c]     : 1 sites
+   push-count histogram since the previous call: [(1, 1), (2, 90), (6, 3)]
+   callee's only positive frame refs ['0x8', '0xc'] ; ret 0x8 ; mode receiver lea_local x76
+== G5 the difficulty dialog: seed -> runner -> 0x985aec on 8 factions ==
+   seed window [('mov', 'eax,ds:0x985aec'), ('push', '0x0'), ('push', '0x0'), ('lea', 'ecx,[ebp-0x5390]'), ('mov', 'DWORD PTR [ebp-0x494c],eax'), ('call', '0x5f1394'), ('test', 'eax,eax'), ('jge', '0x4ddcf1')]
+   jge target [('mov', 'ds:0x985aec,eax'), ('mov', 'ecx,0x94d438'), ('mov', 'DWORD PTR [ecx],eax'), ('add', 'ecx,0x20bc')] ; loop base=ecx,0x94d438 stride=ecx,0x20bc bound=ecx,0x95da18 -> iters=8 ; obj+0xa44 seed
+   caller re-reads its own seed after the call: 0 refs
+== G6 rivals, measured ==
+   R1 'the runner is the difficulty chooser': difficulty refs inside 0, inside its caller FUN_004ddaa0 3 [('0x4ddafa', 'mov', 'esi,0x94d2ac'), ('0x4ddb3e', 'mov', 'eax,ds:0x985aec'), ('0x4ddcf1', 'mov', 'ds:0x985aec,eax')]
+   R2 'the return is a dialog ID (IDOK)': the runner's IMMEDIATE returns are ['IMM_0', 'IMM_NEG1'] - no positive immediate can be returned; the value-carrying exit is a memory cell (+0xa40)
+
+G1   PASS seh=True frame=esp,0x38c first=DWORD PTR [edx+0x170] slots=['0x15c', '0x160', '0x164', '0x16c', '0x170', '0x3094']
+G2   PASS exits=6 kinds=['CELL_a40', 'GLOBAL_698d0c', 'IMM_0', 'IMM_NEG1', 'IMM_NEG1', 'PASSTHRU', 'PASSTHRU'] ret=0x8
+G3   PASS a40=1 a44=0 table=0
+G4   PASS sites=94 lea_local=76 none=0 args=['0x8', '0xc'] mode=lea_local
+G5   PASS iters=8 seed_off=0xa44 store=ds:0x985aec,eax loopback=0
+G6   PASS inside=0 caller_refs=3 imm_returns=['IMM_0', 'IMM_NEG1']
+digest=3162322afffbe406 gates=6 pass=6
+PASS M339: 6/6 gates

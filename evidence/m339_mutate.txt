@@ -1,0 +1,13 @@
+NO-OP  PASS M339: 6/6 gates  digest=3162322afffbe406 gates=6 pass=6
+MU1  SCORED   want=['G1'] red=['G1']  vtbl+0x170 -> +0x174 (the prepare slot)
+MU2  SCORED   want=['G1'] red=['G1']  jne after the prepare test -> je (the -1 path is skipped)
+MU3  SCORED   want=['G2', 'G3'] red=['G2', 'G3']  result cell obj+0xa40 -> obj+0xa44 (the seeded field)
+MU4  SCORED   want=['G4'] red=['G2', 'G4']  ret 0x8 -> ret 0x4 (arity disagrees with the caller pushes)
+MU5  SCORED   want=['G5'] red=['G5', 'G6']  the jge store target 0x985aec -> 0x985af0
+MU6  SCORED   want=['G5'] red=['G5']  faction stride 0x20bc -> 0x20b8 (bound arithmetic breaks)
+MU7  SCORED   want=['G6'] red=['G2', 'G3', 'G6']  plant ds:0x985aec inside the runner (0x698d0c -> 0x985aec)
+MU8  SCORED   want=['G5'] red=['G5']  seed slot obj+0xa44 -> obj+0xa40 (seed == result cell)
+ALG_A1 SCORED   want=['G2'] red=['G2']  classifier mutant: ignore the fallthrough exit
+
+scored 9/9  MISMATCH 0 CRASH 0  digest=ff7d68a9a7e3151a
+HARNESS PASS: 9/9 scored
