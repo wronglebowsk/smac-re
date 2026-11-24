@@ -417,7 +417,7 @@ printers of measured values need the same None-guard as the gate.
 - PITFALL: objdump prints `[ebp-0x4]` and `DWORD PTR [ebp-0x4]` alike; long immediates
   leave 3 trailing bytes on their own line (14 gaps) — normalise both.
 
-## Session 321-chain2 (2026-11-24) — pick (1): the HoF record-window page arithmetic
+## Session 321-chain2 (2026-11-24) — pick (1): the HoF record-window page arithmetic (PR #361, review round done; merge BLOCKED: no CI runs scheduled)
 
 - **ANSWER:** the 0x983a10 record index is `5*n - 5 + s` at THREE .text sites:
   SITE A 0x449793/96 (n=[obj+0x59f4] @0x44970f, s=[obj+0xa918] @0x449715), SITE B
@@ -448,5 +448,8 @@ printers of measured values need the same None-guard as the gate.
   SITE B is a two-register chain (edx=slot+4n, then esi=n+edx-5), SITE C's source
   lands in edx (not ecx) and its address chains are formed by *8/sub/*5/*4. The
   address-chain eval must use the INDEX symbols (edx/ecx), not the (n,k) symbols.
+- MERGE STATUS: PR #361 is OPEN with a green LOCAL gate at head; GitHub created ZERO
+  workflow runs after 03:40Z (empty commit + PR close/reopen did not fire `gate`), so
+  the standing "gh pr checks PASS" rule cannot be met. Left unmerged on purpose.
 - PITFALL: `690k` insn counts are parser-dependent — the count is len(image()),
   printed, never hardcoded from an earlier session (790,695 vs 781,379).
