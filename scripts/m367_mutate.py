@@ -55,6 +55,10 @@ TEXT_MUT = [
      "G5a", "11 of the 13 ids anchor the plain dword, 2 the high one"),
     ("MU20", 0x4DB8AA, "mov ecx,DWORD PTR ds:0x997b20", "mov ecx,DWORD PTR ds:0x997b3c", "R1",
      "every row text is a load THROUGH 0x997b20 (another base is not the label array)"),
+    ("MU25", 0x6146C7, "mov ds:0x997b20,eax", "mov ds:0x997b20,ecx", "G0d",
+     "the alloc RESULT is what lands in 0x997b20 (the data flow, not just a store)"),
+    ("MU26", 0x6146B1, "mov ds:0x997b24,eax", "mov ds:0x997b24,ecx", "G0e",
+     "0x997b24 takes the 0x5ea484 return (the parsed count line)"),
     ("MU22", 0x4DB988, "push 0x2000000", "push 0x9", "R3",
      "the ids are bit masks, not row ordinals (only ~9 exceed 13)"),
 ]
@@ -68,6 +72,10 @@ LAB_MUT = [
     ("MU17", 655, b"PactX", "G4c", "element 0xa14 reads 'Pact' (the set bit's own name)"),
     ("MU23", 885, b"Fight to the death", "R4",
      "the high ids do not reuse the low bit's text"),
+    ("MU27", 880, b"I want revengeX", "G5c", "element 870 reads 'I want revenge'"),
+    ("MU28", 884, b"Fight to the deathX", "G5c", "element 874 reads 'Fight to the death'"),
+    ("MU29", 904, b"Fix current status as permanentX", "G5c",
+     "element 894 reads 'Fix current status as permanent'"),
     ("MU21", 8, b"1089  #LABELS", "R2",
      "without the +10 shift the count would parse from the header line -> 0"),
 ]

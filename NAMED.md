@@ -1536,16 +1536,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | consumers: +round/50+1; 4 cmp; 4 add/lea | `:107-129` | V MU5,6,7 |
 | RIVALS refuted: faction scalar, mask array, -1, aliased row | `:132-140` | V MU10,11,12,13 |
 | INFERRED noun (treaty/contact AGE); key 0x54a373 = 4-byte `"a"` | `:130` | INF |
-## M367 (s335-c3, 24/24) — the 13 relations labels ARE labels.txt lines: element = off/4, line = 10+element. ACCEPT `python3 -u scripts/m367_label_index.py` -> **`PASS M367: 24/24`** `a5632abc2d87583e` (`evidence/m367_label_index.txt:99`); harness 25/25 (`evidence/m367_mutate.txt:31`). `:N` = line of that evidence.
+## M367 (s335-c3, 27/27) — the 13 relations labels ARE labels.txt lines: element = off/4, line = 10+element. ACCEPT `python3 -u scripts/m367_label_index.py` -> **`PASS M367: 27/27`** `a48d5dd630542166` (`evidence/m367_label_index.txt:104`, digest `:105`); harness 30/30 (`evidence/m367_mutate.txt:36`). `:N` = line of that evidence.
 | claim | ev | conf |
 |---|---|---|
-| `0x997b20` = heap LINE-POINTER array (2 stores, `count*4` alloc, one `[edx+ecx*4]` fill); owner 0x614681 takes `atoi(line 9)` = 1089 | `:3-14` | V MU1,2,3 |
-| element i = labels.txt line 10+i (count 1089 == the 1089 following lines; elem 0 = `Mission Year`) | `:16-22` | V MU4,5,6 |
-| builder FUN_004db480: 13 add_item rows = 13 of 18 clamp sites, ids = the sync's 13 in order; 0x61482f VALIDATES (arg compared 3x, 0 arithmetic) | `:24-60` | V MU7,9,10,12,13,14 |
-| anchor: 0x4120c4 tests bit 0x1 of the same 0x82f record -> 0xa14 `Pact` if set, else 0xa10 `Treaty` | `:62-68` | V MU15,16,17 |
-| TEXT: 0x1 Pact, 0x2 Treaty, 0x4 Truce, 0x8 Commlink, 0x10 Vendetta, 0x20 I-want-revenge, 0x400 I-shall-betray, 0x1000 I-have-infiltrator, 0x2000 I-want-to-talk, 0x40000 I-am-atrocity-victim, 0x2000000 I-have-surrendered; high dw 0x80000008 Fight-to-the-death, 0x80002000 Fix-current-status-as-permanent; title `Diplomacy for` | `:71-83` | V MU11,17,19,23 |
-| RIVALS refuted: inline strings, no-shift map, ordinals, high=low alias, one page | `:86-97` | V MU20,21,22,23,24 |
-| QUALIFIED M364: bit 0x8's label = `Commlink`; AT WAR came off the vendetta case keys (contact-gate reading INF) | `:74` | OPEN |
+| `0x997b20` = heap LINE-POINTER array; one body (0x614681) runs count(0x997b24) -> `shl 2` -> alloc -> store, and 0x997b24 takes the 0x5ea484 return (atoi of the line read) | `:3-14` | V MU1,2,3,25,26 |
+| element i = labels.txt line 10+i (count 1089 == the 1089 following lines; elem 0 = `Mission Year`; 3 lines past it unread) | `:16-23` | V MU4,5,6 |
+| builder FUN_004db480: 13 add_item rows = 13 of 18 clamp sites, ids = the sync's 13 in order; 0x61482f VALIDATES (arg read by mov/cmp only, 1 compare) | `:24-60` | V MU7,9,10,12,13,14 |
+| anchor: 0x4120c4 tests bit 0x1; the je FALLTHROUGH loads 0xa14 `Pact`, its target 0xa10 `Treaty` | `:62-71` | V MU15,16,17 |
+| TEXT (13/13 pinned triples): 0x1 Pact, 0x2 Treaty, 0x4 Truce, 0x8 Commlink, 0x10 Vendetta, 0x20 I-want-revenge, 0x400 I-shall-betray, 0x1000 I-have-infiltrator, 0x2000 I-want-to-talk, 0x40000 I-am-atrocity-victim, 0x2000000 I-have-surrendered; high dw 0x80000008 Fight-to-the-death, 0x80002000 Fix-current-status-as-permanent; title `Diplomacy for` | `:73-87` | V MU11,17,19,23,27,28,29 |
+| RIVALS refuted: inline strings, no-shift map, ordinals, high=low alias, one page | `:90-101` | V MU20,21,22,23,24 |
+| QUALIFIED M364: bit 0x8's label = `Commlink`; AT WAR came off the vendetta case keys (contact-gate reading INF) | `:75` | OPEN |
 ## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |
 |---|---|---|

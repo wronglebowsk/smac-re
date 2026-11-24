@@ -14,6 +14,8 @@ M367 mutation harness - one mutant per VERIFIED gate
   MU16  TEXT G4b  red=True  set -> element 0xa14 ('Pact'), clear -> 0xa10 ('Treaty')
   MU18  TEXT G5a  red=True  11 of the 13 ids anchor the plain dword, 2 the high one
   MU20  TEXT R1   red=True  every row text is a load THROUGH 0x997b20 (another base is not the label array)
+  MU25  TEXT G0d  red=True  the alloc RESULT is what lands in 0x997b20 (the data flow, not just a store)
+  MU26  TEXT G0e  red=True  0x997b24 takes the 0x5ea484 return (the parsed count line)
   MU22  TEXT R3   red=True  the ids are bit masks, not row ordinals (only ~9 exceed 13)
   MU4   LAB  G1a  red=True  the section header line 8 is '#LABELS'
   MU5   LAB  G1b  red=True  the declared count equals the number of label lines that follow
@@ -21,11 +23,14 @@ M367 mutation harness - one mutant per VERIFIED gate
   MU11  LAB  G2e  red=True  the title element reads 'Diplomacy for'
   MU17  LAB  G4c  red=True  element 0xa14 reads 'Pact' (the set bit's own name)
   MU23  LAB  R4   red=True  the high ids do not reuse the low bit's text
+  MU27  LAB  G5c  red=True  element 870 reads 'I want revenge'
+  MU28  LAB  G5c  red=True  element 874 reads 'Fight to the death'
+  MU29  LAB  G5c  red=True  element 894 reads 'Fix current status as permanent'
   MU21  LAB  R2   red=True  without the +10 shift the count would parse from the header line -> 0
   MU19  SRC  G5b  red=True  the element is off/4 exactly - a +4 slip lands every row one text off
   MU24  SRC  R5   red=True  the run splitter reports 3 runs, not one (adjacency is measured)
   MUA   SRC  G2a  red=True  the row classifier keys on the 0x997b20 base, not on the call target alone
 
-KILLED 25/25   NO-OP 0
-gate coverage: 24/24 gates have a mutant whose run reached it; unnamed: -
-PASS M367-MUT: 25/25 killed, NO-OP 0, coverage 24/24
+KILLED 30/30   NO-OP 0
+gate coverage: 27/27 gates have a mutant whose run reached it; unnamed: -
+PASS M367-MUT: 30/30 killed, NO-OP 0, coverage 27/27

@@ -8,7 +8,10 @@ G0  the loader: who owns 0x997b20
     count load : mov ds:0x997b24,eax | mov eax,ds:0x997b24 | cmp edx,DWORD PTR ds:0x997b24
     element store: 00614707 mov DWORD PTR [edx+ecx*4],eax
   G0a   PASS  0x997b20 has exactly 2 stores (2): the free-path zero at 00614669 and the alloc result
-  G0b   PASS  the array is sized count*4 (`shl eax,2` on 0x997b24 then one alloc call)
+  G0b   PASS  the window holds one `shl eax,2` and one alloc call ['shl eax,0x2', 'call 0x5be090']
+    data flow: count@006146b6 -> shl@006146bb -> push@006146be -> alloc@006146bf -> store@006146c7
+  G0d   PASS  count(0x997b24) -> shl 2 -> alloc -> stored to 0x997b20 in ONE body (1 prologue, rets): the owner is the function at 0x614681
+  G0e   PASS  0x997b24 has ONE store, fed by the 0x5ea484 return (0x5eaa53 = atoi of the line just read)
   G0c   PASS  one element store form [edx+ecx*4] = the reader's return -> an array of LINE POINTERS
 
 G1  labels.txt is the file the loader opens (`labels` + '.txt', fopen mode 'rt' at 0x5ea673)
@@ -18,7 +21,7 @@ G1  labels.txt is the file the loader opens (`labels` + '.txt', fopen mode 'rt' 
     element 0 -> line 10 b'Mission Year' ; element 1088 -> line 1098 b'More               '
   G1a   PASS  the section header line 8 is b'#LABELS' (the loader opens section 'labels')
   G1b   PASS  the declared count 1089 equals the 1089 label lines that follow it (element i = line 10+i)
-  G1c   PASS  the array is exactly lines 10..1098; the 2 lines after it are never loaded
+  G1c   PASS  the array is exactly lines 10..1098; the 3 lines after the 1089th element are beyond the loader's only bound (count) and are never read
 
 G2  FUN_004db480's add_item rows (text, id, 0) and the sync's set_checked rows (id, mask)
     #  call@      id          flag  label off  element  line  text
@@ -51,7 +54,7 @@ G2  FUN_004db480's add_item rows (text, id, 0) and the sync's set_checked rows (
 G3  the clamp 0x61482f is a validator, so the element index is a build-time constant
     clamp body (24 insns), reads of the argument [ebp+8]: 3
       mov ecx,DWORD PTR [ebp+0x8] | cmp DWORD PTR [ebp+0x8],ecx | mov eax,DWORD PTR [ebp+0x8]
-  G3a   PASS  24-insn body; the argument is only COMPARED (3 reads, 0 arithmetic) -> a validator, not an index computation
+  G3a   PASS  24-insn body; the argument is read by mov/cmp only (classes ['cmp', 'mov'], 1 compare, 0 arithmetic) -> a validator, not an index computation
     element runs: 643..646 868..875 894
     the 10-run 0xd88..0xdac, consumers: ['004db53c->866(other)', '004db87a->875(row)', '004db92b->868(row)', '004db950->869(row)', '004db973->870(row)', '004db999->871(row)', '004db9be->872(row)', '004db9e4->873(row)', '004dba0a->874(row)', '004dbb8d->867(other)']
   G3b   PASS  the 13 elements form exactly 3 maximal runs of sizes [4, 8, 1]
@@ -62,8 +65,9 @@ G4  independent anchor: the status-text function at 0x4120c4 names bit 0x1
       004120d4  mov eax,DWORD PTR [edx+0xa14]
       004120e1  mov eax,DWORD PTR [eax+0xa10]
       004120ed  call 0x61482f
+    branch: test@0x4120c4 je@0x4120cc -> 0x4120dc ('mov eax,ds:0x997b20') ; set load @0x4120d4 ; clear load @0x4120e1
   G4a   PASS  the predicate is `test BYTE PTR [ecx*4+0x94d448],0x1` -> bit 0x1 of the plain relations dword
-  G4b   PASS  set -> element 0xa14, clear -> element 0xa10 (one load each, no fallthrough ambiguity)
+  G4b   PASS  set -> element 0xa14 (fallthrough after the je), clear -> element 0xa10 (the je target): the branch, not just presence, picks the label
   G4c   PASS  element 0xa14 = b'Pact', element 0xa10 = b'Treaty' -> the SET bit names its own label (M364: 0x1=PACT)
 
 G5  THE TABLE - bit -> array element -> labels.txt line -> text
@@ -81,8 +85,9 @@ G5  THE TABLE - bit -> array element -> labels.txt line -> text
     11 0x40000     0x40000  plain        873   883  I am atrocity victim
     12 0x80000008  0x8      high         874   884  Fight to the death
     13 0x80002000  0x2000   high         894   904  Fix current status as permanent
+  G5c   PASS  all 13 (id, element, text) triples match the pinned table (13/13 rows)
   G5b   PASS  the 4 stance ids resolve (through the computed element) to ['Pact', 'Treaty', 'Truce', 'Vendetta']
-  G5a   PASS  11 rows anchor the plain dword 0x94d448, 2 the high dword 0x94d468 (mask==id&0x7fffffff 13/13)
+  G5a   PASS  11 rows anchor the plain dword 0x94d448, 2 the high dword 0x94d468; every sync mask == id&0x7fffffff (13/13)
 
 G6  RIVALS (each must FAIL on the numbers above)
     R1 'the labels are inline strings in terran.exe' -> 1/13 of the 13 texts occur in the
@@ -96,5 +101,5 @@ G6  RIVALS (each must FAIL on the numbers above)
   R4    PASS  R4 refuted: the 2 high ids do NOT reuse the low bit's text (0/2 equal) - distinct flags
   R5    PASS  R5 refuted: the 13 labels are not one contiguous page (3 runs [4, 8, 1], gaps [222, 19])
 
-PASS M367: 24/24 gates
-digest a5632abc2d87583e
+PASS M367: 27/27 gates
+digest a48d5dd630542166
