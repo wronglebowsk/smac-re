@@ -16,11 +16,12 @@ from `data/alpha.json`; none is retyped here.
 
 No box time, no /proc, no gdb, no game-binary load.
 """
-import copy
 import hashlib
+import json
 import os
 import re
 import sys
+import tempfile
 
 from . import composedfeeder as scf
 from . import economy as soco
@@ -170,8 +171,8 @@ def print_digest(recs, shape):
 
 
 # --- the measurement -------------------------------------------------------------------------
-def measure():
-    m = {}
+def measure(sav=SAV):
+    m = {"sav": sav}
     rules = sorules.load(RULES)
     rows = alpha_rows(rules)
     recs, shape = build(rows)
@@ -234,6 +235,7 @@ def measure():
     dl = _line(ARCHIVE_M46, "disabled list (ours)")
     m["disabled"] = sorted({int(x) for x in re.findall(r"item\[\d+\]=(\d+)", dl)})
     m["der_dis"] = sum(0 if i in m["disabled"] else recs[i]["upkeep"] for i in m["fac_set"])
+    m["der_dis_nolist"] = sum(recs[i]["upkeep"] for i in m["fac_set"])
     # rivals on the same numbers.  A VALUE-only rival does NOT discriminate here (the five pinned
     # upkeeps are 0,0,1,1,1 and the neighbouring rows carry the same values) - the NAME is the
     # discriminator, so it is measured separately rather than hidden in a passed assertion.
@@ -278,7 +280,7 @@ def measure():
     orig = soco.upkeep_table
     try:
         soco.upkeep_table = lambda _rules, shift=1: derived       # the substitution under test
-        bm = scf.measure_full(SAV)
+        bm = scf.measure_full(sav)
     finally:
         soco.upkeep_table = orig
     m["b28_table_is_derived"] = (bm["table"] is derived)
@@ -298,22 +300,41 @@ def measure():
     m["alpha_sha"] = hashlib.sha256(open(RULES, "rb").read()).hexdigest()
     costs = [r["cost"] for r in recs[1:shape["branch"]]]
     m["cost_inversions"] = sum(1 for a, b in zip(costs, costs[1:]) if b < a)
+    # Five rival CLAIMS, each refuted by the number it is refuted by.  Two are claims about the
+    # ARRAY (its extent, its row ORDER), three about the TABLE's indexing - none is a proxy for
+    # another: extent 39 vs the census end 72; file order carries 13 cost inversions (so "sorted
+    # by cost" is out); the table is not alpha's without the +1; it is not reversed; it is not
+    # read at the alpha index.  G8 prints each number next to its claim.
     m["rivals"] = {
-        "R1-array-is-39": m["rival39_end"] != m["c_end"],
-        "R2-no-shift": m["shift0_diff"] > 0,
-        "R3-reversed": m["pin_rev_name_ok"] == 0,
-        "R4-cost-sorted": m["cost_inversions"] > 0,
-        "R5-atidx-names": m["pin_atidx_name_ok"] == 0,
+        "array-extent-39 (census end %d)" % m["c_end"]: m["rival39_end"] != m["c_end"],
+        "table=alpha-without-+1 (%d ids)" % m["shift0_diff"]: m["shift0_diff"] > 0,
+        "order=reversed (%d/5 names)" % m["pin_rev_name_ok"]: m["pin_rev_name_ok"] == 0,
+        "order=cost-sorted (%d inversions)" % m["cost_inversions"]: m["cost_inversions"] > 0,
+        "table=read-at-alpha-index (%d/5 names)" % m["pin_atidx_name_ok"]:
+            m["pin_atidx_name_ok"] == 0,
     }
     m["print_sha"] = print_digest(recs, shape)
 
-    # G9 the file is READ: a mutated alpha moves exactly one cell and reddens G3 at one id
-    rows2 = copy.deepcopy(rows)
-    rows2[5]["fields"][2] = str(int(rows2[5]["fields"][2]) + 1)
-    mrecs, _mshape = build(rows2)
+    # G9 the file is READ: a mutated alpha.json WRITTEN TO DISK and RELOADED through
+    # sim.rules.load moves exactly one cell (the in-memory version of this test would prove
+    # nothing about the file read, so it is a real file on the scratch volume).
+    data = json.loads(open(RULES, encoding="utf-8").read())
+    m["mut_row"] = 5
+    data["FACILITIES"][m["mut_row"]]["fields"][2] = str(
+        int(data["FACILITIES"][m["mut_row"]]["fields"][2]) + 1)
+    fd, tmp = tempfile.mkstemp(prefix="b29_alpha_", suffix=".json")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            json.dump(data, fh)
+        mut_rows = alpha_rows(sorules.load(tmp))
+        m["mut_sha"] = hashlib.sha256(open(tmp, "rb").read()).hexdigest()[:16]
+    finally:
+        os.unlink(tmp)
+    m["mut_sha_differs"] = (m["mut_sha"] != m["alpha_sha"][:16])
+    mrecs, _mshape = build(mut_rows)
     mderived = derived_table(mrecs)
     m["mut_diff_ids"] = [i for i in m["ids"] if mderived[i] != derived[i]]
-    m["mut_cell"] = (5 + 1, derived[6], mderived[6])
+    m["mut_cell"] = (m["mut_row"] + 1, derived[6], mderived[6])
     return m
 
 
@@ -362,14 +383,17 @@ def acceptance(m, results):
 
     add(("G4 the %d live-pinned (id, name, upkeep) rows are reproduced by the DERIVED table "
          "(%d/%d), the facility set %s gives raw %d == recorded %d and disabled %d == recorded "
-         "%d == 0x744f28 %d (disabled list %s); by NAME the at-alpha-index rival matches %d/5 "
+         "%d == 0x744f28 %d (the parsed disabled list is %s and the no-list sum %d differs by "
+         "exactly 1); by NAME the at-alpha-index rival matches %d/5 "
          "and the reversed order %d/5 - and the rival's VALUE-only score is %d/5, so the value "
          "alone would not discriminate and the name is the measured discriminator"
          % (len(m["pinned"]), m["pin_match"], len(m["pinned"]), m["fac_set"], m["der_raw"],
             m["rec_raw"], m["der_dis"], m["rec_dis"], m["rec_hud"], m["disabled"],
-            m["pin_atidx_name_ok"], m["pin_rev_name_ok"], m["pin_atidx_val_ok"]),
+            m["der_dis_nolist"], m["pin_atidx_name_ok"], m["pin_rev_name_ok"],
+            m["pin_atidx_val_ok"]),
          m["pin_match"] == len(m["pinned"]) and len(m["pinned"]) == 5
          and m["der_raw"] == m["rec_raw"] and m["der_dis"] == m["rec_dis"] == m["rec_hud"]
+         and m["disabled"] == [8] and m["der_dis_nolist"] - m["der_dis"] == 1
          and m["pin_atidx_name_ok"] == 0 and m["pin_rev_name_ok"] == 0
          and m["pin_atidx_val_ok"] >= 1))
 
@@ -412,12 +436,13 @@ def acceptance(m, results):
          and bool(PRINT_ANCHOR) and m["print_sha"] == PRINT_ANCHOR
          and bool(ALPHA_SHA) and m["alpha_sha"] == ALPHA_SHA))
 
-    add(("G9 the builder READS alpha: %d rows with widths %d/%d/%d equal the census, and a mutated "
-         "alpha.json row moves exactly %d derived cell %s and reddens G3 at %d id(s)"
-         % (m["b_rows"], m["b_w6"], m["b_w7"], m["b_w11"], len(m["mut_diff_ids"]), m["mut_cell"],
-            len(m["mut_diff_ids"])),
+    add(("G9 the builder READS alpha: %d rows with widths %d/%d/%d equal the census, and a "
+         "mutated alpha.json WRITTEN TO DISK (sha %s != file sha %s) and RELOADED through "
+         "sim.rules.load moves exactly %d derived cell %s and reddens G3 at %d id(s)"
+         % (m["b_rows"], m["b_w6"], m["b_w7"], m["b_w11"], m["mut_sha"], m["alpha_sha"][:16],
+            len(m["mut_diff_ids"]), m["mut_cell"], len(m["mut_diff_ids"])),
          (m["b_w6"], m["b_w7"], m["b_w11"]) == (m["c_w6"], m["c_w7"], m["c_w11"])
-         and m["mut_diff_ids"] == [6] and m["mut_cell"] == (6, m["derived"][6],
+         and m["mut_sha_differs"] and m["mut_diff_ids"] == [6] and m["mut_cell"] == (6, m["derived"][6],
                                                             m["derived"][6] + 1)))
 
 
@@ -426,7 +451,7 @@ def main(argv):
     if not os.path.exists(sav):
         print("B29: missing input %s" % sav)
         return 2
-    m = measure()
+    m = measure(sav)
     table = render(m["recs"], m["shape"])
     for line in table:
         print(line)

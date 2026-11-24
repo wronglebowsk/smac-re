@@ -59,7 +59,7 @@ MUTANTS = [
      "                   re.findall(r\"\\((\\d{2}), \\('([^']+)', (\\d+)\\)\\)\", b4)]",
      "the pinned-row parse restricted to 2-digit ids (the five rows vanish)"),
     ("ME5", "sim/itemtable.py",
-     "    mrecs, _mshape = build(rows2)",
+     "    mrecs, _mshape = build(mut_rows)",
      "    mrecs, _mshape = build(rows)",
      "the mutated-alpha probe built from the UNMUTATED rows (G9 measures nothing)"),
     # ---- the NO-OP control --------------------------------------------------------------
