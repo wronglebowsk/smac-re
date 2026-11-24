@@ -1018,20 +1018,18 @@ QUALIFIED BY B24 (s287): `fold()` in this module is now PARAMETERIZED - new hook
 | OPEN (pick): which UI handlers reach 004736a0's 15 sites / the hub's 53 sites in 28 owners; GOAL game-meaning still open (M310) | - | lead |
 Acceptance `python3 -u scripts/m312_goal_callers.py` -> **27/27**, digest 8751c5af18c5a8f8, x2 identical; `scripts/m312_mutate.py` -> **23/23** (post-Greptile #292: A9a full-window, A8b entry-zero scope, A5b both y-laws, A5f new x-law).
 
-## M313 (s278, STATIC, zero box; mutation-tested 23/23) - pick (i') CLOSED: the events are TWO command pumps + one mouse handler, all wired to ONE interaction band; pumpA's door is a data pointer at 0x6724a8 inside a multi-table .text-pointer run
+## M313 (s278, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m313-rows.md` (sha1 `b674876b9a74`) - pick (i') CLOSED: the events are TWO command pumps + one mouse handler, all wired to ONE interaction band; pumpA's door is a data pointer at 0x6724a8 inside a multi-table .text-pointer run
 
-| claim | evidence | conf |
+| claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
-| BAND LAW: the two M312 trunks converge - 20 of FUN_00472810's 28 owner functions AND 9 distinct owners of FUN_004736a0's 15 sites lie in ONE band [0x50bb20, 0x5175b4); the 8 off-band hub owners are exactly {004738f0, 00473960, 004739a0, 0048e530, 004c40e0, 004cbc70, 004e10c0, 0058b1b0}; the 53 hub sites are pinned by exact address list (A2b) | `evidence/m313_event_map.txt:1,2,3,4,5,6` + `evidence/m313_mutate.txt:2,3,5` | V |
-| THE PUMPS (call INTO the MESH = 20 band owners + 8 off-band owners + cursor thunk; post-Greptile #294 the split is exact): FUN_00512b40 -> 8 in-band + 4 off-band {004736e0, 004738f0, 004739a0, 004e10c0}; FUN_00516b80 -> 5 in-band + 5 off-band {004736e0, 004738f0, 004739a0, 004c40e0, 004e10c0} **CORRECTED by M314: that census listed only thunk/hub-sites; pumpB ALSO calls FUN_004d3f70 (activate_at_tile, off-band) directly at 0x517858 - 6th off-band callee; pumpA does NOT**; pump callers exactly {FUN_0041bda0, FUN_004c5d60} and {FUN_005186b0}; pumpA carries 7 hub sites (0x51319E, 0x5137CF, 0x51562D, 0x51567D, 0x5163D4, 0x5164A5, 0x51653A), pumpB 6 (0x516C3E, 0x516D03, 0x5172F3, 0x51753E, 0x5175A9, 0x5175FA) | `evidence/m313_event_map.txt:7,8,9,10,12` + `evidence/m313_mutate.txt:6,7,8,9,11` | V |
-| PUMPA = command dispatcher (switch ENCODING, post-P2 rewrite): command-ID switch is TWO-STAGE - `cmp eax,0x39 / ja 0x512c19 / mov cl,[eax+0x5165ec]` byte map then 8-slot jump @0x5165cc (all 8 targets pinned from PE); navigation-VK switch same shape - keys 0..0x5c byte map @0x516638 then 4-slot jump @0x516628 (default 0x51322f); VK codes in the arms include RETURN 0x0d, ESC 0x1b, PgUp 0x21, PgDn 0x22, LEFT 0x25, RIGHT 0x27 (Greptile P2 fix: NOT END/HOME - those are 0x23/0x24); PUMPB = order-key dispatcher `lea eax,[ebx-0x51] / cmp eax,0xc / ja 0x517110` then 13-slot table @0x5181d0 ('Q'+i, targets pinned; 0x900-0x912 arm -> FUN_004d44d0). Layout law A6e: each jump table ends exactly where its byte map begins | `evidence/m313_event_map.txt:15,16,17,18,19` + `evidence/m313_mutate.txt:16,17,18,19,20,21` | V (encoding) / INFERRED (which ID/VK does what) |
-| PUMPA'S DOOR (post-P1 narrowed - no single-class table claimed): FUN_0041bda0 has ZERO static call/jmp refs; a stored u32 at 0x6724a8 = FUN_0041bda0 lies inside a 490-pointer contiguous .text run starting 0x672290 (digest f2e2c9dfae9ba011) that SPANS MULTIPLE class tables - e.g. 0x67290c in the same run is the chooser FAMILY dialog table's +0x4c entry (base 0x6728c0) per ## M288 - so the dispatch is via a method-table data pointer at a pinned address; table identity/boundaries are NOT claimed and the word "slot" is retired | `evidence/m313_event_map.txt:13,14` + `evidence/m313_mutate.txt:12,13,14,15` | V (entries/digest) |
-| MOUSE PATH: M28-named map_click_handler FUN_00476580 calls 4 in-band members {0050bde0, 0050ca10, 0050cab0, 0050fb80} + 1 off-band (004739a0) - a map click reaches the goal-check machinery with no pump | `evidence/m313_event_map.txt:11` + `evidence/m313_mutate.txt:10` | V |
-| PUMPB ENTRY installed at startup: FUN_005186b0 = zero call/jmp refs (NUMERIC compare post-P2) and EXACTLY one stored u32 file-wide - the imm32 at 0x51892e of a `push 0x5186b0` at 0x51892d (opcode verified in its own gate A7b after the P2) in FUN_00518820, reached only from init FUN_00580260 - callback installation (census V, mechanism INFERRED) | `evidence/m313_event_map.txt:20,21` + `evidence/m313_mutate.txt:22,23,24` | V/INFERRED |
-| CLOSED by M314 (see ## M314): the "dialog-family" census + FUN_004d3f70's band calls - the lead's "15 band-member calls" REFUTED (exactly 1 band member, FUN_0050cab0 x2); GOAL game-meaning still open (M310) | `evidence/m314_tour_family.txt` | V |
-Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de426d127, x2 identical; `scripts/m313_mutate.py` -> **23/23**.
-
-
+| BAND LAW: both trunks converge on [0x50bb20,0x5175b4) - 20/28 + 9 owners, 8 off-band hub owners pinned, 53 sites by address list | `evidence/m313_event_map.txt:1-6` + `evidence/m313_mutate.txt:2,3,5` | V |
+| THE PUMPS: FUN_00512b40 -> 8 in-band + 4 off-band; FUN_00516b80 -> 5 + 5 and (M314) also FUN_004d3f70 @0x517858; 7 + 6 hub sites by address | `evidence/m313_event_map.txt:7,8,9,10,12` + `evidence/m313_mutate.txt:6-9,11` | V |
+| PUMPA = command dispatcher (byte map 0x5165ec + 8-slot jump 0x5165cc; VK map 0x516638 + 4-slot 0x516628); PUMPB = order-key `lea ebx-0x51 / cmp 0xc` + 13-slot table 0x5181d0 | `evidence/m313_event_map.txt:15-19` + `evidence/m313_mutate.txt:16-21` | V encoding / INFERRED meaning |
+| PUMPA'S DOOR: FUN_0041bda0 has zero refs; a stored u32 at 0x6724a8 lies in a 490-pointer multi-class run at 0x672290 (f2e2c9dfae9ba011) - the word 'slot' retired | `evidence/m313_event_map.txt:13,14` + `evidence/m313_mutate.txt:12-15` | V entries |
+| MOUSE PATH: map_click_handler FUN_00476580 calls 4 in-band members + 004739a0 - a map click reaches the goal check with no pump | `evidence/m313_event_map.txt:11` + `evidence/m313_mutate.txt:10` | V |
+| PUMPB ENTRY: FUN_005186b0 has 0 call/jmp refs and exactly ONE stored u32 (imm32 of `push 0x5186b0` at 0x51892d in FUN_00518820, from init FUN_00580260) | `evidence/m313_event_map.txt:20,21` + `evidence/m313_mutate.txt:22-24` | V census / INFERRED install |
+| CLOSED by M314: the 'dialog-family' census and FUN_004d3f70's band calls (exactly 1 band member, FUN_0050cab0 x2); GOAL game-meaning still open (M310) | `evidence/m314_tour_family.txt` | V |
+this stub governs: one line per claim. Acceptance `python3 -u scripts/m313_event_map.py` -> **21/21**, digest 5e14170de426d127, x2 identical; `scripts/m313_mutate.py` -> **23/23**.
 ## M314 (s282, STATIC, zero box; mutation-tested 27/27) - pick (i'') CLOSED: FUN_004c5d60 = the token-keyed tour/dialog dispatcher; its "family" = 4 coordinate-wrapper thunks + 4 tour drivers + 2 registration legs; the 0x4c2e90-0x4c3760 "thunks" = result handlers calling pane methods through the M269 +0x444 secondary delta
 
 | claim | evidence | conf |
@@ -1447,6 +1445,7 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | the 4 register-item set=1 sites: `0x41c6f8` (modal-runner return + bitmap pre-read = toggle), `0x41d8fc` (loop counter under `0x5a6e70`), `0x508c85`/`0x508cee` (1..0x26 clamp) | `:127-131` | V MU5 |
 | stamp = `or BYTE PTR [eax],cl` @`0x4f0ec0` in FUN_004ef6d0: mapper(item=`edi`) -> 304*`ds:0x68cbb0`, 10 pinned insns, **0x86** before the byte-read `call 0x4ef5d0` (pop) @`0x4f0f46` | `:51-70`,`:143`,`:145` | V MU6,MU8 |
 | the same block spends `[edx+0x40]` by `edi` (`0x4f0ca4/6`) then reads `[edi*48+0x984d38]` (`0x4f0f65-6f`), `edi` unwritten in between | `:112-124`,`:144` | V MU7 |
+| CLOSED by `## M346`: the build-finished ALERT is this same block's two posts (0x6265a2 kind 1 @0x4f0f78, 0x626634 kind 2 @0x4f0f96) into the 10-slot `$`-token table, drained by FUN_00636b1e; `0x985b10` is refuted as the channel | `evidence/m346_alert_raiser.txt:72-84` | V |
 | the 8 caller ROLES; `edx` at `0x4f0ca1` = the base record; `+0x40` = accumulated minerals; `edi` = the completed item | `:40-50` | INFERRED |
 ## M345 (s324-chain2, 12/12) — the dialog family `+0x64` commit slot has no .text dispatcher
 
@@ -1460,6 +1459,21 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64` | `:67-77,:102` | V MU7,MU10 |
 | ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 | `:104` | V MU0 |
 | OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped | - | lead |
+
+
+
+
+## M346 (s325, ANALYSE, static; ACCEPT `scripts/m346_alert_raiser.py` -> **`PASS M346: 18/18`** `ab4f0ca8123245bb` x2 (`evidence/m346_alert_raiser.txt:110`); harness 22/22 `[]` (`evidence/m346_mutate.txt:25`)) — the build-finished ALERT = 2 posts into a 10-slot `$`-token table; `0x985b10` is NOT its channel.
+
+| claim | evidence | conf |
+|---|---|---|
+| 0x4f0f46 = `call 0x4ef5d0` (the queue pop) and between it and 0x4f0f9b the block posts exactly 2: 0x6265a2 kind 1 @0x4f0f78, 0x626634 kind 2 @0x4f0f96 (14 in FUN_004ef6d0); payloads `[edi*48+0x984d38]` / `0x927894+1436*idx` | `:5-17`,`:27-37` | V MU1,2,3,4,5 |
+| table: payload 0x999ff4+4k, owner 0x999fcc+4k, text 0x99a01c+0x100k, `cmp k,0x9` + `jle` body = TEN slots | `:41-46` | V MU6,7,8,9 |
+| expander FUN_00625b20: 4 reads 0x999fa4 + 4 `shl REG,8; add REG,0x99a01c` (same register); tokens 0x69911c `$`/`$NUMBER`/`$NUM`/`$HEX`/`$LINK<` | `:59-62` | V MU10,11,12,13,14 |
+| drainer FUN_00636b1e clears slots 0/1/2 @0x63730e,15,1c, calls runner 0x5f1394 @0x63732d, measures slot1 (0x64c460) vs 0x10 and jumps BACK to 0x63724e; reads slot1 x5, slot2 x2; 0 direct callers | `:65-78` | V MU15,16,17,21 |
+| RETRACTION: 0x985b10 = player mask (M96,M308), not the channel: 0 refs in the 5 alert fns and the post window, 0 stores in FUN_004ef6d0 | `:81-83` | V MU18,19 |
+| no pop/consume: the only first-byte writers of the 10 text slots are the 2 publishers + the drainer | `:86-88` | V MU20 |
+| OPEN: queue-control globals in the band (the `inc/add` counter 0x999f90 family) are NOT measured; slot text = message text and payloads = name sources (0x64b9e0) are INFERRED; the template consuming slots 1/2 is OPEN | - | INFERRED |
 
 ## M347 (s324-chain2, STATIC 12/12) — M341's OPEN `+0x59f4` WRITER: the `+0x5970` child selector; the page bound IS 7
 

@@ -1,0 +1,110 @@
+M346 -- the build-finished ALERT: raiser, slot table, expander, drainer
+text=scratch/m574/text.txt (781429 insns)  index=10284 fns
+
+TABLE 1 - alert-API posts inside FUN_004ef6d0 (the base screen, 12298 insns)
+  * = inside the completion block [pop 0x4f0f46, end 0x4f0f9b]
+   4efcc8  post_ptr   args=['0x0', 'ecx', '0xffffffff', '0xffffffff']
+   4efcdd  post_ptr   args=['0x1', 'ecx', '0xffffffff', '0xffffffff']
+   4f0392  post_ptr   args=['0x1', 'ecx', '0xffffffff', '0xffffffff']
+   4f07f8  post_str   args=['0x1', 'edx', '0xffffffff', '0xffffffff']
+   4f083a  post_ptr   args=['0x2', 'edx', '0xffffffff', '0xffffffff']
+   4f087a  post_ptr   args=['0x3', 'eax', '0xffffffff', '0xffffffff']
+   4f098b  post_str   args=['0x1', 'ecx', '0xffffffff', '0xffffffff']
+  *4f0f78  post_str   args=['0x1', 'edx', '0xffffffff', '0xffffffff']
+  *4f0f96  post_ptr   args=['0x2', 'ecx', '0xffffffff', '0xffffffff']
+   4f1010  post_ptr   args=['0x0', 'ecx', '0xffffffff', '0xffffffff']
+   4f133e  post_ptr   args=['0x0', 'ecx', '0xffffffff', '0xffffffff']
+   4f1488  post_ptr   args=['0x0', 'eax']
+   4f19c1  post_ptr   args=['0x5', 'edx', '0xffffffff', '0xffffffff']
+   4f1ace  post_ptr   args=['0x5', 'eax', '0xffffffff', '0xffffffff']
+  14 posts total, kinds=['0x0', '0x1', '0x1', '0x1', '0x2', '0x3', '0x1', '0x1', '0x2', '0x0', '0x0', '0x0', '0x5', '0x5']
+
+  payload preparation:
+    4f0f65  lea    ecx,[edi+edi*2]
+    4f0f68  push   0xffffffff
+    4f0f6a  shl    ecx,0x4
+    4f0f6d  push   0xffffffff
+    4f0f6f  mov    edx,DWORD PTR [ecx+0x984d38]
+    4f0f75  push   edx
+    4f0f76  push   0x1
+    4f0f7d  lea    eax,[ebx+ebx*4]
+    4f0f80  push   0xffffffff
+    4f0f82  push   0xffffffff
+    4f0f84  lea    eax,[eax+eax*8]
+    4f0f87  shl    eax,0x3
+    4f0f8a  sub    eax,ebx
+    4f0f8c  lea    ecx,[eax*4+0x927894]
+    4f0f93  push   ecx
+    4f0f94  push   0x2
+
+TABLE 2 - the slot table as the two POSTERS write it (10 slots, k <= 9)
+  FUN_006265a2
+    6265a8  cmp    DWORD PTR [ebp+0x8],0x9
+    6265d2  mov    DWORD PTR [edx*4+0x999ff4],eax
+    6265f6  mov    DWORD PTR [eax*4+0x999fcc],ecx
+    626600  shl    edx,0x8
+    626603  mov    BYTE PTR [edx+0x99a01c],0x0
+    62661c  shl    ecx,0x8
+    62661f  add    ecx,0x99a01c
+  FUN_00626634
+    626640  cmp    DWORD PTR [ebp+0x8],0x9
+    62666a  mov    DWORD PTR [edx*4+0x999ff4],eax
+    62668e  mov    DWORD PTR [eax*4+0x999fcc],ecx
+    626698  shl    edx,0x8
+    62669b  mov    BYTE PTR [edx+0x99a01c],0x0
+    6266a9  shl    ecx,0x8
+    6266ac  add    ecx,0x99a01c
+
+TABLE 3 - the expander FUN_00625b20: token literals + the two slot arrays
+  0x69911c literals: ['$', '$NUMBER', '$NUM', '$HEX', '>', '$LINK<', 'logfile.txt', 'wt']
+  numeric slot refs 0x999fa4: 4 ['625c2c', '625cec', '625e4b', '626091']
+  text slot adds 0x99a0xx   : 4 ['625dac:eax,0x99a01c', '625f0b:eax,0x99a01c', '6261b3:edx,0x99a01c', '62637f:ecx,0x99a01c']
+  every text-slot read is `mov reg,[ebp-n]; shl REG,0x8; add REG,0x99a01c`: True
+
+TABLE 4 - the drainer FUN_00636b1e (3571 B): clear, run, re-loop
+    63730e  mov    BYTE PTR ds:0x99a01c,0x0
+    637315  mov    BYTE PTR ds:0x99a11c,0x0
+    63731c  mov    BYTE PTR ds:0x99a21c,0x0
+    637323  push   0x0
+    637325  push   0x0
+    63732d  call   0x5f1394
+    637335  cmp    DWORD PTR [ebp-0x10],0xffffffff
+    637340  movsx  ecx,BYTE PTR ds:0x99a11c
+    637349  je     0x637362
+    63734b  push   0x99a11c
+    637350  call   0x64c460
+    637358  cmp    eax,0x10
+    63735b  jle    0x637362
+  drainer also reads slot1 0x99a11c / slot2 0x99a21c at: ['637315', '63731c', '637340', '63734b', '63737d', '637388', '63738d', '6373b4', '6374b6']
+
+TABLE 5 - RIVAL R1: 0x985b10 is NOT the alert channel (M96/M308: player mask)
+  refs inside the post window 0x4f0f30-0x4f0fa0 : 0
+  refs inside FUN_004ef6d0                      : 16 (stores: 0)
+  refs inside the alert chain fns               : {6445856: 0, 6448513: 0, 6448546: 0, 6448692: 0, 6515486: 0}
+
+TABLE 6 - the text-slot first-byte writer census (R2: no pop, no consume-and-clear)
+  first-byte writers of the text slots: ['626603', '62669b', '63730e', '637315', '63731c']
+  of which drains: 3 (['63730e', '637315', '63731c'])   poster zeros: 2
+
+PASS G1 0x4f0f46 IS the queue pop (call 0x4ef5d0) and 0x4f0f9b the block end (re-read of 0x91b5b4)  [0x4ef5d0 | eax,ds:0x91b5b4]
+PASS G2 exactly 2 alert-API posts between the pop and the block end (0x4f0f78/0x4f0f96)  [['4f0f78', '4f0f96'] of 14 in FUN_004ef6d0]
+PASS G3 the two completion kinds are 1 (item row) then 2 (base record)  [['0x1', '0x2']]
+PASS G4 kind-1 payload = DWORD [edi*48 + 0x984d38] (72-record item table, M337)  [ecx,0x4 | edx,dword ptr [ecx+0x984d38]]
+PASS G5 kind-2 payload = 0x927894 + 1436*idx ((5*9*8-1)*4): base record stride 0x59c  [['eax,[eax+eax*8]', 'ecx,[eax*4+0x927894]']]
+PASS G6 both posters write payload/owner/clear with the same 3 arrays  [{'0x6265a2': {'payload': 1, 'owner': 1, 'clear': 1, 'bound': 1, 'stride': 2}, '0x626634': {'payload': 1, 'owner': 1, 'clear': 1, 'bound': 1, 'stride': 2}}]
+PASS G7 bound `cmp arg,0x9` followed by `jle` into the body -> TEN slots (k = 0..9)  [['DWORD PTR [ebp+0x8],0x9', 'DWORD PTR [ebp+0x8],0x9'] | branches [('0x6265ac', '0x6265b5', '0x6265b5'), ('0x626644', '0x62664d', '0x62664d')]]
+PASS G8 text buffer stride is 0x100 (`shl k,0x8` twice per poster: payload idx + buffer idx)  [[2, 2]]
+PASS G9 expander reads the numeric array 0x999fa4 (4 refs) and makes 4 text-slot adds at 0x99a01c  [4/4 of 4]
+PASS G10 every text-slot read is `0x99a01c + (k<<8)` (base AND stride)  [True]
+PASS G11 token literals $NUMBER / $HEX / $LINK< at 0x69911c are the expander's vocabulary  [['$', '$NUMBER', '$NUM', '$HEX', '>']]
+PASS G12 drainer clears the first byte of slots 0,1,2 at 0x63730e/15/1c (consecutive)  [['byte ptr ds:0x99a01c,0x0', 'byte ptr ds:0x99a11c,0x0', 'byte ptr ds:0x99a21c,0x0']]
+PASS G13 drainer clears, runs 0x5f1394 @0x63732d, measures slot1 with 0x64c460, then jumps BACK to 0x63724e when >0x10  [0x5f1394 | 0x64c460 | 0x637362 | back->0x63724e]
+  drainer reads slot1 0x99a11c at ['637340', '63734b', '63738d', '6373b4', '6374b6']
+  drainer reads slot2 0x99a21c at ['63737d', '637388']
+PASS G14 drainer READS both posted slots: slot1 at 5 sites, slot2 at 2 (the base post is load-bearing)  [slot1=['637340', '63734b', '63738d', '6373b4', '6374b6'] slot2=['63737d', '637388']]
+PASS G15 R1 0x985b10 is absent from the whole alert chain (0 refs in 5 fns)  [{6445856: 0, 6448513: 0, 6448546: 0, 6448692: 0, 6515486: 0}]
+PASS G16 R1 0x985b10 is absent from the post window and is never stored in the block  [0/0]
+PASS G17 R2 the only first-byte writers of the text slots are the 2 publishers + the drainer (no pop/consume)  [5 total / 3 drain / 2 post]
+PASS G18 drainer reached indirectly: 0 direct `call 0x636b1e` in .text  [0 calls]
+
+PASS M346: 18/18 gates   digest=ab4f0ca8123245bb

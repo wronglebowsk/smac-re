@@ -520,3 +520,40 @@ whether a facility completion stamps at all.
   absence, the digest hashes MEASURED literals, harness computes coverage.
 - UNKNOWN: which ids the other 33 callers of 0x6291e3 pass (other screens);
   whether a player value 0 can reach 0x44b71e.
+
+## Session 325 (2026-11-24) — M346: who raises the build-finished ALERT (milestone/m346)
+
+- **ACCEPT** `python3 -u scripts/m346_alert_raiser.py` -> **`PASS M346: 18/18 gates`** digest
+  `ab4f0ca8123245bb`, two runs byte-identical (`evidence/m346_alert_raiser.txt:110`);
+  `scripts/m346_mutate.py` -> **22/22**, NO-OP `[]` (`evidence/m346_mutate.txt:25`).
+- **POST:** in FUN_004ef6d0 the block after the queue pop (`call 0x4ef5d0` @0x4f0f46) makes
+  exactly 2 alert posts — `0x6265a2` kind 1 @0x4f0f78 with payload `[edi*48+0x984d38]`, and
+  `0x626634` kind 2 @0x4f0f96 with payload `0x927894+1436*idx` (base record, stride 0x59c).
+  The function holds 14 posts total, so the pair is the completion block's, not the function's.
+  (First draft claimed "exactly 2 in the function"; G1 caught it and the gate was rewritten to
+  the pop-anchored window instead of the threshold being loosened.)
+- **TABLE:** both posters store payload -> `0x999ff4+4k`, owner -> `0x999fcc+4k`, zero the first
+  byte of `0x99a01c+0x100k`, and bound `k<=9` — TEN fixed slots.
+- **EXPANDER:** FUN_00625b20 reads 0x999fa4 (4x) and adds `0x99a01c+(k<<8)` (4x); the literal
+  block at 0x69911c is `$` / `$NUMBER` / `$NUM` / `$HEX` / `$LINK<`.
+- **DRAINER:** FUN_00636b1e clears slots 0/1/2 @0x63730e,15,1c, calls the modal runner 0x5f1394
+  @0x63732d, then re-loops while `strlen(slot1) > 0x10`; 0 direct .text callers.
+- **RETRACTION:** the footing's "0x985b10 = the alert channel/event queue" is WRONG — 0 refs in
+  the five alert functions and in the post window, 0 stores in FUN_004ef6d0; it is the M96/M308
+  player mask. No head/tail/count exists: the only first-byte writers are the 2 posters and the
+  drainer.
+- **Docs:** NAMED 247,825 B = 2,175 B headroom (M313 4,132 B rotated VERBATIM to
+  `docs/named-archive-m313-rows.md`, sha1 `b674876b9a743893`, `scripts/m346_named_rotate.py
+  --verify` PASS); M344 patched in place. SESSION_NOTES's earlier 247,182 was the pre-patch size.
+- **REVIEW #369 (local Strata, 10 findings — 5 P1 / 5 P2):** all fixed, none dismissed. The
+  P1s were real instrument defects: MU15 was a `PATCH_ALGO` hook that forced the gate red (now a
+  real clear-base mutation, MU20), G1's post window was an arbitrary 0x4f0f40 anchor and did not
+  verify the pop (now measured: `call 0x4ef5d0` @0x4f0f46, end 0x4f0f9b), and G13/G16 claimed
+  more than they read (per-slot 5/2 read split with read-vs-store kinds; the "no queue" claim
+  narrowed to the measured first-byte writer census, with 0x999f90's counters declared OPEN).
+  G9 now also requires the `shl` register to be the `add` register (MU13), G7 reads the `jle`
+  (MU9), G13 reads the backward jump (MU16), and fourth-round mutants MU1/MU2/MU7/MU8 pin the
+  pop identity, the post count, the owner array and the poster's text base. The rotate script's
+  idempotence check moved from the header line to the archive/stub body (finding 9).
+- **STILL OPEN:** which .rdata template consumes slots 1/2 (and whether a facility completion
+  ever reaches a template); the unit-id decoding (M68/M69 NEG_TYPE).
