@@ -78,7 +78,7 @@ PINS = {
 }
 # M372_ALGO mutants of the CLASSIFIER / TRACER laws:
 #   1 = the disp32 scan reads the operand BIG-endian
-#   2 = the rel32 filter is OFF (a call's relative operand counts as a reference)
+#   2 = the store/read partition is flipped (mov mem,reg read as a LOAD)
 #   3 = the formatter is forced onto the decimal branch (flag ignored)
 #   4 = the parse emulator uses base 16 instead of base 2
 #   5 = the carrier trace follows register-to-register moves only one hop
@@ -292,6 +292,12 @@ def main():
         if mn != "mov":
             return "OTHER"
         p = ops.split(",")
+        if ALGO == "2":                     # the partition law flipped
+            if memds(p[0].strip()) is not None:
+                return "READ"
+            if memds(p[-1].strip()) is not None:
+                return "STORE"
+            return "OTHER"
         if memds(p[0].strip()) is not None:
             return "STORE"
         if memds(p[-1].strip()) is not None:
@@ -516,7 +522,7 @@ def main():
                                 "ored": ored, "site": a}
                     if src in REGS:
                         hops += 1
-                        if ALGO == "5" and hops > 2:
+                        if ALGO == "5" and hops > 0:
                             return {"origin": "CARRIED", "cleared": cleared, "ored": ored, "site": a}
                         reg = src
                         steps += 1
@@ -680,7 +686,8 @@ def main():
     print("\n== G7 the gap 0x%x ==" % GAP)
     gap_text = [a for a, _, txt, mn, ops in ins
                 if "0x%x" % GAP in ops]
-    pat = struct.pack(">I" if ALGO == "6" else "<I", GAP)
+    endian = ">" if ALGO == "6" else "<"   # A6: the dword scan byte-swapped
+    pat = struct.pack(endian + "I", GAP)
     gap_dw = []
     pos = exe.find(pat)
     while pos >= 0:
@@ -688,7 +695,7 @@ def main():
         pos = exe.find(pat, pos + 1)
     ctl = {}
     for name, tgt in (("cell", CELL), ("neighbour", 0x92BDE8)):
-        p2 = struct.pack("<I", tgt)
+        p2 = struct.pack(endian + "I", tgt)
         n, q = 0, exe.find(p2)
         while q >= 0:
             n += 1
@@ -734,8 +741,9 @@ def main():
     print("  absolute positions 23/24 (no shift anywhere), the writer emits a binary")
     print("  digit string (min width 8) and the loader parses one back.  The shipped")
     print("  INI's `Semaphore=%s` is that string for value 0.  The name is the INI" % ini_sem)
-    print("  KEY; the string is never used as a UI label (G5).  Occupants: bits 23 and")
-    print("  24 of 0x985ae8, each read exactly once, both in the new-game path (G6).")
+    print("  KEY; the string is never used as a UI label (G5).  Occupants: bits 23")
+    print("  (2 readers) and 24 (1 reader) of 0x985ae8; every read sits in the")
+    print("  game-start / new-game path (G6).")
     ok = all(o for _, o in gates)
     print("\n%s M372: %d/%d gates digest %s"
           % ("PASS" if ok else "FAIL", sum(1 for _, o in gates if o), len(gates), dig()))

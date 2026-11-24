@@ -704,3 +704,30 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   0x985ae8) — packed field or reused name, INF; 0x92bdf0 unreferenced; 0x5f1394 chain-2.
 - **PITFALL**: ghidra_out/index.csv ends FUN_00510730 at 0x51080b; four handler stores at
   0x510901..0x5109f8 need pad-delimited attribution, not the index (`:30-42`).
+
+## Session 337-chain3 — M372: 0x92bf0c = BIT-STRING slot, not a packed field
+
+- **ACCEPT** `python3 -u scripts/m372_semaphore_cell.py` -> **`PASS M372: 8/8`** digest
+  `c5400743557a9f3b` (`evidence/m372_semaphore_cell.txt:83`), re-run identical;
+  `scripts/m372_mutate.py` **19/19 killed, 8/8 covered** (`evidence/m372_mutate.txt:33`).
+- **CENSUS** (`:7-18`): 8 refs text==byte, 5 STORE/3 READ in 5 fns: loader
+  0x58ecc9; in-game 0x4dc77c, 0x4dc8c3 (FUN_004dc5f0), 0x57cb1e, 0x57cc66
+  (FUN_0057c550); reads 0x48882e (-> prefs packet 0x8f0c20), 0x57c990 (restore),
+  0x58f2fe (writeback).
+- **THE KEY IS A BIT STRING** (`:20-27`): key push 0x692848 `Semaphore` + flag=1; helper
+  0x58f030's flag!=0 arm loops bits 31..0, '1' when set, '0' when `edi` or `esi<8` (min
+  width 8); those stream constants reproduce the shipped `Semaphore=00000000`, while the
+  flag=0 decimal arm (0x64f980 radix 10) gives `0` — rival killed.
+- **PARSE IS THE INVERSE** (`:29-45`): helper resolved per cell from the nearest 0x5ea48x
+  call before the store: **5 base-2 (0x5ea493->0x628720, charset {0,1}, `shl 1`), 6
+  base-16 (0x5ea484->0x62876b, `shl 4`)**; round-trip exact for all 4 reachable values.
+- **NOT PACKED** (`:47-54`): all four stores mask exactly `0x1800000`; the restore clears
+  `~0x1800000` in 0x985ae8 then ORs the WHOLE cell, so bits stay at 23/24 (0 shifts). 0x4dc77c and 0x57cb1e write a provably-ZERO value; 0x4dc8c3/0x57cc66 carry live
+  bits from 0x99aa38 bits 0x10000/0x20000.
+- **NAME** (`:56-60`): "Semaphore" = 2 image strings, both the INI key; never a UI label.
+- **OCCUPANTS** (`:62-66`): bit23 0x59ef11 (rand()-seeds 5 faction fields
+  0x94d80c..1c) + 0x5a1446 (base arm); bit24 0x5a1150 (12-dword table 0x9280b8). Nouns INF.
+- **0x92bdf0** (`:68-72`): 0 text refs, 0 address dwords in image; only sweep starts
+  0x92bf18 (bound 0x92bf34), unreachable.
+- **PITFALLS**: objdump prints `DWORD PTR ds:0x..`, so `startswith("ds:")` misses a
+  bitset load; "a store exists" != "a live value is stored"; resolve the parse helper.
