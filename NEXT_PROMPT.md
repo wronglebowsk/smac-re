@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M358 MERGED s332 `1af1dcb6fc`; B34 s333 `5296fdad`. STATE: B1-B34 + M54A-M358; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (M358 MERGED s332 `1af1dcb6fc`; B34 s333 `5296fdad`; M363 s334 `66b923f06f4e8866`. STATE: B1-B34 + M54A-M363; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
 Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS (grep only), skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
@@ -23,10 +23,8 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B34 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B30`-`## B34` govern).
-**B34 MERGED (s333)**: a facility completion stamps NOTHING - the leg holds no writer (pop 0 refs/0 API, screen 0
-API) and the run's 6 facility completions are 6/6 unchanged, the 3 discriminating ones falsified ON BYTES
-(`## B34`). **B35**: author its rung in `BUILD_SPINE.md` BEFORE probing - who calls the grant family
-(`FUN_004e47d0`/`FUN_0059ce10`, 11 literal items, 1 caller `FUN_005a0fa0`)? **DOC CAP: NAMED 245,677/250,000.**
+**B35**: author its rung in `BUILD_SPINE.md` BEFORE probing - who calls the grant family
+(`FUN_004e47d0`/`FUN_0059ce10`, 11 literal items, 1 caller `FUN_005a0fa0`)? **DOC CAP: NAMED 246,640/250,000.**
 
 ## THE LEDGER
 
@@ -54,8 +52,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   NEVER bp mid-instruction (s213).
   **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); the analysis-only option is this OPEN-LEADS
-  list, each with a NAMED question: (x1) ANSWERED by M333 (rotated VERBATIM to
-  `docs/named-archive-b33-rows.md`);
+  list, each with a NAMED question: (x1) ANSWERED by M333 (`docs/named-archive-b33-rows.md`);
     (x6) OPEN: other writers of the 0x92bde8..0x92bf14 pref block - NEXT PICK; (x9) CLOSED M342+M344+M346+M348
   (alert = Script.txt `#PRODUCEXQ/G`; `0x985b10` REFUTED; FUN_00636b1e = Create Session dialog);
   ~~writers of 0x999fa4~~ ANSWERED M353 - filler `FUN_00626581` (260 sites, k<=9), consumers
@@ -67,10 +64,9 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 
 ## LIVE FACTS / KIT
 
-- **BOX**: state UP, last touch s258 (TracerPid 0, yama=0; pid via `pgrep -x terran.exe`,
-  never hardcoded) —
-  RE-CHECK `accept_ready.py`; it BLOCKS on credit 0 (d0-gated income, STRUCTURAL here): walk/scan kinds
-  run anyway; production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
+- **BOX**: UP, last touch s258 (TracerPid 0, yama=0; pid via `pgrep -x terran.exe`). RE-CHECK
+  `accept_ready.py`: it BLOCKS on credit 0 (d0-gated, STRUCTURAL); walk/scan kinds run anyway,
+  production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
    `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the
    PRE value after every run, never hardcoded; the harness stays uid 1000 (sudo breaks the prefix) -
    exact commands in skill `wine-operations.md`.**
@@ -84,17 +80,14 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
    prints the OLD eax; ZERO CALLS can be the GAME - scan /proc for the vptr first. (FULL: §s242-traps)
 3. Register semantics live in the ENCODING (scaled vs byte addressing never compare equal; an RMW through a
    COPIED register evades store-shape greps - a hw watchpoint on the FIELD answers "who writes it"). (FULL: §s242-traps)
-4-11. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s256: gdb printf/script + call-frame rules; a >90 s
-   census is never foreground; a PASS on a non-discriminating shape is no PASS; hw-watchpoint read-back rules.)
+4-11. (VERBATIM `docs/pick-archive.md` §trim-s256: gdb printf/script + call-frame; >90 s census never
+   foreground; a PASS on a non-discriminating shape is no PASS; hw-watchpoint read-back.)
 12-13. Both gdb-detach laws (a census can leave gdb ATTACHED; the turn driver returns rc=0 while AI
     upkeep plays). FULL VERBATIM: `docs/pick-archive.md` §trim-s268.
-14-15. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s262: queue-tail STALE ids + id-0 sentinel +
-   negatives-belong-to-TYPE; PRODFLAG 0x4efe60 fires for EVERY record walked (FACTION BANDS) - attribute the
-   sweep by its own predecessor; list cursor read BEFORE the seek = PREVIOUS cursor; dirty-tree
-   `milestone.py start` = stash, start, pop.)
-16-23. (MOVED VERBATIM to `docs/pick-archive.md` §trim-s245: objdump prints UPPERCASE; ARM BEFORE ANY
-   SCREEN; the SIGUSR1/SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT
-   a STORE CENSUS.)
+14-23. (VERBATIM `§trim-s262`: queue-tail STALE ids + id-0 sentinel + negatives-belong-to-TYPE; PRODFLAG
+   0x4efe60 attribute the sweep by its predecessor; list cursor read BEFORE seek = PREVIOUS cursor;
+   dirty-tree start = stash/start/pop. `§trim-s245`: objdump UPPERCASE; ARM BEFORE ANY SCREEN; SIGUSR1/
+   SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT a STORE CENSUS.)
 24. **A PASSING ASSERTION IS NOT A GATE** — an assert that can pass on an UNMEASURED state is a defect, not a
    gate; every gate needs a NAMED mutant that reddens it, and the fixes get mutated too. FULL text + the
    `m308_mutate.py` 8/8 reference: `docs/pick-archive.md` §trim-s296 (a); worked defect list, skill mechanics:
@@ -114,15 +107,14 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M348 (s326) MERGED: slots 1/2 -> Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED (Create Session dialog). 12/12 `a3d46c017673526a`, harness 13/13.
 - M353 (s329) MERGED: `0x999fa4` = 10-dword band; filler `FUN_00626581` (k>9 -> ret 3), consumers `$NUMBER`/`$NUM`/`$HEX` (base 10) + `$#k` (no bound). 11/11 `367fdae1d78979e5`, harness 11/11. NEXT: (x6) pref-block writers.
 - B33 (s330) MERGED: the facility leg WALKED - the OR `0x4f0ec0` is unit-only (door `0x4f0b80 jg` on `[ebp-0x30]` = the unit branch's `0x4ef8a4`); 12/12 `b89b9e6bd940e8d3`, harness 11/11. NEXT BUILD B34 = where a facility stamps `+0x8c`.
-- M358 (s332) MERGED: `0x98ad88` = 52 B (name[0x20], dword +0x20, bytes +0x24..2e, word +0x30, word +0x32); `0x9267e4` = 128 dwords, NOT 64-byte rows. 10/10 `1af1dcb6fcd4a4b6`, harness 15/16. NEXT: (x6); B34 = `+0x8c`.
-- M349 (s326-c2): a negative head is the NEGATED TYPE (`neg` @0x4ef89f; -38 sentinel; >=0x40 gated by 0x98adb8 bit2); 13/13 `4d3c2e4ded19d620`.
-- B34 (s333) MERGED: facility completions stamp NOTHING - 20 stores (API 2/GRANT 11/SET 1/COPY 6), pop+screen
+- M358 (s332) MERGED: `0x98ad88` = 52 B (name[0x20], dword +0x20, bytes +0x24..2e, word +0x30, word +0x32); `0x9267e4` = 128 dwords, NOT 64-byte rows. 10/10 `1af1dcb6fcd4a4b6`, harness 15/16.
+- B34 (s333) MERGED: facility completions stamp NOTHING - 21 stores (API 2/GRANT 11/SET 1/COPY 6), pop+screen
   writer-free, 6 completions 6/6 unchanged, 3 discriminating falsified on bytes. 10/10 `5296fdad6d26caa3`, 11/11.
-- M354 (s329-c2): section A's item IS the 0x98ad88 design row (name/weight/class read off the item); A rows +, B rows -; M349/M351 leg NOUNS swapped. 11/11 `dd5e689e8d9af320`, 23/24.
 - M357 (s330-c3): pref checkbox LABELS — 6 Script.txt sections -> 66 rows (id->cell bit, 1:1); Laptop delta = movies/interludes/SFX/monuments. 18/18 `095258c8b40d0e23`, harness 23/23.
 
 - M356 (s330-c2): +0x30 bit2 = state bit (11 setters, one XOR-toggler 0x4396f6); +0x24 chassis 0x92ae80, +0x25 weapons 0x92b950 (21x0x10), +0x26 armor 0x92fd18 (10x0x10). 17/17 `c1a2beb794cec9f8`, harness 27/27.
 - M359 (s332-chain2): +0x28 = CARRY CAPACITY (V, Mode 7=Transport gates it; TWO writers, M356 G14 retracted); +0x27 = reactor level (INF); +0x2a = PLAN (M354's "class" retracted). 14/14 `7d4a2d1356c9ff41`, harness 18/18. NEXT: #REACTORS=4 vs the 1..3 clamp.
-- M360 (s331-c3): the 4 row-less ids are NOT a seventh page - 0x37/0x38/0x39 are A/V radio rows (+0x7aec 8 built/11 queried, class 1/2/3 relabel ctrl 0x4e/0x4c/0x4d) and 0x50 is the seventh widget's 4th id (built 0x30, queried 0x50); a miss resolves to bit<count>, unwritten in A/V. 25/25 `eb9f07df920a75ab`, harness 23/23. NEXT: readers of the radio flags [0x14d6c]/[0x14220]/[0x158b8].
-- M362 (s333-c3): the 0x4db1xx sibling = the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits (11 from 0x94d448, 2 from 0x94d468 = slot +8; 0x80000000 selects it). 6 writers, 4 symmetric. 20/20 `3b30baa33ea67fcb`, harness 19/19. NEXT: the 13 label strings (0x997b20 heap); bit nouns.
-- M361 (s333-c2): A/V radio flags = widget+0xa18 of 4 rows (0x12cbc+k*0xb4c); readers 0x493ec0/0x492940/0x492030/0x4930e0; relabel ends in generic 0x5fa1e8; master never commits; propagation both ways. 38/38 `b92f1a61c041ae87`, harness 30/30. NEXT: what 0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 toggle.
+- M360 (s331-c3): the 4 row-less ids are NOT a seventh page - 0x37/0x38/0x39 are A/V radio rows (class 1/2/3 relabel ctrl 0x4e/0x4c/0x4d) and 0x50 is the seventh widget's 4th id; a miss resolves to bit<count>. 25/25 `eb9f07df920a75ab`, harness 23/23.
+- M362 (s333-c3): the 0x4db1xx sibling = the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits (11 from 0x94d448, 2 from slot +8); 6 writers, 4 symmetric. 20/20 `3b30baa33ea67fcb`, harness 19/19. NEXT: the 13 label strings; bit nouns.
+- M361 (s333-c2): A/V radio flags = widget+0xa18 of 4 rows (0x12cbc+k*0xb4c); relabel ends in generic 0x5fa1e8; master never commits. 38/38 `b92f1a61c041ae87`, harness 30/30. NEXT: ANSWERED by M363 (below).
+- M363 (s334-chain1): the four A/V audio callees = MIXER ONLY - 0x4b8a60/0x4b8af0 = slot start/stop of a 16-slot voice table (index*0x18, bound 0xf, flag +0x24), 0x4b87f0/0x4b8820 = enable/disable into vtable 0x60/0x64 of `[this+0x14]`; 0 pref-cell sites in the 8-fn closure vs 6 in the handler; `this`=0x8a7920; the 0x4e row is NOT wired. 18/18 `66b923f06f4e8866`, harness 20/20. NEXT: (x6) pref-block writers; B35 = the grant family's caller.

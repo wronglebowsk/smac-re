@@ -59,6 +59,16 @@ bottom rather than by re-reading disassembly.
 - `0x59f0c7`: `mov [ebx+0x94d800],-1` inside `FUN_0059ec90` — the INVALIDATION of the memoized advance threshold,
   right after the accumulator moves; one of its 3 callers zeroes the DIVISOR `[edx*4+0x94e488]` just before.
 
+## Preferences pages: the control ID IS the bit
+
+- The preferences rows carry control ids that ARE the flag masks they edit — `{8,10,4,2,1,1000,2000,20,2000000,400,40000}`
+  off the first record dword, `{80000008,80002000}` off the second. Do not look for an id-to-bit mapping table:
+  the row's id is ORed/cleared directly into its word, so the census that proves the row is `or [word],id`.
+- An id with `0x80000000` set selects the SECOND dword of the same record (`0x94d448[fac*0x82f+tgt]` vs
+  `0x94d468`); strip the prefix before indexing, or the id reads as a huge mask and the row looks unmapped.
+- A 13-id group over one widget (`0x4db1xx`, `+0x15a0`) whose ids are masks is a BITMAP page, not 13 booleans:
+  each id maps to one bit of the same word, and the page's sync routine reads the word back to set each control.
+
 ## Re-prove it with
 
 `python3 scripts/field_census.py` | `scripts/name_global.py <addr>` | `scripts/m124_state_and_memo.py` |
