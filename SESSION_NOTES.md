@@ -316,3 +316,14 @@ printers of measured values need the same None-guard as the gate.
 - PITFALL: this census's `gates()` originally wrapped all seven checks in ONE try/except, so a
   vanished site reddened every gate (MU6 measured {G1..G7} instead of {G3,G5}). Per-gate
   try/except is what makes a declared mutant SET measurable at all.
+- **REVIEW ROUND (Strata, PR #353): 10 findings (3 P1 / 7 P2), 10 accepted, 0 dismissed.** Each
+  fix is a measurement or a stronger assertion plus a mutant: the rotation's placeholder key ate a
+  digit on `## M248/M249` (`ARC_M24` + `8` => a false `:218` cite) and the substring guard passed it
+  -- fixed, and `scripts/m335_named_rotate.py --check-stubs` now proves 9/9 stubs cite their own
+  block head by EXACT line; two stub prose drifts repaired (ADJUSTING WORLD CLIMATE, "y ONLY
+  bounded"); G4 became an ORDERED fragment walk (edi starts at 0, seed before `call 0x5f1394`);
+  G2 reads the loader's actual store; G3 uses token-boundary matching (+ an ALGORITHM mutant, MU20);
+  G5 proves both readers are counting loops; G6 now READS the geometry out of the code (base, bound,
+  clamp hi) instead of comparing against the script's constants, and measures that exactly 1 of the
+  169 `call 0x423af0` sites is fed by `0x8f0c11`. Harness 13 -> 20 mutants (`6e0e05a8ffb388d8`);
+  MU1's declared set corrected to the measured {G2,G3,G6} (G6 reads the loader bound).

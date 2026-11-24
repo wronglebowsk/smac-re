@@ -56,8 +56,8 @@ FULL rows VERBATIM at `docs/named-archive-m246-m254.md:12` (§rotation-m335, sha
 - `DAT_0092ae18` has 6 referencing functions; the only accessors `FUN_00582340`/`FUN_00582360` index `(p1>>1) + base + (0x92ad9c>>1)*p2`; `(Rw+1)/2` appears exactly once image-wide (the length) (census G4) (V).
 - builder `FUN_0058ce00` walks y<Rh, x=(y&1) step 2 < Rw => write set 0..78 at Rw=Rh=13, slack Rh-1 when Rw odd; the slack bytes are `0xcd` (uninitialized) in 17/17 saves, both .MP have slack 0 (G5) (V). Byte VALUES: terrain record `+3` of the first qualifying tile (rule V, meaning OPEN).
 ## M248/M249 (s198, PASS 5/5) — the region map's bytes are a per-region copy of terrain record +3 = the map's REGION LABEL
-FULL rows VERBATIM at `docs/named-archive-m246-m254.md:218` (§rotation-m335, sha1 `8c4762cc7523`); this stub governs.
-- byte = record `+3` of the FIRST land tile of a centre-first 9-diamond sample at (x*5+dx, y*5+dy), 0 if no land; x wraps mod `0x92a378`, y bounded by `0x92a37c`; `(dx,dy)` read from 0x67850c/0x678990, G1 9/9 (V).
+FULL rows VERBATIM at `docs/named-archive-m246-m254.md:21` (§rotation-m335, sha1 `8c4762cc7523`); this stub governs.
+- byte = record `+3` of the FIRST land tile of a centre-first 9-diamond sample at (x*5+dx, y*5+dy), 0 if no land; x wraps mod `0x92a378`, y ONLY bounded by `0x92a37c`; `(dx,dy)` read from 0x67850c/0x678990, G1 9/9 (V).
 - stored == recomputed on 19 files (17 saves + 2 .MP), 1809 cells, 0 mismatches, 38 wrapped samples (G2, `evidence/m248_region_values.txt`) (V); exactly 1 reader (`FUN_00556690`) / 1 writer (`FUN_0058ce00`) (G3) (V).
 - `+3`'s ONLY writer = byte setter `FUN_00582d00`, 4 sites all map generation (G4) (V); `+3<0x40` land / `>=0x41` water, 0x40 unused, 0 exceptions on 19 files (V); used as index into `DAT_0094eda8` (stride 0x20bc) and split at 0x40 (G5) — what NAMES the partition OPEN.
 ## B3 (s199, BUILD track, PASS 6/6) — `sim/turn.py`: M30's turn engine, executable, replays the recorded trace 67/67
@@ -69,7 +69,7 @@ FULL rows VERBATIM at `docs/named-archive-m246-m254.md:33` (§rotation-m335, sha
 FULL rows VERBATIM at `docs/named-archive-m246-m254.md:46` (§rotation-m335, sha1 `8c4762cc7523`); this stub governs.
 - `FUN_0058d390` (1293 B) has exactly 3 call sites: `0x5add8f`, `0x5af0c7`, `0x5b09e3` (G1) (V); inside it the flood-fill `call 0x58d120`@`0x58d47e` is enclosed by BOTH scan back edges, `FUN_0058ce00`@`0x58d88c` by NONE and is the last call but one (G3) (V).
 - id bands land 1..0x3e / water 0x41..0x7e, 0x40 never assigned, overflow 0x3f/0x7f for border rings + band exhaustion (G4) (V); region table `DAT_00989ce0` stride 0x1c, dword 0 = tile count, `+0x14` = 8-byte adjacency bitmap (G4) (V).
-- new-game driver `FUN_005b2970` (4 callers) runs placement -> generator -> retry vote (<=4); `FUN_005b09b0` = ALTERING WORLD CLIMATE re-runs it (G1) (V static / OPEN which site is NEW GAME). instrument `scripts/m250_region_generation.py` 7/7.
+- new-game driver `FUN_005b2970` (4 callers) runs placement -> generator -> retry vote (<=4); `FUN_005b09b0` = ADJUSTING WORLD CLIMATE re-runs it (G1) (V static / OPEN which site is NEW GAME). instrument `scripts/m250_region_generation.py` 7/7.
 ## M251 (s200, PASS 7/7) — `DAT_0094eda8` = the per-faction, per-REGION category byte (128 ids, 4 values)
 FULL rows VERBATIM at `docs/named-archive-m246-m254.md:57` (§rotation-m335, sha1 `8c4762cc7523`); this stub governs.
 - shape `[region + faction*0x20bc]` byte array at exactly `0x94eda8`, 128 entries (`cmp reg,0x80`) (V); 79 refs in 18 functions, 6 store sites in 2 writers (`FUN_00556690` x5, `FUN_0055f650` x1), values {0,2,7,8} (G5) (V).
@@ -1344,10 +1344,10 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 |---|---|---|
 | alpha.txt has ONE `#DIFF` section, 6 rows in file order Citizen/Specialist/Talent/Librarian/Thinker/Transcend | `evidence/m335_difficulty_ladder.txt:2` | V MU4,5 |
 | loader `push "DIFF"`@0x57ac56 -> `call 0x5ea431` -> fill `0x94d2ac`, `add esi,4`, `cmp 0x94d2c4`/`jl` = 6 iterations == 6 file rows (the count is the immediate, never read from the file) | `:3` | V MU1,2,3 |
-| census over all addressing forms incl. scaled: exactly 11 sites on `0x94d2ac..0x94d2c4`, 0 stores outside the loader | `:4` | V MU1,6,13 |
-| ORDER: chooser 0x4ddaf8 walks FORWARD appending `label[k]` with `push edi`=k, then seeds the dialog with `ds:0x985aec` before `call 0x5f1394` | `:5` | V MU10,11 |
-| INDEX: `0x599405` `mov ecx,ds:0x985aec; mov edx,[ecx*4+0x94d2ac]`; two readers bound their walk at immediate 6 (`0x484cb3`,`0x485410`) | `:6` | V MU7,12 |
-| DOMAIN: only clamp = FUN_00423af0(lo=0,hi=6) INCLUSIVE with hi == the array END address (one past the last row); refund cmps {3/jle, 4/jne} => k=1 at 4, k=2 at >=5 = TRANSCEND (M330 refined, not retracted) | `:7` | V MU8,9 |
+| census with token-boundary matching over all addressing forms (7 scaled): exactly 11 sites on `0x94d2ac..0x94d2c4`, 0 literal-address STORES; scope: a register-indirect store elsewhere is NOT excluded | `:4` | V MU1,6,13,20 |
+| ORDER: in 0x4ddaf8..0x4ddb60 the 11 fragments occur in the order base-load, `[esi]`, resolve, `push edi`, append, `add esi,4`, `inc edi`, `cmp 0x94d2c4`, `jl 0x4ddaff`; `edi` starts at 0 and the seed `ds:0x985aec`->`[ebp-0x494c]` precedes `call 0x5f1394` | `:5` | V MU10,11,14,15 |
+| INDEX: `0x599405` `mov ecx,ds:0x985aec; mov edx,[ecx*4+0x94d2ac]`; both other readers are COUNTING loops 0..5 over the table (`cmp [slot],6` + `add eax,1`->same slot + `jmp` back) at `0x484cb3`,`0x485410` | `:6` | V MU7,12,19 |
+| DOMAIN (geometry READ from the bytes, not from the script): base 0x94d2ac, bound 0x94d2c4 and clamp hi=6 with `hi*4 == end-base`, so the INCLUSIVE hi is the array LENGTH = one past the last row; of 169 `call 0x423af0` sites exactly 1 (`0x486f38`) is fed by an `0x8f0c11` load; cmp immediates on `0x985aec` = {1,2,3,4}+ebx (M332 reproduced); refund 3/jle + 4/jne => k=1 at 4, k=2 at >=5 = TRANSCEND (M330 refined) | `:7` | V MU8,9,16,17 |
 | RIVAL killed: "0x94d2ac is not the difficulty names" — section string + row count + iteration count agree | `:8` | V MU3,4,5,13 |
-| ACCEPT `7/7` digest `fb58bdc3307d6258` x2 (`:9-10`,`_rerun.txt`); harness `13/13` `45509023afada03b`; `--selftest` 3/3 (`evidence/m335_mutate_selftest.txt:4`) | `evidence/m335_mutate.txt:16` | V |
+| ACCEPT `7/7` digest `fb58bdc3307d6258` x2 (`:9-10`,`_rerun.txt`); harness `20/20` `6e0e05a8ffb388d8` incl. an ALGORITHM mutant (`--selftest` 3/3, `evidence/m335_mutate_selftest.txt:4`) | `evidence/m335_mutate.txt:22-23` | V |
 | OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x48678f / 0x57c606 | - | lead |

@@ -29,9 +29,10 @@ ALPHA = io.open(M.ALPHA, encoding="utf-8", errors="replace").read()
 EXE = open(M.EXE, "rb").read()
 LINES = TXT.split("\n")
 GATES = ["G1", "G2", "G3", "G4", "G5", "G6", "G7"]
+import re as _re
 # the mutant ids this harness owns (declared so the registry lint can bind row -> mutant)
 MUTANTS = ["MU1", "MU2", "MU3", "MU4", "MU5", "MU6", "MU7", "MU8", "MU9", "MU10", "MU11",
-           "MU12", "MU13"]
+           "MU12", "MU13", "MU14", "MU15", "MU16", "MU17", "MU18", "MU19", "MU20"]
 
 
 def run(lines, alpha, exe):
@@ -100,7 +101,17 @@ def mu4():
 
 
 def mu5():
-    a = ALPHA.replace("Citizen,\nSpecialist,", "Specialist,\nCitizen,")
+    # s317 review F8: swap the ROWS on the parsed lines, never the raw newline bytes
+    out, seen = [], []
+    for line in ALPHA.split("\n"):
+        if line.strip() in ("Citizen,", "Specialist,"):
+            seen.append(line)
+            out.append("__SWAP__")
+        else:
+            out.append(line)
+    assert len(seen) == 2, "expected the two rows, got %r" % (seen,)
+    it = iter([seen[1], seen[0]])
+    a = "\n".join(next(it) if l == "__SWAP__" else l for l in out)
     assert a != ALPHA
     return LINES, a, EXE
 
@@ -139,8 +150,38 @@ def mu13():
     return out, ALPHA, EXE
 
 
+def mu14():
+    return patch_line(LINES, "4ddb4d:", "[ebp-0x494c]", "[ebp-0x4948]"), ALPHA, EXE
+
+
+def mu15():
+    return patch_line(LINES, "4ddb32:", "add    esi,0x4", "sub    esi,0x4"), ALPHA, EXE
+
+
+def mu16():
+    return patch_line(LINES, "486f2c:", "push   0x6", "push   0x7"), ALPHA, EXE
+
+
+def mu17():
+    return patch_line(LINES, "486f40:", "[eax*4+0x94d2ac]", "[ebx*4+0x94d2ac]"), ALPHA, EXE
+
+
+def mu18():
+    return patch_line(LINES, "57ac83:", "DWORD PTR [esi],eax", "DWORD PTR [esi],edx"), ALPHA, EXE
+
+
+def mu19():
+    return patch_line(LINES, "484cb3:", "[ebp-0x62d8]", "[ebp-0x62d0]"), ALPHA, EXE
+
+
+def mu20():
+    # ALGORITHM mutant: a matcher that only knows the direct absolute form loses the scaled sites
+    M.ADDR_RE = _re.compile(r"\[0x94d2(?:ac|b0|b4|b8|bc|c0|c4)\]")
+    return LINES, ALPHA, EXE
+
+
 SCEN = [
-    ("MU1 loader bound 0x94d2c4->0x94d2c8", mu1, {"G2", "G3"}),
+    ("MU1 loader bound 0x94d2c4->0x94d2c8", mu1, {"G2", "G3", "G6"}),
     ("MU2 loader step add esi,4->8", mu2, {"G2"}),
     ("MU3 PE section name DIFF->DIFX", mu3, {"G2", "G7"}),
     ("MU4 alpha.txt drop the Transcend row", mu4, {"G1", "G2", "G7"}),
@@ -153,6 +194,13 @@ SCEN = [
     ("MU11 delete the dialog seed load", mu11, {"G4"}),
     ("MU12 reader loop bound ,0x6->,0x7", mu12, {"G5"}),
     ("MU13 RIVAL base 0x94d2ac->0x94d2e0", mu13, {"G2", "G3", "G4", "G5", "G6"}),
+    ("MU14 seed store slot -0x494c->-0x4948", mu14, {"G4"}),
+    ("MU15 chooser walks BACKWARD add->sub", mu15, {"G4"}),
+    ("MU16 clamp hi push 0x6->0x7", mu16, {"G6"}),
+    ("MU17 clamp index reg eax->ebx", mu17, {"G6"}),
+    ("MU18 loader store eax->edx", mu18, {"G2"}),
+    ("MU19 reader loop cmp on another slot", mu19, {"G5"}),
+    ("MU20 ALGO matcher loses the scaled form", mu20, {"G3"}),
 ]
 
 BASE = run(LINES, ALPHA, EXE)

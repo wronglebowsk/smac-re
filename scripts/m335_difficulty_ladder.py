@@ -68,6 +68,14 @@ SITES = {  # measured; the census must reproduce this EXACTLY (both directions)
 }
 REFUND = (0x520714, 0x520719, 0x52071C, 0x520728, 0x52072B, 0x520758)
 CLAMP = "0x423af0"
+ADDR_RE = re.compile(r"(?<![0-9a-f])0x94d2(?:ac|b0|b4|b8|bc|c0|c4)(?![0-9a-f])")
+FILL = [(0x57AC74, "mov", "esi,0x94d2ac"), (0x57AC79, "call", "0x5ea448"),
+        (0x57AC7E, "call", "0x5ea475"), (0x57AC83, "mov", "DWORD PTR [esi],eax"),
+        (0x57AC85, "add", "esi,0x4"), (0x57AC88, "cmp", "esi,0x94d2c4"),
+        (0x57AC8E, "jl", "0x57ac79")]
+STORE_OPS = {"mov", "movsx", "movzx", "or", "and", "add", "sub", "inc", "dec", "xchg"}
+LOOPS = [(0x484CB3, "ebp-0x62d8", 0x484CA4, 0x484CE7),
+         (0x485410, "ebp-0x62dc", 0x485401, 0x485444)]
 
 
 def parse_text(lines):
@@ -133,82 +141,108 @@ def _g2(ins, strs, nsec, rows):
     ok = len(pushes) == 1 and pushes[0][0] == 0x57AC56
     i0 = at(ins, 0x57AC56)[0]
     call_ok = any(op == "call" and SECTION_OPENER in o for op, o in [ins[i0 + k][1:] for k in range(4)])
-    i_l = at(ins, 0x57AC74)[0]
-    fill = [ins[i_l + k][1:] for k in range(0, 7)]
-    init_ok = fill[0] == ("mov", "esi,0x94d2ac")
-    step_ok = any(op == "add" and o.replace(" ", "") == "esi,0x4" for op, o in fill)
-    bound_ok = any(op == "cmp" and "0x94d2c4" in o for op, o in fill)
-    back_ok = any(op == "jl" and "0x57ac79" in o for op, o in fill)
+    got = [(a, op, o) for a, op, o in ins if 0x57AC74 <= a <= 0x57AC8E]
+    shape = got == FILL                       # exact 7-instruction body, the STORE included
     iters = (END - BASE) // STEP
     nm = strs.get(NAMES_VA, "")
-    return (ok and call_ok and nm == "DIFF" and init_ok and step_ok and bound_ok and back_ok
-            and iters == len(rows),
-            "loader push@0x%x -> call %s, name=%r, fill init=%s base=0x%x step=%d bound=0x%x "
-            "backedge=%s => %d iterations == %d file rows"
-            % (pushes[0][0] if pushes else 0, SECTION_OPENER, nm, init_ok, BASE, STEP, END,
-               back_ok, iters, len(rows)))
+    return (ok and call_ok and nm == "DIFF" and shape and iters == len(rows),
+            "loader push@0x%x -> call %s, name=%r, fill body exact=%s (store 'mov DWORD PTR "
+            "[esi],eax' read, not inferred), base=0x%x step=%d bound=0x%x => %d iterations "
+            "== %d file rows" % (pushes[0][0] if pushes else 0, SECTION_OPENER, nm, shape,
+                                 BASE, STEP, END, iters, len(rows)))
 
 
 def _g3(ins, strs, nsec, rows):
-    addrs = [BASE + k * 4 for k in range((END - BASE) // 4)]
-    seen = {}
-    for a, op, o in ins:
-        if any(hex(x) in o for x in addrs) or "0x94d2c4" in o:
-            seen[a] = (op, o)
+    seen = {a: (op, o) for a, op, o in ins if ADDR_RE.search(o)}
     exact = set(seen) == set(SITES)
-    stores = [a for a, (op, o) in seen.items() if op == "mov" and o.split(",")[0].startswith("DWORD PTR [")]
-    return (exact and not stores,
-            "sites=%d expected=%d extra=%s missing=%s stores=%d"
+    lit = [a for a, (op, o) in seen.items()
+           if op in STORE_OPS and "PTR [" in o.split(",")[0]]
+    scaled = [a for a, (op, o) in seen.items() if "*4" in o]
+    return (exact and not lit,
+            "sites=%d expected=%d extra=%s missing=%s literal-address STORES=%d scaled-form "
+            "sites=%d (a register-indirect store elsewhere is NOT excluded - scope noted)"
             % (len(seen), len(SITES), sorted(hex(x) for x in set(seen) - set(SITES)),
-               sorted(hex(x) for x in set(SITES) - set(seen)), len(stores)))
+               sorted(hex(x) for x in set(SITES) - set(seen)), len(lit), len(scaled)))
 
 
 def _g4(ins, strs, nsec, rows):
-    w = window(ins, 0x4DDAF8, 0x4DDB60)
-    txt_w = ["%s %s" % (op, o) for _, op, o in w]
-    has = lambda frag: any(frag in t for t in txt_w)
-    order_ok = (has("mov esi,0x94d2ac") and has("mov eax,DWORD PTR [esi]")
-                and has("push edi") and has("add esi,0x4") and has("inc edi")
-                and has("cmp esi,0x94d2c4") and has("jl") and has("call 0x60c555"))
-    seed_ok = has("mov eax,ds:0x985aec") and has("call 0x5f1394")
-    return (order_ok and seed_ok,
-            "append loop walks 0x94d2ac..0x94d2c4 forward with push edi as the item index=%s; "
-            "current value ds:0x985aec seeded into the dialog before %s"
-            % (order_ok, "call 0x5f1394" if seed_ok else "MISSING"))
+    seq = ["%s %s" % (op, o) for _, op, o in window(ins, 0x4DDAF8, 0x4DDB60)]
+    frags = ["mov esi,0x94d2ac", "mov eax,DWORD PTR [esi]", "call 0x61482f",
+             "push 0x997120", "call 0x64b9e0", "push edi", "call 0x60c555",
+             "add esi,0x4", "inc edi", "cmp esi,0x94d2c4", "jl 0x4ddaff"]
+    pos, cur, missing = [], 0, None
+    for f in frags:                            # ORDERED search: each fragment after the last
+        try:
+            k = seq.index(f, cur)
+        except ValueError:
+            missing = f
+            break
+        pos.append(k)
+        cur = k + 1
+    order_ok = missing is None
+    zero_ok = "xor edi,edi" in seq and seq.index("xor edi,edi") < pos[0] if pos else False
+    try:
+        seed_ok = (seq.index("mov eax,ds:0x985aec") < seq.index("mov DWORD PTR [ebp-0x494c],eax")
+                   < seq.index("call 0x5f1394"))
+    except ValueError:
+        seed_ok = False
+    return (order_ok and zero_ok and seed_ok,
+            "ordered forward walk %s (missing after pos %d: %r); edi starts at 0=%s; seed "
+            "ds:0x985aec -> [ebp-0x494c] BEFORE call 0x5f1394=%s"
+            % (order_ok, len(pos), missing, zero_ok, seed_ok))
 
 
 def _g5(ins, strs, nsec, rows):
     i5 = at(ins, 0x599405)[0]
-    o5 = ins[i5][2]
     prev = ["%s %s" % (op, o) for _, op, o in ins[max(0, i5 - 4):i5]]
-    idx_ok = "mov ecx,DWORD PTR ds:0x985aec" in prev and "[ecx*4+0x94d2ac]" in o5
-    bounds6 = [a for a, op, o in ins if op == "cmp" and o.replace(" ", "").endswith(",0x6")
-               and a in (0x484CB3, 0x485410)]
-    return (idx_ok and len(bounds6) == 2,
-            "0x599405 indexes with ds:0x985aec (prev=%s); independent 6-bounds at %s"
-            % (prev[-1] if prev else "-", [hex(a) for a in bounds6]))
+    idx_ok = "mov ecx,DWORD PTR ds:0x985aec" in prev and "[ecx*4+0x94d2ac]" in ins[i5][2]
+    loops = []
+    for cmp_a, slot, inc_a, back_a in LOOPS:
+        i = at(ins, cmp_a)[0]
+        body = ["%s %s" % (op, o) for _, op, o in ins[i:i + 14]]
+        inc = ["%s %s" % (op, o) for _, op, o in window(ins, inc_a, inc_a + 12)]
+        ok = (body[0] == "cmp DWORD PTR [%s],0x6" % slot
+              and any(b.startswith("jge ") for b in body)
+              and any("[edx*4+0x94d2ac]" in b for b in body)
+              and any(b.startswith("jmp 0x%x" % inc_a) for b in body)
+              and any(b == "add eax,0x1" for b in inc)
+              and any(b == "mov DWORD PTR [%s],eax" % slot for b in inc))
+        loops.append(ok)
+    return (idx_ok and all(loops),
+            "0x599405 indexes with ds:0x985aec (prev=%s); both readers are COUNTING loops "
+            "0..5 over the table (cmp 6 + increment to the same slot + jmp back) = %s"
+            % (prev[-1] if prev else "-", loops))
 
 
 def _g6(ins, strs, nsec, rows):
-    wc = window(ins, 0x486F2C, 0x486F47)
-    args = ["%s %s" % (op, o) for _, op, o in wc]
-    clamp_ok = any("push 0x6" in s for s in args) and any("push 0x0" in s for s in args) \
-        and any("0x8f0c11" in s for s in args) and any(CLAMP in s for s in args) \
-        and any("[eax*4+0x94d2ac]" in s for s in args)
+    base = int(at(ins, 0x57AC74)[2].split(",")[1], 16)     # read out of the loader, not the module
+    end = int(at(ins, 0x57AC88)[2].split(",")[1], 16)      # read out of the loader bound
+    hi = int(at(ins, 0x486F2C)[2], 16)                     # push 0x6, read out of the clamp
+    geom = (end - base) == 4 * hi and hi == (END - BASE) // STEP
+    wc = ["%s %s" % (op, o) for _, op, o in window(ins, 0x486F2C, 0x486F47)]
+    clamp_ok = ("push 0x%x" % hi in wc and "push 0x0" in wc
+                and any("0x8f0c11" in s for s in wc) and any(CLAMP in s for s in wc)
+                and "mov ecx,DWORD PTR [eax*4+0x94d2ac]" in wc)
     ci = at(ins, 0x423AF0)[0]
     cb = ["%s %s" % (ins[ci + k][1], ins[ci + k][2]) for k in range(0, 20)]
     clamp_law = ("cmp eax,DWORD PTR [ebp+0xc]" in cb and "jl 0x423b09" in cb
                  and "cmp ecx,DWORD PTR [ebp+0xc]" in cb
                  and "cmp edx,DWORD PTR [ebp+0x10]" in cb and "jle 0x423b1b" in cb)
-    off_by_one = (END - BASE) // STEP == 6 and "push 0x6" in args
+    addr = {a: k for k, (a, _, _) in enumerate(ins)}
+    calls = [a for a, op, o in ins if op == "call" and CLAMP in o]
+    fed = [a for a in calls if any("0x8f0c11" in o for _, _, o in ins[max(0, addr[a] - 6):addr[a]])]
+    imms = sorted({o.split(",")[-1].strip() for a, op, o in ins if op == "cmp" and "0x985aec" in o})
+    ref_ok = imms == ["0x1", "0x2", "0x3", "0x4", "ebx"]
     rf = ["%s %s" % (op, o) for a, op, o in window(ins, min(REFUND), max(REFUND))]
-    ref_ok = any("cmp eax,0x3" in s for s in rf) and any("jle 0x520795" in s for s in rf) \
-        and any("cmp eax,0x4" in s for s in rf) and any("jne 0x520758" in s for s in rf)
-    return (clamp_ok and clamp_law and off_by_one and ref_ok,
-            "clamp FUN_00423af0(lo=0,hi=6) INCLUSIVE with hi == the array END address "
-            "(0x%x, 6 rows => last index 5): off-by-one by construction=%s; refund: "
-            "cmp 3/jle (none <=3), cmp 4/jne => k=1 at 4, k=2 at >=5 (=Transcend) =%s"
-            % (END, off_by_one, ref_ok))
+    refund_ok = (any("cmp eax,0x3" in s for s in rf) and any("jle 0x520795" in s for s in rf)
+                 and any("cmp eax,0x4" in s for s in rf) and any("jne 0x520758" in s for s in rf))
+    return (geom and clamp_ok and clamp_law and fed == [0x486F38] and ref_ok and refund_ok,
+            "geometry read from the bytes: base=0x%x bound=0x%x clamp hi=%d -> hi*4 == end-base "
+            "=%s (hi == the array LENGTH, so the inclusive hi is one past the last row); of %d "
+            "call sites of %s exactly %s are fed by an 0x8f0c11 load; cmp immediates on "
+            "0x985aec == %s (M332's set reproduced); refund 3/jle + 4/jne => k=1 at 4, k=2 at "
+            ">=5 = TRANSCEND = %s"
+            % (base, end, hi, geom, len(calls), CLAMP, [hex(x) for x in fed], imms, refund_ok))
 
 
 def _g7(ins, strs, nsec, rows):

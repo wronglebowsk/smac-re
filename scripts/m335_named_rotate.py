@@ -18,6 +18,7 @@ the full rows and its line range is cited from each stub.
 """
 import argparse
 import hashlib
+import re
 import io
 import os
 import sys
@@ -105,10 +106,30 @@ def region(text):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify", action="store_true")
+    ap.add_argument("--check-stubs", action="store_true")
     a = ap.parse_args()
 
     named = io.open(NAMED, encoding="utf-8").read()
     arc = io.open(ARCH, encoding="utf-8").read() if os.path.exists(ARCH) else ""
+
+    if a.check_stubs:
+        arc_lines = arc.split("\n")
+        n_ok = 0
+        nlines = named.split("\n")
+        for h in HEADS:
+            idx = [i for i, l in enumerate(nlines) if l.startswith(h)]
+            assert len(idx) == 1, "expected one stub head %r, got %d" % (h, len(idx))
+            blk = "\n".join(nlines[idx[0]:idx[0] + 4])
+            m = re.search(r"named-archive-m246-m254\.md:(\d+)", blk)
+            assert m, "stub for %r carries no archive cite" % h
+            ln = int(m.group(1))
+            name = h[3:].split("/")[0].strip()
+            assert arc_lines[ln - 1].startswith(h.strip() if "/" in h else "## " + name), \
+                "stub %r cites :%d which is %r" % (h, ln, arc_lines[ln - 1][:60])
+            n_ok += 1
+        print("PASS stub-cites: %d/%d stubs point at their own block head in the archive"
+              % (n_ok, len(HEADS)))
+        return 0
 
     if a.verify:
         # region now lives in the archive; locate it there and re-hash
@@ -142,10 +163,12 @@ def main():
                 marks[h] = arc_hdr_lines + i + 1
     stub_txt = []
     for h in HEADS:
-        t = STUBS[h].replace("SHA12", sha[:12]).replace("ARC_" + h[3:].split("/")[0][:-1].strip(),
-                                                         str(marks[h]))
-        # every stub must cite the archive line of its own block
-        assert str(marks[h]) in t, "stub %r missing archive line %d" % (h, marks[h])
+        name = h[3:].split("/")[0].strip()          # s317 review F1: no [:-1] (ate a digit on "M248/M249")
+        t = STUBS[h].replace("SHA12", sha[:12]).replace("ARC_" + name, str(marks[h]))
+        # every stub must cite the archive line of its own block, as an EXACT token (F10)
+        assert re.search(r"(?<!\d)%d(?!\d)" % marks[h], t), \
+            "stub %r missing archive line %d" % (h, marks[h])
+        assert "ARC_" not in t, "stub %r kept an unsubstituted placeholder" % h
         assert "docs/named-archive-m246-m254.md" in t
         stub_txt.append(t.rstrip("\n"))
     stub = "\n".join(stub_txt) + "\n"
