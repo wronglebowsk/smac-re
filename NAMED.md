@@ -1669,14 +1669,14 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | ACTION LAYER (4,0x691144)=(ENEMYTRUCE), (2,0x691150)=(ENEMYTREATY), (1,none) — the BYTES read through the PE table at image base 0x400000; 5 rivals differ, min 2,424 | `evidence/b36_relations.txt:69-78` | V MU8,9 |
 | UNMODELED: the nouns of 0x800000 / 0x40 / 0x8000 / 0x10000 / 0x100000; which site fires each transition in a live game | - | lead |
 
-## B37 (s339-chain1, BUILD 8/8, zero box; 13 mutants) - the TREATY LIFECYCLE: `0x40` arms a 50-tick cell; the countdown is its only expirer
+## B37 (s339-chain1, BUILD 8/8, zero box; 14 mutants, review #408 hardened) - the TREATY LIFECYCLE: `0x40` arms a 50-tick cell; the countdown is its only expirer
 | claim | evidence | conf |
 |---|---|---|
-| countdown = 10 insns 0x5552b6..0x5552d4 (`and al,0xbf`@0x5552d1) with ONE exit 0x5552d9, so a zero cell stores NOTHING; 4 arms of 0x32 (0x551d22 caller-mask behind `test cl,0x40`; 0x552ce6 `or al,0x40`; 0x5553f3/0x5556eb `and 0xfffdfbff`+`or 0x840`), each proved from its own chain | `evidence/b37_treaty.txt:13,:32` | V MU1-4 |
-| parity 2048 pairs, 0 disagreements, expiry at tick 50; replay: re-arm t30, status t40, expires ONCE at t79 | `evidence/b37_treaty.txt:38,:48` | V MU5-7 MU12 |
-| PEACE 0xffee7faf clears 0x40 -> NULL expiry (49/49); WAR 0xfaeef378 KEEPS it (0x78) -> real clear (0/49); 0 of 11 cell refs inside FUN_00551a20; corrects M375's list presentation only | `evidence/b37_treaty.txt:54` | V MU8 |
-| 0x800000 TREATY ON: all 4 masks with a 0x17 bit clear it, expiry cannot (`0xbf & 0x800000 = 0`) | `evidence/b37_treaty.txt:60` | V MU9 |
-| six rivals differ (min 1 config); ACCEPTANCE `python3 -u -m sim.treaty` PASS 8/8 `5dd4119bd1882d1d`, twice identical | `evidence/b37_treaty.txt:75`, `evidence/b37_twice.txt:2` | V MU10-11 |
+| countdown = 10 insns 0x5552b6..0x5552d4 (`and al,0xbf`@0x5552d1) with ONE exit 0x5552d9, so a zero cell stores NOTHING; 4 arms of 0x32 (0x551d22 caller-mask whose `je 0x551d64` skips the arm; 0x552ce6 `or al,0x40`; 0x5553f3/0x5556eb `and 0xfffdfbff`+`or 0x840`); byte source pinned by size+sha256 | `evidence/b37_treaty.txt:14,:33` | V MU1-4 MU13 |
+| parity 2048 pairs, 0 disagreements, expiry at tick 50; replay: re-arm t30, status t40, expires ONCE at t79 | `evidence/b37_treaty.txt:39,:49` | V MU5-7 MU12 |
+| PEACE 0xffee7faf clears 0x40 -> NULL expiry (49/49); WAR 0xfaeef378 KEEPS it (0x78) -> real clear (0/49); 0 of 11 cell refs inside FUN_00551a20; corrects M375's list presentation only | `evidence/b37_treaty.txt:55` | V MU8 |
+| 0x800000 TREATY ON: an exhaustive 256-mask sweep - 240/240 masks with a 0x17 bit clear it, the 16 without keep it; expiry cannot (`0xbf & 0x800000 = 0`) | `evidence/b37_treaty.txt:61` | V MU9 |
+| six rivals differ (min 1 config); ACCEPTANCE `python3 -u -m sim.treaty` PASS 8/8 `5dd4119bd1882d1d`, twice identical | `evidence/b37_treaty.txt:76`, `evidence/b37_twice.txt:2-3` | V MU10-11 |
 | UNMODELED: nouns of 0x800/0x20000/0x400; FUN_00552970's role; one upkeep pass == one turn | docstring | lead |
 
 ## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..128) of `evidence/m371_war_contact.txt:8`.

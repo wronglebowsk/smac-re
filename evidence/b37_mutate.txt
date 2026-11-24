@@ -1,5 +1,5 @@
-MU1   ok   red=['G0'] want=['G0']  a phantom second exit tolerated: the single-exit property (null cell stores nothing) unpinned
-MU2   ok   red=['G0'] want=['G0']  the block length unpinned: a wider or shorter countdown would still read as the block
+MU1   ok   red=['G0', 'G2', 'G4', 'G7'] want=['G0', 'G2', 'G4', 'G7']  the window truncated before the word store: a dump drift that dropped the expiry would read as the block
+MU2   ok   red=['G0', 'G2', 'G4', 'G7'] want=['G0', 'G2', 'G4', 'G7']  the window started after the cell load: the block still parses but no longer reads the cell
 MU3   ok   red=['G1', 'G7'] want=['G1', 'G7']  the caller-mask guard unread: the 0x551d2a arm loses its 0x40 predecessor and G1 reddens
 MU4   ok   red=['G1', 'G7'] want=['G1', 'G7']  the caller-mask arm read as a literal: the arm table and its digest both shift
 MU5   ok   red=['G1', 'G2', 'G3', 'G6', 'G7'] want=['G1', 'G2', 'G3', 'G6', 'G7']  the lease is 49 ticks: expiry moves to 49 and the re-arm rival stops differing
@@ -8,8 +8,9 @@ MU7   ok   red=['G3', 'G7'] want=['G3', 'G7']  the transcript's re-arm moved a t
 MU8   ok   red=['G4'] want=['G4']  the war asymmetry dropped from the gate: a war-cleared lease would pass as a null write
 MU9   ok   red=['G5'] want=['G5']  TREATY ON re-pointed one bit down: the 0x17 clears no longer reach it and G5 reddens
 MU10  ok   red=['G6'] want=['G6']  a rival made equal to the truth: the status-disarms the cell reading stops falsifying
+MU13  ok   red=['G1', 'G7'] want=['G1', 'G7']  the guard's direction inverted: the 0x551d2a arm reads as unguarded and G1 must redden
 MU11  ok   red=['G7'] want=['G7']  the block digest unpinned: a dump drift would slip past
 MU12  ok   red=['G2'] want=['G2']  the expiry-tick measurement removed: the gate can no longer say WHEN the lease ends
 NOOP  ok   red=[] want=[]  identity: nothing may redden
 
-RUN PASS 13 mutants, NO-OP []
+RUN PASS 14 mutants, NO-OP []

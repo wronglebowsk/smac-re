@@ -7,7 +7,7 @@ must redden EXACTLY its declared gate set; the identity (NO-OP) mutant must redd
 is what proves the comparison bites.  An anchor that does not occur exactly once is a harness
 error, not a pass.
 
-  python3 -u scripts/b37_mutate.py             # full run (12 mutants)
+  python3 -u scripts/b37_mutate.py             # full run (13 mutants)
   python3 -u scripts/b37_mutate.py --selftest  # machinery only
 
 Zero box, zero /proc, zero gdb.
@@ -24,15 +24,15 @@ SIM = os.path.dirname(SRC)
 GATE_RE = re.compile(r"^(ok|BAD)\s+(G\d+)\b")
 
 MUTANTS = [
-    ("MU1", "and exits == [0x5552D9],", "and exits == [0x5552D9, 0x5552BE],", ["G0"],
-     "a phantom second exit tolerated: the single-exit property (null cell stores nothing) unpinned"),
-    ("MU2", "gate(\"G0\", len(blk) == 10", "gate(\"G0\", len(blk) == 11", ["G0"],
-     "the block length unpinned: a wider or shorter countdown would still read as the block"),
+    ("MU1", "TICK_LO, TICK_HI = 0x5552B6, 0x5552D4", "TICK_LO, TICK_HI = 0x5552B6, 0x5552C4", ["G0", "G2", "G4", "G7"],
+     "the window truncated before the word store: a dump drift that dropped the expiry would read as the block"),
+    ("MU2", "TICK_LO, TICK_HI = 0x5552B6, 0x5552D4", "TICK_LO, TICK_HI = 0x5552BC, 0x5552D4", ["G0", "G2", "G4", "G7"],
+     "the window started after the cell load: the block still parses but no longer reads the cell"),
     ("MU3", 'if mn == "test" and op in ("cl,0x40", "dl,0x40", "al,0x40"):',
             'if False and mn == "test" and op in ("cl,0x40", "dl,0x40", "al,0x40"):', ["G1", "G7"],
      "the caller-mask guard unread: the 0x551d2a arm loses its 0x40 predecessor and G1 reddens"),
-    ("MU4", '            return ("conditional", a, None)',
-            '            return ("literal", a, SET_TREATY)', ["G1", "G7"],
+    ("MU4", '            return ("conditional" if g["ok"] else "unguarded", a, None, g)',
+            '            return ("literal", a, 0x40, None)', ["G1", "G7"],
      "the caller-mask arm read as a literal: the arm table and its digest both shift"),
     ("MU5", "ARM_CELL_VALUE = 0x32", "ARM_CELL_VALUE = 0x31", ["G1", "G2", "G3", "G6", "G7"],
      "the lease is 49 ticks: expiry moves to 49 and the re-arm rival stops differing"),
@@ -48,6 +48,8 @@ MUTANTS = [
     ("MU10", "        r1 += int(run_seq(0, ARM_CELL_VALUE, 50, status_at=st, status_mask=0x2,",
              "        r1 += 0 * int(run_seq(0, ARM_CELL_VALUE, 50, status_at=st, status_mask=0x2,",
      ["G6"], "a rival made equal to the truth: the status-disarms the cell reading stops falsifying"),
+    ("MU13", '"ok": mn2 in ("je", "jz") and tgt > arm_addr,', '"ok": False,', ["G1", "G7"],
+     "the guard's direction inverted: the 0x551d2a arm reads as unguarded and G1 must redden"),
     ("MU11", 'ANCHOR = "5dd4119bd1882d1d"', 'ANCHOR = "0000000000000000"', ["G7"],
      "the block digest unpinned: a dump drift would slip past"),
     ("MU12", "        if lc.cell == 0 and expire_tick is None:", "        if False:", ["G2"],

@@ -1467,15 +1467,15 @@ expiry store finds `0x40` already gone and writes the word back byte-identical (
 three immediates, digest printed twice from two decodes; **G1** the arm census over the WHOLE dump:
 every `0x94d4c8` reference classified (arm-read-back), exactly the sites M375 counted, and each
 arm's neighbouring relations-word store PROVED to carry `0x40` by evaluating its mask chain
-(`or ebx,ecx` guarded by `test cl,0x40`, or a literal `or ...,0x840`) rather than by looking at the
-address; **G2** parity of the extracted decrement against `Lifecycle.tick` on every cell value
+(`or ebx,ecx` behind a `test cl,0x40` whose `je` SKIPS the arm, or a literal `or ...,0x840`) rather than
+by looking at the address or at a nearby `test`; **G2** parity of the extracted decrement against `Lifecycle.tick` on every cell value
 0..255 x a pre-state sweep, 0 disagreements, and the expiry tick is exactly the 50th (49 keeps
 `0x40`, 50 clears it); **G3** a replayed lifecycle transcript (arm, 49 ticks, arm again at tick 30,
 status write at tick 40, run to 120) whose every post-word and cell value equals the model's;
 **G4** the asymmetry measured, not asserted: after a status write the later expiry is a null write
 (word before == word after) on every arm/status interleaving swept, and the cell is non-zero at that
-moment; **G5** `0x800000` (TREATY ON) is cleared by every `0x17` status write and NEVER restored by
-expiry - the `0xbf` byte mask cannot reach bit 23; **G6** rivals FAIL on the printed numbers (a
+moment; **G5** `0x800000` (TREATY ON) is cleared by all 240 byte masks that carry a `0x17` bit (an exhaustive
+sweep, the 16 without it keep the bit) and NEVER restored by expiry - the `0xbf` byte mask cannot reach bit 23; **G6** rivals FAIL on the printed numbers (a
 per-turn deadline that clears on any write; expiry that also clears `0x800000`; an arm that only
 initialises an unarmed cell; a countdown that decrements before testing); **G7** the digests are
 pinned and reproduced on a second decode. Each gate has a named mutant in `scripts/b37_mutate.py`.

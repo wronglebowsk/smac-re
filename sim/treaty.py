@@ -48,8 +48,9 @@ WAR_CLEAR = 0xFAEEF378                         # any mask & 0x10
 UNLOCK_CLEAR = 0xFF7FFFFF                      # any mask & 0x17
 
 ANCHOR = "5dd4119bd1882d1d"
-ARM_DIGEST = "7511618271d4a713"
+ARM_DIGEST = "fac4d707359ecb14"
 TRACE_DIGEST = "a068538690fbe406"
+DUMP_SHA = "f67458fa25011f458379f4b61b9b1495de9fb1b4e5b3a9a651ce56d897d33d34"
 
 FAIL = []
 INSN = re.compile(r"^\s+([0-9a-f]{4,8}):\t[0-9a-f ]+\t(\S+)(?:\s+(.*))?$")
@@ -82,6 +83,18 @@ def load(path=TEXT):
 
 def window(ins, lo, hi):
     return [r for r in ins if lo <= r[0] < hi]
+
+
+def dump_identity(path=TEXT):
+    """(size, sha256) of the decoded .text dump - the byte source is untracked (409 MB), so the
+    instrument pins its identity instead of its path (review #408 P2)."""
+    h = hashlib.sha256()
+    size = 0
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 22), b""):
+            h.update(chunk)
+            size += len(chunk)
+    return size, h.hexdigest()
 
 
 # --------------------------------------------------------------------- the dump's countdown block
@@ -189,21 +202,42 @@ def word_store_before(ins, addr, span=14):
     return None
 
 
-def chain_carries_40(rec):
+def guard_proof(ins, arm_addr, store_addr):
+    """The caller-mask arm's CONTROL FLOW, proved rather than assumed: a `test <r>,0x40` before the
+    word store, and the FIRST conditional jump after it skips PAST the arm when the bit is CLEAR
+    (`je` to a target above the arm).  A `test` anywhere in the window is NOT enough - that was
+    review #408's P2 on the first version of this function."""
+    idx = {a: i for i, (a, mn, op) in enumerate(ins)}
+    for j in range(idx[store_addr] - 6, idx[store_addr]):
+        if j < 0:
+            continue
+        a, mn, op = ins[j]
+        if mn == "test" and re.match(r"^(cl|dl|al),0x40$", op):
+            for k in range(j + 1, min(j + 6, len(ins))):
+                b, mn2, op2 = ins[k]
+                if mn2 in ("je", "jne", "jz", "jnz"):
+                    tgt = int(op2, 16)
+                    return {"ok": mn2 in ("je", "jz") and tgt > arm_addr,
+                            "test": a, "jcc": b, "mn": mn2, "target": tgt}
+    return {"ok": False, "test": None, "jcc": None, "mn": None, "target": None}
+
+
+def chain_carries_40(rec, ins=None, arm_addr=None):
     """Does this store's mask chain set bit 6 - literally, or via a caller mask guarded by a
-    `test cl,0x40`?  Evaluated from the instructions, never from the address."""
+    `test <r>,0x40` whose jump skips the arm?  Evaluated from the instructions, never the address."""
     wide, narrow = ALIASES[rec["reg"]]
     for a, mn, op in rec["ops"]:
         if mn == "test" and op in ("cl,0x40", "dl,0x40", "al,0x40"):
-            return ("conditional", a, None)
+            g = guard_proof(ins, arm_addr, rec["store"]) if ins is not None else {"ok": False}
+            return ("conditional" if g["ok"] else "unguarded", a, None, g)
     for a, mn, op in reversed(rec["ops"]):
         m = re.match(r"^(%s|%s),(0x[0-9a-f]+)$" % (wide, narrow), op)
         if mn == "or" and m:
             imm = int(m.group(2), 16)
             if imm & SET_TREATY:
-                return ("literal", a, imm)
-            return ("clear-only", a, imm)
-    return ("none", None, None)
+                return ("literal", a, imm, None)
+            return ("clear-only", a, imm, None)
+    return ("none", None, None, None)
 
 
 def arm_table(ins):
@@ -212,8 +246,10 @@ def arm_table(ins):
     rows = []
     for a in arms:
         rec = word_store_before(ins, a)
-        k = chain_carries_40(rec) if rec else ("none", None, None)
-        rows.append((a, k[0], k[1], k[2], rec["store"] if rec else 0))
+        k = chain_carries_40(rec, ins, a) if rec else ("none", None, None, None)
+        rows.append((a, k[0], k[1], k[2], rec["store"] if rec else 0,
+                     (k[3] or {}).get("jcc"), (k[3] or {}).get("target"),
+                     (k[3] or {}).get("ok")))
     return arms, rows
 
 
@@ -306,6 +342,7 @@ def run_lifecycle(word, cell, ticks, arm_at=None, status_at=None, status_mask=0)
 def accept(quiet=False):
     ins = load()
     blk = window(ins, TICK_LO, TICK_HI)
+    dump = dump_identity()
     d1 = sha16(blk)
     d2 = sha16(window(load(), TICK_LO, TICK_HI))          # second decode of the same file
 
@@ -321,10 +358,12 @@ def accept(quiet=False):
           % (len(blk), " ".join("%08x" % a for a in cell_st), " ".join("%08x" % a for a in word_st),
              "0x%02x@%08x" % (EXPIRE_BYTE, imm_bf[0][0]) if imm_bf else "MISSING",
              " ".join("%08x" % e for e in exits)))
+    print("  byte source: %s  %d B  sha256 %s" % (os.path.relpath(TEXT, ROOT), dump[0], dump[1]))
     gate("G0", len(blk) == 10 and len(cell_st) == 1 and len(word_st) == 1 and len(imm_bf) == 1
-         and exits == [0x5552D9],
-         "10 insns, one cell store and one word store, ONE `and al,0xbf`, and both branches leave "
-         "through the SAME exit 0x5552d9 - so the null-cell path stores nothing at all")
+         and exits == [0x5552D9] and dump[1] == DUMP_SHA,
+         "10 insns, one cell store and one word store, ONE `and al,0xbf`, both branches leave "
+         "through the SAME exit 0x5552d9 (the null cell stores nothing), and the BYTE SOURCE is "
+         "pinned by size+sha256 (%d B, %s)" % (dump[0], dump[1][:16]))
 
     # ---- G1 the arm census over the whole dump -------------------------------------------
     print("\nG1  every reference to the cell 0x%x" % CELL)
@@ -336,18 +375,19 @@ def accept(quiet=False):
     leas = [a for a, mn, op in refs if mn == "lea"]
     for a, mn, op in refs:
         print("    %08x %-8s %s" % (a, mn, op))
-    print("  %d refs = %d arms(%d) + %d reads + %d write-backs + %d lea"
-          % (len(refs), len(arms), len(refs) - len(reads) - len(wback) - len(leas),
-             len(reads), len(wback), len(leas)))
+    print("  %d refs = %d arms + %d reads + %d write-backs + %d lea  (partition %s)"
+          % (len(refs), len(arms), len(reads), len(wback), len(leas),
+             "closed" if len(arms) + len(reads) + len(wback) + len(leas) == len(refs) else "OPEN"))
     _a, rows = arm_table(ins)
     for r in rows:
-        print("  arm %08x  chain %-11s at %s  imm %s  predecessor store %08x"
-              % (r[0], r[1], "%08x" % r[2] if r[2] else "-",
-                 "0x%x" % r[3] if r[3] else "-", r[4]))
+        print("  arm %08x  chain %-11s at %s  imm %s  store %08x  guard %s ok=%s"
+              % (r[0], r[1], "%08x" % r[2] if r[2] else "-", "0x%x" % r[3] if r[3] else "-",
+                 r[4], "%08x->%08x" % (r[5], r[6]) if r[5] else "-", r[7]))
     kinds = sorted(set(r[1] for r in rows))
     ad = sha16(rows)
     gate("G1", len(refs) == 11 and len(arms) == 4 and len(reads) == 3 and len(wback) == 3
-         and len(leas) == 1 and kinds == ["conditional", "literal"] and ad == ARM_DIGEST,
+         and len(leas) == 1 and len(arms) + len(reads) + len(wback) + len(leas) == len(refs)
+         and kinds == ["conditional", "literal"] and ad == ARM_DIGEST,
          "11 cell references; 4 arms of 0x32 - %d literal `or .,0x840`, %d caller-mask guarded by "
          "`test cl,0x40` - and every arm's preceding word store provably carries 0x40"
          % (len([r for r in rows if r[1] == "literal"]),
@@ -427,15 +467,15 @@ def accept(quiet=False):
 
     # ---- G5 TREATY ON: cleared by every 0x17 write, never restored by expiry --------------
     print("\nG5  0x800000 (TREATY ON) across the status masks and the expiry")
-    masks = [0x1, 0x2, 0x4, 0x10, 0x8, 0x100, 0x1000]
+    masks = list(range(256))
     with17 = [m for m in masks if m & LADDER_BITS]
     cleared_n = 0
     for m in with17:
         lc = Lifecycle(TREATY_ON)
         lc.status(m)
         cleared_n += int(not lc.word & TREATY_ON)
-    print("  masks carrying a 0x17 bit: %s -> TREATY ON cleared %d/%d"
-          % (" ".join("0x%x" % m for m in with17), cleared_n, len(with17)))
+    print("  all 256 byte masks: %d carry a 0x17 bit -> TREATY ON cleared %d/%d"
+          % (len(with17), cleared_n, len(with17)))
     print("  0xbf & 0x800000 = 0x%x ; masks with no 0x17 bit keep it: %s"
           % (EXPIRE_BYTE & TREATY_ON,
              " ".join("0x%x" % m for m in masks if not m & LADDER_BITS)))
@@ -445,9 +485,10 @@ def accept(quiet=False):
         lc.tick()
     print("  arm+50 from 0x800000 -> word 0x%x (TREATY ON %s)"
           % (lc.word, "SURVIVES" if lc.word & TREATY_ON else "gone"))
-    gate("G5", cleared_n == len(with17) == 4 and EXPIRE_BYTE & TREATY_ON == 0
+    gate("G5", cleared_n == len(with17) == 240 and EXPIRE_BYTE & TREATY_ON == 0
          and lc.word & TREATY_ON,
-         "every mask carrying a 0x17 bit clears TREATY ON (4/4) while the ones without it keep "
+         "every one of the 240 byte masks carrying a 0x17 bit clears TREATY ON (240/240) while "
+         "the 16 without it keep "
          "it, and the expiry's byte mask cannot touch bit 23 - TREATY ON survives the lease's "
          "expiry untouched, because expiry is an AND, never an OR")
 
@@ -464,14 +505,13 @@ def accept(quiet=False):
     for c in range(1, 60):
         r2 += int(run_seq(SET_TREATY | TREATY_ON, c, c, expiry_clears_on=True)
                   != run_lifecycle(SET_TREATY | TREATY_ON, c, c))
-    # R3: a re-arm only initialises an unarmed cell
+    # R3: a re-arm only initialises an unarmed cell.  The rival runs the WHOLE horizon with the
+    # arm scheduled at t30 (review #408 P1: a 1-tick run never reached arm_at and left the
+    # no_rearm branch dead); it is scored per turn against the truth's trace.
     truth_trace = transcript()[0]
-    lc = Lifecycle(0)
-    lc.arm()
     r3 = 0
     for t in range(1, 121):
-        w, c, _cl, _dg = run_seq(lc.word, lc.cell, 1, arm_at=30, no_rearm=True)
-        lc.word, lc.cell = w, c
+        w, c, _cl, _dg = run_seq(0, 0, t, arm_at=30, no_rearm=True)
         r3 += int((w, c) != (truth_trace[t][2], truth_trace[t][3]))
     # R4: the countdown decrements before testing for zero
     r4 = 0

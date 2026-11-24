@@ -625,27 +625,23 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   grievance (INF); 0x8000/0x10000 = war/truce companions (OPEN). **OPEN**: 0x53bbed's role;
   0x5526b3 / 0x507d21 hosts; 0x4da404's 4th arg.
 
-## Session 339-chain1 — B37: the treaty lifecycle; peace vs war split
+## Session 339-chain1 — B37: the treaty lifecycle; peace vs war split (review #408 hardened)
 
-- **ACCEPT** `python3 -u -m sim.treaty` -> **`PASS B37: 8/8`** `5dd4119bd1882d1d` (`evidence/b37_treaty.txt:75`),
-  re-run byte-identical sha1 `74bbea3a09264c8a` (`evidence/b37_twice.txt:2`); `scripts/b37_mutate.py`
-  **13/13, NO-OP []** (`evidence/b37_mutate.txt:15`).
-- **BLOCK** (`:1-13`): upkeep countdown = 10 insns `0x5552b6..0x5552d4`, `and al,0xbf`@0x5552d1; BOTH
-  branches exit 0x5552d9, so a **zero cell stores nothing** (8/2048 parity cases; one-cell writes both).
-- **ARMS** (`:15-32`): 11 cell refs = 4 arms of 0x32 + 3 reads + 3 write-backs + 1 lea; chains proved per
-  site (`0x551d22` `or edx,ecx` behind `test cl,0x40`; `0x552ce6` `or al,0x40`; `0x5553f3`/`0x5556eb`
-  `and 0xfffdfbff`+`or 0x840`). Hosts FUN_00551cf0 / FUN_00552970 / FUN_005551e0 twice.
-- **PARITY** (`:34-38`): 2048 (cell,word) pairs, **0 disagreements**, expiry at **tick 50**.
-- **REPLAY** (`:40-48`): t29 cell 21; re-arm t30 (its upkeep still runs, 49); treaty status t40 clears 0x40
-  at cell 39; expiry **once, t79**.
-- **PEACE vs WAR** (`:50-54`): `0xffee7faf & 0x40 = 0` but **`0xfaeef378 & 0x40 = 0x40`** (0x78 keeps bit 6):
-  a PEACE clears SET TREATY and its lease expires as a **NULL write (49/49)**; a WAR keeps 0x40 and its
-  expiry is a **real clear (0/49)**. **0 of 11** cell refs lie inside the status writer. **CORRECTS M375's
-  `evidence/m375_relation_bits.txt:41` presentation: 0xfaeef378 is listed among "masks that clear 0x40" -
-  a list, not a claim; it clears 0x10/0x1, NOT 0x40.**
-- **TREATY ON** (`:56-60`): all 4 masks with a 0x17 bit clear 0x800000; `0xbf & 0x800000 = 0`, so expiry
-  cannot restore it.
-- **PITFALLS**: (1) `and al,0xbf` is a BYTE op (`w & ~0x40` is equivalent only because bit 6 is in AL);
-  (2) a rival scored on END STATE can tie the truth - score the per-tick digest (first version 0/49, fixed
-  by the digest, not by weakening the gate); (3) "event then tick, one per turn" is policy, declared
-  UNMODELED.
+- **ACCEPT** `python3 -u -m sim.treaty` -> **`PASS B37: 8/8`** `5dd4119bd1882d1d` (`evidence/b37_treaty.txt:76`),
+  twice byte-identical, same digest (`evidence/b37_twice.txt:2-3`); `scripts/b37_mutate.py`
+  **14/14, NO-OP []** (`evidence/b37_mutate.txt:16`).- **BLOCK** (`:1-14`): 10 insns `0x5552b6..0x5552d4`, `and al,0xbf`@0x5552d1, ONE exit 0x5552d9, so a zero cell stores NOTHING; the 409,000,318-B dump is pinned by sha256 `f67458fa25011f45` (`:13`).
+- **ARMS** (`:15-33`): 11 refs = 4 arms + 3 reads + 3 write-backs + 1 lea (partition closed); the caller-mask
+  arm's CONTROL FLOW is proved (`test cl,0x40` -> `je 0x551d64` PAST the arm, `:29`), not merely a nearby test.
+- **PARITY/REPLAY** (`:35-49`): 2048 pairs 0 disagreements, expiry at tick 50; re-arm t30, status t40, expiry
+  ONCE at t79.
+- **PEACE vs WAR** (`:51-55`): `0xffee7faf & 0x40 = 0` but **`0xfaeef378 & 0x40 = 0x40`** (0x78 keeps bit 6):
+  PEACE clears 0x40 so its lease expires as a **NULL write (49/49)**; WAR keeps it so its expiry is a **real
+  clear (0/49)**; 0 of 11 cell refs inside FUN_00551a20. **CORRECTS M375's `evidence/m375_relation_bits.txt:41`
+  presentation (a list, not a claim): 0xfaeef378 clears 0x10/0x1, NOT 0x40.**
+- **TREATY ON** (`:57-61`): an exhaustive 256-mask sweep - 240/240 masks carrying a 0x17 bit clear 0x800000,
+  the 16 that do not keep it; `0xbf & 0x800000 = 0`, so expiry cannot restore it.
+- **REVIEW #408** (P1 was REAL) - R3's rival ran 1 tick so `arm_at=30` never fired; now the
+  whole 120-turn horizon is replayed and scored per turn. Also fixed: G1 proves the guard DIRECTION, G5 swept
+  all 256 masks, the census prints the measured arm count, MU1/MU2 mutate the parsed window, the dump's sha256 is pinned.
+- **PITFALLS**: (1) `and al,0xbf` is a BYTE op; (2) a rival scored on END STATE can tie the truth - score the
+  per-tick digest (first version 0/49); (3) "event then tick, one per turn" is policy, declared UNMODELED.

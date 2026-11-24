@@ -23,7 +23,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B37 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B34`-`## B37` govern).
 **B38**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
-**DOC CAP: NAMED 245,047/250,000 (4,953 B — rotate a settled block first).**
+**DOC CAP: NAMED 248,724/250,000 (1,276 B — rotate a settled block first; `b37_named_rotate.py` is the pattern).**
 
 ## THE LEDGER
 
