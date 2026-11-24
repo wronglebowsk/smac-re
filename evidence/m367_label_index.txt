@@ -1,0 +1,105 @@
+M367 - the 13 faction-relations label slots (0x997b20 = a labels.txt line table)
+
+G0  the loader: who owns 0x997b20
+    stores to ds:0x997b20: 2
+      00614669  mov DWORD PTR ds:0x997b20,0x0
+      006146c7  mov ds:0x997b20,eax
+    alloc chain: shl eax,0x2 | call 0x5be090
+    count load : mov ds:0x997b24,eax | mov eax,ds:0x997b24 | cmp edx,DWORD PTR ds:0x997b24
+    element store: 00614707 mov DWORD PTR [edx+ecx*4],eax
+  G0a   PASS  0x997b20 has exactly 2 stores (2): the free-path zero at 00614669 and the alloc result
+  G0b   PASS  the window holds one `shl eax,2` and one alloc call ['shl eax,0x2', 'call 0x5be090']
+    data flow: count@006146b6 -> shl@006146bb -> push@006146be -> alloc@006146bf -> store@006146c7
+  G0d   PASS  count(0x997b24) -> shl 2 -> alloc -> stored to 0x997b20 in ONE body (1 prologue, rets): the owner is the function at 0x614681
+  G0e   PASS  0x997b24 has ONE store, fed by the 0x5ea484 return (0x5eaa53 = atoi of the line just read)
+  G0c   PASS  one element store form [edx+ecx*4] = the reader's return -> an array of LINE POINTERS
+
+G1  labels.txt is the file the loader opens (`labels` + '.txt', fopen mode 'rt' at 0x5ea673)
+    line  8: b'#LABELS'
+    line  9: b'1089'   atoi -> 1089
+    label lines after the count line (10..1098, trailing blanks excluded; sentinel at 1100): 1089
+    element 0 -> line 10 b'Mission Year' ; element 1088 -> line 1098 b'More               '
+  G1a   PASS  the section header line 8 is b'#LABELS' (the loader opens section 'labels')
+  G1b   PASS  the declared count 1089 equals the 1089 label lines that follow it (element i = line 10+i)
+  G1c   PASS  the array is exactly lines 10..1098; the 3 lines after the 1089th element are beyond the loader's only bound (count) and are never read
+
+G2  FUN_004db480's add_item rows (text, id, 0) and the sync's set_checked rows (id, mask)
+    #  call@      id          flag  label off  element  line  text
+     1 0x4db87a   0x8         0x0   0xdac      875   885  Commlink
+     2 0x4db89d   0x10        0x0   0xa18      646   656  Vendetta
+     3 0x4db8c0   0x4         0x0   0xa0c      643   653  Truce
+     4 0x4db8e2   0x2         0x0   0xa10      644   654  Treaty
+     5 0x4db905   0x1         0x0   0xa14      645   655  Pact
+     6 0x4db92b   0x1000      0x0   0xd90      868   878  I have infiltrator
+     7 0x4db950   0x2000      0x0   0xd94      869   879  I want to talk
+     8 0x4db973   0x20        0x0   0xd98      870   880  I want revenge
+     9 0x4db999   0x2000000   0x0   0xd9c      871   881  I have surrendered
+    10 0x4db9be   0x400       0x0   0xda0      872   882  I shall betray
+    11 0x4db9e4   0x40000     0x0   0xda4      873   883  I am atrocity victim
+    12 0x4dba0a   0x80000008  0x0   0xda8      874   884  Fight to the death
+    13 0x4dba2f   0x80002000  0x0   0xdf8      894   904  Fix current status as permanent
+    the same window's NON-row label slots (different call target):
+      004db53c +0xd88   elem  866 line  876  -> call 0x64b9e0  Diplomacy for
+      004dbabf +0xdb0   elem  876 line  886  -> call 0x5f9e85  Atrocity
+      004dbb26 +0x378   elem  222 line  232  -> call 0x5f9e85  Integrity
+      004dbb8d +0xd8c   elem  867 line  877  -> call 0x5f9e85  Clear
+      004dbbf4 +0x194   elem  101 line  111  -> call 0x5f9e85  OK
+  G2a   PASS  13 add_item rows carry a clamp'd operand loaded through ds:0x997b20 (13 of 18 clamp sites)
+  G2b   PASS  13 distinct label offsets, every one a multiple of 4 (a dword element index)
+  G2e   PASS  the 3 statics inside the runs read b'Diplomacy for' / b'Clear' / b'Atrocity' - a dialog title, a button, a heading
+  G2c   PASS  the window's 18 clamp sites split 13 rows + 5 non-row statics, excluded by their call target
+    sync rows: 13   ids in builder order: True
+  G2d   PASS  the 13 sync ids are identical AND in the same order as the 13 builder rows
+
+G3  the clamp 0x61482f is a validator, so the element index is a build-time constant
+    clamp body (24 insns), reads of the argument [ebp+8]: 3
+      mov ecx,DWORD PTR [ebp+0x8] | cmp DWORD PTR [ebp+0x8],ecx | mov eax,DWORD PTR [ebp+0x8]
+  G3a   PASS  24-insn body; the argument is read by mov/cmp only (classes ['cmp', 'mov'], 1 compare, 0 arithmetic) -> a validator, not an index computation
+    element runs: 643..646 868..875 894
+    the 10-run 0xd88..0xdac, consumers: ['004db53c->866(other)', '004db87a->875(row)', '004db92b->868(row)', '004db950->869(row)', '004db973->870(row)', '004db999->871(row)', '004db9be->872(row)', '004db9e4->873(row)', '004dba0a->874(row)', '004dbb8d->867(other)']
+  G3b   PASS  the 13 elements form exactly 3 maximal runs of sizes [4, 8, 1]
+  G3c   PASS  the 10-element run 0xd88..0xdac is consumed exactly once each (1 title + 1 button + 8 rows)
+
+G4  independent anchor: the status-text function at 0x4120c4 names bit 0x1
+      004120c4  test BYTE PTR [ecx*4+0x94d448],0x1
+      004120d4  mov eax,DWORD PTR [edx+0xa14]
+      004120e1  mov eax,DWORD PTR [eax+0xa10]
+      004120ed  call 0x61482f
+    branch: test@0x4120c4 je@0x4120cc -> 0x4120dc ('mov eax,ds:0x997b20') ; set load @0x4120d4 ; clear load @0x4120e1
+  G4a   PASS  the predicate is `test BYTE PTR [ecx*4+0x94d448],0x1` -> bit 0x1 of the plain relations dword
+  G4b   PASS  set -> element 0xa14 (fallthrough after the je), clear -> element 0xa10 (the je target): the branch, not just presence, picks the label
+  G4c   PASS  element 0xa14 = b'Pact', element 0xa10 = b'Treaty' -> the SET bit names its own label (M364: 0x1=PACT)
+
+G5  THE TABLE - bit -> array element -> labels.txt line -> text
+    #  id          bit      dword       elem  line  text
+     1 0x8         0x8      plain        875   885  Commlink
+     2 0x10        0x10     plain        646   656  Vendetta
+     3 0x4         0x4      plain        643   653  Truce
+     4 0x2         0x2      plain        644   654  Treaty
+     5 0x1         0x1      plain        645   655  Pact
+     6 0x1000      0x1000   plain        868   878  I have infiltrator
+     7 0x2000      0x2000   plain        869   879  I want to talk
+     8 0x20        0x20     plain        870   880  I want revenge
+     9 0x2000000   0x2000000 plain        871   881  I have surrendered
+    10 0x400       0x400    plain        872   882  I shall betray
+    11 0x40000     0x40000  plain        873   883  I am atrocity victim
+    12 0x80000008  0x8      high         874   884  Fight to the death
+    13 0x80002000  0x2000   high         894   904  Fix current status as permanent
+  G5c   PASS  all 13 (id, element, text) triples match the pinned table (13/13 rows)
+  G5b   PASS  the 4 stance ids resolve (through the computed element) to ['Pact', 'Treaty', 'Truce', 'Vendetta']
+  G5a   PASS  11 rows anchor the plain dword 0x94d448, 2 the high dword 0x94d468; every sync mask == id&0x7fffffff (13/13)
+
+G6  RIVALS (each must FAIL on the numbers above)
+    R1 'the labels are inline strings in terran.exe' -> 1/13 of the 13 texts occur in the
+       image at all: 'Commlink'@291058
+       13 row text operands: 13 are heap loads [0x997b20+off], 0 are address pushes
+  R1    PASS  R1 refuted: 13/13 add_item texts are loaded through ds:0x997b20 (0 inline); the 1 incidental image copies are never referenced by these rows
+    R2 'the element index IS the file line (no +10 shift)' -> first row would read 'Round'
+       and the count line would be atoi(b'#LABELS') = 0
+  R2    PASS  R2 refuted: without the +10 shift the count parses from the '#LABELS' header -> 0 lines
+  R3    PASS  R3 refuted: the ids are bit masks (9 of 13 exceed 13; 2 carry 0x80000000), not ordinals
+  R4    PASS  R4 refuted: the 2 high ids do NOT reuse the low bit's text (0/2 equal) - distinct flags
+  R5    PASS  R5 refuted: the 13 labels are not one contiguous page (3 runs [4, 8, 1], gaps [222, 19])
+
+PASS M367: 27/27 gates
+digest a48d5dd630542166
