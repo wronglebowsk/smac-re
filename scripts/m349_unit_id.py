@@ -32,8 +32,8 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEXT = os.path.join(ROOT, "scratch", "m574", "text.txt")
-B31 = os.path.join(ROOT, "evidence", "b31_facoracle.txt")
+TEXT = os.environ.get("SMAC_M349_TEXT") or os.path.join(ROOT, "scratch", "m574", "text.txt")
+B31 = os.environ.get("SMAC_M349_B31") or os.path.join(ROOT, "evidence", "b31_facoracle.txt")
 
 ROW = re.compile(r"^\s*([0-9a-f]{6,8}):\t([0-9a-f ]+)\t(.*)$")
 
@@ -131,7 +131,7 @@ COST_BLOCK = [
 ]
 
 # heads this milestone decodes: the B31 recorded heads plus the boundary/branch probes
-UNIVERSE = [-39, -38, -24, -8, -6, -3, -2, -1, 0, 1, 2, 31, 32, 33, 34, 37,
+UNIVERSE = [-39, -38, -37, -34, -33, -24, -8, -6, -3, -2, -1, 0, 1, 2, 31, 32, 33, 34, 37,
             38, 39, 63, 64, 128, 133, 192, 193, 195, 196, 321]
 
 EXPECT = {
@@ -145,6 +145,9 @@ EXPECT = {
     -1: ("UNIT", 1, -1, 0),
     0: ("FACILITY", 0, None, 0),
     2: ("FACILITY", 2, None, 0),
+    -33: ("UNIT", 33, -1, 0),
+    -34: ("UNIT", 34, -1, 1),
+    -37: ("UNIT", 37, -1, 1),
     63: ("FACILITY", 63, None, 0),
     64: ("BIGITEM", 64, None, None),
     321: ("BIGITEM", 321, None, None),
@@ -170,18 +173,19 @@ def byte_bit(item):
 
 
 def parse_scale():
-    """COST_BLOCK: lea [esi+esi*2] -> 3, shl 4 -> 16, total 48."""
+    """COST_BLOCK: lea [esi+esi*2] -> x3, shl edx,0x4 -> x(1<<4); total 48."""
     a = L.get(0x4EF8E7) or ""
     m = re.search(r"\[esi\+esi\*(\d+)\]", a)
     k = int(m.group(1)) + 1 if m else 0
     s = L.get(0x4EF8EA) or ""
     sh = re.search(r"shl edx,0x([0-9a-f]+)", s)
     imm = int(sh.group(1), 16) if sh else 0
-    return k, imm, k * imm
+    return k, imm, k * (1 << imm)
 
 
 def stride_304():
-    """Both bitmap sites: lea eax,[esi+esi*8]; lea ecx,[esi+eax*2]; shl ecx,0x4 => 304."""
+    """Both bitmap sites: lea eax,[esi+esi*8]; lea ecx,[esi+eax*2]; shl ecx,0x4
+    => esi + 2*(9*esi) = 19*esi, then << 4 = 304."""
     out = []
     for base in (0x4EF964, 0x4F0EAA):
         a = L.get(base) or ""
@@ -189,11 +193,11 @@ def stride_304():
         k = int(m.group(1)) + 1 if m else 0
         b = L.get(base + 6) or ""
         m2 = re.search(r"\[esi\+eax\*(\d+)\]", b)
-        c = int(m2.group(1)) + 1 if m2 else 0
+        c = int(m2.group(1)) if m2 else 0
         d = L.get(base + 9) or ""
         m3 = re.search(r"shl ecx,0x([0-9a-f]+)", d)
         e = int(m3.group(1), 16) if m3 else 0
-        out.append(k * c * e)
+        out.append((1 + k * c) * (1 << e))
     return out
 
 
@@ -279,7 +283,7 @@ def main():
     mapper_calls = L.calls(MAPPER)
     cost_base = 0x984D44
     arr_base = 0x984D38
-    mw = L.window(MAPPER, MAPPER + 0x27)
+    mw = L.window(MAPPER, MAPPER + 0x26)
     print("\nTABLE 4  measured literals")
     print("  decode constants   sentinel=0x%08x type_max=0x%02x band=0x%02x..0x%02x item64=0x%x"
           % (SENTINEL, TYPE_MAX, BAND_LO, BAND_HI, ITEM_THRESHOLD))
@@ -291,9 +295,7 @@ def main():
     # ---- gates
     print("")
     gate(all(L.get(a) == w for a, w in DECODE_BLOCK), "G1 the decode block is the pinned 19-instruction sequence")
-    s_ops = [L.get(a) for a, _ in FACILITY_BLOCK]
-    gate(s_ops[0] == "cmp ebx,0x40" and s_ops[1] == "jl 0x4efed1"
-         and s_ops[3] == "or al,0x4" and s_ops[4] == "mov DWORD PTR [ebp-0x20],0x0",
+    gate(all(L.get(a) == w for a, w in FACILITY_BLOCK),
          "G2 the facility leg gates the stamp on item < 0x40 (else the 0x98adb8 bit 2)")
     pin = (SENTINEL, TYPE_MAX, BAND_LO, BAND_HI, ITEM_THRESHOLD)
     gate(pin == (0xFFFFFFDA, 0x27, 0x22, 0x26, 0x40), "G3 the five decode constants are the declared literals",
@@ -310,6 +312,7 @@ def main():
          "G9 FUN_00507410 is the 17-instruction id->byte/bit mapper", "callers=%d" % len(mapper_calls))
     gate(counts == {"UNIT": 4, "FACILITY": 1, "BIGITEM": 1, "SENTINEL": 0},
          "G10 the recorded B31 heads split 4 unit / 1 facility / 1 >=64", str(counts))
+    mp = {item: byte_bit(item) for item in (2, 8, 32, 33, 195, 321, -3, -8)}
 
     # ---- rivals, scored on the printed numbers
     print("\nRIVALS")
@@ -326,19 +329,25 @@ def main():
     # R4: heads > 31 are unit-encoded
     print("  R4 'head > 31 is unit-encoded' -> decode(128)=%s decode(321)=%s (>=0 goes to the facility leg)"
           % (tbl[128][0], tbl[321][0]))
+    r5 = (-3) >> 3          # a LOGICAL shift would give 0x1ffffffd; python's >> is arithmetic
+    print("  R5 'byte = id >> 3 with a logical shift' -> -3 gives %d; the signed truncating divide gives %s"
+          % (r5, mp[-3][0]))
     gate(r1_ok and r2[0] == -3 and r2[1] == -4 and r2[1] != -6,
          "G11 R1/R2 fail on the printed numbers (the -(id-192) rival misses -6)")
     gate(tbl[-39][0] == "UNIT" and tbl[128][0] == "BIGITEM" and tbl[321][0] == "BIGITEM",
          "G12 R3/R4 fail: -39 decodes as a unit type and >31 heads take the >=64 facility gate")
+    gate(mp == {2: (0, 4), 8: (1, 1), 32: (4, 1), 33: (4, 2), 195: (24, 8),
+                321: (40, 2), -3: (0, 32), -8: (-1, 1)},
+         "G13 the mapper's signed truncating divide pins 8 item->byte/bit rows", str(mp[321]) + " " + str(mp[-3]))
 
     body = "\n".join("%d:%s" % (h, tbl[h]) for h in UNIVERSE)
     body += "\n%d %d %d %d %d %d" % (cost_stride, s1, s2, len(mw), len(mapper_calls), counts["UNIT"])
     dig = hashlib.sha256(body.encode()).hexdigest()[:16]
-    print("\nDIGEST %s  universe=%d gates=%d" % (dig, len(UNIVERSE), 12))
+    print("\nDIGEST %s  universe=%d gates=%d" % (dig, len(UNIVERSE), 13))
     if FAIL:
         print("FAIL M349: %d gate(s) red: %s" % (len(FAIL), FAIL))
         return 1
-    print("PASS M349: 12/12 gates")
+    print("PASS M349: 13/13 gates")
     return 0
 
 

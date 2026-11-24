@@ -1,0 +1,101 @@
+M349 - queue head -> item/bitmap-id decode (terran.exe .text, static)
+listing: scratch/m574/text.txt
+
+TABLE 1  the decode block FUN_004ef6d0 @0x4ef88b..0x4ef8c9
+  0x4ef88b  mov ecx,DWORD PTR [eax+0x50]               
+  0x4ef88e  cmp ecx,0xffffffda                         
+  0x4ef891  je 0x4ef9b3                                
+  0x4ef897  test ecx,ecx                               
+  0x4ef899  jge 0x4efa2c                               
+  0x4ef89f  neg ecx                                    
+  0x4ef8a1  cmp ecx,0x27                               
+  0x4ef8a4  mov DWORD PTR [ebp-0x30],ecx               
+  0x4ef8a7  jl 0x4ef8b1                                
+  0x4ef8a9  lea edx,[ecx-0x27]                         
+  0x4ef8ac  mov DWORD PTR [ebp-0x1c],edx               
+  0x4ef8af  jmp 0x4ef8b8                               
+  0x4ef8b1  mov DWORD PTR [ebp-0x1c],0xffffffff        
+  0x4ef8b8  cmp ecx,0x22                               
+  0x4ef8bb  jl 0x4ef8c9                                
+  0x4ef8bd  cmp ecx,0x26                               
+  0x4ef8c0  mov DWORD PTR [ebp-0x20],0x1               
+  0x4ef8c7  jl 0x4ef8d0                                
+  0x4ef8c9  mov DWORD PTR [ebp-0x20],0x0               
+TABLE 1  facility leg @0x4efe41
+  0x4efe41  cmp ebx,0x40                               
+  0x4efe44  jl 0x4efed1                                
+  0x4efe50  mov ax,WORD PTR [edx+0x98adb8]             
+  0x4efe59  or al,0x4                                  
+  0x4efed1  mov DWORD PTR [ebp-0x20],0x0               
+
+TABLE 2  head -> class, item, second-table index, band[34,38)
+    head  class       item  second  band   byte    bit
+     -39  UNIT          39       0     0      4    128
+     -38  SENTINEL    None    None  None      -      -
+     -37  UNIT          37      -1     1      4     32
+     -34  UNIT          34      -1     1      4      4
+     -33  UNIT          33      -1     0      4      2
+     -24  UNIT          24      -1     0      3      1
+      -8  UNIT           8      -1     0      1      1
+      -6  UNIT           6      -1     0      0     64
+      -3  UNIT           3      -1     0      0      8
+      -2  UNIT           2      -1     0      0      4
+      -1  UNIT           1      -1     0      0      2
+       0  FACILITY       0    None     0      0      1
+       1  FACILITY       1    None     0      0      2
+       2  FACILITY       2    None     0      0      4
+      31  FACILITY      31    None     0      3    128
+      32  FACILITY      32    None     0      4      1
+      33  FACILITY      33    None     0      4      2
+      34  FACILITY      34    None     0      4      4
+      37  FACILITY      37    None     0      4     32
+      38  FACILITY      38    None     0      4     64
+      39  FACILITY      39    None     0      4    128
+      63  FACILITY      63    None     0      7    128
+      64  BIGITEM       64    None  None      8      1
+     128  BIGITEM      128    None  None     16      1
+     133  BIGITEM      133    None  None     16     32
+     192  BIGITEM      192    None  None     24      1
+     193  BIGITEM      193    None  None     24      2
+     195  BIGITEM      195    None  None     24      8
+     196  BIGITEM      196    None  None     24     16
+     321  BIGITEM      321    None  None     40      2
+
+TABLE 3  the recorded B31 G3 heads through the decode
+  head=321    class=BIGITEM  item=321   bit_that_appeared=4   mapper=(40,2)
+  head=-2     class=UNIT     item=2     bit_that_appeared=2   mapper=(0,4)
+  head=-8     class=UNIT     item=8     bit_that_appeared=8   mapper=(1,1)
+  head=2      class=FACILITY item=2     bit_that_appeared=4   mapper=(0,4)
+  head=-3     class=UNIT     item=3     bit_that_appeared=3   mapper=(0,8)
+  head=-6     class=UNIT     item=6     bit_that_appeared=6   mapper=(0,64)
+  counts unit=4 facility=1 bigitem=1 sentinel=0
+
+TABLE 4  measured literals
+  decode constants   sentinel=0xffffffda type_max=0x27 band=0x22..0x26 item64=0x40
+  cost table         stride=48 (lea x3, shl x4) base=0x984d44  arr=12*0x30+0xc
+  bitmap sites       stride=304 and 304 base=0x95da9c/0x95da9c
+  mapper             insns=17 bytes=39 call_sites=203
+
+ok   G1 the decode block is the pinned 19-instruction sequence
+ok   G2 the facility leg gates the stamp on item < 0x40 (else the 0x98adb8 bit 2)
+ok   G3 the five decode constants are the declared literals  sentinel=-38
+ok   G4 the model reproduces every pinned row  bad=[]
+ok   G5 the unit leg TESTS the mapper bit (and al,cl @0x4ef97a)
+ok   G6 the stamp ORs the same bitmap @0x4f0ec0
+ok   G7 both sites index 0x95da9c + 304*player (equal stride, one array)
+ok   G8 the unit type indexes the 72-record array at 0x984d38 (stride 0x30, +0xc)
+ok   G9 FUN_00507410 is the 17-instruction id->byte/bit mapper  callers=203
+ok   G10 the recorded B31 heads split 4 unit / 1 facility / 1 >=64  {'UNIT': 4, 'FACILITY': 1, 'BIGITEM': 1, 'SENTINEL': 0}
+
+RIVALS
+  R1 'a negative head is a bitmap byte index' -> decode reads it as a type id: True
+  R2 'the M68 negative is -(design_id-192)' -> predicts (-3, -4), recorded (-3,-6)
+  R3 '-39 is the head sentinel' -> the compared constant is 0xffffffda (-38); decode(-39)=('UNIT', 39, 0, 0)
+  R4 'head > 31 is unit-encoded' -> decode(128)=BIGITEM decode(321)=BIGITEM (>=0 goes to the facility leg)
+  R5 'byte = id >> 3 with a logical shift' -> -3 gives -1; the signed truncating divide gives 0
+ok   G11 R1/R2 fail on the printed numbers (the -(id-192) rival misses -6)
+ok   G12 R3/R4 fail: -39 decodes as a unit type and >31 heads take the >=64 facility gate
+ok   G13 the mapper's signed truncating divide pins 8 item->byte/bit rows  (40, 2) (0, 32)
+
+DIGEST 4d3c2e4ded19d620  universe=30 gates=13
+PASS M349: 13/13 gates

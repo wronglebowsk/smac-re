@@ -1,0 +1,26 @@
+M349 mutation harness - 18 declared mutants
+  baseline rc=0 red=[] -> GREEN
+  NO-OP rc=0 red=[]
+
+  mutant                                                 rc    gate  red gates
+  MU1 sentinel -38 -> -39                                1     G3    G3  SCORED
+  MU2 type max 39 -> 38 in the model                     1     G4    G4  SCORED
+  MU3 band lo 34 -> 33                                   1     G4    G4  SCORED
+  MU4 cost stride <- raw shift imm                       1     G8    G8  SCORED
+  MU5 bitmap base +2                                     1     G7    G7  SCORED
+  MU6 item threshold 0x40 -> 0x1f                        1     G3    G3  SCORED
+  MU7 head>=0 becomes UNIT                               1     G4    G10,G12,G4  SCORED
+  MU8 M68 rival pinned to -6                             1     G11   G11  SCORED
+  MU9 B31 regex drops negatives                          1     G10   G10  SCORED
+  MU10 mapper window +0x30                               1     G9    G9  SCORED
+  MU11 mask &7 -> &0xf                                   1     G13   G13  SCORED
+  MU12 signed truncating divide -> arithmetic shift      1     G13   G13  SCORED
+  MU13 decode block holds an or, not the neg             1     G1    G1  SCORED
+  MU14 unit leg AND -> OR                                1     G5    G5  SCORED
+  MU15 stamp OR -> AND                                   1     G6    G6  SCORED
+  MU16 facility gate 0x40 -> 0x3f                        1     G2    G2  SCORED
+  MU17 sentinel compare -38 -> -39                       1     G12   G12,G4  SCORED
+  MU18 R1 read without the negation                      1     G11   G11  SCORED
+
+  scored 18/18  covered 13/13 ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12', 'G13']  NO-OP []  uncovered []
+HARNESS PASS M349: 18/18 scored, NO-OP [], uncovered [] (covered 13/13)

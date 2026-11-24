@@ -557,3 +557,27 @@ whether a facility completion stamps at all.
   idempotence check moved from the header line to the archive/stub body (finding 9).
 - **STILL OPEN:** which .rdata template consumes slots 1/2 (and whether a facility completion
   ever reaches a template); the unit-id decoding (M68/M69 NEG_TYPE).
+
+## Session 326-chain2 (2026-11-24) — M349: M68/M69 `NEG_TYPE` ANSWERED (milestone/m349)
+- QUESTION (the open spine item behind B32): the queue stored **-3** for chooser entry 195 and
+  **-6** for 196 — two different negatives, so not one sentinel.
+- ANSWER (static, `python3 -u scripts/m349_unit_id.py`): `FUN_004ef6d0` decodes queue slot 0 at
+  **0x4ef88b** — `mov ecx,[eax+0x50]`; `cmp ecx,0xffffffda` (-38) -> sentinel handler; `jge
+  0x4efa2c` -> FACILITY leg (item = head); `neg ecx` @0x4ef89f -> **item = -head = the UNIT TYPE**.
+  Type >= 0x27(39) -> second-table index (type-39); 0x22..0x26 (34..37) -> the [ebp-0x20] band.
+- Facility leg `cmp ebx,0x40 ; jl 0x4efed1` -> `[ebp-0x20]=0`: id < 64 stamps the bitmap; id >= 64
+  toggles bit 2 of the item word @0x98adb8 and does not stamp.
+- ONE bitmap, two legs: mapper `FUN_00507410` (17 insns, 203 call sites) = byte
+  `(id+(id>>31&7))>>3`, mask `1<<(id&7)` (signed divide truncating toward zero); both sites index
+  `0x95da9c + 304*player` — unit leg ANDs/tests @0x4ef97a, facility leg ORs @0x4f0ec0. A unit type
+  3 aliases facility 3's bit but can never write it. Unit cost = `[0x984d44 + 48*type]` = the
+  72-record array 0x984d38 (stride 0x30) + 0xc.
+- B31's six recorded heads re-decoded: 4 unit types (2,8,3,6), 1 facility (2), 1 >=64 (321).
+  "Unit-encoded" is precise for the negatives; **`>31` heads are NOT unit ids** (head>=0 leg).
+- RETRACTIONS: the M68 "(195-192) -> -3" arithmetic is a coincidence (196 would give -4, recorded
+  -6); B11's "-39 head sentinel" is wrong — the compared constant is **-38** (0xffffffda).
+- ACCEPT `PASS M349: 13/13 gates`, digest `4d3c2e4ded19d620`, two runs byte-identical
+  (`evidence/m349_unit_id.txt:100-101`); harness `HARNESS PASS M349: 18/18 scored, NO-OP [],
+  uncovered [] (covered 13/13)` (`evidence/m349_mutate.txt:26`).
+- STILL OPEN: which field of a unit DESIGN the widget negates (decode side settled, chooser-side
+  producer not); which B31 loss is a raze vs a record change; whether a completion stamps at all.

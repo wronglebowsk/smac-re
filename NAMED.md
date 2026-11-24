@@ -1488,3 +1488,16 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | no guard; -1 store = the NOT-FOUND branch (je @629331 -> 0x62936b); -1/-2 index BEFORE 0x983a10 (0x983498../0x9831dc..) | `:29-33` | V MU13,MU19 |
 | rivals DEAD: ctor-zero, census (1 plain + 12 [r+r*4+] outside 0x44xxxx), 0-based ids, cap-32, receiver-blind 2/35 | `:34-41` | V MU3,MU14,MU10,MU7,MU15 |
 | ACCEPT `scripts/m347_page_writer.py` `PASS M347: 12/12` `3fadfd6e6d26e64c` x2; harness 20/20, coverage 12/12 | `:55-57` | V MU0 |
+
+## M349 (s326-chain2, STATIC 13/13) — M68/M69 `NEG_TYPE` ANSWERED: a negative queue head is the NEGATED UNIT TYPE, `>=0` is the facility item id, `-38` is the sentinel slot
+| claim | evidence | conf |
+|---|---|---|
+| `FUN_004ef6d0` reads slot 0 `[eax+0x50]`, `cmp 0xffffffda` (-38) -> 0x4ef9b3, `jge 0x4efa2c` (facility leg), `neg ecx` @0x4ef89f -> item = -head = the unit type; 19 pinned insns | `evidence/m349_unit_id.txt:4-23` | V MU13 |
+| type bands at 0x27/0x22/0x26 (39/34/38); pinned rows -1..-39, 0..63, 64/128/321 | `:31-62`,`:92-93` | V MU2,MU3,MU7,MU17 |
+| facility leg `cmp ebx,0x40` -> id<64 stamps the bitmap; id>=64 gated by bit 2 of the item word @0x98adb8 | `:24-30` | V MU16,MU6 |
+| a unit type costs `[0x984d44+48*type]` = the 72-record array 0x984d38 stride 0x30 +0xc | `:75` | V MU4 |
+| mapper `FUN_00507410` (17 insns, 203 call sites): byte = id/8 truncating toward zero, mask = 1<<(id&7) | `:77`,`:98` | V MU10,MU11,MU12 |
+| ONE per-player bitmap `0x95da9c+304*player`: unit leg ANDs/tests @0x4ef97a, facility leg ORs @0x4f0ec0 | `:83-86` | V MU14,MU15,MU5 |
+| B31's 6 recorded heads = 4 unit types (2,8,3,6) + 1 facility (2) + 1 >=64 (321); `>31` heads are NOT unit-encoded | `:64-71` | V MU9 |
+| rivals DEAD: negative-as-byte-index, -(design-192) (predicts -4 vs recorded -6), "-39 sentinel" (constant is -38), logical-shift byte | `:89-97` | V MU18,MU8 |
+| ACCEPT `scripts/m349_unit_id.py` -> `PASS M349: 13/13 gates` `4d3c2e4ded19d620` (2 runs identical); harness `scripts/m349_mutate.py` 18/18, covered 13/13 | `:100-101`, `evidence/m349_mutate.txt:26` | V MU0 |
