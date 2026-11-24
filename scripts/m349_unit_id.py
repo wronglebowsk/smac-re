@@ -130,13 +130,36 @@ COST_BLOCK = [
     (0x4EF8ED, "imul edi,DWORD PTR [edx+0x984d44]"),
 ]
 
+MAPPER_BLOCK = [
+    (0x507410, "push ebp"),
+    (0x507411, "mov ebp,esp"),
+    (0x507413, "mov ecx,DWORD PTR [ebp+0x8]"),
+    (0x507416, "mov eax,ecx"),
+    (0x507418, "and ecx,0x7"),
+    (0x50741B, "cdq"),
+    (0x50741C, "and edx,0x7"),
+    (0x50741F, "add eax,edx"),
+    (0x507421, "mov edx,DWORD PTR [ebp+0xc]"),
+    (0x507424, "sar eax,0x3"),
+    (0x507427, "mov DWORD PTR [edx],eax"),
+    (0x507429, "mov eax,0x1"),
+    (0x50742E, "shl eax,cl"),
+    (0x507430, "mov ecx,DWORD PTR [ebp+0x10]"),
+    (0x507433, "mov DWORD PTR [ecx],eax"),
+    (0x507435, "pop ebp"),
+    (0x507436, "ret"),
+]
+
 # heads this milestone decodes: the B31 recorded heads plus the boundary/branch probes
 UNIVERSE = [-39, -38, -37, -34, -33, -24, -8, -6, -3, -2, -1, 0, 1, 2, 31, 32, 33, 34, 37,
             38, 39, 63, 64, 128, 133, 192, 193, 195, 196, 321]
 
 EXPECT = {
-    -38: ("SENTINEL", None, None, None),
     -39: ("UNIT", 39, 0, 0),
+    -38: ("SENTINEL", None, None, None),
+    -37: ("UNIT", 37, -1, 1),
+    -34: ("UNIT", 34, -1, 1),
+    -33: ("UNIT", 33, -1, 0),
     -24: ("UNIT", 24, -1, 0),
     -8: ("UNIT", 8, -1, 0),
     -6: ("UNIT", 6, -1, 0),
@@ -144,12 +167,23 @@ EXPECT = {
     -2: ("UNIT", 2, -1, 0),
     -1: ("UNIT", 1, -1, 0),
     0: ("FACILITY", 0, None, 0),
+    1: ("FACILITY", 1, None, 0),
     2: ("FACILITY", 2, None, 0),
-    -33: ("UNIT", 33, -1, 0),
-    -34: ("UNIT", 34, -1, 1),
-    -37: ("UNIT", 37, -1, 1),
+    31: ("FACILITY", 31, None, 0),
+    32: ("FACILITY", 32, None, 0),
+    33: ("FACILITY", 33, None, 0),
+    34: ("FACILITY", 34, None, 0),
+    37: ("FACILITY", 37, None, 0),
+    38: ("FACILITY", 38, None, 0),
+    39: ("FACILITY", 39, None, 0),
     63: ("FACILITY", 63, None, 0),
     64: ("BIGITEM", 64, None, None),
+    128: ("BIGITEM", 128, None, None),
+    133: ("BIGITEM", 133, None, None),
+    192: ("BIGITEM", 192, None, None),
+    193: ("BIGITEM", 193, None, None),
+    195: ("BIGITEM", 195, None, None),
+    196: ("BIGITEM", 196, None, None),
     321: ("BIGITEM", 321, None, None),
 }
 
@@ -211,6 +245,47 @@ def bitmap_base():
     return bases
 
 
+def mapper_params():
+    """Derive (low-mask, sign-mask, shift) from FUN_00507410's own instructions."""
+    got = {a: L.get(a) for a, _ in MAPPER_BLOCK}
+    if any(v is None for v in got.values()):
+        return None
+    m1 = re.fullmatch(r"and ecx,0x([0-9a-f]+)", got[0x507418] or "")
+    m2 = re.fullmatch(r"and edx,0x([0-9a-f]+)", got[0x50741C] or "")
+    sh = re.fullmatch(r"sar eax,0x([0-9a-f]+)", got[0x507424] or "")
+    shape = (got[0x50741B] == "cdq" and got[0x50741F] == "add eax,edx"
+             and got[0x507429] == "mov eax,0x1" and got[0x50742E] == "shl eax,cl")
+    if not (m1 and m2 and sh and shape):
+        return None
+    return int(m1.group(1), 16), int(m2.group(1), 16), int(sh.group(1), 16)
+
+
+def mapper(mp, item):
+    """Run the derived parameters: byte = (item + ((item>>31)&m2)) >> sh, mask = 1<<(item&m1)."""
+    m1, m2, sh = mp
+    return (item + ((item >> 31) & m2)) >> sh, 1 << (item & m1)
+
+
+def recorded_pair():
+    """The two RECORDED negatives, read from the traces, with their cites."""
+    out = []
+    p68 = os.environ.get("SMAC_M349_M68") or os.path.join(ROOT, "evidence", "m68_key_run_attempt1.txt")
+    p69 = os.environ.get("SMAC_M349_M69") or os.path.join(ROOT, "evidence", "m69_cursor2.jsonl")
+    with open(p68, "r", errors="replace") as f:
+        for n, line in enumerate(f, 1):
+            m = re.search(r'"item": (\d+).*?"stored_id": (-?\d+)', line)
+            if m and int(m.group(1)) == 195:
+                out.append((int(m.group(1)), int(m.group(2)),
+                            "evidence/m68_key_run_attempt1.txt:%d" % n))
+    with open(p69, "r", errors="replace") as f:
+        for n, line in enumerate(f, 1):
+            m = re.search(r'"stored": (-?\d+).*"item": (\d+)', line)
+            if m and int(m.group(2)) == 196:
+                out.append((int(m.group(2)), int(m.group(1)),
+                            "evidence/m69_cursor2.jsonl:%d" % n))
+    return out
+
+
 def b31_heads():
     """The six G3 rows of the recorded oracle: head and the bit that appeared."""
     rows = []
@@ -254,10 +329,13 @@ def main():
     # ---- TABLE 2: the decode model
     print("\nTABLE 2  head -> class, item, second-table index, band[34,38)")
     print("  %6s  %-9s %6s %7s %5s %6s %6s" % ("head", "class", "item", "second", "band", "byte", "bit"))
+    mp = mapper_params()
+    def bb(item):
+        return mapper(mp, item) if mp else byte_bit(item)
     tbl = {}
     for h in UNIVERSE:
         cls, item, second, band = decode(h)
-        b, m = byte_bit(item) if item is not None else ("-", "-")
+        b, m = bb(item) if item is not None else ("-", "-")
         tbl[h] = (cls, item, second, band)
         print("  %6d  %-9s %6s %7s %5s %6s %6s" % (h, cls, item, second, band, b, m))
 
@@ -268,7 +346,7 @@ def main():
     for h, bit in heads:
         cls, item, second, band = decode(h)
         counts[cls] += 1
-        b, m = byte_bit(item) if item is not None else ("-", "-")
+        b, m = bb(item) if item is not None else ("-", "-")
         print("  head=%-6d class=%-8s item=%-5s bit_that_appeared=%-3d mapper=(%s,%s)"
               % (h, cls, item, bit, b, m))
     print("  counts unit=%d facility=%d bigitem=%d sentinel=%d"
@@ -287,10 +365,11 @@ def main():
     print("\nTABLE 4  measured literals")
     print("  decode constants   sentinel=0x%08x type_max=0x%02x band=0x%02x..0x%02x item64=0x%x"
           % (SENTINEL, TYPE_MAX, BAND_LO, BAND_HI, ITEM_THRESHOLD))
-    print("  cost table         stride=%d (lea x%d, shl x%d) base=0x%x  arr=%d*0x30+0x%x"
-          % (cost_stride, k, imm, cost_base, cost_base - arr_base, cost_base - arr_base))
+    print("  cost read          imul base=0x%x (arr 0x%x + 0x%x) stride=%d (lea x%d, shl x%d)"
+          % (cost_base, arr_base, cost_base - arr_base, cost_stride, k, imm))
     print("  bitmap sites       stride=%d and %d base=0x%x/0x%x" % (s1, s2, bb1 or 0, bb2 or 0))
-    print("  mapper             insns=%d bytes=%d call_sites=%d" % (len(mw), 39, len(mapper_calls)))
+    print("  mapper             insns=%d bytes=%d call_sites=%d params=%s"
+          % (len(mw), 39, len(mapper_calls), mp))
 
     # ---- gates
     print("")
@@ -306,13 +385,17 @@ def main():
     gate(all(L.get(a) == w for a, w in STAMP_SITE), "G6 the stamp ORs the same bitmap @0x4f0ec0")
     gate(BITMAP_BASE == 0x95DA9C and s1 == 304 and s2 == 304,
          "G7 both sites index 0x95da9c + 304*player (equal stride, one array)")
-    gate(cost_stride == 48 and cost_base - arr_base == 0xC and L.get(0x4EF8ED) == "imul edi,DWORD PTR [edx+0x984d44]",
-         "G8 the unit type indexes the 72-record array at 0x984d38 (stride 0x30, +0xc)")
-    gate(len(mw) == 17 and len(mapper_calls) > 150,
-         "G9 FUN_00507410 is the 17-instruction id->byte/bit mapper", "callers=%d" % len(mapper_calls))
-    gate(counts == {"UNIT": 4, "FACILITY": 1, "BIGITEM": 1, "SENTINEL": 0},
-         "G10 the recorded B31 heads split 4 unit / 1 facility / 1 >=64", str(counts))
-    mp = {item: byte_bit(item) for item in (2, 8, 32, 33, 195, 321, -3, -8)}
+    gate(cost_stride == 48 and cost_base - arr_base == 0xC
+         and "imul edi,DWORD PTR [edx+0x984d44]" in (L.get(0x4EF8ED) or ""),
+         "G8 the unit type's cost is imul [0x984d44 + 48*type] (= 0x984d38 + 0xc, stride 0x30)")
+    gate(len(mw) == 17 and all(L.get(a) == w for a, w in MAPPER_BLOCK) and len(mapper_calls) == 203,
+         "G9 FUN_00507410 is the 17-instruction mapper at 203 call sites",
+         "callers=%d" % len(mapper_calls))
+    seq = [h for h, _ in heads]
+    gate(seq == [321, -2, -8, 2, -3, -6]
+         and counts == {"UNIT": 4, "FACILITY": 1, "BIGITEM": 1, "SENTINEL": 0},
+         "G10 the recorded B31 heads ARE 321,-2,-8,2,-3,-6 (4 unit / 1 facility / 1 >=64)", str(seq))
+    mpr = {item: bb(item) for item in (2, 8, 32, 33, 195, 321, -3, -8)}
 
     # ---- rivals, scored on the printed numbers
     print("\nRIVALS")
@@ -320,9 +403,12 @@ def main():
     r1 = [(h, -h) for h in (-24, -8, -6, -3, -2)]
     r1_ok = all(decode(h)[0] == "UNIT" and decode(h)[1] == -h for h, _ in r1)
     print("  R1 'a negative head is a bitmap byte index' -> decode reads it as a type id: %s" % r1_ok)
-    # R2: the M68 pair is -(id-192)
-    r2 = (-(195 - 192), -(196 - 192))
-    print("  R2 'the M68 negative is -(design_id-192)' -> predicts %s, recorded (-3,-6)" % (r2,))
+    # R2: the M68/M69 pair is -(id-192)  -- the recorded side comes from the traces
+    pair = recorded_pair()
+    rec = tuple(v for _, v, _ in pair)
+    print("  recorded pair: %s  (%s)" % (pair, ", ".join(c for _, _, c in pair)))
+    r2 = tuple(-(i - 192) for i, _, _ in pair)
+    print("  R2 'the negative is -(design_id-192)' -> predicts %s, recorded %s" % (r2, rec))
     # R3: -39 is the sentinel
     print("  R3 '-39 is the head sentinel' -> the compared constant is 0x%08x (-38); decode(-39)=%s"
           % (SENTINEL, tbl[-39]))
@@ -331,17 +417,23 @@ def main():
           % (tbl[128][0], tbl[321][0]))
     r5 = (-3) >> 3          # a LOGICAL shift would give 0x1ffffffd; python's >> is arithmetic
     print("  R5 'byte = id >> 3 with a logical shift' -> -3 gives %d; the signed truncating divide gives %s"
-          % (r5, mp[-3][0]))
-    gate(r1_ok and r2[0] == -3 and r2[1] == -4 and r2[1] != -6,
-         "G11 R1/R2 fail on the printed numbers (the -(id-192) rival misses -6)")
+          % (r5, mpr[-3][0]))
+    gate(r1_ok and len(pair) == 2 and rec == (-3, -6) and r2[0] == -3 and r2[1] == -4
+         and r2[1] != rec[1],
+         "G11 R1/R2 fail on the RECORDED numbers (the -(id-192) rival predicts -4, the trace -6)")
     gate(tbl[-39][0] == "UNIT" and tbl[128][0] == "BIGITEM" and tbl[321][0] == "BIGITEM",
          "G12 R3/R4 fail: -39 decodes as a unit type and >31 heads take the >=64 facility gate")
-    gate(mp == {2: (0, 4), 8: (1, 1), 32: (4, 1), 33: (4, 2), 195: (24, 8),
-                321: (40, 2), -3: (0, 32), -8: (-1, 1)},
-         "G13 the mapper's signed truncating divide pins 8 item->byte/bit rows", str(mp[321]) + " " + str(mp[-3]))
+    want = {2: (0, 4), 8: (1, 1), 32: (4, 1), 33: (4, 2), 195: (24, 8),
+            321: (40, 2), -3: (0, 32), -8: (-1, 1)}
+    same_model = mp is not None and all(mapper(mp, it) == byte_bit(it)
+                                       for it in UNIVERSE if it > -1000)
+    gate(mp == (7, 7, 3) and mpr == want and same_model,
+         "G13 the DERIVED mapper (masks 7/7, sar 3) pins 8 item->byte/bit rows and equals the model",
+         str(mpr[321]) + " " + str(mpr[-3]))
 
     body = "\n".join("%d:%s" % (h, tbl[h]) for h in UNIVERSE)
     body += "\n%d %d %d %d %d %d" % (cost_stride, s1, s2, len(mw), len(mapper_calls), counts["UNIT"])
+    body += "\n%s %s %s" % (seq, rec, mp)
     dig = hashlib.sha256(body.encode()).hexdigest()[:16]
     print("\nDIGEST %s  universe=%d gates=%d" % (dig, len(UNIVERSE), 13))
     if FAIL:

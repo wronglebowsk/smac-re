@@ -29,7 +29,7 @@ MUTANTS = [
      "bases.append((int(m.group(1), 16) + 2) if m else None)", "G7"),
     ("MU6", "item threshold 0x40 -> 0x1f", "ITEM_THRESHOLD = 0x40", "ITEM_THRESHOLD = 0x1F", "G3"),
     ("MU7", "head>=0 becomes UNIT", '"FACILITY" if head < 64 else "BIGITEM"', '"UNIT"', "G4"),
-    ("MU8", "M68 rival pinned to -6", "-(196 - 192)", "-6", "G11"),
+    ("MU8", "rival offset 192 -> 191", "-(i - 192)", "-(i - 191)", "G11"),
     ("MU9", "B31 regex drops negatives", r"head=(-?\d+)", r"head=(\d+)", "G10"),
     ("MU10", "mapper window +0x30", "MAPPER + 0x26", "MAPPER + 0x30", "G9"),
     ("MU11", "mask &7 -> &0xf", "1 << (item & 7)", "1 << (item & 0xf)", "G13"),
@@ -42,6 +42,10 @@ MUTANTS = [
     ("MU16", "facility gate 0x40 -> 0x3f", '(0x4EFE41, "cmp ebx,0x40")', '(0x4EFE41, "cmp ebx,0x3f")', "G2"),
     ("MU17", "sentinel compare -38 -> -39", "if head == -38:", "if head == -39:", "G12"),
     ("MU18", "R1 read without the negation", "decode(h)[1] == -h", "decode(h)[1] == h", "G11"),
+    ("MU19", "mapper sar -> shr in the pin", '(0x507424, "sar eax,0x3")', '(0x507424, "shr eax,0x3")', "G9"),
+    ("MU20", "call count 203 -> 202", "len(mapper_calls) == 203", "len(mapper_calls) == 202", "G9"),
+    ("MU21", "head sequence drops 321", "seq == [321, -2, -8, 2, -3, -6]", "seq == [-2, -8, 2, -3, -6]", "G10"),
+    ("MU22", "recorded pair pinned to -4", "rec == (-3, -6)", "rec == (-3, -4)", "G11"),
 ]
 
 RED = re.compile(r"^FAIL (G\d+)", re.M)
@@ -54,7 +58,9 @@ def run(src_text, tag):
         f.write(src_text)
     env = dict(os.environ, PYTHONPATH="",
                SMAC_M349_TEXT=os.path.join(ROOT, "scratch", "m574", "text.txt"),
-               SMAC_M349_B31=os.path.join(ROOT, "evidence", "b31_facoracle.txt"))
+               SMAC_M349_B31=os.path.join(ROOT, "evidence", "b31_facoracle.txt"),
+               SMAC_M349_M68=os.path.join(ROOT, "evidence", "m68_key_run_attempt1.txt"),
+               SMAC_M349_M69=os.path.join(ROOT, "evidence", "m69_cursor2.jsonl"))
     r = subprocess.run([sys.executable, "-u", p], capture_output=True, text=True, env=env)
     red = sorted(set(RED.findall(r.stdout)))
     shutil.rmtree(d, ignore_errors=True)

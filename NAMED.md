@@ -1489,15 +1489,15 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | rivals DEAD: ctor-zero, census (1 plain + 12 [r+r*4+] outside 0x44xxxx), 0-based ids, cap-32, receiver-blind 2/35 | `:34-41` | V MU3,MU14,MU10,MU7,MU15 |
 | ACCEPT `scripts/m347_page_writer.py` `PASS M347: 12/12` `3fadfd6e6d26e64c` x2; harness 20/20, coverage 12/12 | `:55-57` | V MU0 |
 
-## M349 (s326-chain2, STATIC 13/13) — M68/M69 `NEG_TYPE` ANSWERED: a negative queue head is the NEGATED UNIT TYPE, `>=0` is the facility item id, `-38` is the sentinel slot
+## M349 (s326-chain2, 13/13) — M68/M69 `NEG_TYPE`: a negative queue head is the NEGATED UNIT TYPE
 | claim | evidence | conf |
 |---|---|---|
-| `FUN_004ef6d0` reads slot 0 `[eax+0x50]`, `cmp 0xffffffda` (-38) -> 0x4ef9b3, `jge 0x4efa2c` (facility leg), `neg ecx` @0x4ef89f -> item = -head = the unit type; 19 pinned insns | `evidence/m349_unit_id.txt:4-23` | V MU13 |
-| type bands at 0x27/0x22/0x26 (39/34/38); pinned rows -1..-39, 0..63, 64/128/321 | `:31-62`,`:92-93` | V MU2,MU3,MU7,MU17 |
-| facility leg `cmp ebx,0x40` -> id<64 stamps the bitmap; id>=64 gated by bit 2 of the item word @0x98adb8 | `:24-30` | V MU16,MU6 |
-| a unit type costs `[0x984d44+48*type]` = the 72-record array 0x984d38 stride 0x30 +0xc | `:75` | V MU4 |
-| mapper `FUN_00507410` (17 insns, 203 call sites): byte = id/8 truncating toward zero, mask = 1<<(id&7) | `:77`,`:98` | V MU10,MU11,MU12 |
-| ONE per-player bitmap `0x95da9c+304*player`: unit leg ANDs/tests @0x4ef97a, facility leg ORs @0x4f0ec0 | `:83-86` | V MU14,MU15,MU5 |
-| B31's 6 recorded heads = 4 unit types (2,8,3,6) + 1 facility (2) + 1 >=64 (321); `>31` heads are NOT unit-encoded | `:64-71` | V MU9 |
-| rivals DEAD: negative-as-byte-index, -(design-192) (predicts -4 vs recorded -6), "-39 sentinel" (constant is -38), logical-shift byte | `:89-97` | V MU18,MU8 |
-| ACCEPT `scripts/m349_unit_id.py` -> `PASS M349: 13/13 gates` `4d3c2e4ded19d620` (2 runs identical); harness `scripts/m349_mutate.py` 18/18, covered 13/13 | `:100-101`, `evidence/m349_mutate.txt:26` | V MU0 |
+| `FUN_004ef6d0` slot 0: `cmp 0xffffffda` (-38) -> 0x4ef9b3, `jge 0x4efa2c` facility, `neg ecx` @0x4ef89f -> item = -head = unit type; 19 insns | `evidence/m349_unit_id.txt:4-23` | V MU13 |
+| G4 pins all 30 TABLE-2 rows (bands 39/34/38, 2nd index type-39, sentinel -38, split 0x40) | `:31-62` | V MU2,MU3,MU7,MU17 |
+| facility leg `cmp ebx,0x40` / `jl` -> id<64 stamps; id>=64 sets bit 2 @0x98adb8, stamps only if clear | `:24-30` | V MU16,MU6 |
+| unit cost `imul [0x984d44+48*type]` (= 0x984d38+0xc, stride 0x30; 72-record identity = M337) | `:75` | V MU4 / INF |
+| mapper DERIVED from its 17 insns (masks 7/7, `sar 3`, `shl cl`): byte id/8 truncating, mask 1<<(id&7); 203 calls exact | `:77`,`:98` | V MU19,MU20,MU11,MU12 |
+| both sites: base 0x95da9c, 304 stride; unit leg ANDs @0x4ef97a, facility leg ORs @0x4f0ec0 | `:83-86` | V MU14,MU15,MU5 |
+| recorded B31 heads ARE 321,-2,-8,2,-3,-6 (4 unit + 1 facility + 1 >=64); `>31` NOT unit-encoded | `:64-71` | V MU9,MU21 |
+| rivals DEAD: -(design-192) -> -4 vs trace -6 (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`), "-39 sentinel", logical shift | `:92-97` | V MU8,MU18,MU22 |
+| ACCEPT `scripts/m349_unit_id.py` `PASS M349: 13/13` `fa2d81797551dae5` x2; harness 22/22, 13/13 | `:101-102`, `evidence/m349_mutate.txt:30` | V MU0 |

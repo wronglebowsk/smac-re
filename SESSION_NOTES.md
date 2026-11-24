@@ -559,25 +559,27 @@ whether a facility completion stamps at all.
   ever reaches a template); the unit-id decoding (M68/M69 NEG_TYPE).
 
 ## Session 326-chain2 (2026-11-24) — M349: M68/M69 `NEG_TYPE` ANSWERED (milestone/m349)
-- QUESTION (the open spine item behind B32): the queue stored **-3** for chooser entry 195 and
-  **-6** for 196 — two different negatives, so not one sentinel.
+- QUESTION: the queue stored **-3** for chooser entry 195 and **-6** for 196
+  (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`) — not one sentinel.
 - ANSWER (static, `python3 -u scripts/m349_unit_id.py`): `FUN_004ef6d0` decodes queue slot 0 at
-  **0x4ef88b** — `mov ecx,[eax+0x50]`; `cmp ecx,0xffffffda` (-38) -> sentinel handler; `jge
-  0x4efa2c` -> FACILITY leg (item = head); `neg ecx` @0x4ef89f -> **item = -head = the UNIT TYPE**.
-  Type >= 0x27(39) -> second-table index (type-39); 0x22..0x26 (34..37) -> the [ebp-0x20] band.
-- Facility leg `cmp ebx,0x40 ; jl 0x4efed1` -> `[ebp-0x20]=0`: id < 64 stamps the bitmap; id >= 64
-  toggles bit 2 of the item word @0x98adb8 and does not stamp.
-- ONE bitmap, two legs: mapper `FUN_00507410` (17 insns, 203 call sites) = byte
-  `(id+(id>>31&7))>>3`, mask `1<<(id&7)` (signed divide truncating toward zero); both sites index
-  `0x95da9c + 304*player` — unit leg ANDs/tests @0x4ef97a, facility leg ORs @0x4f0ec0. A unit type
-  3 aliases facility 3's bit but can never write it. Unit cost = `[0x984d44 + 48*type]` = the
-  72-record array 0x984d38 (stride 0x30) + 0xc.
-- B31's six recorded heads re-decoded: 4 unit types (2,8,3,6), 1 facility (2), 1 >=64 (321).
-  "Unit-encoded" is precise for the negatives; **`>31` heads are NOT unit ids** (head>=0 leg).
-- RETRACTIONS: the M68 "(195-192) -> -3" arithmetic is a coincidence (196 would give -4, recorded
-  -6); B11's "-39 head sentinel" is wrong — the compared constant is **-38** (0xffffffda).
-- ACCEPT `PASS M349: 13/13 gates`, digest `4d3c2e4ded19d620`, two runs byte-identical
-  (`evidence/m349_unit_id.txt:100-101`); harness `HARNESS PASS M349: 18/18 scored, NO-OP [],
-  uncovered [] (covered 13/13)` (`evidence/m349_mutate.txt:26`).
-- STILL OPEN: which field of a unit DESIGN the widget negates (decode side settled, chooser-side
-  producer not); which B31 loss is a raze vs a record change; whether a completion stamps at all.
+  **0x4ef88b** — `cmp ecx,0xffffffda` (-38) -> sentinel handler; `jge 0x4efa2c` -> FACILITY leg
+  (item = head); `neg ecx` @0x4ef89f -> **item = -head = the UNIT TYPE**. Type >= 39 -> a
+  second-table index (type-39); 34..37 -> the [ebp-0x20] band flag.
+- Facility leg `cmp ebx,0x40 / jl 0x4efed1` -> id < 64 stamps; id >= 64 sets bit 2 @0x98adb8 and
+  stamps only when that bit was previously clear.
+- ONE bitmap, two legs: mapper `FUN_00507410` derived from its 17 insns = masks 7/7, `sar 3`,
+  `shl eax,cl` -> byte `(id+(id>>31&7))>>3`, mask `1<<(id&7)`; both sites index 0x95da9c with a
+  304 stride (unit leg ANDs @0x4ef97a, facility leg ORs @0x4f0ec0). A unit type 3 aliases facility
+  3's bit but can never write it. Unit cost = `imul [0x984d44 + 48*type]` (stride 0x30).
+- B31's recorded heads ARE 321,-2,-8,2,-3,-6 -> 4 unit types (2,8,3,6), 1 facility (2), 1 >=64.
+  "Unit-encoded" is precise for the negatives; **`>31` heads are NOT unit ids**.
+- RETRACTIONS: M68's "(195-192) -> -3" is a coincidence (196 would give -4, the trace says -6);
+  B11's "-39 head sentinel" is wrong — the constant is **-38**.
+- ACCEPT `PASS M349: 13/13 gates`, digest `fa2d81797551dae5`, two runs byte-identical
+  (`evidence/m349_unit_id.txt:101-102`); harness `HARNESS PASS M349: 22/22 scored ... (covered
+  13/13)` (`evidence/m349_mutate.txt:30`).
+- REVIEW #372 (Strata, 10 findings): 9 fixed / 1 dismissed — mapper DERIVED from its own pinned
+  insns, G4 pins all 30 rows, G9/G10 pin the 203 calls and the head sequence, R2 reads the traces,
+  the facility latch is pinned test-then-set, cost/"per-player" narrowed to what is measured.
+- STILL OPEN: which field of a unit DESIGN the chooser negates; which B31 loss is a raze vs a
+  record change; whether a completion stamps.

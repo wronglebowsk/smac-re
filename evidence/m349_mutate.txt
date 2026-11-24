@@ -1,4 +1,4 @@
-M349 mutation harness - 18 declared mutants (baseline row MU0)
+M349 mutation harness - 22 declared mutants (baseline row MU0)
   baseline rc=0 red=[] -> GREEN
   NO-OP rc=0 red=[]
 
@@ -10,7 +10,7 @@ M349 mutation harness - 18 declared mutants (baseline row MU0)
   MU5  bitmap base +2                                     1     G7    G7  SCORED
   MU6  item threshold 0x40 -> 0x1f                        1     G3    G3  SCORED
   MU7  head>=0 becomes UNIT                               1     G4    G10,G12,G4  SCORED
-  MU8  M68 rival pinned to -6                             1     G11   G11  SCORED
+  MU8  rival offset 192 -> 191                            1     G11   G11  SCORED
   MU9  B31 regex drops negatives                          1     G10   G10  SCORED
   MU10 mapper window +0x30                                1     G9    G9  SCORED
   MU11 mask &7 -> &0xf                                    1     G13   G13  SCORED
@@ -21,6 +21,10 @@ M349 mutation harness - 18 declared mutants (baseline row MU0)
   MU16 facility gate 0x40 -> 0x3f                         1     G2    G2  SCORED
   MU17 sentinel compare -38 -> -39                        1     G12   G12,G4  SCORED
   MU18 R1 read without the negation                       1     G11   G11  SCORED
+  MU19 mapper sar -> shr in the pin                       1     G9    G9  SCORED
+  MU20 call count 203 -> 202                              1     G9    G9  SCORED
+  MU21 head sequence drops 321                            1     G10   G10  SCORED
+  MU22 recorded pair pinned to -4                         1     G11   G11  SCORED
 
-  scored 18/18  covered 13/13 ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12', 'G13']  NO-OP []  uncovered []
-HARNESS PASS M349: 18/18 scored, NO-OP [], uncovered [] (covered 13/13)
+  scored 22/22  covered 13/13 ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12', 'G13']  NO-OP []  uncovered []
+HARNESS PASS M349: 22/22 scored, NO-OP [], uncovered [] (covered 13/13)
