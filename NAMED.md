@@ -1004,18 +1004,16 @@ QUALIFIED BY B24 (s287): `fold()` in this module is now PARAMETERIZED - new hook
 | MATCHER CLAUSES, MEASURED (A8): only the window's RIGHT reach changes results (`0x4e4dd0`'s fold sits 78 B past the store: -24/+32→0, -24/+90→1); the `*8` operand-equality clause and 24 B proximity cap are **DECLARED INERT** — two earlier prose claims that they were load-bearing RETRACTED in the gate text | `evidence/m311_recidx.txt:53-58` | V |
 | UNPROVEN, DECLARED: the index VALUE reaching the fold's 2nd step is not established (no write tracking; a register-name rule would be FALSE at the setter) → claim stops at the arithmetic shape | `evidence/m311_recidx.txt:58` | V |
 | UNMODELED: which entity the index addresses in play; record +48's semantics; `0x68cbb4`'s 19 extra writers; who fills `[ebp-0x8]` behind `0x4f5c36` | - | lead |
-## M312 (s276, STATIC, zero box; mutation-tested 23/23) - the selection check (FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is UNREACHABLE from every caller; the pair is the cursor-tile neighbourhood
+## M312 (s276, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d`) - the selection check (FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is UNREACHABLE from every caller; the pair is the cursor-tile neighbourhood
 
-| claim | evidence | conf |
+| claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
-| THE RETRACTION: FUN_00470fe0 gates its invalidator tail on arg4 != 0 (`cmp [ebp+0x14],0 / je 0x47108b`); ALL FOUR forwarder sites (0x47169A/6D6/802 in FUN_004715d0, 0x472151 in FUN_00471fd0) push literal `0x0` -> M310 "site 1" (0x471086) never executes; only the 4 DIRECT sites fire it (internal gate `this+0x1dd70&0x2000`; 15d0's three pre-gated by the same bit, `je 0x4719d3` at 0x47183e skips all three) | `evidence/m312_goal_callers.txt:11,12,16` + `evidence/m312_mutate.txt:7,8,13` | V |
-| TRUNK A (cursor): FUN_004736a0 (64 B, 15 call sites) pushes `cursor_x_list[cursor], cursor_y_list[cursor], 2` (0x91b5f0/0x91b670/0x91b5e8) -> FUN_004727c0 (gate 0x469060) -> FUN_004725a0 -> sweep FUN_004715d0: ALL FOUR y-slot stores follow one of two laws (`arg_y-3` at the direct sites and fwd 1/2; `arg_y+[ebp-0xc]` delta at fwd 3 + loop, A5b); every one of the 6 x-slot stores is `mov [ebp-0x10],eax` exactly 8 B after `call FUN_00469010` (A5f - every candidate clamped); candidates gated FUN_00469060 != 0, loop site also FUN_00422060 != 0. Block law at 0x4725ac-0x4725c9 == M310's filter `(ds:0x985ae8&0x80)?-1:ds:0x91b5b4` | `evidence/m312_goal_callers.txt:13,14,17,18,19,22,23` + `evidence/m312_mutate.txt:9,10,11,12,13,14,15,16,17` | V |
-| VIEW-INSTANCE FAN-OUT: FUN_00473760 walks the **M262 view table** `ds:0x7cdecc[0..7]` - 8 entries, bound 8 EXCLUSIVE (the first cmp/jge precedes the body, the increment is on the back-edge); element IS the this-pointer (A8a pins the ecx-load), null-skip, and i != 0 gates on busy-flag element+0x1dd74 == 0. Third fan-in: view-move FUN_00473d00 (kind=2, gated `view+0x1dd8c` bit 4) | `evidence/m312_goal_callers.txt:24` + `evidence/m312_mutate.txt:18,19` | V |
-| THE CENSUS LIMIT (Greptile P2 on #292): of the band, entry ZERO has the one direct store (0x5803E1 <- 0x8f79e0 = the static main view) and the cache carries ZERO indexed `*4+0x7cdecc]` stores (every band ref is a read/cmp); entries 1..7 arrive via the pointer-arithmetic `mov [esi],eax` at 0x5803BB per ## M262-M264 - no claim of this milestone covers table CONTENTS | `evidence/m312_goal_callers.txt:25` + `evidence/m312_mutate.txt:20,21` | V |
-| TRUNK B: the 5 hub arms of FUN_00472810 (53 call sites, 28 owner functions) pass `(block, param<0)` - NOT coordinates; A9a pins all 16 instructions x 5 arms (mask, branch, -1 store, setl, push order) after the P2; 00471fd0 unpacks its own pair (M310 site 5). KICKOFF-CORRECTION: 0x4725e9 is in FUN_004725a0 (544 B) | `evidence/m312_goal_callers.txt:26,27` + `evidence/m312_mutate.txt:22,23,24,25` | V |
-| OPEN (pick): which UI handlers reach 004736a0's 15 sites / the hub's 53 sites in 28 owners; GOAL game-meaning still open (M310) | - | lead |
-Acceptance `python3 -u scripts/m312_goal_callers.py` -> **27/27**, digest 8751c5af18c5a8f8, x2 identical; `scripts/m312_mutate.py` -> **23/23** (post-Greptile #292: A9a full-window, A8b entry-zero scope, A5b both y-laws, A5f new x-law).
-
+| THE RETRACTION | `evidence/m312_goal_callers.txt:11,12,16` + `evidence/m312_mutate.txt:7,8,13` | V |
+| TRUNK A (cursor) | `evidence/m312_goal_callers.txt:13,14,17,18,19,22,23` + `evidence/m312_mutate.txt:9,10,11,12,13,14,15,16,17` | V |
+| VIEW-INSTANCE FAN-OUT | `evidence/m312_goal_callers.txt:24` + `evidence/m312_mutate.txt:18,19` | V |
+| THE CENSUS LIMIT (Greptile P2 on #292) | `evidence/m312_goal_callers.txt:25` + `evidence/m312_mutate.txt:20,21` | V |
+| TRUNK B | `evidence/m312_goal_callers.txt:26,27` + `evidence/m312_mutate.txt:22,23,24,25` | V |
+| OPEN (pick) | - | lead |
 ## M313 (s278, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m313-rows.md` (sha1 `b674876b9a74`) - pick (i') CLOSED: the events are TWO command pumps + one mouse handler, all wired to ONE interaction band; pumpA's door is a data pointer at 0x6724a8 inside a multi-table .text-pointer run
 
 | claim (one line each; full rows in the archive) | evidence | conf |
@@ -1566,3 +1564,15 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | `$#` at k>=10 leaves the band: k=10 = owner[0], 20 = payload[0], 30 = text[0] | `:83,70` | V MU9 |
 | OPEN: what the `$#` flag gates; numeric[0] is DUAL-USE (the 0x442642 cheat clamp and the ENERGY read @0x4e032c) | - | lead |
 
+## M354 (s329-chain2, STATIC 11/11) — SECTION A's identity: the positive chooser rows ARE the 0x98ad88 unit-type/design rows (M351's OPEN closed; the leg NOUNS of M349/M351 retracted). `:N` = a line of `evidence/m354_design_row.txt:1-91`
+| claim | evidence | conf / mutant |
+|---|---|---|
+| A rows are the 0x98ad88 rows, stride 0x34: three imul sites take the item from [ebp-0x2c] (filled from `[..*4+0x9267e4]` @0x4956d6) and reach +0x00 name, +0x29 weight, +0x2a class | `:1-8,72-73` | V MU1,MU2,MU3,MU19 |
+| A's flags fn 0x496050 over its PARSED extent 0x496050..0x4960c7 reads EXACTLY +0x2a and +0x30 (2 refs) and gates on item<0x40 / flags&4 (bit 2); B's 0x4960f0 over 0x4960f0..0x496150 has ALL 10 PTR operands on stack slots or its own 0x4961xx tables, 0 calls, returns {1,2,3}+xor | `:10-18,74-75` | V MU4-MU7,MU20 |
+| sign follows the SECTION: A `or al,0x20` @0x495a8d, B `or al,0x10` @0x495dff, modal `and eax,0x20`/`neg` @0x49772a/7c | `:37-41,76` | V MU8-MU10 |
+| builder 0x596000: `cmp 0x40`, `shl 6`, mask 0x8000003f (&0x3f==0x3f), store to 0x9267e4 — k<0x40 -> k, else owner*0x40\|(k&0x3f) (64 shared + 64 owner); item*0x34 via 13*i<<2 | `:19-36,77-78` | V MU11,MU12,MU21,MU26 |
+| validator 0x5a73f0 reads {+0x24,+0x2a,+0x2c,+0x30,+0x32}; flags bit0 @0x5a7402, class @0x5a748b, owner mask 1<<owner (`shl ebx,cl`) | `:79` | V MU13,MU14 |
+| field atlas (12 offsets consumed): +0 name, +0x20 abil, +0x24 domain, +0x25..+0x28 components, +0x29 weight, +0x2a class, +0x2c mask, +0x30 flags, +0x32 pre-req; the offset SET is gated (G8) and four SEMANTICS are gated (G10: name->std::string 0x64b9e0, weight x 0x4e40a0, class==8, +0x32 WORD -> tech table 0x92fdd4); the component NOUNS stay INFERRED | `:55-70,80,83-88` | V (set+4 semantics) MU3,MU14,MU22,MU24 / INFERRED (nouns) |
+| **RETRACTION (narrows M349/M351):** the decoder legs are identified by their TABLES: `test ecx,ecx`/`jge 0x4efa2c`/`neg ecx` pinned, head<0 reads the 0x984d38/0x30 cost +0x0c (M337 `#FACILITIES`), head>=0 LOADS+STORES the 0x98ad88 row +0x30. M349's per-leg nouns (neg=UNIT, +2=FACILITY) and M351's "unit row" for section B are INVERTED; the arithmetic and the sign split stand | `:42-54,81` | V MU15,MU16,MU23 |
+| ACCEPT `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 11/11`** `dd5e689e8d9af320`, x2 identical (`evidence/m354_x2.txt:91`); `scripts/m354_mutate.py` **23/24 scored, NO-OP ['MU25']**, measured coverage ALL 11 gates {G1,G2,G3,G4,G5,G6,G6b,G7,G8,G9,G10} | `:91`, `evidence/m354_mutate.txt:30` | V MU0 |
+| OPEN: the game noun of +0x25..+0x28; whether the +0x30 bit2 stamp is the prototype build (INFERRED); NAMED M312 rotated VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py --verify` PASS) | - | lead |

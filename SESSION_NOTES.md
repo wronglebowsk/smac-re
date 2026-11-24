@@ -641,3 +641,38 @@ whether a facility completion stamps at all.
 - OPEN: what the `$#` flag gates; numeric[0] is DUAL-USE (cheat clamp `0x442642` vs ENERGY read `0x4e032c`/`0x4e0336`); `0x64c460`'s semantic.
 - CAP: NAMED headroom was 4,204 B (<5 KB trigger) -> `## B25` rotated VERBATIM to `docs/named-archive-m353-rows.md`, sha1 `dd4991b77b2528c9d3bf011d226165c14277c19d`, verify 8/8 (`evidence/m353_named_rotate.txt:9`); review #378: 10 findings (4 P1/6 P2) all fixed - geometry DERIVED from the writer body, G5 histogram pinned, G6 per-address mapping, G7 arg3 position, store-form census, RETRACT preserved through the rotation.
 - PITFALLS: (a) a rotation stub gate written as `... or True` is vacuous — replaced with a real set-intersection check; (b) a PE section walk must read ImageBase at `pe+24+28`, not at the section-table base.
+
+## Session 329-chain2 (2026-11-24) — M354: section A's identity = the 0x98ad88 row (M351's OPEN closed; leg NOUNS retracted)
+
+- **ACCEPT** `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 11/11 gates`**,
+  table digest `dd5e689e8d9af320`; two runs byte-identical (`evidence/m354_design_row.txt`,
+  `evidence/m354_x2.txt:91`). `scripts/m354_mutate.py` -> **23/24 scored, NO-OP ['MU25']**,
+  measured coverage ALL 11 gates (`evidence/m354_mutate.txt:30`).
+- **REVIEW #379 (11 findings, all fixed)**: function extents now PARSED
+  (`.func_starts.json` + the last ret) instead of window widths; G4 proves "no data reads"
+  by classifying every PTR operand; G9 pins `test/jge/neg` and LOAD-vs-STORE; G6 pins the
+  mask+store; G10 gates 4 atlas semantics; harness records ALL reddened gates and adds
+  MU19-MU24 so every gate has a killer; rotation stub header is derived from the archived
+  block (the hardcoded "neighbour test" vs "neighbourhood" was a real byte mismatch).
+- **THE ROW IS A 0x98ad88 RECORD**, stride 0x34, keyed by the A item: three imul sites
+  (0x49571b name, 0x4957e2 +0x29 weight, 0x4959be +0x2a class) all read the item from
+  [ebp-0x2c], filled from `[ecx*4+0x9267e4]` @0x4956d6. So a +head is a UNIT-TYPE/design
+  ROW, not a facility id — M351's OPEN "does A speak designs" is ANSWERED (V).
+- **THE FLAGS FNS DIFFER IN KIND**: 0x496050 (A) reads exactly +0x2a and +0x30 and is
+  band-guarded (`cmp [ebp+8],0x40`, bit 4 test); 0x4960f0 (B) reads NO memory at all and
+  returns {1,2,3}. Two different row spaces, proved by their field sets, not by names.
+- **BUILDER**: 0x596000 writes `owner*0x40 | (k&0x3f)` for k>=0x40 (shl 0x6; cmp 0x40) —
+  64 shared rows + 64 owner-band rows; the same value is row-indexed (13*i<<2 = 0x34*i).
+- **RETRACTION (narrows M349 + M351):** the decoder's legs are identified by their TABLES,
+  not by their labels: head<0 reads the 0x984d38/0x30 cost +0x0c (M337 = `#FACILITIES`);
+  head>=0 indexes 0x98ad88/0x34 and stamps +0x30 (0x4efe50/60). So M349's per-leg nouns
+  (neg=UNIT, +2=FACILITY) and M351's "unit row" label for section B are INVERTED; the
+  sign split and all arithmetic stand. Do not re-derive the nouns from trace names.
+- **PITFALL (new)**: gate messages that index a parsed list (`v30[0]`) crash *before* the
+  FAIL line prints, so the mutant scores MISSED — a gate that can die silently is a defect;
+  format parsed sets, then assert. MU11 also caught an AUTHORED constant (the 0x40 split
+  was hardcoded); the split is now parsed from 0x596017.
+- **DOC CAP**: NAMED 245,796 B was under the 5 KB trigger -> `## M312` rotated VERBATIM to
+  `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py
+  --verify` PASS) before `## M354` landed.
+- OPEN: game nouns of +0x25..+0x28; bit2 = prototype build INFERRED.
