@@ -28,6 +28,16 @@
 - `0x585720` `unit_action_resolve(unit, param, mode)` — per-unit action executor (AI + end of turn) (M)
 - `0x5abb40` `unit_array_compact()` — slides records down with `rep movsd` (H)
 
+## M389 (s343-c2, 60/60) — 5 OPEN mask args = verbs. `scripts/m389_family_mask.py` -> **`PASS M389: 60/60`** `05a36a50540466f3` (`evidence/m389_family_mask.txt:113`); 27/27 (`evidence/m389_mutate.txt:31`).
+| claim | ev | conf |
+|---|---|---|
+| 4 reg masks resolve in-fn @0x4daea3 `ebx=4`, 0x4daf07 `2`, 0x4dafcf `edi=0x1000`, 0x4db035 `0x2000` | `:19-23` `:32-34` | V MU1-3 MU15 MA1 MA5 |
+| 7 FUN_0x6051fa-keyed arms; ladder {1,2,4,8,0x10,0x1000,0x2000}; SET on eax!=0; fall-through jmp past CLEAR | `:49-62` | V MU5 MU6 MU9 MU16 MU17 MA2 MA6 |
+| 5 lows: 0x551a20 ORs ebx<-[ebp+0x10]; 0x5518f0 NOTs+ANDs; big arms: 1 0x551cf0 call, flag picks OR/AND | `:70-74` | V MU8 MU10 MU11 MU18 MU19 MA3 |
+| 0x4dad30 mask = edi=[ebp+8] (2nd push); 4 callers push {0x20,0x2000000,0x400,0x40000}; 0x400 pushed once (0x4db0aa) | `:26-34` `:79-83` | V MU4 MU12 MU20 |
+| entry FUN_004db480 live; FUN_004dab90 0 call sites + 1 .rdata slot VA 0x677ff8 | `:87-96` | V MU13 MA7 |
+| OPEN: guard noun + 3 out-of-arm applies | `:64` | OPEN |
+
 ## M388 (s342-chain6, 39/39) — slot 0's agenda pair has NO writer; the SE commit writes the live grid only. **`PASS M388: 39/39`** `e03bfb351d33c64e` (`evidence/m388_agenda_slot0.txt:164`), x2 same; 19/19 (`evidence/m388_mutate.txt:22`).
 | claim | ev | conf/mutant |
 |---|---|---|
@@ -1547,7 +1557,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 |---|---|---|
 | countdown = 10 insns 0x5552b6..0x5552d4 (`and al,0xbf`@0x5552d1) with ONE exit 0x5552d9, so a zero cell stores NOTHING; 4 arms of 0x32 (0x551d22 caller-mask whose `je 0x551d64` skips the arm; 0x552ce6 `or al,0x40`; 0x5553f3/0x5556eb `and 0xfffdfbff`+`or 0x840`); byte source pinned by size+sha256 | `evidence/b37_treaty.txt:14,:33` | V MU1-4 MU13 |
 | parity 2048 pairs, 0 disagreements, expiry at tick 50; replay: re-arm t30, status t40, expires ONCE at t79 | `evidence/b37_treaty.txt:39,:49` | V MU5-7 MU12 |
-| PEACE 0xffee7faf clears 0x40 -> NULL expiry (49/49); WAR 0xfaeef378 KEEPS it (0x78) -> real clear (0/49); 0 of 11 cell refs inside FUN_00551a20; corrects M375's list presentation only | `evidence/b37_treaty.txt:55` | V MU8 |
+| PEACE 0xffee7faf clears 0x40 -> NULL expiry (50/50); WAR 0xfaeef378 KEEPS it (0x78) -> real clear (0/49); 0 of 11 cell refs inside FUN_00551a20; corrects M375's list presentation only | `evidence/b37_treaty.txt:55` | V MU8 |
 | 0x800000 TREATY ON: an exhaustive 256-mask sweep - 240/240 masks with a 0x17 bit clear it, the 16 without keep it; expiry cannot (`0xbf & 0x800000 = 0`) | `evidence/b37_treaty.txt:61` | V MU9 |
 | six rivals differ (min 1 config); ACCEPTANCE `python3 -u -m sim.treaty` PASS 8/8 `5dd4119bd1882d1d`, twice identical | `evidence/b37_treaty.txt:76`, `evidence/b37_twice.txt:2-3` | V MU10-11 |
 | UNMODELED: nouns of 0x800/0x20000/0x400; FUN_00552970's role; one upkeep pass == one turn | docstring | lead |

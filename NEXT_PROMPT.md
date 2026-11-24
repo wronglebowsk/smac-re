@@ -19,6 +19,7 @@ from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace
 PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B38 MERGED** (cmds `NAMED` §CHAIN-BUILDS).
 **B39**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
 **DOC CAP: NAMED 246,041/250,000 (3.9k free - ROTATE FIRST next fire; `b38_named_rotate.py` = pattern).**
+**DOC CAP: NAMED 244,408/250,000 (5.6k free; `b38_named_rotate.py` = rotate pattern).**
 
 ## THE LEDGER
 
@@ -29,7 +30,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 
 1. **accept_ready.py** = readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
    base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm**.
-2. Writer/flag chain (BOX ONLY) - VERBATIM `docs/pick-archive.md` §trim-s295 (b): m94/m97/m100/m102/m103
+2. Writer/flag chain (BOX ONLY) — `docs/pick-archive.md` §trim-s295 (b), verbatim.
    + m92/m95/m98/m117.
 3. Static-first kit (zero box time): `field_census.py`, `name_global.py`, `m118_flag_never_set.py`
    (gate satisfiability), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]`, `evidence.py audit|budget|prune`.
@@ -43,6 +44,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
   Next (ANALYSE, static, zero box): **(a) the LAST peace writer `0x53fcb3` - B39 executed `0x523f4c`; `0x53fcb3` is `push 1; push 2; call 0x551d70`, i.e. `551d70(a,b,0x2,mode=1)` = SET 0x2 on word B**.
   ANSWERED: M227-M340,M344,M346 + B1-B39 (M241 FAIL 2/5 #180).
+  ANSWERED: M227-M348, M368-M389 + B1-B39 (M241 FAIL 2/5 #180); no static pick left below.
   CLOSED enumeration + pick rows + open-lead census VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); else the OPEN-LEADS list, each with a
@@ -55,6 +57,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 - **BOX**: UP (s258; TracerPid 0, yama=0). RE-CHECK `accept_ready.py`; credit 0 is d0-gated
   STRUCTURAL; `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): restore
   yama PRE; harness stays uid 1000 — skill `wine-operations.md`.**
+- **BOX**: RE-CHECK `accept_ready.py` + `sudo -n python3 scripts/smac_preflight.py` before arming (credit 0 is
+  d0-gated STRUCTURAL). **ptrace law (s211): restore yama PRE; harness uid 1000 — skill `wine-operations.md`.**
 
 ## TRAPS — rules (FULL s241 text verbatim: `docs/pick-archive.md` §s242-traps; detail §trim-s205/§s198; laws: skill
 `instrument-laws.md` + `wine-pitfalls.md`)
@@ -85,11 +89,8 @@ earlier blocks IN PLACE, every VERIFIED row names its mutant; 4 `NEXT_PROMPT.md`
 `ai_review.py <n>` -> triage ALL findings in one reply, re-measure at head, merge ONLY on a
 verified PASS. Region-B pointers: §trim-s313-chain1 (sha1 `6f2ddbe32478`); per-id `NAMED` GOVERN.
 - M348 (s326) MERGED: slots 1/2 <- Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED.
-- B34 (s333) MERGED: a facility completion stamps NOTHING (21 stores: API 2/GRANT 11/SET 1/COPY 6; 6/6 unchanged). 10/10 `5296fdad6d26caa3`.
 
 - B35 (s335): WHO calls the grant family - 3 sites into the founder (FUN_004cca50/FUN_0059ce10/FUN_0059ec90), 1 into the new-game setup (FUN_005a0fa0); the record EXISTENCE, not the bit value, separates them. 11/11 `fa541d0a2445cacf`, harness 18/18.
-- M368 (s336-chain1): 0x2 = TREATY, 0x4 = TRUCE — behaviour keys `ENEMYTRUCE`/`ENEMYTREATY` on the mask writes; truce<treaty<pact (pact IMPLIES treaty); FUN_005076d0's classifier is ordered EQUALITY. 34/34 `6f4b692777cc3549`, harness 32/32. NEXT: the two other peace hosts (0x53fcb3 / 0x523f4c).
-- M369 (s336-chain2): relations bit 0x8 = COMMLINK (contact), M364's AT WAR RETRACTED — the vendetta block only TESTS 8 both ways as a guard; the war bit is 0x10; the pod (rel&8==0) and the council sweep set 8 alone. 23/23 `475fdceda961ef2d`, harness 39/39. NEXT: 0x2/0x4 (chain 1).
 
 - B36 (s337-chain1) MERGED: FUN_00551a20 EXTRACTED AND RUN - 5 `test bl` blocks on the CURRENT ebx + an UNCONDITIONAL tail OR; pact=0x3, truce-after-war=0x8000010c, war=0x80000118, combined 0x11=0x8000011b; the ladder ACCUMULATES so the state is the classifier's precedence (1>2>4 EQUALITY). 10/10 `b20f5818dee2d861`, harness 11/11.
 - M371 (s337-chain2): the war-initiation hosts' 0x8 = COMMLINK — `or ebx,0x80000108`@0x551b11 puts contact into every 0x10 request (16 war-alone vs 4 pure-contact callers, peace keeps 8). 18/18 `4e82206112fe63ad`, harness 27/27, twice-byte-identical. NEXT: 0x88000008 bits 27/31.
@@ -105,3 +106,4 @@ verified PASS. Region-B pointers: §trim-s313-chain1 (sha1 `6f2ddbe32478`); per-
 
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
 - M390 (s343-c3): 0x4dabb0 DEAD-INF under every PE32 dispatch form (non-rebasable PE, 0 stored VA); 0x551cf0 arg4 = SET/CLEAR (26 one / 6 zero / 4 reg of 36). 47/47 `bafd75107d142bc4`, 16/16 mutants.
+- M389 (s343-c2): 0x4dadxx CLOSED - the 5 OPEN mask args are verbs: FUN_004dadd0's 7 arms {1,2,4,8,0x10,0x1000,0x2000} (4 `mov ebx/edi,imm` at 0x4daea3/0x4daf07/0x4dafcf/0x4db035), each a FUN_0x6051fa-keyed SET/CLEAR (0x551a20/0x5518f0; 0x551cf0 flag for 0x1000/0x2000); FUN_004dacc0(owner,other,{0x20,0x2000000,0x400,0x40000}) = the only 0x400 host; no arm can ask 0x400/0x800. 60/60 `05a36a50540466f3`, 27/27. NEXT: the .rdata slot VA 0x677ff8's table owner.
