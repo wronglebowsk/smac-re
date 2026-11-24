@@ -1,0 +1,7 @@
+# B37 acceptance, two independent runs (sim/treaty.py, zero box)
+run1 PASS B37: 8/8 gates  digest 5dd4119bd1882d1d
+run2 PASS B37: 8/8 gates  digest 5dd4119bd1882d1d
+diff: byte-identical
+4b9572815f23fe77f9c2d55dce1a4133161c128c  evidence/b37_treaty.txt
+4b9572815f23fe77f9c2d55dce1a4133161c128c  scratch/b37/run2.txt
+lines 76
