@@ -1668,7 +1668,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | NOUNS id 8 = labels.txt:886 "Commlink", 0x10 = :657 "Vendetta"; RIVAL '8=war companion' DEAD on 3 predictions; pending masks measured (3x0x88000008, 1x0x80000008, no 0x10) | `:88-123` G5a,R1-R2 | V MU19-20,26-27 |
 | ACCEPT `PASS M371: 18/18 digest 4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`), twice byte-identical (`evidence/m371_twice.txt:4`); harness 27/27 (`evidence/m371_mutate.txt:35`); OPEN: 0x88000008 bits 27/31 (INF), 24 carried sites, 0x100 | as cited | V |
 
-## M373 (s338-chain1, STATIC 19/19) — the PENDING-VENDETTA consumer: FUN_005551e0 clears 0x80000000 under a bit-13 exception; **bit 27 is not a gate there** (the pick's premise refuted). ACCEPT `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19` `162f8833a8a831f0` x2 (`evidence/m373_pending_vendetta.txt:161`); harness 16/16 (`evidence/m373_mutate.txt`). `:N` = a line of the evidence.
+## M373 (s338-chain1, STATIC 19/19) — the PENDING-VENDETTA consumer: FUN_005551e0 clears 0x80000000 under a bit-13 exception; **bit 27 is not a gate there** (the pick's premise refuted). ACCEPT `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19` `162f8833a8a831f0` x2 (`evidence/m373_pending_vendetta.txt:161`); harness 16/16 (`evidence/m373_mutate.txt:20`). `:N` = a line of the evidence.
 | claim | ev | conf |
 |---|---|---|
 | CONSUMER: 6 bit-31 touch points — READ 0x55573c, CLEAR 0x555750 + store 0x555758 (own), CLEAR 0x55578a + store 0x555792 (mirror), ARM `push 0x80000000`@0x5558da -> setter 0x551a20 @0x5558e1 | `:15-19` | V MU1,5,13,14 |
