@@ -1,0 +1,26 @@
+baseline: PASS M347: 12/12 gates
+baseline gates: 12 PASS, 0 FAIL
+
+  id    row defended                                          expected   reddened   verdict
+  MU0   ACCEPT baseline (must stay 12/12)                    -          -          BASELINE
+  MU1   G1 field = sub+0x84 (ctor lea moved)                 G1         G1         RED
+  MU2   G1 vtable +0x30 = reader method                      G1         G1         RED
+  MU3   G2 ctor leaves +0x84 untouched                       G2,R1      G2,R1      RED
+  MU4   G3 the four stores (id store moved off +0x84)        G3         G3         RED
+  MU5   G3 no lea-alias store evasion                        G3         G3         RED
+  MU6   G4 absolute receiver 0x74df70                        G4         G4,R5      RED
+  MU16  G4 the call SET is exactly 4 (register retargeted)   G4         G4         RED
+  MU17  G5 the counter instruction is an inc                 G5         G5         RED
+  MU18  G6 the player id is PUSHED to the selector           G6         G6         RED
+  MU19  G7 the -1 store is the NOT-FOUND branch              G7         G7         RED
+  MU7   G5 child count 7 (algorithm: trip+1)                 G5,R4      G5,G6,R4   RED
+  MU8   G5 reload AFTER the counter inc                      G5         G5         RED
+  MU9   G5 Init stores arg2 at +0xa78                        G5         G5         RED
+  MU10  G5 ids are 1..7 (algorithm: 0-based)                 G5,R3      G5,G6,R3   RED
+  MU11  G6 block id = counter+1                              G6         G6         RED
+  MU12  G6 player id is the SITE B cell                      G6         G6         RED
+  MU13  G7 sentinel lands BEFORE the buffer (algorithm)      G7         G7         RED
+  MU14  R2 textual census would claim all 13                 R2         R2         RED
+  MU15  R5 receiver-blind census                             R5         R5         RED
+
+HARNESS PASS M347: 20/20 scored, NO-OP [], uncovered [] (covered 12/12)
