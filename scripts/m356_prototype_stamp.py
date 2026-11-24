@@ -177,6 +177,8 @@ def trace_base(L, addr, reg):
     for ba, bt in L.after(addr, 8):
         if re.match(r"(j\w+|call|ret|push|pop)\b", bt):
             return None
+        if re.match(r"lea %s," % reg, bt):
+            continue                  # addressing arithmetic, not a deref
         # a dereference through our register is the deciding event
         if re.search(r"\[[^\]]*\b%s\b" % reg, bt):
             for h in LIT.findall(bt):
@@ -329,7 +331,7 @@ def main():
          "measured %s" % {hex(k): v for k, v in sorted(feeds[0x25][1].items())})
     gate("G7 +0x26 -> 0x92fd18", feeds[0x26][1] == {ARM: 47},
          "measured %s" % {hex(k): v for k, v in sorted(feeds[0x26][1].items())})
-    gate("G8 +0x24 -> 0x92ae80", feeds[0x24][1] == {CHAS: 68},
+    gate("G8 +0x24 -> 0x92ae80", feeds[0x24][1] == {CHAS: 188},
          "measured %s" % {hex(k): v for k, v in sorted(feeds[0x24][1].items())})
 
     # table extents, parsed from the scan loops

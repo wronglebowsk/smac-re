@@ -731,12 +731,12 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | u=45 value-leg CLOSED (dest-moved): live unit-45 order+17=0x00 dest(+20/+28)=(9,47) owner 6 vs save 0x18/(19,6); live (19,6) byte2=0x5 byte9=0x10; machine init 5 stays a DECLARED input | evidence/s249_live_census.txt S5, addendum A1-P5 | V |
 | S3 finding (documented FAIL, floor unweakened): strict live law 2102/2321 exact, lazy 0, misses 219 = bit4-flips 134 (117 flip-attested) + nibble 85 (84 change-attested), 201 machine-attested / 18 not; end-window snapshots grade only the last turn; bit4 flips are val-INVISIBLE (M296 S3b under-attests); s250 instrument fix: attestation = a grading event LATER on the same tile (drift_taxonomy), A0 shipped-verify 25/25, A6 amends the S8 starttime token | evidence/s249_live_census.txt S3, addendum A2/A0/A6 | V |
 
-## M298 (s251, STATIC, zero box) - the last two FUN_0051dcb0 holes CLOSED: 0x582cc0 = lazy-nibble CACHE WRITE-BACK (edi survives); [ebp-0xc] = BYTE[rec+3] (callers EXONERATED)
-| claim | evidence | conf |
+## M298 (STUB - block VERBATIM: `docs/named-archive-m356-rows.md`, sha1 `a7e25e645e556118`)
+| claim | ev | conf |
 |---|---|---|
-| 0x582cc0 does NOT mutate edi: callee = push/pop ebp + eax/ecx/edx clobber only, zero edi/esi/ebx writes (full 19-insn body pinned) - the 0x5aff90 lazy value (edi 0x51df9f) survives into min 0x51dfc3 + max 0x51dfee-51dff3 with no reload; the discarded return is eax = rec base (lea 0x582ce6), overwritten by `mov eax,[ebp-0xc]` 0x51dfac; side-effect = BYTE[rec2+2] = (old&0x0F)\|(edi<<4), rec2 = [0x92ae14]+0x2c*([0x692184]*param_2+sar(param_1,1)) (both globals LOADED first: mov 0x582cc3/0x582cd3) - the SAME byte +2 high nibble the cached-path test 0x51df85 reads: lazy value (0x5aff90 = 525 insns) written back as a cache | evidence/s251_statics_fn51dcb0.txt A+B windows (objdump verbatim) | V |
-| [ebp-0xc] has NO caller writer (M294 question REFUTED): FUN_0051dcb0 builds its own frame (0x51dcb1 mov ebp,esp; 0x51dcb3 sub esp,0x1c), is void/0-args - the 11 e8-callers cannot reach a below-ebp slot; the 386-insn body has EXACTLY ONE store: 0x51dd57 mov [ebp-0xc],ecx = zero-extended BYTE[rec+3] (xor ecx,ecx 0x51dd48; mov cl,[edi+3] 0x51dd4f), edi = record cursor (base [0x92ae14] 0x51dd1e; +0x2c tail 0x51e128, reload 0x51e133); the other 5 refs (0x51dd9f/0x51df28/0x51dfac/0x51e021/0x51e0cc) are loads; store precedes first load - no uninit read. The site/region index rides IN the record array (byte +3), per record | evidence/s251_statics_fn51dcb0.txt C windows + full-body ref grep | V |
-| M294 phrasing FIXED: the 0x51dfe2 cell addr contains NO min - the slot store 0x51dfcb = max(edi,[site*28+0x989ce8]) (cmp edi,eax / jle 0x51dfc5 keeps the OLD slot when edi<=old, else mov eax,edi) on the 28B/site slot (esi = (x*8-x)<<2 = 28*[ebp-0xc], 0x51dfb1-ba); addr = 0x94eca8 + 4*(2095*ebx) + [ebp-0xc] (0x51dfd3-e0: 65x,131x,<<4,-x; 4*2095 = 8380 = M297 faction-block stride), cell byte = max(edi,old) 0x51dfeb-51dff3; ebx = scan index (xor 0x51ddf5; -1 sentinel clamped to 0 0x51df22-24) and ebx==0 SKIPS the cell store (test ebx/je 0x51dfd1) while the min store stands; ebx's walked "table" (0x51de2c-0x51df1d) = NOT a table: 243 B of code, the base_array walk + its exit block - CLOSED/REFUTED by M301 (see §M301) | evidence/s251_statics_fn51dcb0.txt D windows | V |
+| 0x582cc0 does NOT mutate edi | archive:1 | archived |
+| [ebp-0xc] has NO caller writer (M294 question REFUTED) | archive:2 | archived |
+| M294 phrasing FIXED | archive:3 | archived |
 
 ## B18 (s252, BUILD 10/10) - the site-gate VALUE SOURCE + MAX STORES named, pinned and executable (sim/sitegate.py)
 | claim | evidence | conf |
@@ -1561,3 +1561,15 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
+
+## M356 (s330-chain2, STATIC 15/15) — +0x30 bit 2 = a ONE-WAY LATCH (11 setters, 0 bit-2 AND-clears, both latches band-guarded 0x40); +0x24 -> chassis 0x92ae80 (0x90), +0x25 -> offense 0x92b950 (21x0x10), +0x26 -> armor 0x92fd18 (10x0x10); +0x27/+0x28 index none. `:N` = line of `evidence/m356_stamp.txt:1-92`
+| claim | ev | conf/mutant |
+|---|---|---|
+| flags census by instruction SHAPE: 45 writes; the 11 bit-2 setters are listed in the table at `:3-49`; 0 ANDs clear bit 2 | `:3-49` | V MU1,2,6,15-17 |
+| one-shot latch 0x4d2ff9 test->OR->store->`call 0x584520`; 0x4efe60 stores `al\|4` then tests the OLD bit, `call 0x572800` only on 0->1 | `:57,60` | V MU3-5,21 |
+| finalizer 0x595e80: flags 1/0x105/0x115; +0x2b from `cmp al,bl` (weapon vs armor) | `:79` | V MU7,8,12,18-20 |
+| feeds: +0x24->0x92ae80 (188 chains), +0x25->0x92b950 21 recs (181), +0x26->0x92fd18 10 recs (47), exclusive | `:64-77` | V MU9-11,22,23 |
+| rival refuted: +0x27/+0x28 reach no 0x10-stride table; +0x28 writer 0x595d1c only | `:82,85` | V MU13,23 |
+| **RETRACTION (M354):** +0x24 = the CHASSIS ORDINAL, not "domain"; the offset set and stride 0x34 stand | `:64,76` | V MU11,22 |
+| ACCEPT `scripts/m356_prototype_stamp.py` 15/15 `2f83dbf542b5a238` x2; harness 23/23, NO-OP MU24, all gates covered | `:92` | V MU0 |
+| OPEN: nouns of +0x27/+0x28; bit2's UI reading INFERRED | `:88` | lead |
