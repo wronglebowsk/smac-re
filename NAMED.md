@@ -1636,6 +1636,6 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | the recorded run holds 6 facility-head paid completions (Korolev r0, Virgin Soil s1/s9, New Jerusalem s1/s9, Training Camp s15); every bitmap is UNCHANGED 6/6; 3 already had the bit set (vacuous), 3 discriminate | `:54-59,90` | V MU1,MU2,MU7 |
 | at all 3 discriminating completions the stamp model differs from the recording by exactly 1 byte (`[8]`->`[2,8]`, `[27]`->`[2,27]`): the stamp rival is falsified ON BYTES | `:70-76,92` | V MU7 |
 | the 5 gains are NOT completions: every before-head is unit-encoded (321/-2/-8/-3/-6); Virgin Soil s11 (gain 4 + loss 27, no pay) is the COPY signature 1/1 | `:61-67,91` | V MU8,MU9 |
-| ACCEPT `python3 -u -m sim.facstamp` -> 10/10 `5296fdad6d26caa3` (x2 identical); harness 11/11 `d14c15ba21d1bec5`; `sim.selftest --b34` relays | `:96`, `evidence/b34_mutate.txt:14` | V |
-| QUALIFIES `## B31`: its "one NEGATIVE at a facility-range head" is real but is 3 boundaries, and it did not flag the 3 vacuous rows | `:54-59` | V |
+| ACCEPT `python3 -u -m sim.facstamp` -> 10/10 `5296fdad6d26caa3` (x2 identical); harness 11/11 `d14c15ba21d1bec5`; `sim.selftest --b34` relays | `:96`, `evidence/b34_mutate.txt:14` | V MU3 |
+| QUALIFIES `## B31`: its "one NEGATIVE at a facility-range head" is real but is 3 boundaries, and it did not flag the 3 vacuous rows | `:54-59` | V MU1,MU2,MU7 |
 | OPEN: which grant/copy call site fired in the run (no call stack in the trace); `FUN_0059ce10`'s 11 literal items (1 caller `FUN_005a0fa0`) | - | lead |
