@@ -1,0 +1,34 @@
+== M372 mutation harness ==
+  baseline: rc=0 PASS=True
+  MU1  TEXT 0x58f303|push 0x0            want=G2 red=G2 rc=1 KILLED
+  MU2  TEXT 0x58f306|push 0x692854       want=G2 red=G2,G5 rc=1 KILLED
+  MU3  TEXT 0x628731|cmp ecx,0x31        want=G3 red=G3 rc=1 KILLED
+  MU4  TEXT 0x57cb18|and ecx,0x1000000   want=G4 red=G4,G6 rc=1 KILLED
+  MU5  TEXT 0x57c99b|and esi,0xffffffff  want=G4 red=G4 rc=1 KILLED
+  MU6  TEXT 0x4dc740|and ecx,0xffffffff  want=G4 red=G4 rc=1 KILLED
+  MU7  TEXT 0x58ecc9|mov ds:0x92bf10,eax want=G1 red=G1,G3 rc=1 KILLED
+  MU8  TEXT 0x5a1150|test DWORD PTR ds:0 want=G6 red=G6 rc=1 KILLED
+  MU9  TEXT 0x59ef11|test eax,0x400000   want=G6 red=G6 rc=1 KILLED
+  MU10 TEXT 0x58efc4|mov esi,0x92bdf0    want=G7 red=G7 rc=1 KILLED
+  MU11 TEXT 0x4dc77c|mov ds:0x92bf0c,edx want=G4 red=G4 rc=1 KILLED
+  MU12 TEXT 0x58eca8|push 0x69278c       want=G5 red=G5 rc=1 KILLED
+  MU13 TEXT 0x58ee0f|call 0x5ea484       want=G3 red=G3 rc=1 KILLED
+  A1   ALGO 1                            want=G1 red=G1 rc=1 KILLED
+  A2   ALGO 2                            want=G1 red=G1 rc=1 KILLED
+  A3   ALGO 3                            want=G2 red=G2 rc=1 KILLED
+  A4   ALGO 4                            want=G3 red=G3 rc=1 KILLED
+  A5   ALGO 5                            want=G4 red=G4 rc=1 KILLED
+  A6   ALGO 6                            want=G7 red=G7 rc=1 KILLED
+  A7   ENV  truncated cache              want=G0 red=G0,G1,G3,G5,G7 rc=1 KILLED
+
+  coverage (gate -> mutants that redden it):
+   G0 A7
+   G1 MU7,A1,A2,A7
+   G2 MU1,MU2,A3
+   G3 MU3,MU7,MU13,A4,A7
+   G4 MU4,MU5,MU6,MU11,A5
+   G5 MU2,MU12,A7
+   G6 MU4,MU8,MU9
+   G7 MU10,A6,A7
+
+PASS M372 harness: 20/20 killed, 0 survivors, coverage 8/8

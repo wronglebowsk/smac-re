@@ -667,3 +667,33 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   the 0x100. **PITFALL**: pushes split by lea/shl — scan 14 insns back, require a 3-push run
   with one immediate (0x554426; MU21). `## M318` rotated to
   `docs/named-archive-m371-rows.md` (`evidence/m371_named_rotate.txt:1`).
+
+## Session 337-chain3 — M372: 0x92bf0c = BIT-STRING slot, not a packed field
+
+- **ACCEPT** `python3 -u scripts/m372_semaphore_cell.py` -> **`PASS M372: 8/8`** digest
+  `b699a30c05573575` (`evidence/m372_semaphore_cell.txt:89`), re-run identical;
+  `scripts/m372_mutate.py` **20/20 killed, 8/8 covered** (`evidence/m372_mutate.txt:34`).
+- **CENSUS** (`:19`): 8 refs text==byte, 5 STORE/3 READ: loader 0x58ecc9; in-game
+  0x4dc77c, 0x4dc8c3, 0x57cb1e, 0x57cc66; reads 0x48882e, 0x57c990 (restore),
+  0x58f2fe (writeback).
+- **THE KEY IS A BIT STRING** (`:28`): writeback pushes key 0x692848 `Semaphore` + flag=1;
+  helper 0x58f030's flag!=0 arm loops bits 31..0, '1' set / '0' when `edi` or `esi<8` (min
+  width 8): those constants reproduce the shipped `Semaphore=00000000`; the flag=0 decimal
+  arm (0x64f980 radix 10) gives `0` — killed.
+- **PARSE IS THE INVERSE** (`:46`): helper per cell from the nearest 0x5ea48x call:
+  **5 base-2 (0x5ea493->0x628720), 6 base-16 (0x5ea484->0x62876b)**, counts GATED;
+  round-trip exact.
+- **NOT PACKED** (`:55`): all four stores mask `0x1800000`; the restore clears
+  `~0x1800000` in 0x985ae8 then ORs the WHOLE cell (bits stay 23/24, 0 shifts).
+  0x4dc77c/0x57cb1e=provably ZERO; 0x4dc8c3/0x57cc66 carry live 0x99aa38 bits 16/17.
+- **NAME** (`:62`): 2 image-wide "Semaphore" strings, each referenced once (a push);
+  0 data/table pointers -> no other consumer.
+- **OCCUPANTS** (`:71`): bit23 read 0x59ef11+0x5a1446, bit24 0x5a1150; owners
+  FUN_0059ec90 / FUN_005a0fa0 (new-game), owners GATED; nouns INF.
+- **0x92bdf0** (`:78`): 0 refs, 0 address dwords even byte-unaligned across all sections;
+  only sweep starts 0x92bf18.
+- **REVIEW #404**: 10 findings fixed in-gate (sha1+size re-checked in G0; G1/G4 rows
+  split; G3 counts+MU13; G5 image-wide; G6 owners+4 idioms; G7 scans split; cov=ACTUAL
+  reds; cache regenerated).
+- **PITFALLS**: objdump prints `DWORD PTR ds:0x..`, so `startswith("ds:")` misses a bitset
+  load; a break-test ordered before the hit-test loses the reader.

@@ -1,0 +1,90 @@
+== G0 inputs ==
+  .text cache insns=781429  PE sections=8  fn index=10284
+  cell=0x92bf0c  gap=0x92bdf0  span=[0x92bde8,0x92bf14] (76 dwords)  bitsets=0x985ac4/0x985ae8
+  rotation docs/named-archive-m372-rows.md: 3851 B sha1 e4c1833079918bcc (stub e4c1833079918bcc/3851) match=True
+G0   ok   cache/index/PE resolve; 9/9 anchors in the stream; NAMED rotation sha1+size verified
+  ini=Alpha Centauri.Ini present=True
+
+== G1 census, cell 0x92bf0c ==
+  text sites=8  byte-disp32 sites=8  equal=True
+   48882e READ  mov eax,ds:0x92bf0c          owner=FUN_00487fd0
+   4dc77c STORE mov ds:0x92bf0c,eax          owner=FUN_004dc5f0
+   4dc8c3 STORE mov DWORD PTR ds:0x92bf0c,ecx owner=FUN_004dc5f0
+   57c990 READ  mov edx,DWORD PTR ds:0x92bf0c owner=FUN_0057c550
+   57cb1e STORE mov DWORD PTR ds:0x92bf0c,ecx owner=FUN_0057c550
+   57cc66 STORE mov DWORD PTR ds:0x92bf0c,ecx owner=FUN_0057c550
+   58ecc9 STORE mov ds:0x92bf0c,eax          owner=FUN_0058e7f0
+   58f2fe READ  mov eax,ds:0x92bf0c          owner=FUN_0058f0d0
+  partition: STORE=5 READ=3 OTHER=0 fns=5
+G1   ok   text set == byte set (8 sites); 5 STORE / 3 READ / 0 OTHER
+
+== G2 the serialised form (writeback 0x58f0d0 -> helper 0x58f030) ==
+  writeback read=58f2fe  flag push=0x1  key push=0x692848 -> 'Semaphore'
+  emit: flag test at 0x58f042 -> je 0x58f08d ; flag=1 block (0x58f042,0x58f08d) ; flag=0 block [0x58f08d,0x58f0d0)
+  flag=1 constants read from the stream: hi_bit=0x1f min_width=8 one='1' zero='0'
+  flag=0 path: decimal converter 0x64f980 radix=10
+  emulated form of the 4 reachable values: {0: '00000000', 8388608: '100000000000000000000000', 16777216: '1000000000000000000000000', 25165824: '1100000000000000000000000'}
+  shipped INI `Semaphore`='00000000'  emulated fm(0)='00000000'  match=True  (decimal fm(0)='0')
+G2   ok   flag=1 -> BINARY emitter (hi_bit=0x1f, min width 8); emulation == shipped INI '00000000'; decimal rival produces '0' != '00000000'
+
+== G3 the parse side ==
+  loader stores=11  parse helpers: 0x5ea484 x6, 0x5ea493 x5
+   58e8c6 -> 0x92bde8   base-16
+   58e922 -> 0x92bdf4   base-16
+   58e98e -> 0x92bdf8   base-16
+   58e9ec -> 0x92bdec   base-16
+   58eb11 -> 0x92befc   base-2
+   58ec20 -> 0x92bf00   base-2
+   58ecc9 -> 0x92bf0c   base-2
+   58ed2a -> 0x92bf14   base-16
+   58ee16 -> 0x92bf08   base-2
+   58ef00 -> 0x92bf04   base-2
+   58eff8 -> 0x92bf10   base-16
+  parser 0x628720 accepts charset=01  shift=1  (hex sibling 0x62876b shifts 4)
+  round-trip (emitter -> parser): {0: 0, 8388608: 8388608, 16777216: 16777216, 25165824: 25165824}
+  clauses: helper=True charset=True shift=True hshift=True hexcells=1 rt=True
+G3   ok   0x628720 is base-2 (5 of 11 cells use it, 6 use base-16 0x62876b); round-trip exact; RULES string 1101000001110 -> 6670
+
+== G4 the shape: masked copy or packed field ==
+   4dc77c STORE mask=0x1800000  reg=eax origin=0x985ae8 cleared=0xfe7fffff ored=0x0       -> ZERO-BY-CLEAR
+   4dc8c3 STORE mask=0x1800000  reg=ecx origin=CASE-ENTRY cleared=0xfe7fffff ored=0x1000000 -> LIVE-BITS
+   57cb1e STORE mask=0x1800000  reg=ecx origin=0x985ae8 cleared=0xfe7fffff ored=0x0       -> ZERO-BY-CLEAR
+   57cc66 STORE mask=0x1800000  reg=ecx origin=CASE-ENTRY cleared=0xfe7fffff ored=0x1000000 -> LIVE-BITS
+   restore @57c990: clear-mask=0xfe7fffff (== ~0x1800000 ? True) ; whole-cell OR uses reg edx (cell reg edx) ? True
+   shifts inside the cell's windows: 0
+G4   ok   all 4 in-game stores mask exactly 0x1800000 with NO shift (2 write a provably-zero value, 2 carry live bits; 2 carriers are the bitsets themselves); restore clears ~0x1800000 then ORs the whole cell -> the cell is a bit-shadow of 0x985ae8 bits 23/24, not a packed field
+
+== G5 the name ==
+  image-wide C-string occurrences of "Semaphore": 2 at ['0x692780', '0x692848']
+   referenced at 58eca8 (push) in FUN_0058e7f0
+   referenced at 58f306 (push) in FUN_0058f0d0
+  address-dword occurrences: .text imm32=2 (the two pushes) ; data/table=0
+G5   ok   2 image-wide string occurrences, each referenced exactly ONCE (a push) by the loader and the writeback; 0 data/table pointer entries -> no other consumer
+
+== G6 who reads bits 23/24 of 0x985ae8 ==
+   bit 0x800000   readers: ['0x59ef11(reg-test)', '0x5a1446(direct-test)']
+   bit 0x1000000  readers: ['0x5a1150(direct-test)']
+   bit 0x800000   owner fns: ['FUN_0059ec90', 'FUN_005a0fa0']
+   bit 0x1000000  owner fns: ['FUN_005a0fa0']
+   bit23 @0x59ef11 -> test eax,0x800000 | mov DWORD PTR [esi+0x94d82c],0xfffffc19 | je 0x59ef92 | call 0x64c6f0 | cdq | mov ecx,0x3 | idiv ecx
+   bit24 @0x5a1150 -> test DWORD PTR ds:0x985ae8,0x1000000 | je 0x5a121e | mov ecx,0xc | xor eax,eax
+G6   ok   bit 23 read at 0x59ef11, 0x5a1446, bit 24 at 0x5a1150 (owners FUN_0059ec90/FUN_005a0fa0 / FUN_005a0fa0); every reader sits in the game-start initialiser or the new-game faction setup
+
+== G7 the gap 0x92bdf0 ==
+  text references to 0x92bdf0: 0
+  address-dword occurrences, MOST PERMISSIVE scan (every byte offset, every section, one-byte alignment): 0 ; outside .text: 0 ; 4-aligned outside .text: 0
+  positive controls on the same scan: 0x92bf0c=8, 0x92bde8=11 (their .text hits are the instruction operands G1 already censuses)
+  base-pointer sweep at 58efc4: [0x92bf18, 0x92bf34) step 0x4 -> 7 dwords, covers 0x92bdf0 ? False
+G7   ok   0x92bdf0: 0 text refs and 0 address dwords under the most permissive scan (every offset, every section) - so no aligned pointer table can hide one; the only sweep in the region starts at 0x92bf18 and stops at 0x92bf34, above it
+
+== VERDICT ==
+  The cell is a BIT STRING slot, not a packed field: its bits keep their
+  absolute positions 23/24 (no shift anywhere), the writer emits a binary
+  digit string (min width 8) and the loader parses one back.  The shipped
+  INI's `Semaphore=00000000` is that string for value 0.  The name is the INI
+  KEY; the string is never used as a UI label (G5).  Occupants: bits 23
+  (2 readers) and 24 (1 reader) of 0x985ae8; every read sits in the
+  game-start / new-game path (G6).
+
+PASS M372: 8/8 gates digest b699a30c05573575
+  evidence: evidence/m372_semaphore_cell.txt
