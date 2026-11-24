@@ -687,3 +687,28 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   silently loses every arm; (3) a byte mask on `ah` names bit 13 — `test al,0x20`@0x5556a7 is
   bit 5 and a DIFFERENT guard (R3); (4) a mutation address must be the INSTRUCTION's address,
   not the call site's (`push`@0x59f16f, call@0x59f176).
+## Session 338-chain3 — M375: the five unnamed bits are DEAL-PROTOCOL terms; 0x40 owns a 50-tick cell
+
+- **ACCEPT** `python3 -u scripts/m375_relation_bits.py` -> **`PASS M375: 8/8`** `34bcef7ab64b9272`
+  (`evidence/m375_relation_bits.txt:88`); re-run byte-identical (`evidence/m375_twice.txt:4`, sha1
+  `aef3c85337bb3fe0`); `scripts/m375_mutate.py` **13/13 killed** (`evidence/m375_mutate.txt:16`).
+  `:N` = an acceptance-file line. **CENSUS** (`:4-6`): 658 refs = 378 test / 253 load /
+  **27 stores**; byte literals only +0/+1.
+- **READERS** (`:10-19`): 0x800000 -> 0x53f863 only; 0x40 -> 0x508ebd/0x508ef9/0x547fd0;
+  **0x8000 is read ONLY as a byte at +1** (`test BYTE [..+0x94d449],0x80` @0x53bbed; a grep for
+  `94d448` misses it); 0x10000 -> 0x547367 + 2; 0x100000 -> 2.
+- **SET VOCAB** (`:23-30`): 94 setter calls (76 push-run + 18 via-jcc); 0x800000 arrives ONLY as
+  the bare mask 0x800000 (3 sites); 0x8000 only 0x8010; 0x10000 only 0x10004; 0x100000 once.
+- **0x40 TIMER LAW** (`:34-43`): the only bit with a counter — 4/4 stores that leave 0x40 set arm
+  `0x94d4c8=0x32`; upkeep 0x5552b6 decrements and clears 0x40 at 0 (`and al,0xbf` @0x5552d1); the
+  peace mask never touches the cell.
+- **0x800000** (`:46-53`): survives only a request with NO 0x17 bit; every status write clears bit
+  23 at 0x551b98/0x551bbf and the tail OR cannot restore it. **PITFALL: 0x80000018 is bit 31 +
+  war, NOT bit 23** (`& 0x800000 == 0`) — a lookalike.
+- **ANCHORS** (`:56-67`): 9 mask+string pairs — 0x800000 'Sending TREATY ON', 0x1000000 'Sending
+  TREATY OFF', 0x40 'Sending SET TREATY'. **0x100000** set once at the tail of FUN_0053f9f0 (the
+  unit sweep, stride 0x34) that expels b's units from a's tiles.
+- **LABELS** (`:70-74`): none of the five is a diplomacy id. **NOUNS**: 0x800000 = 'TREATY ON'
+  (V, INF noun); 0x40 = 'SET TREATY' + 50-tick window (V, INF noun); 0x100000 = eviction
+  grievance (INF); 0x8000/0x10000 = war/truce companions (OPEN). **OPEN**: 0x53bbed's role;
+  0x5526b3 / 0x507d21 hosts; 0x4da404's 4th arg.

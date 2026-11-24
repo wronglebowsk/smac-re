@@ -1004,6 +1004,20 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - RIVAL KILLED: 0x92bde8 is BOTH the end of the 4x0xd4 array at 0x92ba98 AND a scalar pref cell - V (`:108` + G9.6 `:98-100`)
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
+
+## M375 (s338-c3, STATIC 8/8) — the five bits B36 left unnamed are DEAL-PROTOCOL terms; 0x40 owns a 50-tick cell. ACCEPT `scripts/m375_relation_bits.py` -> **`PASS M375: 8/8`** `34bcef7ab64b9272` (`evidence/m375_relation_bits.txt:88`), re-run identical (`evidence/m375_twice.txt:4`); harness **13/13** (`evidence/m375_mutate.txt:16`). `:N` = a line of the acceptance file.
+| claim | ev | conf |
+|---|---|---|
+| +0 dword: 658 refs = 378 test/253 load/**27 stores**; byte literals only +0/+1; 45 DWORD tests carry bits 16-31 | `:4-6` | V MU1 A2 |
+| readers: 0x800000 -> 0x53f863 only; 0x8000 -> **byte +1** `[..+0x94d449],0x80` @0x53bbed (a `94d448` grep misses it); 0x40 -> 0x508ebd/0x508ef9/0x547fd0 | `:10-19` | V MU2 MU3 A2 |
+| set vocab (94 calls, 76 push-run + 18 via-jcc): 0x800000 only as the bare mask (3x); 0x8000 only 0x8010; 0x10000 only 0x10004; 0x100000 once | `:23-30` | V MU4 MU9 |
+| **0x40 = the only armed bit**: 4/4 stores that leave it set write `0x94d4c8=0x32` (50); upkeep 0x5552b6 decrements and clears 0x40 at 0; peace never touches the cell | `:34-43` | V MU5 MU6 A3 |
+| **0x800000 = 'TREATY ON'**: a request with no 0x17 bit survives, any status write clears bit 23 @0x551b98/0x551bbf, tail OR cannot restore; `0x80000018` is bit **31**+war, NOT bit 23 | `:46-53` | V MU7 A1 |
+| anchors: 9 mask+string pairs — 0x800000 TREATY ON, 0x1000000 TREATY OFF, 0x40 SET TREATY | `:56-64` | V MU8 |
+| 0x100000 set once at the tail of FUN_0053f9f0, the unit sweep (stride 0x34) that expels b's units | `:66-67` | V MU9 |
+| 13 diplomacy ids contain NONE of the five (M367 anchors re-checked by delta) | `:70-74` | V MU13 |
+| NOUNS (the words themselves, not the bytes): 0x800000 'TREATY ON'; 0x40 'SET TREATY'+50-tick window; 0x100000 eviction grievance; 0x8000/0x10000 war/truce companions - every one INF/OPEN, the mechanism rows above carry the V | `:78-83` | INF |
+
 ## M372 (s337-c3 SEMAPHORE 8/8). ACCEPT `scripts/m372_semaphore_cell.py` -> **`PASS M372: 8/8`** `b699a30c05573575` (`evidence/m372_semaphore_cell.txt:89`); harness **20/20, cov 8/8** (`evidence/m372_mutate.txt:34`).
 | claim | ev | conf |
 |---|---|---|
