@@ -1,0 +1,87 @@
+M353 - the numeric band ds:0x999fa4: who fills it, which tokens consume it
+
+BAND GEOMETRY (computed from four bases + the setter's own bound)
+  numeric 0x00999fa4  owner 0x00999fcc  payload 0x00999ff4  text 0x0099a01c
+  gaps: 0x28 / 0x28 / 0x28 bytes -> 10 dwords each; text stride 0x100, 10*stride -> 0x99aa1c
+
+EVERY REFERENCE TO 0x999fa4 (kind / R-W / containing function)
+  0x41a4e0  abs    R  FUN_00419c30   mov    ecx,DWORD PTR ds:0x999fa4
+  0x41da9e  abs    R  FUN_0041d480   mov    eax,ds:0x999fa4
+  0x41db95  abs    R  FUN_0041d480   mov    eax,ds:0x999fa4
+  0x41dd7e  abs    R  FUN_0041d480   mov    cl,BYTE PTR ds:0x999fa4
+  0x44261f  abs    R  FUN_00442320   mov    edx,DWORD PTR ds:0x999fa4
+  0x442642  abs    W  FUN_00442320   mov    DWORD PTR ds:0x999fa4,edx
+  0x442648  abs    R  FUN_00442320   mov    eax,ds:0x999fa4
+  0x4da76e  abs    R  FUN_004da2c0   mov    eax,ds:0x999fa4
+  0x4e032c  abs    R  FUN_004e0260   mov    eax,ds:0x999fa4
+  0x4e0377  abs    R  FUN_004e0350   mov    eax,ds:0x999fa4
+  0x625c2c  scaled R  FUN_00625b20   mov    ecx,DWORD PTR [eax*4+0x999fa4]
+  0x625cec  scaled R  FUN_00625b20   mov    ecx,DWORD PTR [eax*4+0x999fa4]
+  0x625e4b  scaled R  FUN_00625b20   mov    ecx,DWORD PTR [eax*4+0x999fa4]
+  0x626091  scaled R  FUN_00625b20   cmp    DWORD PTR [eax*4+0x999fa4],0x1
+  0x626597  scaled W  FUN_00626581   mov    DWORD PTR [eax*4+0x999fa4],ecx
+  0x626fd7  abs    W  FUN_00626f19   mov    ds:0x999fa4,eax
+
+THE SETTER FUN_00626581 (the only indexed writer)
+  0x626582  mov    ebp,esp
+  0x626584  cmp    DWORD PTR [ebp+0x8],0x9
+  0x626588  jle    0x626591
+  0x62658a  mov    eax,0x3
+  0x62658f  jmp    0x6265a0
+  0x626591  mov    eax,DWORD PTR [ebp+0x8]
+  0x626594  mov    ecx,DWORD PTR [ebp+0xc]
+  0x626597  mov    DWORD PTR [eax*4+0x999fa4],ecx
+  0x62659e  xor    eax,eax
+  0x6265a0  pop    ebp
+  0x6265a1  ret
+
+SETTER CALLERS: 260 sites
+  literal k histogram: 0:131, 1:75, 2:23, 3:7, 4:3, 5:2, 6:1
+  non-literal arg1 (register/stack) at 18 sites
+
+CONSUMING TOKENS (read site -> token literal read from the PE, radix passed to itoa)
+  0x625c2c  $NUMBER  radix=10  (mov    ecx,DWORD PTR [eax*4+0x999fa4])
+  0x625cec  $NUM     radix=10  (mov    ecx,DWORD PTR [eax*4+0x999fa4])
+  0x625e4b  $HEX     radix=10  (mov    ecx,DWORD PTR [eax*4+0x999fa4])
+  0x626091  ?        radix=None  (cmp    DWORD PTR [eax*4+0x999fa4],0x1)
+  token literals: 0x699120='$NUMBER', 0x699128='$NUM', 0x699130='$HEX'
+  itoa 0x64f980: cmp    DWORD PTR [ebp+0x10],0xa
+
+THE `$#k` PREDICATE PATH (0x62606c..0x6260a0) vs the `$k` DIGIT PATH (0x6260a1..0x6260c1)
+  # 0x62606c  mov    ecx,DWORD PTR [ebp-0x4]
+  # 0x62606f  movsx  edx,BYTE PTR [ecx]
+  # 0x626072  cmp    edx,0x23
+  # 0x626075  jne    0x6260a1
+  # 0x626077  mov    eax,DWORD PTR [ebp-0x4]
+  # 0x62607a  add    eax,0x1
+  # 0x62607d  mov    DWORD PTR [ebp-0x4],eax
+  # 0x626080  mov    ecx,DWORD PTR [ebp-0x4]
+  # 0x626083  movsx  edx,BYTE PTR [ecx]
+  # 0x626086  sub    edx,0x30
+  # 0x626089  mov    DWORD PTR [ebp-0x18],edx
+  # 0x62608c  mov    eax,DWORD PTR [ebp-0x18]
+  # 0x62608f  xor    ecx,ecx
+  # 0x626091  cmp    DWORD PTR [eax*4+0x999fa4],0x1
+  # 0x626099  setne  cl
+  # 0x62609c  mov    DWORD PTR [ebp-0x8],ecx
+  # 0x62609f  jmp    0x6260d2
+  $ 0x6260ad  cmp    DWORD PTR [ebp-0x18],0xa
+  $ 0x6260bb  mov    edx,DWORD PTR [ecx*4+0x999ff4]
+  ALIAS arithmetic: k=10 -> 0x999fcc (owner[0]), k=20 -> 0x999ff4 (payload[0]), k=30 -> 0x99a01c (text[0] byte of slot 0)
+
+RIVAL B: the 10-slot publisher FUN_00626634 @0x626634 holds 0 refs to 0x999fa4
+
+GATES
+  PASS G1 ref census: 16 = 11 abs + 5 scaled, 0 displacement-form                     refs=16 abs=11 scaled=5 disp/other=0
+  PASS G2 stores into the band = exactly 3 (one SCALED, two absolute)                 stores=0x442642/abs/FUN_00442320, 0x626597/scaled/FUN_00626581, 0x626fd7/abs/FUN_00626f19
+  PASS G3 band geometry: four 10-dword bands, text stride 0x100 over 10 slots -> 0x99aa1c num_own=0x28 own_pay=0x28 pay_txt=0x28 slots=10 txt_span=0xa00 stride=0x100
+  PASS G4 setter: bound literal == slots-1, error return 3, success 0, indexed store, jle first bound=(6448516, 9) err=(6448522, 3) jle=0x626588 store=mov    DWORD PTR [eax*4+0x999fa4],ecx ok=0x62659e
+  PASS G5 setter callers: 260 sites, 0 pass a literal k > 9                           calls=260 literal_k=242 distinct=[0, 1, 2, 3, 4, 5, 6] over_bound=[]
+  PASS G6 consumers: 4 scaled reads in the expander; 3 tokens = $NUMBER/$NUM/$HEX     reads=0x625c2c->$NUMBER, 0x625cec->$NUM, 0x625e4b->$HEX, 0x626091->? expander=FUN_00625b20
+  PASS G7 every numeric token passes radix 0xa to the itoa -> $HEX prints DECIMAL     radix={'$NUMBER': 10, '$NUM': 10, '$HEX': 10} itoa_bound=0x64f983
+  PASS G8 the 4th read is the `$#` PREDICATE: cmp [band+k],1 -> setne, NO k bound on that path hash_cmp=1 cmp1=1 setne=1 bound_on_#path=0 bound_on_$path=1
+  PASS G9 `$#` index >= 10 is UNBOUNDED: k=10 aliases owner[0], 20 -> payload[0], 30 -> text[0] alias={10: '0x999fcc', 11: '0x999fd0', 20: '0x999ff4', 30: '0x99a01c'}
+  PASS R1 rival 'it is a scalar, all writers absolute' FAILS on the scaled store      abs_writers=['0x442642', '0x626fd7'] scaled_writers=['0x626597']
+  PASS R2 rival 'the 10-slot publisher fills it' FAILS: 0 refs in the publisher body  publisher=FUN_00626634 @0x626634 refs=0
+
+PASS M353: 11/11 gates digest 86a07168fa9aa476
