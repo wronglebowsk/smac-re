@@ -712,24 +712,26 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 ## Session 340-chain2 — M379: record +0x594 has two AI readers; M376's "8th agenda write" is a pointer, not a store
 
-- **ACCEPT** `python3 -u scripts/m379_field594.py` -> **`PASS M379: 24/24`** `3a154c8f3aea79fd`
-  (`evidence/m379_field594.txt:75`; x2 sha1 `41e0f9c31c18e1cc`); harness **20/20**
-  (`evidence/m379_mutate.txt:25`). Static only, zero box.
+- **ACCEPT** `python3 -u scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad`
+  (`evidence/m379_field594.txt:85`; x2 cmp-identical); harness
+  **22/22** (`evidence/m379_mutate.txt:27`). Static only, zero box.
 - **READERS** (positive-displacement sweep): exactly 2 loads of `[k*0x59c+0x927b24]` —
-  `0x5a1eac` FUN_005a1ad0 and `0x54696c` FUN_00546800, both AI SE scorers. A: skip if <0,
-  index the local 11-effect vector, >0 adds `[0x94e488+k*0x82f*4]`, <0 sets a reject flag.
-  B: `k*0x82f` then `[0x94d67c+..]`; a negative entry enters the message block 0x546983.
-- **NO static +0x594 store**; the lone `[reg+0x594]` (0x4ffff2) reads `ds:0x997b20`, a
-  `malloc(count*4)` heap array (store 0x6146c7) — RIVAL refuted.
-- **RETRACTION (M376 OPEN):** the agenda loop runs **7** bodies, not 8. `ebx` starts at 1
-  (0x5a116a), `inc` in-body (0x5a11c5), and `cmp ebx,8 / jl` (0x5a1213/16) tests AFTER the
-  increment. Seed 0x9280b8; bases 0x9280b8..0x92a260; last store 0x92a268 < end 0x92a270.
-  **0x92a7fc is the terminal POINTER** (seed+7*0x59c): no immediate, no store. M376 used the
-  bound constant as an iteration count.
-- **EXTENT:** exactly 8 records (8*0x59c = 0x2ce0 B): save/load pushes `0x2ce0`+`0x927590`
-  twice (0x596ea4/9, 0x596ec3/c8), two walks stop at 0x92a270 (0x523e1a, 0x44947f), and the
-  globals past it have no record-0 mirror -> no 9th slot; slot 0 (the human) is never seeded.
-- **LIMIT (OPEN):** stack/heap-copy readers and split displacements (+0x400/+0x194) are not
-  excluded by the sweep.
+  `0x5a1eac` FUN_005a1ad0 (skip <0, index the local 11-effect vector, >0 adds the weight
+  `[0x94e488+k*0x82f*4]`, <0 rejects) and `0x54696c` FUN_00546800 (eax spills to `[ebp+0xc]`,
+  `[0x94d67c+..]`, negative -> message block 0x546983).
+- **NO static +0x594 store** (mnemonic-complete classifier); the lone
+  `[reg+0x594]` (0x4ffff2) is a `malloc(count*4)` heap array (`ds:0x997b20`, store 0x6146c7).
+- **RETRACTION (M376 OPEN):** a control-flow interpreter runs the block's own bytes
+  (0x5a1160..0x5a121c): **7 bodies, 6 back-edges, 35 stores in 0x9280b0..0x92a268, terminal
+  edi 0x92a7fc**, terminated after 1413 steps. `ebx` starts at 1, is inc'd in the body and
+  `cmp ebx,8 / jl` tests after it — **0x92a7fc is the terminal POINTER** (seed+7*0x59c),
+  never an immediate, never stored. M376 used the bound constant as an iteration count.
+- **EXTENT:** 8 records (8*0x59c = 0x2ce0 B): save/load pushes `0x2ce0`+`0x927590` twice;
+  8 walks bound at 0x92a270; no static operand addresses a rec-8 field; 0x92a270 is itself a
+  scalar global (`mov ds:0x92a270,eax`) -> no 9th slot; slot 0 (human) never seeded.
+- **REVIEW #412 (10 findings / 2 P1 / 8 P2, all fixed in-gate):** printed digest + cmp instead
+  of a file sha1; complete store classifier; CFG interpreter (+MU19/MU21 algorithm mutants);
+  register/branch-target gates; enumerated extent; exe sha1 gated; rotate refuses stubs.
+- **LIMIT (OPEN):** stack/heap-copy readers, split displacements (+0x400/+0x194) not excluded.
 - Rotated `## M311`/`## M305` VERBATIM -> `docs/named-archive-m379-m311-m305-rows.md`
-  (`--verify` PASS, sha1 `8ac1d711b2aaa84f`/`9bc9c82dfc0139e7`).
+  (`--verify` PASS).

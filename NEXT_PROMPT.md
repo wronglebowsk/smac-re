@@ -115,4 +115,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M376 (s339-chain2): `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix (11 effect keywords = the columns); bit-24 stores (category, choice) at rec +0x584/+0x58c; Future Society row never sampled. 29/29 `f22d2b46cc7e9507`, harness 33/33. NEXT: +0x594's reader / the 8th write 0x92a7fc.
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); 0x53bbed = AI compare of the 0x94e48c scalars; M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
 - OPEN LEADS: bit 13's noun (M373); 0x800/0x20000/0x400 nouns (B37); FUN_00552970 (0x552cec arm); 0x94e48c's noun (M377).
-- M379 (s340-c2): +0x594 = 2 AI readers (0x5a1eac/0x54696c); M376 8th-write RETRACTED (7 bodies; 0x92a7fc = terminal POINTER). 24/24 `3a154c8f3aea79fd`.
+- M379 (s340-c2): +0x594 = 2 AI readers; M376 8th-write RETRACTED (CFG run: 7 bodies, 0x92a7fc = terminal POINTER). 31/31 `256603d5fb70d2ad`.

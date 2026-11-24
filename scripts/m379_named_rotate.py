@@ -9,7 +9,7 @@ index) and M305 (FUN_0051dcb0 rebuild) are settled and referenced by neither
 NEXT_PROMPT.md nor SESSION_CURSOR.md.  Rotated text is byte-for-byte what
 NAMED carried.
 
-    python3 scripts/m379_named_rotate.py            # rotate (idempotent)
+    python3 scripts/m379_named_rotate.py            # rotate (guarded against re-rotation)
     python3 scripts/m379_named_rotate.py --verify   # archive sha1 vs stubs
 """
 import hashlib
@@ -55,6 +55,11 @@ def main():
         return 0 if ok else 1
 
     text = open(NAMED).read()
+    for head in HEADS:
+        ln = next(l for l in text.splitlines() if l.startswith(head + " "))
+        if "VERBATIM" in ln:
+            raise SystemExit(f"{head} is already a rotation stub - refusing to re-rotate "
+                             "(the archive is the source of truth; use --verify)")
     sp = spans(text)
     lines = text.splitlines(keepends=True)
     stubs = {}
@@ -64,8 +69,10 @@ def main():
         sha = hashlib.sha1(body.encode()).hexdigest()
         first = body.splitlines()[0]
         noun = first.split(" - ", 1)[1] if " - " in first else ""
+        if len(noun) > 90:
+            noun = noun[:90].rsplit(" ", 1)[0] + "..."
         stubs[head] = (f"{head} - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` "
-                       f"(sha1 `{sha[:16]}`, {len(body)} B); noun: {noun[:90]}\n")
+                       f"(sha1 `{sha[:16]}`, {len(body)} B); noun: {noun}\n")
         chunks.append(body)
     open(ARCHIVE, "w").write(ARCHIVE_HEAD + "".join(chunks))
 

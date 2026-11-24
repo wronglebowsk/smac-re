@@ -740,7 +740,7 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | ACCEPTANCE `python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV` -> **PASS B20: 10/10** (G10 two runs byte-identical; zero box, zero /proc, zero gdb) | `evidence/b20_bytecounter.txt:39` (9/9 module line; G10 in selftest stdout) | V |
 | DECLARED UNMODELED: live byte-table contents; block upper bound (<8 implied); per-call zero-rebuild cadence (FUN_0051dcb0 callers OPEN); dispatch/settle-nest meaning (M303 S7, M304); save-carry vs rebuild; 8380-B siblings | docstring + BUILD_SPINE §B20 | lead |
 
-## M305 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `9bc9c82dfc0139e7`, 3108 B); noun: FUN_0051dcb0 = the zero-rebuild OWNER: 11 single-site callers, one loop-enclosed, a round-
+## M305 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `9bc9c82dfc0139e7`, 3108 B); noun: FUN_0051dcb0 = the zero-rebuild OWNER (11 callers, round-mod-4 gate).
 ## M306 (s264, STATIC, zero box) - 0x4f35e0 = a real 2673-B function absorbed by tail-jump folding; the export's "hole" is an index.csv size/containment lie
 | claim | evidence | conf |
 |---|---|---|
@@ -862,7 +862,7 @@ QUALIFIED BY B24 (s287): `fold()` in this module is now PARAMETERIZED - new hook
 | MU2's FIRST anchor reddened NOTHING (the driver's per-turn write re-composes from the container's bytes); replaced by the write-side anchor `ent["raw"] = bytearray(target_raw)` | `scripts/b24_mutate.py` comment | V |
 | OPEN: the queue content ON the founded base (the log records fac/x/y/cnt only - the seed span is a declared fixture); real income/price during t22-t29 (`D0_DECL`/`PRICE_DECL` are fixtures) | - | lead |
 
-## M311 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `8ac1d711b2aaa84f`, 3180 B); noun: `ds:0x68cbb0` is the CURRENT-RECORD INDEX of the 304-B entity array; `ds:0x8f0d60` is its 
+## M311 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `8ac1d711b2aaa84f`, 3180 B); noun: `ds:0x68cbb0` = CURRENT-RECORD INDEX of the 304-B entity array. 
 ## M312 (s276, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d`) - the selection check (FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is UNREACHABLE from every caller; the pair is the cursor-tile neighbourhood
 
 | claim (one line each; full rows in the archive) | evidence | conf |
@@ -1636,13 +1636,13 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | STORES: 41 register stores (+0 `and/or/xor [word],imm`, +0 `mov [word],imm32` shapes) — 33 cannot clear bit 31, the ONLY 2 literal clears are the pass's own, 3 caller-mask, 3 opaque; G4c ties the sim's 3 masks to the dump's bytes | `:76-121` | V MU6,7,11,12 |
 | SECOND CLEARER: FUN_005518f0 (`not edx`) / FUN_00551cf0 (4th arg 0) clear a CALLER mask — 66 sites, 46 with a contiguous >=3-push run / 35 literal (20 undecoded, disclosed); `0x9000ff48`@0x59f176 (FUN_0059ec90 sweep) is the only LITERAL mask carrying bit 31 | `:124-132` | V MU9 |
 | UNRESOLVED: the noun of bit 13 (0x2000); 0xdd9bc3c0@0x4da404 (flag = caller's ebx) and the 20 undecoded call sites could clear bit 31; which live event fires the ARM | `:132` | OPEN MU10 |
-## M379 (s340-c2, 24/24) — +0x594 has 2 readers (AI SE scorers); 0x92a7fc is a POINTER — M376 OPEN RETRACTED.
-ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 24/24`** `3a154c8f3aea79fd` (`evidence/m379_field594.txt:75`, x2 `41e0f9c31c18e1cc`).
+## M379 (s340-c2, 31/31) — +0x594 has 2 readers (AI SE scorers); 0x92a7fc is a POINTER — M376 OPEN RETRACTED.
+ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (`evidence/m379_field594.txt:85`, x2 cmp-identical).
 | claim | ev | conf |
 |---|---|---|
-| READERS: 2 loads `[k*0x59c+0x927b24]` — 0x5a1eac (>0 adds `[0x94e488+k*0x82f*4]`, <0 rejects) / 0x54696c (`[0x94d67c+..]`, neg -> msg 0x546983) | `:59-61` | V MU7 MU8 MU11 MU12 |
-| NO static +0x594 store; 0x4ffff2 `[reg+0x594]` = a malloc'd dword array (ds:0x997b20), rival FAILS | `:56-58` | V MU15 |
-| LOOP: seed 0x9280b8, ebx 1, inc before `cmp ebx,8`/jl => 7 bodies (slots 1..7), max store 0x92a268 < 0x92a270 | `:63-65` | V MU1-MU6 MU19 |
-| RETRACTION: 0x92a7fc = terminal POINTER (seed+7*0x59c), terminal only | `:66-67` | V MU18 MU2 MU3 |
-| EXTENT: 8 rec = 0x2ce0 B (save pushes x2; walks bound 0x92a270 x2); no mirror past => no 9th slot | `:70-73` | V MU13 MU14 MU16 MU20 |
+| READERS: 2 loads `[k*0x59c+0x927b24]` — 0x5a1eac (>0 adds `[0x94e488+k*0x82f*4]`, <0 rejects) / 0x54696c (`[0x94d67c+..]`, neg -> msg 0x546983) | `:63-70` | V MU7 MU8 MU11 MU12 |
+| NO static +0x594 store (RMW-inclusive classifier); 0x4ffff2 `[reg+0x594]` = malloc'd dword array (ds:0x997b20) | `:60-62` | V MU15 MU22 |
+| LOOP: CFG interpreter over 0x5a1160..0x5a121c => 7 bodies, 6 back-edges, stores 0x9280b0..0x92a268 | `:72-74` | V MU1-MU6 MU19 MU21 |
+| RETRACTION: 0x92a7fc = terminal POINTER (seed+7*0x59c), never an immediate or store | `:75-76` | V MU18 MU2 MU3 |
+| EXTENT: 8 rec = 0x2ce0 B (save x2; walks end 0x92a270 = scalar global; no rec-8 operand) => no 9th slot | `:80-83` | V MU13 MU14 MU16 MU20 |
 | OPEN: copied-record readers / split displacements not excluded | `:22-23` | OPEN |

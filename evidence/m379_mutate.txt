@@ -1,4 +1,4 @@
-baseline: rc=0 PASS 24/24
+baseline: rc=0 PASS 31 gates
 id    expect    killed  mutant
 ----------------------------------------------------------------------------------------------------
 MU1   G3        yes     seed pointer 0x9280b8
@@ -19,7 +19,9 @@ MU15  G2        yes     the 0x997b20 malloc array evidence
 MU16  G4        yes     walk bound 0x92a270
 MU17  G2        yes     effect index bound 0xb = 11 keywords
 MU18  G3        yes     '0x92a7fc never occurs as an immediate'
-MU19  G3        yes     ALGORITHM: bound counted as an inclusive iteration
+MU19  G3        yes     ALGORITHM: the interpreter's jl condition is inverted
+MU21  G3        yes     ALGORITHM: the bound is treated as inclusive
+MU22  G2        yes     an RMW store to the field
 MU20  G4        yes     second independent walk bound
 ----------------------------------------------------------------------------------------------------
-PASS M379 harness: 20/20 killed
+PASS M379 harness: 22/22 killed
