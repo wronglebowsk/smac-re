@@ -745,10 +745,10 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 
 ## Session 336-chain3 (2026-11-24) — M370: the pref block's writers — 11 cells, 43 stores, 14 fns
 
-- **ACCEPT** `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 16/16`** digest
-  `2ccee487aea07932` (`evidence/m370_pref_writers.txt:175`);
-  `scripts/m370_mutate.py` **22/22 killed, NO-OP 0, coverage 16/16**
-  (`evidence/m370_mutate.txt:27`).
+- **ACCEPT** `python3 -u scripts/m370_pref_writers.py` -> **`PASS M370: 17/17`** digest
+  `2295f90aa47bb981` (`evidence/m370_pref_writers.txt:193`);
+  `scripts/m370_mutate.py` **23/23 killed, NO-OP 0, coverage 17/17**
+  (`evidence/m370_mutate.txt:28`).
 - **CENSUS** (`:7,:16-20`): 85 refs over 76 dwords = 43 STORE / 39 READ / 3 BOUND. Text ==
   bytes only as (site,cell) PAIRS with a rel32 filter (a call's rel32 false-matches 0x92befc
   at 0x52732e). 5 materialisations, all cmp (2 on 0x92bde8 = M332's array end, 3 on 0x92bdfc

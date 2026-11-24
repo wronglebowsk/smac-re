@@ -66,6 +66,20 @@ CELLS = [0x92BDE8, 0x92BDEC, 0x92BDF4, 0x92BDF8, 0x92BEFC,
          0x92BF00, 0x92BF04, 0x92BF08, 0x92BF0C, 0x92BF10, 0x92BF14]
 CENSUS = CELLS + [BOUND_ONLY]
 
+# Every site a TEXT mutant patches.  G9a asserts each of them is EXERCISED by this
+# run (a store/read site, a key push, a materialisation, or within +-2 insns of one),
+# so the mutation harness cannot pass by patching an address the census never reads.
+PINS = {
+    0x58E8C6: "loader Difficulty store", 0x58EC20: "loader More-Preferences store",
+    0x58E8A1: "read key `Difficulty` push", 0x58F159: "write key `Difficulty` push",
+    0x58E9CD: "read key `Faction` push", 0x492464: "APPLY Preferences store",
+    0x57C7B0: "second 0x92bde8 store", 0x58E98E: "loader Top-Menu store",
+    0x4DC8B7: "predecessor of the Semaphore store", 0x48AEA9: "0x92bdfc bound cmp",
+    0x579BC6: "0x92bde8 bound cmp", 0x5109F8: "gap handler Preferences store",
+    0x57C914: "Customize store", 0x58E922: "Map-Type store",
+    0x58EFC4: "Custom-World sweep base",
+}
+
 # M370_ALGO mutants of the CLASSIFIER / TRACER laws:
 #   1 = the leaning of the pairing is flipped (backward <-> forward)
 #   2 = `mov mem,reg` is read as a LOAD (the store/load split is off)
@@ -642,6 +656,29 @@ def main():
     print("  span END 0x%x < sweep start 0x92bf18" % HI)
     gate("G8a", len(esi0) == 1 and len(bound) == 1 and len(wbsweep) >= 2 and HI < 0x92BF18,
          "the block ends at 0x92bf14; the sweep is a separate 7-dword group")
+
+    # ---------------- G9 mutation-pin coverage ----------------
+    kpush = {a for a in order if by[a][2] == "push" and by[a][3]
+             and IMM.match(by[a][3].strip())
+             and int(by[a][3].strip(), 16) in keytext}
+    used = ({a for a, _, _, _ in stores} | {a for a, _, _ in reads}
+            | {a for a, _, _ in matrefs} | kpush
+            | {a for a in order if 0x58EFC0 <= a <= 0x58EFE6})
+    near = set()
+    for a in used:
+        i = idx[a]
+        for k in range(max(0, i - 2), min(len(order), i + 3)):
+            near.add(order[k])
+    pins = PINS if ALGO != "6" else {}
+    print("== G9 mutation-pin coverage (every mutated site is read by this run) ==")
+    bad = []
+    for p in sorted(pins):
+        ok = p in near
+        if not ok:
+            bad.append(p)
+        print("  %-9s %-40s %s" % (hex(p), pins[p], "exercised" if ok else "NOT EXERCISED"))
+    gate("G9a", len(pins) == len(PINS) and not bad,
+         "%d/%d mutated sites are exercised by the census" % (len(pins) - len(bad), len(PINS)))
 
     # ---------------- summary ----------------
     npass = sum(1 for _, ok, _ in gates if ok)

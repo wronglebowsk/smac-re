@@ -1,4 +1,4 @@
-base run: rc=0 gates=16 PASS
+base run: rc=0 gates=17 PASS
   MU1   TEXT 0x58e8c6 G2a  red      the loader's Difficulty store is the only one to 0x92bde8's cell; moved to the pad d
   MU2   TEXT 0x58ec20 G6b  red      the loader STORES More Preferences (a load would leave the cell unwritten)
   MU3   TEXT 0x58e8a1 G5a  red      the read-side key VA is a DIFFERENT copy from the write-side one (same text)
@@ -19,9 +19,10 @@ base run: rc=0 gates=16 PASS
   MA3   ALGO 3     G1a  red      the byte scan reads the disp32 little-endian
   MA4   ALGO 4     G1a  red      a rel32 operand is not an address reference
   MA5   ALGO 5     G4c  red      the pairing uses the CALL SHAPE, not the nearest string push
+  MA6   ALGO 6     G9a  red      every site a mutant patches is exercised by the census
   MG0   INPUT empty cache                   ok
   MU0   NOOP  identical patch               detected
 
-KILLED 22/22   NO-OP 0
-gate coverage: 16/16 gates have a mutant whose run reached it; unnamed: -
-PASS M370-MUT: 22/22 killed, NO-OP 0, coverage 16/16
+KILLED 23/23   NO-OP 0
+gate coverage: 17/17 gates have a mutant whose run reached it; unnamed: -
+PASS M370-MUT: 23/23 killed, NO-OP 0, coverage 17/17

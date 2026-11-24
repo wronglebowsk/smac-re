@@ -64,6 +64,7 @@ ALGO_MUT = [
     ("MA3", "3", "G1a", "the byte scan reads the disp32 little-endian"),
     ("MA4", "4", "G1a", "a rel32 operand is not an address reference"),
     ("MA5", "5", "G4c", "the pairing uses the CALL SHAPE, not the nearest string push"),
+    ("MA6", "6", "G9a", "every site a mutant patches is exercised by the census"),
 ]
 
 

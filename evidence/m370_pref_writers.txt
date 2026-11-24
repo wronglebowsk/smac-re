@@ -158,6 +158,23 @@ G7a   ok   all three rivals killed on the measured numbers
   writeback mirrors it: ['0x58f352', '0x58f388']
   span END 0x92bf14 < sweep start 0x92bf18
 G8a   ok   the block ends at 0x92bf14; the sweep is a separate 7-dword group
+== G9 mutation-pin coverage (every mutated site is read by this run) ==
+  0x48aea9  0x92bdfc bound cmp                       exercised
+  0x492464  APPLY Preferences store                  exercised
+  0x4dc8b7  predecessor of the Semaphore store       exercised
+  0x5109f8  gap handler Preferences store            exercised
+  0x579bc6  0x92bde8 bound cmp                       exercised
+  0x57c7b0  second 0x92bde8 store                    exercised
+  0x57c914  Customize store                          exercised
+  0x58e8a1  read key `Difficulty` push               exercised
+  0x58e8c6  loader Difficulty store                  exercised
+  0x58e922  Map-Type store                           exercised
+  0x58e98e  loader Top-Menu store                    exercised
+  0x58e9cd  read key `Faction` push                  exercised
+  0x58ec20  loader More-Preferences store            exercised
+  0x58efc4  Custom-World sweep base                  exercised
+  0x58f159  write key `Difficulty` push              exercised
+G9a   ok   15/15 mutated sites are exercised by the census
 == SUMMARY ==
   cells=11 stores=43 reads=39 bounds=3 loader=11 writeback=11 non-loader=32 fns=13
   per cell (stores / writers):
@@ -172,5 +189,5 @@ G8a   ok   the block ends at 0x92bf14; the sweep is a separate 7-dword group
     0x92bf0c Semaphore          5  0x4dc77c:MASKED(and    eax,0x1800000) 0x4dc8c3:MASKED(and    ecx,0x1800000) 0x57cb1e:MASKED(and    ecx,0x1800000) 0x57cc66:MASKED(and    ecx,0x1800000) 0x58ecc9:INI-LOADER
     0x92bf10 Time Controls      2  0x57d276:CARRIED 0x58eff8:INI-LOADER
     0x92bf14 Customize          2  0x57c914:DEF(test) 0x58ed2a:INI-LOADER
-  digest 2ccee487aea07932
-PASS M370: 16/16 gates
+  digest 2295f90aa47bb981
+PASS M370: 17/17 gates
