@@ -28,8 +28,12 @@ ADDR = re.compile(r"^(\s*)([0-9a-f]{6,8}):")
 TEXT_MUT = [
     ("MU1", 0x551ABF, "test bl,0x10", "test bl,0x8", "G2a",
      "the 0x80000108 OR lives inside the test-bl-0x10 (war) branch"),
-    ("MU2", 0x551B11, "or ebx,0x80000108", "or ebx,0x80000100", "G2a",
-     "the war branch sets bit 8 through 0x80000108"),
+    ("MU2", 0x551B11, "or ebx,0x80000108", "or ebx,0x80000100", "G2b",
+     "the war branch sets bit 8 through 0x80000108 (the MEASURED immediate)"),
+    ("MU26", 0x555667, "push 0x88000008", "push 0x88000018", "R2",
+     "FUN_005551e0's pending-vendetta mask is 0x88000008, no war bit"),
+    ("MU27", 0x551B98, "and edx,0xff7fffff", "and edx,0xff7fffef", "G2c",
+     "the 0xff7fffff clear mask keeps 0x10 (only the peace mask clears it)"),
     ("MU3", 0x551A88, "and edx,0xffee7faf", "and edx,0xffee7fae", "G2c",
      "the peace clear mask keeps bit 8"),
     ("MU4", 0x551B17, "and edx,0xfaeef378", "and edx,0xfaeef370", "G2c",
@@ -74,7 +78,7 @@ LAB_MUT = [
 ALG_MUT = [
     ("MU21", "WINDOW = 14", "WINDOW = 3", "G1a",
      "the argument-push lookback window is 14 instructions (0x554426 proves it)"),
-    ("MU22", "ln = 11 + off // 4", "ln = 10 + off // 4", "G5a",
+    ("MU22", "11 + off // 4", "10 + off // 4", "G5a",
      "the label line is 11+elem (line 10 is the count) - tracer mutated"),
     ("MU23", "if m is not None and (m & 0x18)", "if m is not None and (m & 0x10)", "G1a",
      "the host-call classifier selects bit 8 or war 0x10"),
@@ -102,7 +106,10 @@ def mutant_text(addr, old, new, work):
     for i, line in enumerate(src):
         m = ADDR.match(line)
         if m and int(m.group(2), 16) == addr and pat.search(line):
-            src[i] = pat.sub(new, line, count=1)
+            new_line = pat.sub(new, line, count=1)
+            if new_line == line:
+                return None
+            src[i] = new_line
             p = os.path.join(work, "text.txt")
             open(p, "w").write("\n".join(src))
             return p
@@ -129,7 +136,8 @@ def main():
             results.append((name, gate, "NO-OP", claim))
             continue
         ok, red, out, err = run_tool(dict(base_env, M371_TEXT=p))
-        results.append((name, gate, "KILLED" if gate in red else ("SURVIVED" if ok else "CRASH"), claim))
+        verdict = "KILLED" if gate in red else ("SURVIVED" if ok else "CRASH")
+        results.append((name, gate, verdict, claim + ("  [red: %s]" % ",".join(sorted(red)) if red else "")))
         os.unlink(p)
 
     lab_src = open(LABELS, "rb").read().split(b"\n")
