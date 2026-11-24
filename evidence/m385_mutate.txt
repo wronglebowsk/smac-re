@@ -1,0 +1,36 @@
+MU0   KILLED G0 the nine-site population is a measurement                                   
+MU1   KILLED G1 four CONST masks: 0x4dafcf's literal is the reaching def                    
+MU2   KILLED G1 const set {0x1000 x2, 0x2000 x2}                                            
+MU3   KILLED G1 four STACKARG sites in two functions                                        
+MU4   KILLED G1 one ORIMM site: `or al,imm` is the nearest def                              
+MU5   KILLED G2 FUN_0x4dabb0 has ZERO direct callers                                        
+MU6   KILLED G2 FUN_0x4dacc0 has 4 direct callers                                           
+MU7   KILLED G2 pushed arg set {0x20,0x400,0x40000,0x2000000}                               
+MU8   KILLED G2 the 0x400 push is what reaches the pair test                                
+MU9   KILLED G2 no pushed arg carries 0x800                                                 
+MU10  KILLED G2/G4 no arg carries the 0xc00 PAIR                                            
+MU11  KILLED G3 two pre-OR candidates {0x0,0x10}                                            
+MU12  KILLED G3 composed set exactly {0x20,0x30}                                            
+MU13  KILLED R1 no mask is a runtime word (def kinds)                                       
+MU14  KILLED R2 FUN_0x4dabb0 is not live                                                    
+MU15  KILLED R3 0x4dadd0's literal sits after the arg load                                  
+MU16  KILLED R4 `or al` cannot smuggle 0xc00 high bytes                                     
+MU17  KILLED R5 the wrapper's callers bound the mask                                        
+MU18  KILLED G4 NO site can contain 0x800 (bit classifier)                                  
+MU19  KILLED G4 exactly TWO 0x400 sites                                                     
+MU20  KILLED G6 digest pins the verdict table                                               
+MA1   KILLED ALGO: calls clobber callee-saved edi (def tracer)                              
+MA2   KILLED ALGO: `or al` path join ignored (classifier)                                   
+MA3   KILLED ALGO: 0x400 and 0x800 read as one bit (bit classifier)                         
+MA4   KILLED ALGO: body bounded by the ebp frame, blind to the early ret (attribution)      
+MA5   KILLED ALGO: same attribution law, cross-checked against index.csv                    
+MA6   KILLED ALGO: every forward branch counts as an entry (dominance law)                  
+MA7   KILLED ALGO: a mis-derived bit column diverges between the two digests                
+MU21  KILLED G1 dominance: a branch injected into the def-site gap                          
+MU22  KILLED G2 each call carries exactly one pushed argument                               
+MU23  KILLED G2 the censused file is the pinned 3,067,904-B terran.exe                      
+MU24  KILLED G8 the total 0x400-only reader count is counted, not asserted                  
+MU25  KILLED G8 population 15 -> 17                                                         
+
+33/33 mutants killed
+PASS M385-mutate: 33/33

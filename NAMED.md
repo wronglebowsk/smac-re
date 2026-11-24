@@ -1413,15 +1413,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | OPEN: the game noun of +0x25..+0x28; whether the +0x30 bit2 stamp is the prototype build (INFERRED); NAMED M312 rotated VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py --verify` PASS) | - | lead |
 
 ## M355 — VERBATIM at `docs/named-archive-m368-rows.md` (sha1 `55fb00f1153bf459`, 1004 B)
-## M364 (s334-chain2, STATIC 24/24) — the faction-relations bits have NOUNS: 0x1 = PACT, 0x8 = AT WAR (V, string-keyed); the other 11 are standing flags (INF). ev `evidence/m364_bitnouns.txt:131`
-| 13 ids = 11 single bits of rel[fac][tgt]+0x18 + 2 of +0x38; only 0x8/0x2000 repeat (directional A/B copies); the sync block's index chain EMULATES to fac*0x82f+tgt, x4 == the predicate's imul 0x20bc | `:3-22` | V MU1,2,3,4,18 |
-| `FUN_00426d60(fac,tgt,mask)` = `(rel & mask)!=0`: 17 insns (window count), `imul 0x20bc`, 0 stores; 232 call sites, 214 constant, 18 unresolved | `:24-44,:46-88` | V MU5,6,7,ALG |
-| 19 single-bit asks + 16 composites, each composite an OR of bits also asked alone (0x800 alone: never); 0x1 = 53 sites / 14 fns = the maximum | `:52-88,:175` | V MU8,9,12 |
-| **0x1 = PACT**: the end-pact case block asks mask 1 -> "DONTHAVEPACT"/"REALLYENDPACT" -> `FUN_00530af0(...,1)`; ~~**0x8 = AT WAR**~~ **RETRACTED by M369: 0x8 = COMMLINK** — the declare-vendetta block only TESTS mask 8 (both directions) as a guard and stores nothing; see `## M369` | `:131-134,:172-174` | V MU10,11,ALG2 / M369 |
-| writers: `test 0x7 -> or 0x1100000`, `test 0x10 -> or 0x8040` (`0x5518f0`); apply pushes 4 bulk masks — 0x1f SETS {1,2,4,8,10}, 0x1f89 SETS {1,8,0x400,0x1000}, 0x2043c20 SETS the other 6, 0xdd9bc3c0 CLEARS all 11 | `:177-194` | V MU13,19,14 |
-| rivals refuted ON THE NUMBERS: 3-bit enum (16/19 asks outside 0x7), ordinals, "0x1 is vendetta" (0x1's block carries 0 vendetta keys), "one 16-bit field" (the parsed rows read 2 dwords 8 dwords apart) | `:202-206` | V MU16,15,17,20 |
-| ACCEPT `python3 -u scripts/m364_bitnouns.py` -> 24/24 `f6d006d0281ac189` x2; harness 23/23 (22 gate mutants + MU0 NO-OP control; every gate mutated) | `evidence/m364_bitnouns.txt:208`, `evidence/m364_mutate.txt:25` | V MU0 |
-| INF: nouns of 0x2,0x4,0x10,0x20,0x400,0x1000,0x2000,0x40000,0x2000000 and dword B's 0x8/0x2000 | - | INF |
+## M364 (s334-chain2, STATIC 24/24) — the faction-relations bits have NOUNS: 0x1 = PACT, 0x8 = AT WAR (V, string-keyed); the other 11 are standing flags (INF). ev `evidence/m364_bitnouns.txt:131` - FULL rows VERBATIM at `docs/named-archive-m385-m364-rows.md` (sha1 `09e3ab976eac1c1e47bfca55e930439b54501bb2`, 1967 B); this stub governs.
 ## M365 - VERBATIM at `docs/named-archive-m377-m365-rows.md` (sha1 `88284d0d000d5d5b`, 1005 B): 0x94d5dc = per-(fac,tgt) dword at record +0x1ac, 23 sites 8W/15R, zeroed by the writer / ++ on contact / read as a DEADLINE; noun INF. ev `evidence/m365_pair_slot.txt:142`
 ## M367 (s335-c3, 27/27) — the 13 relations labels ARE labels.txt lines: element = off/4, line = 10+element. ACCEPT `python3 -u scripts/m367_label_index.py` -> **`PASS M367: 27/27`** `a48d5dd630542166` (`evidence/m367_label_index.txt:104`, digest `:105`); harness 30/30 (`evidence/m367_mutate.txt:36`). `:N` = line of that evidence.
 | `0x997b20` = heap LINE-POINTER array; one body (0x614681) runs count(0x997b24) -> `shl 2` -> alloc -> store, and 0x997b24 takes the 0x5ea484 return (atoi of the line read) | `:3-14` | V MU1,2,3,25,26 |
@@ -1639,7 +1631,19 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | 0x5552ff = lone 0x400-only -> gates M378's proposal roll; 0x560b77 = lone 0xc00-only | `:22` `:46` | V MU7 MU9 MU22 |
 | the ask: `(pair & mask) != 0` = an accord standing -> veto hostile action (0x4ec9c3 -> 0x4ed94e; 0x5859ae -> 0x587078) or cooperative selector (0x563165, 0x56a8a2, 0x523a7c) | `:75` | V MU16 MU23 MU11 / INF for the action nouns |
 | hosts: the 15 span 8 functions (5 for the named 6); AI hub FUN_0055f650 holds 5 of 15; 2095-fold proved at all 5 inline sites (seed mov + register used as the index) | `:107` `:100` | V MU12 MU14 MU15 MU19 |
-| OPEN: 9 dynamic-mask inline sites (`test [mem],reg`) unread; register-through-copy / stack-copy readers and uses beyond the 8-insn window unwalked | `:9` | OPEN |
+| 9 dynamic-mask sites CLOSED by M385: no site can ask 0x800 or the 0xc00 pair; 0x400 IS asked at 0x4dacf7/0x4dad22 (so 0x5552ff is not alone) | `:9` | V M385 |
+| OPEN: register-through-copy / stack-copy readers and uses beyond the 8-insn window (M385 walked only the 9 sites) | `:9` | OPEN |
+## M385 (s342-c3) - nine dyn-mask 0xc00 sites: 7 PROVEN + 2 DEAD-INF; no 0x800, no 0xc00 pair; 0x400 ALONE at two (M382 sole-0x400 RETRACTED). `scripts/m385_mask_walk.py` -> **`PASS M385: 44/44`** `0103209f070e60f7` (`evidence/m385_mask_walk.txt:140`).
+| claim | ev | conf/mutant |
+|---|---|---|
+| 4 CONST, 4 STACKARG (`[ebp+8]`, literal push), 1 ORIMM; defs dominate | `:17-26` `:35` `:37-52` | V MU1-4 MU21-22 MA1 MA6 |
+| 4 literal sites in FUN_004dadd0 (entry law; index.csv 9/9) | `:22-25` `:112-120` | V MU2 MA4 MA5 |
+| FUN_004dabb0: 0 call insns, 0 dword refs -> DEAD-INF | `:41-43` | V MU5 / INF |
+| FUN_004dacc0: 4 callers push {0x20,0x2000000,0x400,0x40000} -> 0x400 ALONE at 0x4dacf7/0x4dad22 | `:45-48` `:99` | V MU6-10 MU24 |
+| RETRACTION: 0x5552ff not the sole 0x400 reader (3 total, pop 15->17) | `:124-131` | V MU24-25 |
+| 0x574a66 masks {0x20,0x30} | `:59-82` | V MU11 MU12 MA2 |
+| 0x800 / 0xc00 pair at no PROVEN site | `:96-98` | V MU18 MA3 |
+| OPEN: FUN_004dabb0 entry; 0x551cf0 arg noun | - | OPEN |
 ## M386 (s342-c4, 55/55) — +0x94d820 = X of a per-faction PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's guard reads the PARTNER row. ACCEPT `scripts/m386_marker_pair.py` `401580f3c8ad292e` (`evidence/m386_marker_pair.txt:143`), 15 mutants (`evidence/m386_mutate.txt:19`). `:N` = same file.
 | claim | ev | conf |
 |---|---|---|

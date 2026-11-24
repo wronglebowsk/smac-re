@@ -705,3 +705,30 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **INFERRED**: the marker = the faction's "unit-of-interest" tile (best unit by distance 0x8f0d34; HUD
   highlights the unit there; 0x5a5776 clears it). Which unit, and why the arm reads the PARTNER's, stay OPEN.
 - **NAMED**: rotated settled `## M342` VERBATIM to `docs/named-archive-m342-rows.md` (verify PASS 9/9).
+
+## Session 342-chain3 — M385: nine dynamic-mask sites resolved; no 0xc00, 0x400 at two (M382's sole-0x400 reader RETRACTED)
+
+- **ACCEPT** `python3 -u scripts/m385_mask_walk.py` -> **`PASS M385: 44/44`** `0103209f070e60f7`
+  (`evidence/m385_mask_walk.txt:140`), re-run identical (`evidence/m385_twice.txt`, cmp);
+  `scripts/m385_mutate.py` **33/33 killed** (`evidence/m385_mutate.txt:36`). Static only.
+- **DEF-USE** (`:17-26`): 4 LITERAL sites - 0x1000 @0x4dafcf (0x4db003/0x4db01f), 0x2000
+  @0x4db035 (0x4db063/0x4db07f); the nearest def DOMINATES each site (no branch enters the
+  def-site gap, `:35`).
+- **STACK-COPY** (`:18-21`,`:37-52`): 4 sites take edi = `[ebp+8]` (`ret 0x4`, one literal
+  push each). FUN_004dacc0: 4 callers push {0x20,0x2000000,0x400,0x40000}; FUN_004dabb0:
+  0 call insns + 0 dword refs of 0x4dabb0 in 3,067,904 B -> **DEAD-INF** (2 sites excluded
+  from the proven set).
+- **REGISTER SITE** (`:59-82`): 0x574a66 masks `(0x0|0x10)|0x20` = **{0x20,0x30}**.
+- **VERDICT** (`:86-95`): 7 PROVEN + 2 DEAD-INF; 0x800 at no PROVEN site; the 0xc00 pair at no
+  PROVEN site; **0x400 asked ALONE at 0x4dacf7/0x4dad22** (push 0x400 @0x4db0aa, one test,
+  two je paths). M382's "0x5552ff = sole 0x400 reader" is **RETRACTED**, counted against
+  M382's own PASS evidence: 1+2 = 3, population 15 -> 17 (`:124-131`).
+- **PITFALLS**: (1) arg = `[ebp+8]` for a `ret 0x4` callee. (2) A flat-dump boundary is
+  neither the ebp prologue nor the last `ret` (0x4dad40 ends 0x4dadc2;
+  FUN_004dadd0 is frameless). Entry = call-target UNION prologue,
+  checked vs index.csv (`:112-120`). (3) `or al,imm` is a partial write: map al->eax.
+  (4) M382's 0x94d448 count (653) calibrates the dword census.
+- **REVIEW (10 findings)**: dominance-gated def tracer; caller decoder requires `ret 0x4`
+  + one literal push; exe size asserted; "0x400 alone" == mask 0x400; population COUNTED
+  from M382's evidence; second-derivation digest; rotate `--verify` full sha1.
+- **OPEN**: FUN_004dabb0's entry mechanism (INF) and 0x551cf0's boolean-arg noun.
