@@ -526,9 +526,19 @@ build track. Protocol, validated end to end:
   DELETION, they are TRACKED (the fire committed them) — restore with `git checkout -- <paths>` and leave
   them in the repo; moving a tracked file out dirties the tree instead of cleaning it. **In the linked worktree `start` then dies at
   `git checkout main` — `fatal: 'main' is already used by worktree at /home/paul/reverse/smac`; create the
-  branch directly instead (`git checkout -b milestone/<ID> origin/main`) and continue.** Put that in the
-  chain-2 kickoff or the fire spends calls rediscovering it. A lane's PR showing `CONFLICTING` means main
-  moved under it — report it as a state; the fire rebases, the parent neither merges nor force-pushes.
+  branch directly instead (`git checkout -b milestone/<ID> origin/main`) and continue.**  A lane's PR showing `CONFLICTING` means main moved under it — report it as a state, not a merge. **But
+  the fire can die INSIDE that merge, and the lane is then NOT closed:** `git status` in the lane worktree
+  shows `UU NAMED.md / NEXT_PROMPT.md / SESSION_CURSOR.md` with `M SESSION_NOTES.md` already staged and the
+  merge commit uncommitted/unpushed. The PARENT finishes it (force-push is blocked, and waiting for the
+  lane's next tick is a day out): resolve each hunk keeping BOTH sides (the other lane's block/line first,
+  this lane's after it; the single-line `SESSION_CURSOR.md` keeps this lane's row, marked
+  `merge pending`), assert `grep -c '<<<<<<<\|>>>>>>>'` is 0 in each file, re-run `gate.py --base
+  origin/main` (its `conflict markers: none` line) AND the lane's acceptance (must reprint the pinned
+  digest), `git add` the three files, `git commit --no-edit`, push, then wait for `gh pr checks` to print
+  `pass` and `gh pr view --json mergeable` to say `MERGEABLE` before `gh pr merge <n> --squash`. Put "if
+  main has moved, merge origin/main in keeping BOTH sides and FINISH the merge before reporting" in that
+  lane's kickoff — a fire that stops at the conflict is indistinguishable from a clean lane until you
+  read its worktree.
   **GitHub also schedules NO PR run while the PR is dirty**, so `no checks reported` on a conflicting
   branch is the conflict, not an outage: merging origin/main in flips it to MERGEABLE and the run appears
   on the push (`references/git-workflow.md` §A dirty PR).
