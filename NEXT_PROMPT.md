@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B33 MERGED s330 `b89b9e6bd940e8d3`; M355 MERGED s329-c3. Old header/enumerations/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B33 + M54A-M355; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (B33 MERGED s330 `8cb969b` (`b89b9e6bd940e8d3`); M355 MERGED s329-c3. Old header/enumerations/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B33 + M54A-M355; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
