@@ -187,6 +187,46 @@ Greptile caught it). The only law is the query: `git log --oneline -2`, `git cat
 before claiming it, and prove loss before re-authoring - re-writing a change whose commit still exists makes a
 duplicate you then have to explain in the PR body.
 
+## A squash can silently DELETE shared registry rows — audit NAMED after every merge
+
+**A squash merge takes the BRANCH's copy of a shared doc, so a milestone branch cut before other
+merges can remove rows from `NAMED.md` while the gate stays GREEN.** The budget check reads size, not
+continuity: one milestone squash took the registry from 246,635 B / 109 headings to 147,418 B / 76
+headings, deleting 34 blocks (M311-M334, B22-B29) of which only the single block its rotation had
+archived was legitimately gone. Nothing in the gate, the PR checks or the fire's own report notices.
+
+After EVERY merge, diff heading identity against the pre-merge base — not the byte size:
+
+```bash
+git show <base>:NAMED.md | grep '^## ' | sort > /tmp/named_before
+grep '^## ' NAMED.md | sort > /tmp/named_after
+comm -23 /tmp/named_before /tmp/named_after   # must be empty, or exactly the block archived this merge
+```
+
+Restore every dropped section VERBATIM from the base commit at its original anchor (keep the current
+head's new blocks and stubs; do not reflow or "tidy" the restored text), then run the gate and land it
+as a docs-only PR — the registry is what the next fire greps, and a missing block is invisible to every
+check. A fire's claim about the registry's size is not evidence: measure `grep -c '^## ' NAMED.md` and
+`wc -c NAMED.md` at HEAD.
+
+## A dirty PR gets NO CI run
+
+**GitHub schedules no `pull_request` run while the PR's `mergeable_state` is `dirty`.** A branch that
+fell behind main reads `CONFLICTING`, and every pushed head then gets zero runs — `gh pr checks` prints
+`no checks reported` indefinitely and looks exactly like an Actions outage. Waiting, empty-committing
+and close/reopen do not fire it.
+
+Check the state before diagnosing anything: `gh pr view <n> --json mergeable,mergeableState`. If it is
+CONFLICTING, `git merge origin/main` into the branch (resolve shared-doc conflicts keep-both), push —
+the run appears on the new head within seconds. Only after the PR is MERGEABLE and the CURRENT head has
+a green run is it mergeable; a local gate is not a substitute, so leave it open and report the blocker
+if the run still does not appear.
+
+**In a linked worktree `milestone.py merge` lands the PR and then dies on its trailing
+`gh pr merge --delete-branch`** with `'main' is already used by worktree at <primary>`; the merge is
+server-side and final. Verify with `gh pr view <n> --json state,mergedAt,mergeCommit` and delete the
+branch from the primary checkout — never re-run the merge to "finish" it.
+
 ## The checkpoint gate compares header IDENTITIES, not section counts (s275, PR #290)
 `check_checkpoint` passes when `set(session_sections(HEAD)) - set(session_sections(base))` is non-empty, so
 appending bullets to the current `## Session N` section does **not** satisfy it. A follow-up PR that edits both
