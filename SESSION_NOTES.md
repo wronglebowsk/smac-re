@@ -792,3 +792,28 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   every `jne`); keep the tracked set closed (eax/ax/[ebp-0x28]) or the loop state space
   explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
 - **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).
+
+
+## Session 343-chain4 — M391: `and 0xfaeef378` is 3 gated masks x 2 rows, not a blanket; the 0xc00 clears use the other API half
+
+- **ACCEPT** `python3 -u scripts/m391_blanket_clear.py` -> **`PASS M391: 51/51`** `76148839fd85b66e`
+  (`evidence/m391_blanket_clear.txt:134`, `cmp`-identical `evidence/m391_twice.txt`); harness
+  **12/12** (`evidence/m391_mutate.txt:18`). Static, zero box.
+- **M384 CORRECTED, not retracted**: "one arm ANDs 0xfaeef378" is **3 masks x 2 rows = 6 ANDs**
+  (`:12-28`): 0x551a88/af `0xffee7faf`, 0x551b17/42 `0xfaeef378`, 0x551b98/bf `0xff7fffff`; each
+  arm sits under a DIFFERENT mask-argument guard (`test bl,0x7` / `0x10` / `0x17`, `:29-40`). Only
+  the WAR arm touches 0xc00; the treaty/truce arm PRESERVES it.
+- **NOT EVERY 0xc00 CLEAR IS THERE** (`:41-50`): bit10 has **5** immediate-mask clearers in **2**
+  functions -- 0x551b17 0x551b42 (FUN_00551a20) + 0x55538c `0xfffdf3ff`, 0x5553e7 0x5556e1
+  `0xfffdfbff` (FUN_005551e0, M378's arm); bit11 has 3. All register RMWs off a `mov` load.
+- **THE EXPLICIT CLEARS ARE THE OTHER HALF** (`:59-73`): both 0xc00-mask clears are
+  `FUN_00551cf0(...,set=0)` -- 0x4db11b (0xc20), 0x519bb5 (0xc00) -- a `not`+`and reg,reg` with
+  **zero immediates**. 0 of **65** resolved masks to FUN_00551a20 carry 0xc00, so all **24**
+  WAR-arm callers drop the pair; the 5 setters use FUN_00551cf0 set=1.
+- **SURVIVAL** (`:74-119`): WAR net `0xfa6e7328`, TRUCE net `0xff6e7faf` (0xc00 kept). Vectors
+  (0x80000f18,0x10)->0x80000318, (,0x4)->0x80000f0c, (,0x11)->0x80000319; 0x80000108 survives.
+- **PITFALLS**: the +0x20 sibling `0x94d468` has its own 2 ANDs in FUN_00551c40 (a field-blind scan
+  reads them as pair clears); a whole-binary census over-counts (46 vs 6), scope to the body;
+  `and r,imm` KEEPS every bit set in imm, so cleared = complement.
+- **OPEN**: 3 opaque set=0 masks to FUN_00551cf0 (0x4dad30/0x4db02d/0x4db08d) could still name
+  0xc00; 0x400/0x800 nouns stay INFERRED.

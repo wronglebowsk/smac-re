@@ -52,3 +52,24 @@ fired manually on a paused schedule so per-round deltas are clean:
 Estimate from the last 2-3 rounds' settled deltas, not the batch average (the average over-states late cost).
 When the collapse sets in, a batch of this shape spends roughly a point every 3-4 rounds — say so plainly
 rather than re-quoting an early-round rate.
+
+## Cost per merged unit, and projecting a finish
+
+Convert the meter into the currency the user actually asks about — merges:
+
+```
+pp_per_merge = (day_now - day_at_round_start) / merges_landed_in_round
+merges_left  = (80 - day_now) / pp_per_merge
+```
+
+Measured on this repo at six lanes: **0.73-0.89 pp per merged milestone**, i.e. a 100-point day window
+affords roughly **17 merges** before the 80% stop, and one six-lane round is ~6 merges in 35-50 min.
+The week gauge moves ~0.1-0.2 pp/merge and the month ~0.2 pp/merge, so the DAY window binds first and the
+month stays comfortable — say that explicitly instead of quoting one number.
+
+For "how long until the project is done", state the finish line first (R3/G4 parity, G1 auto-play, G3 90%
+coverage are orders of magnitude apart — `ROADMAP.md`), then convert the remaining scope into MERGES and divide
+by merges-per-window. Two honesty constraints: the chapter estimates in `MILESTONES.md`/`ROADMAP.md` are in
+"sessions" of a coarser unit than today's milestones, so quote a range (this repo: combat + research + AI + UI
+≈ 120-200 milestones), and note that combat/AI cost MORE per milestone than a diplomacy/prefs chapter, so the
+range is optimistic on the low end. Re-estimate per chapter, never extrapolate one chapter's rate across all.
