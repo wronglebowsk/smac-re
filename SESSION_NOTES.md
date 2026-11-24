@@ -709,3 +709,28 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   record[1]+0x58c. Do not read those literals as record bases.
 - Rotated `## M286`/`## M287` VERBATIM -> `docs/named-archive-m376-rows{,2}.md` (sha1
   `25eb67cd987ee782`/`723e6eebf7c77ff8`) for the NAMED cap; both `--verify` PASS.
+
+## Session 340-chain1 — M378: 0x800 = TREATY IN FORCE, 0x20000 = an outstanding treaty request
+
+- **ACCEPT** `python3 -u scripts/m378_bit_nouns.py` -> **`PASS M378: 40/40`**
+  `f0d487d67c35ee80` (`evidence/m378_bit_nouns.txt:103`; re-run byte-identical, sha1
+  `bf5789cfcef3a17a` both runs, `evidence/m378_twice.txt:2-3`); `scripts/m378_mutate.py`
+  **14/14, NO-OP `[]`** (`evidence/m378_mutate.txt:16`). Zero box.
+- **THE ARM B37 COULD NOT NAME** (0x5553e1..0x5553f9, FUN_005551e0): `and edx,0xfffdfbff` then
+  `or edx,0x840` = **sets {0x800,0x40}, clears {0x20000,0x400}**, and the next instruction arms the
+  50-tick lease `[pair+0x94d4c8]=0x32`. B37 proved 0x40 = "SET TREATY", so **0x800 is the durable
+  TREATY-IN-FORCE flag**: this sign arm is its only setter; the PACT path (`test al,0x1`@0x555371,
+  `and 0x20c00`) clears it, and M366's war mask `0xfaeef378` clears it.
+- **0x20000, the other leg**: `jge 0x555405` on `[pair+0x94d820] >= 0` reaches a 2-insn arm that
+  only `or eax,0x20000` on the SAME load (0x55536b); that field takes a **-1 sentinel** (0x55fce0)
+  => INFERRED "a treaty request is OUTSTANDING" (both solve arms clear it).
+- **0x400 is never asked alone**: all 5 field-inline tests carrying it (`0xc10 0xc11 0xc30 0x40c30`)
+  carry 0x800 too; register-form readers `test ah,0x4`@0x5552ff (gates RNG 0x64c6f0) + 0x5468c7.
+  **0x20000 has 0 direct readers** (MU13).
+- **FUN_00552970 is NOT a 0x800 setter** (B37's lead): its `or al,0x40`@0x552ce4 sets 0x40, and the
+  preceding store 0x552cca clears only 0x20. The window's two `and 0xfffff3ff` (0xc00) land on the
+  **sibling field +0x94d468** - which has its own 0x400/0x800 bits.
+- **CAP**: NAMED 247,824 -> 245,647 B; `## M366`+`## M319` rotated VERBATIM into
+  `docs/named-archive-m378-rows.md` (19 rows=19 bullets, `--verify` PASS).
+- **PITFALL**: a jcc's operand is one field, so `src()` (splits on comma) returns "" and a
+  branch-target scan finds zero predecessors; use `imm2(i.ops)` for one-operand mnemonics.

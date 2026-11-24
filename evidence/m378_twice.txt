@@ -1,0 +1,4 @@
+M378 twice-run check
+sha1 run1 bf5789cfcef3a17a4a4fbdf8abf1cfa6b7be8b52
+sha1 run2 bf5789cfcef3a17a4a4fbdf8abf1cfa6b7be8b52
+diff stdout run1 run2: EMPTY (rc=0)

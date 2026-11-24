@@ -1655,3 +1655,12 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | STORES: 41 register stores (+0 `and/or/xor [word],imm`, +0 `mov [word],imm32` shapes) — 33 cannot clear bit 31, the ONLY 2 literal clears are the pass's own, 3 caller-mask, 3 opaque; G4c ties the sim's 3 masks to the dump's bytes | `:76-121` | V MU6,7,11,12 |
 | SECOND CLEARER: FUN_005518f0 (`not edx`) / FUN_00551cf0 (4th arg 0) clear a CALLER mask — 66 sites, 46 with a contiguous >=3-push run / 35 literal (20 undecoded, disclosed); `0x9000ff48`@0x59f176 (FUN_0059ec90 sweep) is the only LITERAL mask carrying bit 31 | `:124-132` | V MU9 |
 | UNRESOLVED: the noun of bit 13 (0x2000); 0xdd9bc3c0@0x4da404 (flag = caller's ebx) and the 20 undecoded call sites could clear bit 31; which live event fires the ARM | `:132` | OPEN MU10 |
+## M378 (s340-c1) — 0x800 = TREATY IN FORCE, 0x20000 = an OUTSTANDING request; FUN_00552970 is NOT a 0x800 setter. ACCEPT `scripts/m378_bit_nouns.py` **`PASS 40/40`** `f0d487d67c35ee80` (`evidence/m378_bit_nouns.txt:103`; x2 in SESSION_NOTES), 14/14 mutants (`evidence/m378_mutate.txt:16`). `:N` = evidence line.
+| claim | ev | conf/mutant |
+|---|---|---|
+| sign arm (`and 0xfffdfbff`+`or 0x840`) sets {0x800,0x40}, clears {0x20000,0x400}, arms 0x94d4c8=0x32 | `:18-27` | V MU1,2,12 |
+| arm B `or eax,0x20000`@0x555405 on the SAME load; only entry `jge` on [pair+0x94d820]>=0 | `:29-49` | V MU4,5 |
+| PACT `test al,0x1`@0x555371 -> `and 0x20c00` clears all three | `:51-59` | V MU6,7 |
+| 0x20000: 0 readers; 0x800 only in the 0xc00 cluster + 0x810; 0x400 + `test ah,0x4`@0x5552ff | `:61-76` | V MU8,11,13 |
+| FUN_00552970: 0x552ce6 sets 0x40, 0x552cca clears 0x20; both `and 0xfffff3ff` hit SIBLING +0x94d468 | `:78-89` | V MU9,10 |
+| nouns: 0x800 V, 0x20000/0x400 INFERRED | `:18-49` | INF |
