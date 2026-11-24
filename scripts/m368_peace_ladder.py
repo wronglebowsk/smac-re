@@ -45,8 +45,11 @@ EXPECT_KEYS = {0x4: "ENEMYTRUCE", 0x2: "ENEMYTREATY", 0x1: None}
 LABEL_ELEM = {0x4: 643, 0x2: 644, 0x1: 645}
 EXPECT_LABEL = {0x4: "Truce", 0x2: "Treaty", 0x1: "Pact"}
 TRIO = (0x553C41, 0x553F10, 0x554165)
-CLEAR_A = 0x00118050          # `and edx,0xffee7faf` == ~CLEAR_A
-WAR_A = 0x05110C87            # `and edx,0xfaeef378` == ~WAR_A
+PEACE_AND = 0x551A88          # `and edx,<peace-clear>` in FUN_00551a20
+WAR_AND = 0x551B17            # `and edx,<war-clear>` in FUN_00551a20, inside `test bl,0x10`
+POSTER = 0x483470             # the message poster FUN_005076d0 uses for VENDETTAWARNING
+CLEAR_A = None                # derived: `and edx,<imm>` at PEACE_AND, decoded from its own bytes
+WAR_A = None                  # derived: `and edx,<imm>` at WAR_AND
 REGS = ("eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp")
 
 
@@ -138,6 +141,18 @@ def pushes_before(a, n=16):
     return out
 
 
+def prev_call(a, maxn=12):
+    """(addr, target) of the nearest call before a, and (None, None) if there is none."""
+    for k in range(1, maxn):
+        b = around(a, -k)
+        if b is None:
+            break
+        m = re.match(r"call\s+0x([0-9a-f]+)$", at(b))
+        if m:
+            return b, int(m.group(1), 16)
+    return None, None
+
+
 def mask_of(a):
     """The mask arg of a 3-arg cdecl call, or None when the push shape is not (imm, reg, reg)."""
     p1, p2, p3 = around(a, -1), around(a, -2), around(a, -3)
@@ -158,10 +173,47 @@ def call_sites():
     return out
 
 
+def img_dims():
+    """[(name, va, vsize, raw_ptr, raw_size)] from the PE section table — never assume va-0x400000."""
+    d = open(EXE, "rb").read()
+    pe = int.from_bytes(d[0x3C:0x40], "little")
+    nsec = int.from_bytes(d[pe + 6:pe + 8], "little")
+    opt = int.from_bytes(d[pe + 20:pe + 22], "little")
+    base = pe + 24 + opt
+    out = []
+    for i in range(nsec):
+        b = base + i * 40
+        name = d[b:b + 8].rstrip(b"\0").decode("latin-1")
+        vs, va, rs, ro = (int.from_bytes(d[b + o:b + o + 4], "little")
+                          for o in (8, 12, 16, 20))
+        out.append((name, va, vs, ro, rs))
+    return out
+
+
+SECTIONS = []
+
+
+def vma_off(vma):
+    rva = vma - 0x400000
+    for name, va, vs, ro, rs in SECTIONS:
+        if va <= rva < va + max(vs, rs):
+            return ro + (rva - va)
+    raise KeyError(hex(vma))
+
+
 def image_string(vma):
     with open(EXE, "rb") as f:
-        f.seek(vma - 0x400000)
-        return f.read(64).split(b"\0")[0].decode("latin-1")
+        f.seek(vma_off(vma))
+        s = f.read(64).split(b"\0")[0].decode("latin-1")
+    return s
+
+
+def and_imm(a):
+    """Decode `and <reg>,imm32` at a straight from the dump's own bytes."""
+    b = BYTES.get(a, "")
+    if not b.startswith("81e2") or len(b) < 10:
+        raise ValueError("0x%x is not `and reg,imm32` (bytes %r)" % (a, b))
+    return int.from_bytes(bytes.fromhex(b[4:]), "little")
 
 
 def bits_cleared(mask):
@@ -172,7 +224,9 @@ def main():
     load()
     global STARTS
     STARTS = fn_starts()
+    SECTIONS[:] = img_dims()
     print("M368 — nouns of the faction-relations bits 0x2 and 0x4 (%d insns parsed)" % len(INSN))
+    row("PE sections: %s", " ".join("%s va=0x%x raw=0x%x" % (n, va, ro) for n, va, vs, ro, rs in SECTIONS))
 
     # ---------------- G0 ----------------
     print("\nG0 anchor instructions")
@@ -211,6 +265,8 @@ def main():
                 "the bare peace masks that reach a writer are exactly {1,2,4}")
     ok1 &= gate("G1c", 0x5537D0 in fns and all(fn_of(a) == 0x5537D0 for a in TRIO),
                 "FUN_005537d0 hosts a 0x4 site and a 0x2 site")
+    ok1 &= gate("G1d", len(peace) == 8 and fns == [0x4DADD0, 0x523B20, 0x53F9F0, 0x5537D0],
+                "exactly 8 bare-peace sites over exactly those 4 hosts")
 
     # ---------------- G2 ----------------
     print("\nG2 mask vs the message key posted in the same block")
@@ -218,20 +274,30 @@ def main():
     for a, t, m in peace:
         key = None
         kv = None
-        for pa, v in reversed(pushes_before(a, 16)):
-            if 0x68F000 <= v < 0x692000:
+        pc, pct = prev_call(a)
+        ppc, _ = prev_call(pc) if pc is not None else (None, None)
+        for pa, v in reversed(pushes_before(a, 20)):
+            if 0x68F000 <= v < 0x692000 and pc is not None and ppc is not None and ppc < pa < pc:
                 kv, key = v, image_string(v)
                 break
-        row("%s mask %s key %s -> %-12s host %s", hex(a), hex(m),
-            "None" if kv is None else hex(kv), key, hex(fn_of(a)))
+        row("%s mask %s key %s -> %-12s host %s  prev-call %s",
+            hex(a), hex(m), "None" if kv is None else hex(kv), key, hex(fn_of(a)),
+            "none" if pc is None else hex(pct))
         if a in TRIO:
             g2 &= gate("G2-%x" % a, key == EXPECT_KEYS[m],
                        "trio site mask 0x%x carries `%s` (expected `%s`)"
                        % (m, key, EXPECT_KEYS[m]))
+            if m in (2, 4):
+                g2 &= gate("G2b-%x" % a, pct == POSTER and kv is not None,
+                           "the key is an argument of the POSTER call 0x483470 that precedes the writer")
     keys = {}
     for a, t, m in peace:
         if a in TRIO:
-            keys[m] = [image_string(v) for pa, v in pushes_before(a, 16) if 0x68F000 <= v < 0x692000]
+            pc, pct = prev_call(a)
+            ppc, _ = prev_call(pc) if pc is not None else (None, None)
+            keys[m] = [image_string(v) for pa, v in pushes_before(a, 20)
+                       if 0x68F000 <= v < 0x692000 and pc is not None and ppc is not None
+                       and ppc < pa < pc]
     row("trio keys: 0x4 -> %s ; 0x2 -> %s", keys.get(4), keys.get(2))
     g2 &= gate("G2x", keys.get(4) and keys.get(2) and keys[4][-1] != keys[2][-1],
                "the 0x4 and 0x2 sites post DIFFERENT .data keys (a swap would redden G2-*)")
@@ -264,17 +330,30 @@ def main():
                 "that upgrade sits in the writer FUN_00551a20 (host %s)" % hex(fn_of(0x551ABC)))
 
     # ---------------- G4 ----------------
-    print("\nG4 exclusion arithmetic: war <-> peace, and which bits a peace write spares")
-    clr = bits_cleared((~CLEAR_A) & 0xFFFFFFFF)
-    war = bits_cleared((~WAR_A) & 0xFFFFFFFF)
-    row("`and 0xffee7faf` (any peace mask) clears %s", " ".join(hex(b) for b in clr))
-    row("`and 0xfaeef378` (mask 0x10, war) clears %s", " ".join(hex(b) for b in war))
+    print("\nG4 exclusion arithmetic, decoded from the two `and` instructions")
+    peace_mask = and_imm(PEACE_AND)
+    war_mask = and_imm(WAR_AND)
+    # the war `and` must sit inside the `test bl,0x10` branch of the same writer
+    war_test = None
+    for k in range(1, 40):
+        a = around(WAR_AND, -k)
+        if a and at(a) == "test   bl,0x10":
+            war_test = a
+            break
+    row("0x%x bytes %s -> mask 0x%08x (peace); 0x%x bytes %s -> mask 0x%08x (war)",
+        PEACE_AND, BYTES[PEACE_AND], peace_mask, WAR_AND, BYTES[WAR_AND], war_mask)
+    row("the war mask's branch head: %s = %s", "-" if war_test is None else hex(war_test),
+        at(war_test) if war_test else "-")
+    clr = bits_cleared(peace_mask)
+    war = bits_cleared(war_mask)
+    row("`and 0x%08x` (any peace mask) clears %s", peace_mask, " ".join(hex(b) for b in clr))
+    row("`and 0x%08x` (mask 0x10, war) clears %s", war_mask, " ".join(hex(b) for b in war))
     ok4 = gate("G4a", 0x10 in clr and 0x1 not in clr and 0x2 not in clr and 0x4 not in clr,
                "a peace write ENDS war (clears 0x10) and spares every peace bit")
-    ok4 &= gate("G4b", {0x1, 0x2, 0x4} <= set(war),
-                "the war write ends all three peace bits - the exclusion runs both ways")
+    ok4 &= gate("G4b", {0x1, 0x2, 0x4} <= set(war) and war_test is not None,
+                "the war write ends all three peace bits, and it sits under `test bl,0x10`")
     ok4 &= gate("G4c", clr == [0x10, 0x40, 0x8000, 0x10000, 0x100000],
-                "the peace-write clear set is exactly those 5 bits (constant pinned)")
+                "the decoded peace-clear set is exactly those 5 bits")
 
     # ---------------- G5 ----------------
     print("\nG5 labels.txt, re-read")
@@ -290,25 +369,46 @@ def main():
                    "bit 0x%x's label element reads `%s`" % (bit, s))
     g5 &= gate("G5b", lines[10 + 866].strip() == "Diplomacy for",
                "control: element 866 = `Diplomacy for` (the page title)")
+    elems = [LABEL_ELEM[b] for b in (0x4, 0x2, 0x1)]
+    row("bit->element map (M367, V: evidence/m367_label_index.txt:30-32) = %s; neighbours `%s`",
+        elems, "/".join(lines[10 + e].strip() for e in range(elems[0] - 1, elems[-1] + 2)))
+    g5 &= gate("G5c", elems == list(range(elems[0], elems[0] + 3)) and
+               lines[10 + elems[0] - 1].strip() == "Clock",
+               "the three elements are consecutive and sit after the `Clock` line")
 
     # ---------------- G6 ----------------
     print("\nG6 FUN_005076d0 same-state classifier")
     tests = [(a, imm(TXT[a])) for a in INSN
-             if 0x50796F <= a <= 0x5079A1 and re.match(r"test\s+cl,0x[0-9a-f]+$", TXT[a])]
+             if 0x50796F <= a <= 0x507998 and re.match(r"test\s+cl,0x[0-9a-f]+$", TXT[a])]
     tests.sort()
+    je_t, jne_t, jumps = [], [], []
     for a, v in tests:
-        row("0x%x test cl,0x%x -> %s -> %s", a, v, at(around(a, 1)), at(around(a, 2)))
+        je, pair, jne = around(a, 1), around(a, 2), around(a, 3)
+        je_t.append(imm(at(je)))
+        jne_t.append(imm(at(jne)) if at(jne).startswith("jne") else None)
+        jumps.append(imm(at(around(a, 4))) if at(around(a, 4)).startswith("jmp") else None)
+        row("0x%x test cl,0x%x -> %s %s -> %s -> %s", a, v, at(je), "0x%x" % imm(at(je)),
+            at(pair), at(jne))
     order = [v for a, v in tests]
     paired = all(re.match(r"test\s+BYTE PTR \[ebp-0xc\],0x[0-9a-f]+$", at(around(a, 2)))
                  and imm(at(around(a, 2))) == v for a, v in tests)
-    numeric = sum(1 for a in INSN if 0x50796F <= a <= 0x5079A1
-                  and TXT[a].split()[0] in ("cmp", "jg", "jge", "jl"))
-    row("tested immediates %s; paired on [ebp-0xc] %s; cmp/jcc in window %d",
-        order, paired, numeric)
+    NUMOP = ("cmp", "sub", "add", "jg", "jge", "jl", "jle", "ja", "jae", "jb", "jbe",
+             "inc", "dec", "shl", "sar", "imul")
+    numeric = [a for a in INSN if 0x50796F <= a <= 0x507998 and TXT[a].split()[0] in NUMOP]
+    hx = lambda x: "-" if x is None else ("0x%x" % x)
+    row("tested %s; je targets %s; jne targets %s; jmp-to-mismatch %s",
+        order, [hx(x) for x in je_t], [hx(x) for x in jne_t], [hx(x) for x in jumps])
+    row("numeric opcodes inside the window: %d %s", len(numeric),
+        [("%s@%x" % (TXT[a].split()[0], a)) for a in numeric])
     ok6 = gate("G6a", order == [0x1, 0x2, 0x4], "the classifier's precedence is 0x1, 0x2, 0x4")
     ok6 &= gate("G6b", paired and len(tests) == 3,
                 "3 tests, each paired with the SAME mask on the other record")
-    ok6 &= gate("G6c", numeric == 0, "no numeric compare in the window: EQUALITY, not a rank")
+    ok6 &= gate("G6c", not numeric, "no numeric opcode in the window: EQUALITY, not a rank")
+    ok6 &= gate("G6d", je_t == [0x507982, 0x50798F, 0x5079A1] and
+                set(jne_t) == {0x5079A1} and jumps[:2] == [0x50799A, 0x50799A],
+                "the chain runs test->je(next test)->pair->jne(match)->jmp(mismatch 0x50799a)")
+    ok6 &= gate("G6e", at(0x50799A) == "mov    DWORD PTR [ebp-0x8],0x1",
+                "0x50799a is the mismatch store `%s`" % at(0x50799A))
 
     # ---------------- G7 ----------------
     print("\nG7 RIVALS")

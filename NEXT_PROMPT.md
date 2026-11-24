@@ -23,7 +23,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B35 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B30`-`## B34` govern).
 **B36**: `track_mode.py` decides; the spine now ends at B35 (who calls the grant family). Author the
-next rung in `BUILD_SPINE.md` BEFORE probing. **DOC CAP: NAMED 246,864/250,000 — ROTATE FIRST.**
+next rung in `BUILD_SPINE.md` BEFORE probing. **DOC CAP: NAMED 247,373/250,000.**
 
 ## THE LEDGER
 
@@ -110,6 +110,6 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M364 (s334-chain2): the relations bits have NOUNS — 0x1 = PACT, 0x8 = AT WAR (V: the end-pact and declare-vendetta case blocks ask those masks); the other 11 INF. 24/24 `f6d006d0281ac189`, harness 23/23. NEXT: 0x10 (37 asks, co-sets 0x8000|0x40) and 0x20 (18 asks, clears dword B's 0xc00).
 - M365 (s334-c3): 0x94d5dc = relations-record slot block+0x1ac (23 sites, 8W/15R): only 0 stored, 3 `++`, 1 `+=2*byte`; 0x94d5bc pairs 5/5; deadlines value+round/50+1, 4 cross-direction cmp. 22/22 `d1d567339ee8c5b2`, harness 26/26.
 - B35 (s335): WHO calls the grant family - 3 sites into the founder (FUN_004cca50/FUN_0059ce10/FUN_0059ec90), 1 into the new-game setup (FUN_005a0fa0); 11 API grants `[6,3,7,27,8,4,6,3,6,3,27]` + 10 mapper grants `[1,3,6,7,3,6,7,26]`; births 3/3 founder vs 1/3 new-game; the record EXISTENCE, not the bit value, is the separator. 11/11 `fa541d0a2445cacf`, harness 18/18. NEXT BUILD B36.
-- M368 (s336-chain1): 0x2 = TREATY, 0x4 = TRUCE — behaviour keys `ENEMYTRUCE`/`ENEMYTREATY` on the mask writes; ladder truce<treaty<pact (pact IMPLIES treaty); FUN_005076d0's classifier is ordered EQUALITY, not a rank. 28/28 `3b115185807f53fc`, harness 27/27. NEXT: the two other peace hosts (0x53fcb3 / 0x523f4c).
+- M368 (s336-chain1): 0x2 = TREATY, 0x4 = TRUCE — behaviour keys `ENEMYTRUCE`/`ENEMYTREATY` on the mask writes; truce<treaty<pact (pact IMPLIES treaty); FUN_005076d0's classifier is ordered EQUALITY. 34/34 `6f4b692777cc3549`, harness 32/32. NEXT: the two other peace hosts (0x53fcb3 / 0x523f4c).
 - M367 (s335-c3): the 13 labels = `labels.txt` lines (element=off/4, line=10+element): 1/2/4/0x10 = Pact/Treaty/Truce/Vendetta, 8 = Commlink, 8 more stance strings, 2 high-dw; title `Diplomacy for`. 27/27 `a48d5dd630542166`, harness 30/30. NEXT: bit 8's noun (Commlink vs M364 AT WAR).
 - M366 (s335-chain2): 0x10 = AT WAR/vendetta in force (V: the declare path FUN_00507ce0->FUN_005076d0 writes 0x10 on both exits, fires VENDETTAWARNING/INCITED; its set-rule clears 1|2|4); 0x20 = the human-branch war record (INF). 26/26 `bc58f707128a8b15`, harness 29/29. NEXT: the noun WORD for 0x20; role of 0x80000000.

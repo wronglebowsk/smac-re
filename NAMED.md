@@ -1651,14 +1651,15 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | ACCEPT `python3 -u scripts/m366_bitnouns.py` -> 29/29 `c36db3d154a5ea1b` x2; harness 32/32 | `evidence/m366_bitnouns.txt:597`, `evidence/m366_mutate.txt:33` | V MU0 |
 | INF: the noun WORD for 0x20 (inferred from the human branch + B-ladder + ending text); 0x80000000's role | - | INF |
 
-## M368 (s336-chain1, STATIC 28/28) — relations bits 0x2 = TREATY, 0x4 = TRUCE (V); the peace ladder is truce < treaty < pact and FUN_005076d0's classifier is an ordered EQUALITY test, not a rank. ACCEPT `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 28/28`** `3b115185807f53fc` x2 (`evidence/m368_peace_ladder.txt:83`); harness 27/27 NO-OP `[]`, 28/28 gates covered (`evidence/m368_mutate.txt:31`). `:N` = line of that evidence.
+## M368 (s336-chain1, STATIC 34/34, review #399 hardened) — relations bits 0x2 = TREATY, 0x4 = TRUCE (V); the peace ladder is truce < treaty < pact and FUN_005076d0's classifier is an ordered EQUALITY test, not a rank. ACCEPT `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 34/34`** `6f4b692777cc3549` x2 (`evidence/m368_peace_ladder.txt:94`); harness 32/32 NO-OP `[]`, 34/34 gates covered (`evidence/m368_mutate.txt:36`). `:N` = line of that evidence.
 | claim | ev | conf |
 |---|---|---|
-| BEHAVIOUR is the discriminating axis: FUN_005537d0 pushes a bare mask to FUN_00551a20 and the block building each call posts a .data key first — 0x553c41/0x4 -> 0x691144 `ENEMYTRUCE`, 0x553f10/0x2 -> 0x691150 `ENEMYTREATY`, 0x554165/0x1 -> no key | `:35-39` | V MU7,8,9 |
-| LABELS: labels.txt element 643/644/645 -> lines 653/654/655 = Truce/Treaty/Pact (control 866 = `Diplomacy for`); bit value runs AGAINST friendship | `:56-66` | V MU15-19 |
-| pact IMPLIES treaty: `test bl,0x1 -> or ebx,0x2` (0x551abc, FUN_00551a20) is the only such upgrade in 781,429 insns; the reverse occurs 0x | `:44-47` | V MU10,11 |
-| war<->peace exclusion both ways: a peace write `and 0xffee7faf` clears exactly {0x10,0x40,0x8000,0x10000,0x100000} and spares all three peace bits; the war write `and 0xfaeef378` clears {1,2,4,...} | `:49-54` | V MU12,13,14 |
-| CLASSIFIER: 0x507975..0x50798f tests 0x1 then 0x2 then 0x4, each paired with the SAME mask on the other side; 0 cmp/jg in the window -> EQUALITY (M366's `rank` WORD retracted, its precedence stands) | `:67-74` | V MU20,21,22 |
-| census: 169 writer call sites; the bare peace masks reaching one are exactly {1,2,4} — 8 sites, 4 hosts (0x4dadd0/0x523b20/0x53f9f0/0x5537d0) | `:13-27` | V MU1-6 |
-| RIVALS refuted: swapped nouns, independent flags, label-text-only, numeric rank, war-unrelated | `:76-82` | V MU23-27 |
-| OPEN: what FUN_0053f9f0 @0x53fcb3 (mask 0x2, no key) and FUN_00523b20 @0x523f4c (mask 0x1) transact | - | lead |
+| BEHAVIOUR is the discriminating axis: FUN_005537d0 pushes a bare mask to FUN_00551a20 and the immediately preceding POSTER call (0x483470) carries the key — 0x553c41/0x4 -> 0x691144 `ENEMYTRUCE`, 0x553f10/0x2 -> 0x691150 `ENEMYTREATY`, 0x554165/0x1 -> no poster | `:37-45` | V MU7,8,9,30 |
+| LABELS: labels.txt element 643/644/645 -> lines 653/654/655 = Truce/Treaty/Pact (consecutive, after `Clock`; control 866 = `Diplomacy for`); bit value runs AGAINST friendship | `:65-72` | V MU15-18,28 |
+| pact IMPLIES treaty: `test bl,0x1 -> or ebx,0x2` (0x551abc, FUN_00551a20) is the only such upgrade in 781,429 insns; the reverse occurs 0x | `:47-50` | V MU10,11 |
+| war<->peace exclusion both ways, from the DECODED instructions: peace `and 0xffee7faf` (bytes 81e2af7feeff @0x551a88) clears exactly {0x10,0x40,0x8000,0x10000,0x100000} and spares all three peace bits; war `and 0xfaeef378` (@0x551b17, under `test bl,0x10` @0x551abf) clears {1,2,4,...} | `:52-60` | V MU12,13,14 |
+| CLASSIFIER: 0x507975..0x50798f tests 0x1,0x2,0x4, je chains test->test->exit, jne 0x5079a1 = match, jmp 0x50799a = the `mov [ebp-0x8],1` mismatch store; 0 numeric opcodes -> EQUALITY (M366's `rank` WORD retracted, its precedence stands) | `:74-84` | V MU20,21,22,31,32 |
+| census: 169 writer call sites; the bare peace masks reaching one are exactly {1,2,4} — 8 sites over exactly 4 hosts (0x4dadd0/0x523b20/0x53f9f0/0x5537d0) | `:24-29` | V MU1-6,29 |
+| RIVALS refuted: swapped nouns, independent flags, label-text-only, numeric rank, war-unrelated | `:86-92` | V MU23-27 |
+| PE section table parsed (not `vma-0x400000`): .data va 0x289000 raw 0x289000; every key string resolves through it | `:2` | V MU7 |
+| OPEN: what FUN_0053f9f0 @0x53fcb3 (mask 0x2, no poster) and FUN_00523b20 @0x523f4c (mask 0x1) transact | - | lead |

@@ -638,27 +638,27 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
   reading them as clear-writers inverts the 0x20 story (caught before the first commit).
 - **OPEN**: the noun WORD for 0x20; the role of 0x80000000 (set with 0x10).
 
-## Session 336-chain1 (2026-11-24) — M368: 0x2 = TREATY, 0x4 = TRUCE; the ladder is truce < treaty < pact, the classifier an ordered EQUALITY test
+## Session 336-chain1 (2026-11-24) — M368: 0x2 = TREATY, 0x4 = TRUCE (V); truce < treaty < pact; the classifier is ordered EQUALITY
 
-- **ACCEPT** `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 28/28 gates` digest
-  `3b115185807f53fc`** (`evidence/m368_peace_ladder.txt:83`) x2;
-  `scripts/m368_mutate.py` -> **`RUN PASS 27 mutants, NO-OP []`**, 28/28 gates covered
-  (`evidence/m368_mutate.txt:31`). Zero box time.
-- **THE DISCRIMINATING AXIS (behaviour, not labels)**: FUN_005537d0's three peace sites push a bare
-  mask to the writer FUN_00551a20, and the block building each call posts a .data key first —
-  0x553c41/0x4 posts 0x691144 `ENEMYTRUCE` (`:35`), 0x553f10/0x2 posts 0x691150 `ENEMYTREATY`
-  (`:37`), 0x554165/0x1 posts none (`:39`). A swapped reading needs the keys swapped.
-- **LABELS** (`:56-66`): labels.txt element 643/644/645 = Truce/Treaty/Pact (control 866 =
-  `Diplomacy for`). Bit value runs AGAINST friendship (0x4 weakest), so behaviour had to pin it.
-- **ALGEBRA** (`:44-54`): `test bl,0x1 -> or ebx,0x2` (0x551abc, FUN_00551a20) is the only
-  pact->treaty upgrade in 781,429 insns (reverse: 0). A peace write `and 0xffee7faf` clears exactly
-  {0x10,0x40,0x8000,0x10000,0x100000} — ends war, spares every peace bit — and the war write
-  `and 0xfaeef378` clears {1,2,4,...}: exclusion both ways.
-- **CLASSIFIER QUALIFIED** (`:67-74`): FUN_005076d0 0x507975..0x50798f tests cl 0x1, then 0x2, then
-  0x4, each paired with the SAME mask on `[ebp-0xc]` (the other side's record), with no `cmp`/`jg`
-  in the window — an ordered EQUALITY classifier, not the numeric rank M366's phrasing suggested.
-  The WORD is retracted, the precedence is not: 0x1 > 0x2 > 0x4 stands.
-- **CENSUS** (`:13-27`): 169 writer call sites; bare peace masks reaching one are exactly {1,2,4}
-  (8 sites, 4 hosts).
-- **CAP**: NAMED 248,819 -> 244,904 B; M352/M353/M355 rotated verbatim (`m368_named_rotate --verify`).
-- **OPEN**: what FUN_0053f9f0 @0x53fcb3 (mask 0x2, no key) and FUN_00523b20 @0x523f4c (0x1) transact.
+- **ACCEPT** `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 34/34`** `6f4b692777cc3549`
+  (`evidence/m368_peace_ladder.txt:94`) x2; `scripts/m368_mutate.py` ->
+  **`RUN PASS 32 mutants, NO-OP []`**, 34/34 gates covered (`evidence/m368_mutate.txt:36`).
+- **THE DISCRIMINATING AXIS (behaviour, not labels)**: FUN_005537d0 pushes a bare mask to the writer
+  FUN_00551a20 and the POSTER call 0x483470 immediately before it carries the key — 0x553c41/0x4 posts
+  0x691144 `ENEMYTRUCE` (`:37`), 0x553f10/0x2 posts 0x691150 `ENEMYTREATY` (`:40`), 0x554165/0x1 has
+  no poster (`:43`). A swapped reading needs the keys swapped.
+- **LABELS** (`:65-72`): labels.txt element 643/644/645 = Truce/Treaty/Pact, consecutive after
+  `Clock`. Bit value runs AGAINST friendship, so behaviour had to pin it.
+- **ALGEBRA** (`:47-60`): `test bl,0x1 -> or ebx,0x2` (0x551abc) is the only pact->treaty upgrade in
+  781,429 insns (reverse: 0). Both `and` masks are DECODED from bytes: peace `0xffee7faf` (@0x551a88)
+  clears exactly {0x10,0x40,0x8000,0x10000,0x100000}, sparing every peace bit; war `0xfaeef378`
+  (@0x551b17, under `test bl,0x10`) clears {1,2,4,...}.
+- **CLASSIFIER QUALIFIED** (`:74-84`): 0x507975..0x50798f tests 0x1,0x2,0x4; je chains test->test->exit,
+  jne 0x5079a1 = match, jmp 0x50799a = the mismatch store; 0 numeric opcodes -> EQUALITY, not the
+  numeric rank M366's phrasing suggested. The WORD is retracted, the precedence is not.
+- **CENSUS** (`:24-29`): 169 writer call sites; bare peace masks reaching one are exactly {1,2,4} —
+  8 sites over exactly 4 hosts (listed in NAMED).
+- **REVIEW #399 (3 P1 + 7 P2, all fixed; NAMED 248,819 -> 244,904 by rotation)**: masks now decoded
+  from bytes, G1d pins 8/4, G2 ties the key to the POSTER call, PE section table replaces
+  `vma-0x400000`, G5c/G6d/G6e added.
+- **OPEN**: what FUN_0053f9f0 @0x53fcb3 (mask 0x2) and FUN_00523b20 @0x523f4c (0x1) transact.
