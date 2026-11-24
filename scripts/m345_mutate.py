@@ -17,6 +17,7 @@ SCRIPT = os.path.join(ROOT, "scripts", "m345_slot64_dispatch.py")
 
 # (id, row it defends, env, gates that must redden)
 MUTANTS = [
+    ("MU0", "ACCEPT baseline (no mutation, must stay 12/12)", {}, set()),
     ("MU1", "slot census == 5 data dwords",
      {"M345_PATCH_IMG": "6716b0=404ed0"}, {"G1"}),
     ("MU2", "no .text operand names the slot",
@@ -67,6 +68,13 @@ def main():
     bad = []
     for mid, row, env, expect in MUTANTS:
         f, p, tail2, err2 = run(env)
+        if mid == "MU0":
+            ok = (not f) and ("12/12" in tail2)
+            if not ok:
+                bad.append((mid, sorted(f), ["baseline red"]))
+            print("  %-5s %-48s %-9s %-9s %s" % (mid, row, "-", ",".join(sorted(f)) or "-",
+                                                  "BASELINE" if ok else "BAD"))
+            continue
         ok = expect <= f and f
         # a surviving gate that was green at baseline must not silently vanish
         missing = set(base_gates) - set(p) - f
@@ -81,9 +89,8 @@ def main():
             print("HARNESS FAIL %s: reddened=%s missing=%s" % (mid, f, missing))
         print("HARNESS FAIL M345: %d/%d scored" % (len(MUTANTS) - len(bad), len(MUTANTS)))
         return 1
-    noop = [m[0] for m in MUTANTS if not m[3]]
-    print("HARNESS PASS M345: %d/%d scored, NO-OP %s, uncovered []"
-          % (len(MUTANTS), len(MUTANTS), noop))
+    print("HARNESS PASS M345: %d/%d scored, NO-OP [], uncovered []"
+          % (len(MUTANTS), len(MUTANTS)))
     return 0
 
 

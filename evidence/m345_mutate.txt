@@ -2,6 +2,7 @@ baseline: PASS M345: 12/12 gates   digest=73e03a68d5e3fd23
 baseline gates: 11 PASS, 0 FAIL
 
   id    row defended                                        expected  reddened  verdict
+  MU0   ACCEPT baseline (no mutation, must stay 12/12)   -         -         BASELINE
   MU1   slot census == 5 data dwords                     G1        G1,G3     RED
   MU2   no .text operand names the slot                  G2        G2        RED
   MU3   0x671644+0x6c aliases 0x67164c+0x64              G3        G1,G3     RED
@@ -13,4 +14,4 @@ baseline gates: 11 PASS, 0 FAIL
   MU9   arity/BB classifier (algorithm mutant: no block bounds) G10       G10       RED
   MU10  the runner dispatches no +0x64 slot              G11       G11,G6,G7,G8 RED
 
-HARNESS PASS M345: 10/10 scored, NO-OP [], uncovered []
+HARNESS PASS M345: 11/11 scored, NO-OP [], uncovered []
