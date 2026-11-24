@@ -45,9 +45,10 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   (read §M297 first - the 0x94d104 phrasing is WRONG).
 - **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A`.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
-  M381 CLOSED bit 13: 0x2000 = PEACE, two setters, strict might(ecx) > might(esi) @0x503936. Next (ANALYSE,
-  static, zero box): **(a) the two peace writers outside FUN_005537d0 - 0x53fcb3 / 0x523f4c (M368, chain-1)**.
+  Next (ANALYSE, static, zero box): **(a) the two peace writers outside FUN_005537d0 - 0x53fcb3 / 0x523f4c (M368, chain-1)**.
   NOT chain 1: 0xc00 readers (chain 2), 0x94e48c composition (chain 3). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
+  Next (ANALYSE, static, zero box): (a) who asks the 0xc00 cluster - the 5 field-inline tests
+  (0x4ec9c3 0x523a7c 0x563165 0x56a8a2 0x5859ae) and the 2 register readers (0x5468c7/0x5552ff); (c) bit 13 (M373). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
   CLOSED enumeration + pick rows + open-lead census (v..x4, B27) VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   NEVER bp mid-instruction (s213).
@@ -111,8 +112,9 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - B37 (s339-c1) MERGED: `0x40` arms `0x94d4c8=0x32`; countdown 0x5552b6..d4 (`and al,0xbf`@d1), ONE exit; PEACE clears 0x40 so its expiry is a NULL write, WAR keeps it (0x78). 8/8 `5dd4119bd1882d1d`.
 - M376 (s339-chain2): `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix (11 effect keywords = the columns); bit-24 stores (category, choice) at rec +0x584/+0x58c; Future Society row never sampled. 29/29 `f22d2b46cc7e9507`, harness 33/33. NEXT: +0x594's reader / the 8th write 0x92a7fc.
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
-- OPEN LEADS: the two peace writers 0x53fcb3/0x523f4c (M368); who SETS 0x400 (M382); ds:0x985ba0's writer (M334).
+- OPEN LEADS: who SETS 0x400 (M382); ds:0x985ba0's writer (M334); the two peace writers (pick above).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
 - M380 (s340-c3): 0x94e48c = MIGHTY/MEEK scalar; 2/27 rel rewrites drop a stamp; hub 3 = TREATY validator. 7/7 `5dfd436fe4093015`, 19/19 mutants.
 - M382 (s341-c2): 0xc00 cluster = 15 readers (0x5468c7 is NOT one - bits 2|16). 35/35 `90cb89f84ce7feeb`. Next: who SETS 0x400.
 - M381 (s341-c3): 0x2000 = PEACE; setter A 0x50393d (PACT third party + peace/commlink + strict might(ecx) > might(esi), peer's own scalar); setter B 0x506cf1 = not-at-war only; both rows. 9/9 `2fa1a4100ec6f4f6`, 20/20.
+- M383 (s341-c3): 0x94e48c = per-unit (OFF+ARM) sum; 12/14 rewrites resolve. 9/9 `1d419b65323aec6c`, 29/29.

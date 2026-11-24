@@ -51,7 +51,7 @@ cites), `screen-read.md` (why ONE OCR pass is not a screen read), `verify-outcom
 core, retired to depth s242), `netcode.md` (the "jackal" netcode map), `ui-assets.md` (Script.txt,
 alpha.txt, PCX/FLIC, glsmac), `ghidra-batch-export.md`, `terraforming-order-path.md`,
 `session-discipline.md` (budget, closing order, handoff, shadow-running the cron loop, parallel
-chains (2–4 lanes, N-round ledger), and the full s242-retired discipline/evidence text), `review-pipeline.md` (local review pipeline: lint design
+chains (2–4 lanes, N-round ledger), and the full s242-retired discipline/evidence text), `multi-lane-usage.md` (what a multi-lane batch costs on the Nous plan meter: gauge-reading recipe, the cache-reuse collapse, projection from settled deltas), `review-pipeline.md` (local review pipeline: lint design
 classes, reviewer validation). `grep -n '^## \|^### ' SKILL.md` and the references, then
 `sed -n 'A,Bp'` the section you need. When adding depth, append to the right reference; only new
 cross-cutting pitfalls belong here.

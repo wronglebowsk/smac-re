@@ -689,3 +689,25 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   6 named cluster sites); AI hub FUN_0055f650 hosts 5 of 15 (`:107`).
 - **LIMIT (OPEN):** the 9 dynamic-mask inline sites (`test [mem],reg`) are unread — a runtime mask could
   name 0xc00; register-through-copy and stack-copy readers are not walked.
+## Session 341-chain3 — M383: 0x94e48c is a per-UNIT (offense+armor) sum; 12 of M380's 14 rewrites resolve
+
+- **ACCEPT** `python3 -u scripts/m383_composition.py` -> **`PASS M383: 9/9`** `1d419b65323aec6c`
+  (`evidence/m383_composition.txt:156`), two re-runs identical (`evidence/m383_twice.txt:4`);
+  `scripts/m383_mutate.py` **29/29 killed** (`evidence/m383_mutate.txt:33`).
+- **COMPOSITION (M380 OPEN #1 closed)**: the one ADDer 0x5579ea stores
+  `field + ((A+B)*(C+6))>>3`, the term PARSED not inferred: A = FUN_005706c0, B =
+  FUN_00570670, each `(byte[0x98ad88+0x25/0x26 + 52*type], faction)`; type =
+  word[52*unit+0x933282] (`[ebp-8]` = 52*u, 13*4 measured); C = FUN_005ac0a0(unit,0,0).
+  The scalar is the sum over the faction's units of (offense+armor) x rate — NOT a
+  per-turn counter; the sibling +0x1060 takes A alone at the same rate. Bases
+  0x92b950/0x92fd18 + the +0x25/+0x26 fields are M356's (nouns INFERRED); each indexes
+  16*id, a negative entry falling back to a faction stat (0x94dc58 x 0x92a2e8/0x92a2dc).
+- **THE 14 (M380 OPEN #2 closed to 12/14)**: must-dataflow over the function CFG resolves
+  **12/14 to PRESERVE, 0 new droppers** (`:136`); totals 23 PRESERVE / 2 DROP / 2 unknown.
+  The last 2 copy stack slots -0x50/-0x4c written from the field at 0x52affb/0x52b004,
+  but over a CLOSED CFG (5 jump tables resolved from their `cmp/ja` bounds, 0x52ba1c:
+  0x2a entries) the writer does NOT dominate the store.
+- **PITFALLS**: (1) cdecl — the LAST push is arg0; reversing swaps table id with faction
+  silently. (2) a `mov` to memory must route to the slot store BEFORE the register branch.
+  (3) `or r,reg` preserves an IN bit but turns a provable 0 into unknown. (4) seed every
+  register UNKNOWN at entry, or a join inherits another path's value.

@@ -1,0 +1,6 @@
+# two independent re-runs of scripts/m383_composition.py, plus the committed evidence
+f9294fe457da979b0141d9e838f1083221fe396f  /tmp/r1.txt
+f9294fe457da979b0141d9e838f1083221fe396f  /tmp/r2.txt
+f9294fe457da979b0141d9e838f1083221fe396f  evidence/m383_composition.txt
+cmp r1 r2: IDENTICAL
+cmp r1 evidence: IDENTICAL

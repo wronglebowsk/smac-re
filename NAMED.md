@@ -190,7 +190,7 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 |---|---|---|
 | `python3 -m sim.movesim --sav programs/saves/m54b_clean.SAV --map programs/maps/planet.MP --turns 5 --dump sim_move_state.json` exits 0 | `evidence/b7_moveslice.txt:1-6` (the inner run via selftest) | V (runnable) |
 | 67 units built from the .SAV's own record array; 5 rounds x 3 east-presses each: **670 accepted / 335 refused** - every unit accepted exactly 2 (6 MP / 3 MP) then refused (FUN_005acc00 total-spent>0) with spent == 3*accepted | `evidence/b7_moveslice.txt:3-4` | V (parity vs the M27 economy) |
-| every accepted press moved by the trace's ring delta (+2,0), x wrapped by the **map file's** width (80) — MODULUS CORRECTED by B25 (row split at s295, #319 review f.2 — these are TWO MEASUREMENTS OF DIFFERENT RUNS, not one): **(a) B7's own run, in memory** — wrapped by 80, **10 of 67** final tiles end outside this save's own 64x64 grid (4 of 67 at B7's accepted `--turns 5`); **(b) B25's `mpwidth` rival, composed THROUGH the writer** — 37 records written outside the container, 27 returning as a later read, that parse's `found_units` 67 -> 4. B25 never re-parses B7's own final state, so (a) carries no parser-acceptance claim and (b) is not B7's run. The (+2,0) delta and the 2-accept/1-refuse budget stand | `evidence/b7_moveslice.txt:3` (its own tiles); `evidence/b25_selftest.txt:38` (a: table F) and `:52`, `:64` (b: table I + G5, the rival's parse) | V (delta/budget; (a) and (b) each measured); **retracted modulus** |
+| every accepted press moved by the trace's ring delta (+2,0), x wrapped by the **map file's** width (80) — MODULUS CORRECTED by B25 (row split at s295, #319 review f.2 — these are TWO MEASUREMENTS OF DIFFERENT RUNS, not one): **(a) B7's own run, in memory** — wrapped by 80, **10 of 67** final tiles end outside this save's own 64x64 grid (4 of 67 at B7's accepted `--turns 5`); **(b) B25's `mpwidth` rival, composed THROUGH the writer** — 37 records written outside the container, 27 returning as a later read, that parse's `found_units` 67 -> 4. B25 never re-parses B7's own final state, so (a) carries no parser-acceptance claim and (b) is not B7's run. The (+2,0) delta and the 2-accept/1-refuse budget stand | `evidence/b7_moveslice.txt:3` (its own tiles); `evidence/b25_selftest.txt:38` (a: table F) and `:53`, `:64` (b: table I + G5, the rival's parse) | V (delta/budget; (a) and (b) each measured); **retracted modulus** |
 | year 2150 -> 2155 == +1/press (B3), ends (cur,tf)=(3,0); economy identical to B6's per-faction round | `evidence/b7_moveslice.txt:1-2,5` | V |
 | deterministic: two runs -> byte-identical 67,790-B dump, sha256 3b62847494b252ad... | `evidence/b7_moveslice.txt:5` (`python3 -m sim.selftest --b7 ...` -> `PASS B7: 6/6 gates`) | V |
 | declared ASSUMED in the dump `smac-sim-move/1`: positions come from the save (load-restore not modeled - M106 kernel write); the gesture is applied to EVERY unit (the trace's 117-120 live in a different save); uniform 3 MP cost | dump `assumed` | ASSUMED (declared) |
@@ -581,7 +581,7 @@ argmax; X wraps, Y bounds-checks) + M292 esi-dispatch/walk EXECUTABLE (sim/podsc
 (evidence/b14_ring_table.txt). **B1-B14 DONE.**
 
 **B26 DONE (s299; PR #328 TRIAGE s300)** `python3 -u -m sim.selftest --b26` ->
-`PASS B26: 10/10 gates`, anchor `ae43e0ab9c8cfc3d` (`evidence/b26_selftest.txt:52`, gate line
+`PASS B26: 10/10 gates`, anchor `ae43e0ab9c8cfc3d` (`evidence/b26_selftest.txt:53`, gate line
 `:63`); harness `python3 -u scripts/b26_mutate.py` -> **19/19 scored + 1 declared NO-OP**
 (`evidence/b26_mutate.txt:24`), `--selftest` **8/8 REJECTED**
 (`evidence/b26_mutate_selftest.txt:14`), **ENTRY-POINT IDENTITY 2/2** (`evidence/b26_mutate.txt:25-30`)
@@ -696,7 +696,7 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | ACCEPTANCE `python3 scripts/m301_ebxtable.py` -> **PASS M301: 8/8** (zero box, zero /proc, zero gdb) | `evidence/m301_ebxtable.txt` tail | V |
 
 ## B19 (s257, BUILD 10/10) - ROTATED VERBATIM to `docs/named-archive-b19-rows.md` (sha1 `f12ca5e5df2a5a7d9a4c25f2bbd52b9b5d8be8e8`): the slot [+4] visit counter is executable (`sim/visitcounter.py`). One line per claim, each with its full `path:line`.
-- GATED INC: `[0x989ce8+28*site+4]++` IFF `FUN_005832b0(x,y) != 0`@0x51dffd; inc block 0x51e00d-0x51e01b entered ONLY by fall-through (`je 0x51e11d`); field DECODES to MAX +4 on the pinned 28-B esi; two agreeing impls + the recorded 36/36 theorem - V (`evidence/b19_visitcounter.txt:10`, `evidence/b19_visitcounter.txt:13`, `evidence/m299_visitgate.txt:5`, `evidence/m299_visitgate.txt:52`)
+- GATED INC: `[0x989ce8+28*site+4]++` IFF `FUN_005832b0(x,y) != 0`@0x51dffd; inc block 0x51e00d-0x51e01b entered ONLY by fall-through (`je 0x51e11d`); field DECODES to MAX +4 on the pinned 28-B esi; two agreeing impls + the recorded 36/36 theorem - V (`evidence/b19_visitcounter.txt:10`, `evidence/b19_visitcounter.txt:13`, `evidence/m299_visitgate.txt:5`, `evidence/m299_visitgate.txt:53`)
 - REPLAY 2321 rows: sites {1:2253, 9:68} == B18 anchor; census {'branchA':1099,'rung1':1222}; 1222 CERTAIN-refuse / 0 accept / 1099 possible; baseline = 20 eax=2, 1079 undecided; eax=1 STRUCTURAL-ONLY (0 rows) - V law, LIVE side OPEN (`evidence/b19_visitcounter.txt:5-9`, `evidence/b19_visitcounter.txt:17-18`)
 - M300/M301 re-graded in-sim: 21/2/1 and 17/1/6, one IN-WRITER 0x51dffd line-for-line, 0 backward edges - V (`evidence/b19_visitcounter.txt:15-16`, `evidence/m300_callers.txt`, `evidence/m301_ebxtable.txt`)
 - DECLARED UNMODELED: live ds:0x92a380 / 0x69220c / 0x692210 / 0x985ac4-bit2000; counter-table CONTENTS; 0x51e02c 0x94ed28; which REACHES callers run - lead (`evidence/m299_visitgate.txt:175-178`, `evidence/b19_visitcounter.txt:14`, `evidence/b19_visitcounter.txt:18`)
@@ -923,6 +923,18 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
+## M383 (s341-c3, 9/9) — 0x94e48c = a per-UNIT military sum; 12 of M380's 14 rewrites resolve. **`PASS M383: 9/9`** 1d419b65323aec6c (`evidence/m383_composition.txt:154`); harness 29/29 (`evidence/m383_mutate.txt:33`); re-run identical (`evidence/m383_twice.txt:5`). `:N` = acceptance-file line; NOUNS INF (s341).
+| claim | ev | conf |
+|---|---|---|
+| addend = (OFF+ARM)*(FACTOR+6)>>3 added to the loaded FIELD @0x5579ea; 1 ADDer of 3 stores | `:53`, `:51` | V MU2-MU4 MU15 A2-A5 |
+| leaves read type rec 0x98ad88: +0x25 -> 0x92b950, +0x26 -> 0x92fd18, index 13*4 = 52*type | `:59-63` | V MU5 MU6 MU17 A6 |
+| each callee indexes a BYTE 16*id table; the bases differ | `:68` | V MU9 MU16 A6 |
+| sibling +0x1060 takes OFF alone, rate copied `mov eax,ecx` -> two inputs | `:86-89` | V MU7 MU14 A7 |
+| per UNIT: [ebp-8] = 52*u, type word at unit+0xa | `:95` | V MU8 A8 |
+| 23 PRESERVE / 2 DROP / 2 unknown of 27 over a CLOSED CFG; the 2 = stack copies whose writer does NOT dominate | `:127-130` | V MU10-MU13 A9 A11 A12 |
+| M380's 14: 12 resolve PRESERVE, 0 new droppers | `:134-136` | V MU11 A10 |
+
+
 ## M381 (s341-c3, 9/9) — bit 13 (`0x2000`) = a PEACE stamp with TWO setters; the strength leg is a strict `>` against the peer's own scalar. **`PASS M381: 9/9`** `2fa1a4100ec6f4f6` (`evidence/m381_bit13_noun.txt:149`), re-run identical; harness 20/20 (`evidence/m381_mutate.txt:22`). `:N` = evidence line.
 | claim | ev | conf/mutant |
 |---|---|---|
@@ -938,7 +950,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - block+0x105c: 70 operands (67R/3W); stride 2095 dwords measured 19/19 — V MU1 MU2 MU18 (`:9`)
 - 3 writers; create/reset zero +0x1054..+0x1068/+0x1070, zeroing proved; accumulator @0x5579ea shape 7/7 — V MU3 MU15 MU16 (`:14-26`)
 - **noun**: `cmp field[a],field[b]`@0x54dcf0 `jle`->'MEEK' 0x690f20, else 'MIGHTY' 0x690f18 — V MU4 MU5 MU19 (`:38`)
-- hub on 0x920700: 2->0x53a9c0 (REJPACTMEEK), 3->0x53bb90 (REJTREATYMEEK) — V MU6-8 (`:52`)
+- hub on 0x920700: 2->0x53a9c0 (REJPACTMEEK), 3->0x53bb90 (REJTREATYMEEK) — V MU6-8 (`:53`)
 - mode-3 @0x545d4a: validator -> `test eax` -> `test edi` -> call 0x540390; edi = sete(77c==3); 77c!=3 refusal = NO action — V MU9 MU10 MU17 (`:80`)
 - **erasure**: 0x551b1d clears 0x10000, 0x555430 clears 0x8000, both RMW one dword; 11 PRESERVE/14 unknown; M377's "0 provable" RETRACTED — V MU11-14 (`:88-116`)
 ## M377 (s339-c3, 8/8) — 0x8000/0x10000 are DEAL STAMPS: 0x8000 rides WAR (0x8010), 0x10000 the first-contact TRUCE (0x10004). **`PASS M377: 8/8`** `c9e99e3b7e9f0a31` (`evidence/m377_companion_bits.txt:98`), re-run identical; harness 18/18 (`evidence/m377_mutate.txt:20`).
@@ -1103,7 +1115,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | an image-only poison of record 0 at round 1 shifts its trajectory 39 mod 64 into the FINAL container ([19,42] vs clean [44,42]), 0 of 67 others move; the model-fed movers are blind to the falsifier, not to writing (268 unit bytes each, image == their own clean run) | `:21-23` (table D), `:65` (G6) | V MU1/MU7 |
 | the save's grid is 64x64 (`decode_save --sections`, 90,112 = 64*64*22) vs `planet.MP` 80x80: 37 records land out of the container, 27 return, `found_units` 67 -> 4, all six numbers PINNED in G5; B7 wrapped by the map file: 10 of 67 final tiles outside (4 of 67 at --turns 5) | `:52-53` (table I, mpwidth/wrapskip), `:38` (table F, B7), `:64` (G5) | V MU8/MU12/MU13 |
 | **THE TILE TEST IS NOT THE DECODER**: raw `tile >= width` and `sim/save._unit_ok` differ in 8/44 probes - exactly the records the decoder exempts (25 of the 67 carry +10 in [128,130,131,256,320,321,322,323], so it coord-checks 42); with that rule both agree 44/44, and `found_units` is reproduced from `_unit_ok` 44/44 | `:56` (TOTAL), `:45-55` (table I), `:64` | V MU12/MU16 (archive: RETRACTED by M327) |
-| footprint == move law: 67 unit bytes == 67 tiles written/round at record offset +0 (x only), + 1 modeled header byte/round (year 2151->2154); final image 68 B from the save, 0 B outside a modeled span | `:4-7` (table A), `:61` (G2), `:66` (G7) | V MU3/MU4/MU5 |
+| footprint == move law: 67 unit bytes == 67 tiles written/round at record offset +0 (x only), + 1 modeled header byte/round (year 2151->2154); final image 68 B from the save, 0 B outside a modeled span | `:4-7` (table A), `:61` (G2), `:68` (G7) | V MU3/MU4/MU5 |
 | rivals/controls: nowrite 0 unit bytes, lift 0 + year frozen 2150, budget3 1 accept/round; mpwidth and wrapskip COINCIDENT here (max_x 79 < 80, declared not separated); G8 requires the FULL table-E signature to differ from ALL 5 rival rows (the 3 `:clean` twins coincide by design) | `:26-36` (table E), `:67` (G8) | V MU4/MU5/MU6 |
 | ACCEPT `python3 -u -m sim.selftest --b25` -> **PASS B25: 9/9**, anchor **901a286332960a10**, 2 runs byte-identical and identical to `python3 -u -m sim.composedmove`; **G9 PINS the anchor to a literal** (MU9 reddens G9 and nothing else); harness **13/13 + 3 declared NO-OP**; `--selftest` 5/5 | `:59`, `:69`, `b25_movepersist.txt:69` (its 69 lines are byte-identical to `b25_selftest.txt:1-69`), `b25_mutate.txt:20`, `b25_mutate_selftest.txt:11` | V MU1-MU16 |
 | UNMODELED: MP/spent never crosses the container; y never moves (dy=0) so the y-bound law is unexercised; no blocking/ZOC/terrain refusal; which unit the game moves is not claimed; presses on all 67 records though 25 are not coord-checked | spine §B25 | lead |
@@ -1124,7 +1136,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | the coord exemption is **ours, not the game's**: `0x5ab320` (90 insns, 9 jumps) has **0 branches on the entry path to the `+0`/`+2` stores** (0x5ab355/5c) | `:756` | V; MU4, MU5, MU19 |
 | the only save where it bites is **our own poke** `m113map` = `m54b_clean` + 20 markers `0xc0de0001..14`, stride 128 from 222000; 13 windows in-array (one straddles rec16/17); out-of-grid recs **12 (3076,56832), 17 (192) both marker-struck**; all-record check ⇒ found_units 67→**49**; the 20 diff-derived windows == the 20 marker dwords an INDEPENDENT value scan of `m113map` finds (`:741`, s305) | `:741-755` | V; MU10, MU13, MU14 |
 | rivals measured: R1 0-based page covers 0..34 too, so bounds do NOT discriminate — it dies on the decoded const -5; R2 a coherent 6-row page (step 6, 6 pages, 36 cells) reaches index 35 = the terminator; R3 a flat list needs coef_n == 1 but all three sites decode (5,-5); R4 base 0x983984 ends at 0x984ca8 != term | `:36-40` | V MU2,MU3,MU4,MU11 |
-| **RETRACTED IN PLACE**: `sim/save.py:52` + `_unit_ok`'s docstring (comments only — `--b26` 10/10 `ae43e0ab9c8cfc3d`, `--b25` 9/9 `901a286332960a10` re-run after); `## B25`'s `.exe shares the rule`; the `0x933278` row's "flags at +10"; M26's `unit_can_act` bits (bit 6 = index bit 6, 6 recs; the word at **+12** is zero on **67/67** — G3 now asserts it — while the same census at +10 is nonzero on 64/67, `:757`) | `:757`, `:761` | V; MU4/MU19 (guarded-store rival), MU6/MU16/MU18 (band==owner), MU11 (out-of-band index), MU13 (shared-rule claim), MU23 (+12 census — G3+G10), MU24 (bit 10 of +10 poked — G3+G5+G6+G10) |
+| **RETRACTED IN PLACE**: `sim/save.py:53` + `_unit_ok`'s docstring (comments only — `--b26` 10/10 `ae43e0ab9c8cfc3d`, `--b25` 9/9 `901a286332960a10` re-run after); `## B25`'s `.exe shares the rule`; the `0x933278` row's "flags at +10"; M26's `unit_can_act` bits (bit 6 = index bit 6, 6 recs; the word at **+12** is zero on **67/67** — G3 now asserts it — while the same census at +10 is nonzero on 64/67, `:757`) | `:757`, `:761` | V; MU4/MU19 (guarded-store rival), MU6/MU16/MU18 (band==owner), MU11 (out-of-band index), MU13 (shared-rule claim), MU23 (+12 census — G3+G10), MU24 (bit 10 of +10 poked — G3+G5+G6+G10) |
 | OPEN: what `+0x2d` means; what the game validates on LOAD; `m112poke.SAV` is a byte-copy of `m54b_clean.SAV` (4 saves = 3 states) | - | lead |
 
 ## M329 (s307, pick (viii), STATIC, zero box; ACCEPT `python3 -u scripts/m329_scratchtree.py` -> 13/13, digest `757e40a7ed04abda`, 2 runs byte-identical; harness `scripts/m329_mutate.py` 26/26, base reddened `[]`) - `FUN_0041a8f0` = `ui_governor_options_pane(widget, page)`. FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m329-rows.md:5` (sha1 `ccee72a56f16b4b4`); this stub governs, one line per claim
@@ -1354,7 +1366,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 
 | claim | evidence | conf |
 |---|---|---|
-| the 10-slot bank (payload 0x999ff4, owner 0x999fcc, text 0x99a01c stride 0x100, numeric 0x999fa4, k<=9) is GENERAL: 63 sites in 30 fns, 7 sites build `k<<8+0x99a01c` (4 expander, 2 setters, 1 modal @0x5f12ee) | `:4-7`,`:58-61` | V MU1,MU11 |
+| the 10-slot bank (payload 0x999ff4, owner 0x999fcc, text 0x99a01c stride 0x100, numeric 0x999fa4, k<=9) is GENERAL: 63 sites in 30 fns, 7 sites build `k<<8+0x99a01c` (4 expander, 2 setters, 1 modal @0x5f12ee) | `:4-7`,`:59-63` | V MU1,MU11 |
 | setter A FUN_006265a2(index, LABEL-ID) resolves via table 0x997b28 (`call 0x61482f`) then strcats; setter B FUN_00626634 copies a LITERAL; both clear the slot byte, return 3 above k=9 | `:10-19` | V MU2,MU3 |
 | completion block: slot 1 = `[0x984d38+edi*48]` (item label id) @0x4f0f78; slot 2 = `0x927894+ebx*1436` (base name) @0x4f0f96 | `:21-27` | V MU4,MU5,MU6 |
 | key = `PRODUCEX`(0x68cfc4)+`Q`/`G` into 0x997120 (fallback `PRODUCE` 0x68cfe8) -> FUN_0048f100 @0x4f122a, which sets slot 0 = `[0x8f0d60]+0x13` @0x48f20f | `:29-44` | V MU7,MU8 |
@@ -1402,7 +1414,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | claim | evidence | conf |
 |---|---|---|
 | heads `[321,-2,-8,2,-3,-6]` = 4 UNIT / 1 FAC / 1 BIG; local decode == M349's 30-row `UNIVERSE` row-for-row | `:43` | V MU11 |
-| before-sample head PER LEG: 4/4 unit heads gain exactly the mapper bit (`-2`->2, `-8`->8, `-3`->3, `-6`->6); 0/2 facility; B31's bulk rule 0/6 | `:25`, `:44` | V MU3,MU7 |
+| before-sample head PER LEG: 4/4 unit heads gain exactly the mapper bit (`-2`->2, `-8`->8, `-3`->3, `-6`->6); 0/2 facility; B31's bulk rule 0/6 | `:25`, `:51` | V MU3,MU7 |
 | the AFTER-sample head scores 0/6 -> the stamp reads the head BEFORE the pop (M344's order) | `:28`, `:45` | V MU5 |
 | before OR mask == the recorded after window at 4/4 unit boundaries; only the mapper byte moves | `:35-39`, `:47` | V MU6,MU13 |
 | facility side: 321 -> byte 40 (off the 8-byte map, 1 refusal); facility 2 at Virgin Soil predicts `04 00 00 08 00` vs recorded `10 00 00 00 00` | `:34`, `:37`, `:48` | V MU10 |
@@ -1473,7 +1485,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 
 | claim | cite | conf |
 |---|---|---|
-| census: FUN_004ef6d0 3,164 insns, 12,298 B contiguous, 0x4ef6d0..0x4f26da == Ghidra size | `evidence/b33_facilityleg.txt:52` | V MU9 |
+| census: FUN_004ef6d0 3,164 insns, 12,298 B contiguous, 0x4ef6d0..0x4f26da == Ghidra size | `evidence/b33_facilityleg.txt:53` | V MU9 |
 | CFG closed: 3,482 edges, 0 external targets, 0 indirect jumps | `evidence/b33_facilityleg.txt:53` | V MU10 |
 | stamp 0x4f0e90 reached from entry + unit (3,045), NOT from facility (886), sets nested | `:54` | V MU3 |
 | door: preds(0x4f0e90)={0x4f0d94}, preds(0x4f0ca1)={0x4f0b80 `jg`} | `:10-11` | V MU2 |
@@ -1505,7 +1517,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | +0x27 = reactor level INFERRED: constant 1 for basic units; 127 loads, compare band {1:53,3:54} over 52 clamp sites; UI health `clamp(v,1,3)*10/3` with the input written only by the clamp | `:92-96` | I (MU8,9,18 pin band+chain) |
 | +0x2a = PLAN (M354 called it "class"): loader Plan token -> +0x2a; Planet-Buster branch hard-sets +0x2a=5 (alpha Plan 5); 49 sites (4 base regs) compare it with 12 | `:98-101` | V MU10,11 |
 | RIVALS: "+0x27 is the Plan column" FAILS (plan is +0x2a, +0x27 gets a literal); "+0x28 one writer" FAILS | `:103-106` | V MU3,5 |
-| OPEN: #REACTORS has 4 rows but the health readers clamp 1..3; +0x27's noun rests on elimination + the constant 1 | `:92` | lead |
+| OPEN: #REACTORS has 4 rows but the health readers clamp 1..3; +0x27's noun rests on elimination + the constant 1 | `:95` | lead |
 ## M358 (s332, STATIC 10/10) — the 52-byte `0x98ad88` row atlas + row-63 prototype; `0x9267e4` = 128 dwords, NOT 64-byte rows. `:N` = `evidence/m358_row_layout.txt:1-77`
 | claim | ev | conf/mutant |
 |---|---|---|
