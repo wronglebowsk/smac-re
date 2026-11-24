@@ -435,7 +435,7 @@ printers of measured values need the same None-guard as the gate.
   COLUMNS of the one record in [ebp-0x1c] (ebx reloaded once, 0x449982).
 - ACCEPT `m341_hof_window.py` -> **`PASS M341: 10/10`** `c9baf9f6ef0521ce`, two
   runs diff-identical (`evidence/m341_hof_window.txt:41-53`); `m341_mutate.py`
-  **14/14** `ea5c77bf6ba5c0c0`, ST 4/4 (`evidence/m341_mutate.txt:17`), baseline
+  **14/14** `ea5c77bf6ba5c0c0`, ST 4/4 (`evidence/m341_mutate.txt:16`), baseline
   re-run = the NO-OP control.
 - NAMED: `## M338` rotated VERBATIM to `docs/named-archive-m341-rows.md:5`
   (sha1 `b82cddad74c8`, `m341_named_rotate.py --verify`): 246,635 -> 245,663 B.
