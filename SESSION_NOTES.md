@@ -792,3 +792,30 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   every `jne`); keep the tracked set closed (eax/ax/[ebp-0x28]) or the loop state space
   explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
 - **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).
+
+## Session 343-chain1 (2026-11-24) — B39: the relations API FAMILY — four entry points, TWO words
+
+`python3 -u -m sim.relapi` -> **`PASS B39: 10/10 gates  digest 57987f64b83e3289`**
+(`evidence/b39_relapi.txt:45`), re-run byte-identical; `python3 -u scripts/b39_mutate.py` ->
+**`RUN PASS 9 mutants, NO-OP MU9`** (`evidence/b39_mutate.txt:10`). Static, zero box.
+
+Pick (a) from B38 answered half: the peace host **`0x523f4c`** is executed, and it is not one writer
+but a THREE-CALL block over TWO words. The census (`:29`) separates the family: `0x551a20` -> A
+(`0x94d448`, 1 tail store), `0x551cf0` -> A + the B37 lease `0x94d4c8`, `0x551c40` -> **B
+(`0x94d468`, 4 stores = two per path)**, `0x551d70` -> B (2 stores = one per mode arg). All four
+carry the same `f*2095` row scale; `0x94d468-0x94d448 = 0x20` = 8 dwords — so B is a second slot of
+the same per-faction block, not a mirror: `0x551c40` writes B **both directions** in one call while
+A is untouched.
+
+The block: `0x551a20(esi,edx,0x50)`, `0x551a20(esi,edi,0x1)`, `0x551c40(esi,edi,0x2000)` (`:34`).
+Guards measured, not assumed: A-row bit0 (`test al,0x1`) gates the block, `test eax,0x2000000`
+skips it, and `je 0x523f46` skips **both** the `0x1` and the `0x2000` writes when `esi==edi`
+(`:38`). Executed: a normal pair gets `0x2000` in B both ways; a self-pair gets nothing (`:40`).
+`0x551c40`'s `test bl,0x20` arm **clears 0x40 and does not set 0x20** (`:31`) — a mask bit whose
+effect is a different bit.
+
+New: M381's `0x2000` PEACE also lands on word B via `0x551c40`, so PEACE is carried in BOTH words.
+OPEN: the `0x1` write's noun on A (M364's PACT candidate, unverified here); every noun on B.
+Retraction: none this round. Pitfall: the dump's store operand usually has NO displacement — the
+field is folded into a register by the preceding `lea`, so a displacement grep alone reports zero
+stores for `0x551c40`/`0x551d70` (mutant MU2 recreates exactly that).

@@ -264,7 +264,7 @@ def accept(quiet=False):
          and homes[0x551C40] == [WORD_B] and homes[0x551D70] == [WORD_B]
          and len(api[0x551C40]["stores"]) == 4 and len(api[0x551D70]["stores"]) == 2,
          "field homes %s (551c40 4 stores = 2 per path, 551d70 2 = one per mode)" %
-         {hex(k): [FIELDS[v] for v in homes[k]] for k in APIS})
+         {hex(k): [FIELDS.get(v, hex(v)) for v in homes[k]] for k in APIS})
 
     # G2 - index algebra
     scales = {a: api[a]["scale"] for a in APIS}

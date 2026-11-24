@@ -1,0 +1,10 @@
+ok   MU1 reddens ['G1', 'G2']   the one-matrix rival made real: the sibling displacement IS 0x94d448, so both words collapse and the padding rival stops differing
+ok   MU2 reddens ['G1', 'G6']   the folded-pointer census switched off: 0x551c40 and 0x551d70 store through a register the preceding `lea` set, so their field homes read empty
+ok   MU3 reddens ['G4']   the 0x20 arm tested against 0x40 instead: the seeded 0x2050 keeps 0x40 and G4's 0x2010 expectation reddens
+ok   MU4 reddens ['G5b']   the skip-target filter dropped: the first in-block `je` (0x523f2f) is selected and the 'skips both calls' claim reddens
+ok   MU5 reddens ['G5c']   the pair-equality guard removed: a self-pair now gets the 0x1 and 0x2000 writes
+ok   MU6 reddens ['G2']   the row scale off by one: the 2095-dword identity from M297 is no longer reproduced
+ok   MU7 reddens ['G3']   the arg-guard extractor switched off: test bl,0x7 / bl,0x20 / cl,0x40 all vanish
+ok   MU8 reddens ['G7']   the first digest's input gets a constant the second decode does not: the two decodes no longer agree
+ok   MU9 NO-OP   NO-OP: a docstring space changes nothing, so every gate must stay green
+RUN PASS 9 mutants, NO-OP MU9

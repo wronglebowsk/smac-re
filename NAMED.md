@@ -1657,3 +1657,18 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | 106 callers, 95 masks resolve: 5 set 0x400 (0x41b2d2 0x4cd6f6 0x5470d6 0x59aef0; 0x594cf7 0x420), 2 clear (0x4db11b 0xc20, 0x519bb5 0xc00) | `:199` `:210` | V MU4 MU5 MU6 MU15 |
 | FUN_00551a20: one arm ANDs `0xfaeef378` (~0x05110c87 carries bit 10 -> wipes 0x400), then ORs `mask\|0x80000108` | `:87` | V MU20 |
 | OPEN: 7 runtime mask args (0x4dadxx, `[ebx+0x18]`), 4 passthrough; FUN_004dacc0 is a caller-mask SET/CLEAR gate whose 0x400 caller is M385 `:55` (8th setter, behind the arg) | `:215` | OPEN |
+
+## B39 (s343-chain1, BUILD 10/10, zero box; 9 mutants) — the relations API family: four entry points, TWO words. **`PASS B39: 10/10`** `57987f64b83e3289` (`evidence/b39_relapi.txt:45`), re-run identical; `RUN PASS 9 mutants, NO-OP MU9` (`evidence/b39_mutate.txt:10`).
+
+| claim | cite | conf |
+|---|---|---|
+| four relation APIs, field homes separated: `0x551a20`->A `0x94d448` (1 store), `0x551cf0`->A+lease `0x94d4c8`, `0x551c40`->**B `0x94d468`** (4 = 2 per path), `0x551d70`->B (2, one per mode) | `:29` | V MU1 MU2 |
+| all four carry the `f*2095` row scale; `0x94d468-0x94d448 = 0x20` = 8 dwords of the SAME per-faction block (M297) | `:30` | V MU6 |
+| `0x551c40` writes word B **symmetric** (both directions) in one call, A untouched — B is a second word, not a mirror | `:31` | V MU1 MU2 |
+| `test bl,0x20` arm of `0x551c40` CLEARS `0x40` and does NOT set `0x20` (seeded 0x2050 -> 0x2010) | `:31` | V MU3 |
+| `0x551cf0` ORs the mask into A and a mask carrying `0x40` arms the lease cell to `0x32` (B37 parity) | `:31` | V MU3 |
+| peace block: `0x551a20(esi,edx,0x50)`, `0x551a20(esi,edi,0x1)`, `0x551c40(esi,edi,0x2000)` in that order | `:34` | V MU4 MU7 |
+| `je 0x523f46` skips BOTH the `0x1` and the `0x2000` writes when `esi==edi`; a self-pair gets nothing | `:38` `:40` | V MU4 MU5 |
+| A-row bit0 (`test al,0x1`) gates the block; `test eax,0x2000000` skips it | `:36` `:40` | V MU7 |
+| M381's `0x2000` PEACE is written to word B by `0x551c40` as well — PEACE is carried in BOTH words | `:31` | V MU1 |
+| OPEN: the noun of the `0x1` write on A (M364 PACT candidate), every noun on B, and B's readers | `:34` | OPEN |
