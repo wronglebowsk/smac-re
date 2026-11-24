@@ -1297,3 +1297,19 @@ M330 MERGED #340 -> 1b9cb38 (s309-chain2); pr340 JSON sidecar folded #342 (red-g
 M331 (s310-chain2): +2fc/+308=INCOME siblings; ledger 8/8; rate +4ec%/100; cap MIN(E/2,100net)>=50. 14/14 442270fd57be2b62 x2; 43/43+1 29061c567f9132fb. NAMED ## M331.
 
 (§trim-s313-chain1 ends; anything below belongs to a later trim.)
+
+
+## trim-s343-chain4 — result lines retired from NEXT_PROMPT (VERBATIM, sha1 `dfe9d7b2173a`)
+
+- B34 (s333) MERGED: a facility completion stamps NOTHING (21 stores: API 2/GRANT 11/SET 1/COPY 6; 6/6 unchanged). 10/10 `5296fdad6d26caa3`.
+
+- B35 (s335): WHO calls the grant family - 3 sites into the founder (FUN_004cca50/FUN_0059ce10/FUN_0059ec90), 1 into the new-game setup (FUN_005a0fa0); the record EXISTENCE, not the bit value, separates them. 11/11 `fa541d0a2445cacf`, harness 18/18.
+- M368 (s336-chain1): 0x2 = TREATY, 0x4 = TRUCE — behaviour keys `ENEMYTRUCE`/`ENEMYTREATY` on the mask writes; truce<treaty<pact (pact IMPLIES treaty); FUN_005076d0's classifier is ordered EQUALITY. 34/34 `6f4b692777cc3549`, harness 32/32. NEXT: the two other peace hosts (0x53fcb3 / 0x523f4c).
+- M369 (s336-chain2): relations bit 0x8 = COMMLINK (contact), M364's AT WAR RETRACTED — the vendetta block only TESTS 8 both ways as a guard; the war bit is 0x10; the pod (rel&8==0) and the council sweep set 8 alone. 23/23 `475fdceda961ef2d`, harness 39/39. NEXT: 0x2/0x4 (chain 1).
+
+- B36 (s337-chain1) MERGED: FUN_00551a20 EXTRACTED AND RUN - 5 `test bl` blocks on the CURRENT ebx + an UNCONDITIONAL tail OR; pact=0x3, truce-after-war=0x8000010c, war=0x80000118, combined 0x11=0x8000011b; the ladder ACCUMULATES so the state is the classifier's precedence (1>2>4 EQUALITY). 10/10 `b20f5818dee2d861`, harness 11/11.
+- M371 (s337-chain2): the war-initiation hosts' 0x8 = COMMLINK — `or ebx,0x80000108`@0x551b11 puts contact into every 0x10 request (16 war-alone vs 4 pure-contact callers, peace keeps 8). 18/18 `4e82206112fe63ad`, harness 27/27, twice-byte-identical. NEXT: 0x88000008 bits 27/31.
+- M373 (s338-c1) MERGED: FUN_005551e0 clears 0x80000000 only when bit 13 (0x2000) is clear - a one-shot protector; bit 27 does NOT gate that pass. 19/19 `4fd02c603e36c69c`. NEXT: bit 13's noun.
+- M375 (s338-c3) MERGED: 0x800000 = 'TREATY ON' (only a mask with no 0x17 bit sets it; any status write clears it), 0x40 = 'SET TREATY' + a 50-tick cell (4/4 set-stores arm 0x94d4c8=0x32, expiry clears it), 0x100000 = eviction-sweep tail, 0x8000/0x10000 = war/truce companions (OPEN); `0x80000018` is bit31+war, NOT bit23. 8/8 `34bcef7ab64b9272`, harness 13/13.
+- B37 (s339-c1) MERGED: `0x40` arms `0x94d4c8=0x32`; countdown 0x5552b6..d4 (`and al,0xbf`@d1), ONE exit; PEACE clears 0x40 so its expiry is a NULL write, WAR keeps it (0x78). 8/8 `5dd4119bd1882d1d`.
+- M376 (s339-chain2): `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix (11 effect keywords = the columns); bit-24 stores (category, choice) at rec +0x584/+0x58c; Future Society row never sampled. 29/29 `f22d2b46cc7e9507`, harness 33/33. NEXT: +0x594's reader / the 8th write 0x92a7fc.

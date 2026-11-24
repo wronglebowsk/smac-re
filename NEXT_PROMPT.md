@@ -49,9 +49,9 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); else the OPEN-LEADS list, each with a
   NAMED question. STILL OPEN: `ds:0x985ba0`'s WRITER (M334). ANSWERED (do not re-derive): x1 M333,
-  x7 M334, x8 M337, x9 M342+M344+M346+M348, `0x999fa4` M353, x6 M390. Lists in NAMED ## M310-M390.
+  x7 M334, x8 M337, x9 M342+M344+M346+M348, `0x999fa4` M353, x6 M390. Lists in NAMED ## M310-M391.
   READER LAWS still BIND: every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
-
+  Trimmed result lines: `docs/pick-archive.md` §trim-s343-chain4 (sha1 `dfe9d7b2173a`).
 ## LIVE FACTS / KIT
 
 - **BOX**: UP (s258; TracerPid 0, yama=0). RE-CHECK `accept_ready.py`; credit 0 is d0-gated
@@ -89,14 +89,7 @@ earlier blocks IN PLACE, every VERIFIED row names its mutant; 4 `NEXT_PROMPT.md`
 `ai_review.py <n>` -> triage ALL findings in one reply, re-measure at head, merge ONLY on a
 verified PASS. Region-B pointers: §trim-s313-chain1 (sha1 `6f2ddbe32478`); per-id `NAMED` GOVERN.
 - M348 (s326) MERGED: slots 1/2 <- Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED.
-
-- B35 (s335): WHO calls the grant family - 3 sites into the founder (FUN_004cca50/FUN_0059ce10/FUN_0059ec90), 1 into the new-game setup (FUN_005a0fa0); the record EXISTENCE, not the bit value, separates them. 11/11 `fa541d0a2445cacf`, harness 18/18.
-
-- B36 (s337-chain1) MERGED: FUN_00551a20 EXTRACTED AND RUN - 5 `test bl` blocks on the CURRENT ebx + an UNCONDITIONAL tail OR; pact=0x3, truce-after-war=0x8000010c, war=0x80000118, combined 0x11=0x8000011b; the ladder ACCUMULATES so the state is the classifier's precedence (1>2>4 EQUALITY). 10/10 `b20f5818dee2d861`, harness 11/11.
-- M371 (s337-chain2): the war-initiation hosts' 0x8 = COMMLINK — `or ebx,0x80000108`@0x551b11 puts contact into every 0x10 request (16 war-alone vs 4 pure-contact callers, peace keeps 8). 18/18 `4e82206112fe63ad`, harness 27/27, twice-byte-identical. NEXT: 0x88000008 bits 27/31.
-- M373 (s338-c1) MERGED: FUN_005551e0 clears 0x80000000 only when bit 13 (0x2000) is clear - a one-shot protector; bit 27 does NOT gate that pass. 19/19 `4fd02c603e36c69c`. NEXT: bit 13's noun.
-- M375 (s338-c3) MERGED: 0x800000 = 'TREATY ON' (only a mask with no 0x17 bit sets it; any status write clears it), 0x40 = 'SET TREATY' + a 50-tick cell (4/4 set-stores arm 0x94d4c8=0x32, expiry clears it), 0x100000 = eviction-sweep tail, 0x8000/0x10000 = war/truce companions (OPEN); `0x80000018` is bit31+war, NOT bit23. 8/8 `34bcef7ab64b9272`, harness 13/13.
-- B37 (s339-c1) MERGED: `0x40` arms `0x94d4c8=0x32`; countdown 0x5552b6..d4 (`and al,0xbf`@d1), ONE exit; PEACE clears 0x40 so its expiry is a NULL write, WAR keeps it (0x78). 8/8 `5dd4119bd1882d1d`.
+- Retired result lines (B34-B38, M368-M376, VERBATIM + sha1 check): `docs/pick-archive.md` §trim-s343-chain4 (sha1 `dfe9d7b2173a`); per-id `NAMED ## <id>` governs.
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
 - OPEN LEADS: who SETS 0x400 (M382); ds:0x985ba0's writer (M334); the two peace writers (pick above).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
@@ -107,3 +100,4 @@ verified PASS. Region-B pointers: §trim-s313-chain1 (sha1 `6f2ddbe32478`); per-
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
 - M390 (s343-c3): 0x4dabb0 DEAD-INF under every PE32 dispatch form (non-rebasable PE, 0 stored VA); 0x551cf0 arg4 = SET/CLEAR (26 one / 6 zero / 4 reg of 36). 47/47 `bafd75107d142bc4`, 16/16 mutants.
 - M389 (s343-c2): 0x4dadxx CLOSED - the 5 OPEN mask args are verbs: FUN_004dadd0's 7 arms {1,2,4,8,0x10,0x1000,0x2000} (4 `mov ebx/edi,imm` at 0x4daea3/0x4daf07/0x4dafcf/0x4db035), each a FUN_0x6051fa-keyed SET/CLEAR (0x551a20/0x5518f0; 0x551cf0 flag for 0x1000/0x2000); FUN_004dacc0(owner,other,{0x20,0x2000000,0x400,0x40000}) = the only 0x400 host; no arm can ask 0x400/0x800. 60/60 `05a36a50540466f3`, 27/27. NEXT: the .rdata slot VA 0x677ff8's table owner.
+- M391 (s343-c4): `and 0xfaeef378` is 3 masks x 2 rows gated on mask-arg bits 0x7/0x10/0x17, not a blanket; 0xc00 clearers = 5 instr / 2 fns, and both explicit 0xc00 clears are the `not`+`and` half (0x4db11b 0xc20, 0x519bb5 0xc00); 0 of 65 masks carry 0xc00 -> 24 WAR-arm callers always drop it. 53/53 `76148839fd85b66e`, 14/14. NEXT: 0x4dad30 can carry 0x400 (M389) - a 6th dynamic bit10 clear; 0x4db02d/0x4db08d remain UNKNOWN.
