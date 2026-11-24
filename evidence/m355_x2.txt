@@ -1,0 +1,8 @@
+M355 acceptance, run TWICE after the review fixes — replay determinism
+cmd: python3 -u scripts/m355_laptop_masks.py
+run1: sha1 d3f17cc91148e5a606b0179b5f8d8bb8b9e45801  evidence/m355_laptop_masks.txt
+run2: sha1 d3f17cc91148e5a606b0179b5f8d8bb8b9e45801  (scratch copy, deleted after the diff)
+IDENTICAL: yes (byte-for-byte)
+tables digest c742bc131105fb25  (71 rows)
+RESULT: PASS M355: 7/7 gates
+mutants: scripts/m355_mutate.py 24/24 killed, 2 no-op controls green (evidence/m355_mutate.txt)

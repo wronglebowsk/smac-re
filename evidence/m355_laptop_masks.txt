@@ -1,0 +1,113 @@
+== M355  Laptop -> the Preferences / More Preferences default bit-vectors ==
+func | start | size | name
+0x58e7f0 | 0x58e7f0 | 2066 | FUN_0058e7f0
+0x58e640 | 0x58e640 | 121 | FUN_0058e640
+0x58e6c0 | 0x58e6c0 | 121 | FUN_0058e6c0
+0x58e740 | 0x58e740 | 6 | FUN_0058e740
+0x58e750 | 0x58e750 | 6 | FUN_0058e750
+0x4923d0 | 0x4923d0 | 383 | FUN_004923d0
+0x628720 | 0x628720 | 75 | FUN_00628720
+[PASS] G0 all 7 entry addresses are function starts in ghidra_out/index.csv
+
+-- G1  key literals and argument attribution --
+Laptop push sites | 4 | 0x58e688 0x58e708 0x58e9f3 0x58eb0c | VAs | ['0x6926fc', '0x692704']
+literals | 0x6926fc=Laptop | 0x692704=Laptop
+Laptop sites in loader | 2 | 0x58e9f3 0x58eb0c
+Laptop sites in GETTER_A / GETTER_B | 1 | ['0x58e688'] | 1 | ['0x58e708']
+[PASS] G1a image-wide `Laptop` literal pushes = 4: 2 in FUN_0058e7f0 and 1 inside EACH of FUN_0058e640 / FUN_0058e6c0 (no other function pushes it); 2 VAs, both 'Laptop'
+api site | app | key | default | out | size | file
+0x58e9d3 | app=ds:0x6926bc->'Alpha Centauri' | key=0x69273c('Faction') | default=0x997120 | out=ds:0x996a94 | size=0x100 | file=ds:0x6926b8->'.\Alpha Centauri.Ini'
+  roles | app | Alpha Centauri | file | .\Alpha Centauri.Ini | out | ('global', 10054292) | size | ('imm', 256) | default | ('imm', 10055968) | OK
+0x58eaf7 | app=ds:0x6926bc->'Alpha Centauri' | key=0x69274c('Preferences') | default=0x997120 | out=ds:0x996a94 | size=0x100 | file=ds:0x6926b8->'.\Alpha Centauri.Ini'
+  roles | app | Alpha Centauri | file | .\Alpha Centauri.Ini | out | ('global', 10054292) | size | ('imm', 256) | default | ('imm', 10055968) | OK
+0x58ebbe | app=ds:0x6926bc->'Alpha Centauri' | key=0x6926ec('Prefs Format') | default=0x6926e8('0') | out=ds:0x996a94 | size=0x100 | file=ds:0x6926b8->'.\Alpha Centauri.Ini'
+  roles | app | Alpha Centauri | file | .\Alpha Centauri.Ini | out | ('global', 10054292) | size | ('imm', 256) | default | ('imm', 6891240) | OK
+0x58ec0d | app=ds:0x6926bc->'Alpha Centauri' | key=0x692760('More Preferences') | default=0x997120 | out=ds:0x996a94 | size=0x100 | file=ds:0x6926b8->'.\Alpha Centauri.Ini'
+  roles | app | Alpha Centauri | file | .\Alpha Centauri.Ini | out | ('global', 10054292) | size | ('imm', 256) | default | ('imm', 10055968) | OK
+[PASS] G1b 4 API sites' nearest-first 6-push windows resolve app/file/key/default/out/size; the key arg of 0x58eaf7='Preferences' and of 0x58ec0d='More Preferences'
+IAT 0x671100 | ('KERNEL32.dll', 'GetPrivateProfileStringA')
+[PASS] G1c the api slot is KERNEL32!GetPrivateProfileStringA (PE import directory)
+getter default arg | [('0x58e68e', '0x997120', True, '0x58e64e'), ('0x58e70e', '0x997120', True, '0x58e6ce')]
+[PASS] G1d both getters push the zeroed buffer 0x997120 as lpDefault AND zero it (`mov BYTE PTR ds:0x997120,0x0`) at an address BEFORE the call, so an ABSENT key and an explicit 0 take the same path
+
+-- G2  mask arithmetic from the encodings --
+window | neg | sbb | and imm | add imm | reg | Laptop=0 | Laptop!=0
+loaderA | -1/0 | -1/0 | 0xe7ffff80 | 0xbbe1dd96 | esi | 0xbbe1dd96 | 0xa3e1dd16
+loaderB | -1/0 | -1/0 | 0xfff80000 | 0x3a7168 | esi | 0x3a7168 | 0x327168
+getterA | -1/0 | -1/0 | 0xe7ffff80 | 0xbbe1dd96 | eax | 0xbbe1dd96 | 0xa3e1dd16
+getterB | -1/0 | -1/0 | 0xfff80000 | 0x3a7168 | eax | 0x3a7168 | 0x327168
+[PASS] G2a all 4 windows carry the neg/sbb(-1/0) + and + add idiom with explicit immediates
+[PASS] G2b getter A/B immediates == loader A/B immediates (the two sides compute the SAME mask)
+causal link | {'loaderA': 'mov esi,eax', 'loaderB': 'mov esi,eax', 'getterA': 'eax', 'getterB': 'eax'}
+emit test register | {'loaderA': 'esi', 'loaderB': 'esi'}
+[PASS] G2e each window's `neg`/`sbb`/`and`/`add` register IS the register that received the `Laptop` read's atoi result (loader: `mov esi,eax` after call 0x58e760; getters: `neg eax` right after call 0x64c460) and it is the register the emit loop tests
+Preferences  Laptop=0  | 0xbbe1dd96 | bits | [1, 2, 4, 7, 8, 10, 11, 12, 14, 15, 16, 21, 22, 23, 24, 25, 27, 28, 29, 31] | n=20
+Preferences  Laptop!=0 | 0xa3e1dd16 | bits | [1, 2, 4, 8, 10, 11, 12, 14, 15, 16, 21, 22, 23, 24, 25, 29, 31] | n=17
+MorePrefs    Laptop=0  | 0x3a7168 | bits | [3, 5, 6, 8, 12, 13, 14, 17, 19, 20, 21] | n=11
+MorePrefs    Laptop!=0 | 0x327168 | bits | [3, 5, 6, 8, 12, 13, 14, 17, 20, 21] | n=10
+delta Preferences | 0x18000080 | bits | [7, 27, 28] | cleared | [7, 27, 28]
+delta MorePrefs | 0x80000 | bits | [19] | cleared | [19]
+[PASS] G2c the four masks are 0xbbe1dd96 / 0xa3e1dd16 (Preferences) and 0x3a7168 / 0x327168 (More Preferences)
+[PASS] G2d Laptop!=0 CLEARS bits {7,27,28} of Preferences and {19} of More Preferences (nothing is added)
+
+-- G3  the Difficulty gate (Preferences block only) --
+loaderA gate | {'load': [5827078], 'cmp': [], 'cmp_imm': [(5827102, 'eax,0x2')], 'jcc': [(5827105, 'jge    0x58ea26'), (5827127, 'je     0x58ea45'), (5827139, 'jmp    0x58ea53'), (5827143, 'jne    0x58ea4e'), (5827148, 'jge    0x58ea60'), (5827175, 'jns    0x58ea2e')], 'orimm': [(5827107, 'esi,0x20')]}
+loaderB gate | {'load': [], 'cmp': [], 'cmp_imm': [], 'jcc': [(5827406, 'je     0x58eb5e'), (5827420, 'jmp    0x58eb6f'), (5827427, 'jne    0x58eb6a'), (5827432, 'jge    0x58eb7c'), (5827453, 'jns    0x58eb43')], 'orimm': []}
+gate bit | 0x20 | bit | [5]
+gate threshold | 0x2
+gate geometry | cmp | 0x58ea1e | jcc | 0x58ea21 | jge    0x58ea26 | or | 0x58ea23 | guarded
+[PASS] G3a A: a load of ds:0x92bde8 -> `cmp eax,0x2` -> a CONDITIONAL jcc that jumps PAST the `or esi,0x20` (bit 5), i.e. the or runs only on the fall-through (Difficulty<2)
+[PASS] G3b B (More Preferences) holds 0 references to ds:0x92bde8 and no OR immediate: no difficulty gate
+Preferences default with Difficulty<2 | 0xbbe1ddb6 | 0xa3e1dd36 | bits | [1, 2, 4, 5, 7, 8, 10, 11, 12, 14, 15, 16, 21, 22, 23, 24, 25, 27, 28, 29, 31] | [1, 2, 4, 5, 8, 10, 11, 12, 14, 15, 16, 21, 22, 23, 24, 25, 29, 31]
+
+-- G4  the emit loop and the round-trip through the image's parser --
+emitA decode | (31, 8, '1', '0', 'edx,cl', 'ebx,ebx') | {'shl': 'edx,cl', 'test': 'esi,edx', 'dec': 'ecx', 'jns': 'jns    0x58ea2e', 'ok': True, 'head': '0x58ea33'}
+emitB decode | (31, 8, '1', '0', 'edx,cl', 'eax,eax') | {'shl': 'edx,cl', 'test': 'esi,edx', 'dec': 'ebx', 'jns': 'jns    0x58eb43', 'ok': True, 'head': '0x58eb4a'}
+[PASS] G4a both loops: start bit 0x1f, suppression `cmp <counter>,0x8`, chars '1'/'0', `shl edx,cl` off the COUNTER, `test <mask>,edx` on the mask register, `dec <counter>` + backward `jns` to the head = a downward walk over bits 31..0
+parser bytes head | 0x628720 | 55 8b ec 51 c7 45 fc 00 00 00 00 8b 45 08 0f be 08 83 f9 30 74 0b 8b 55
+parser law | cmp 0x30 | True | cmp 0x31 | True | shl 1 | True | lea +c-0x30 | True
+[PASS] G4b 0x628720 accepts ONLY '0'/'1' and accumulates v=v*2+(c-0x30) (decoded from bytes)
+group | mask | emitted default string | len | re-parse | match
+Pref0 | 0xbbe1dd96 | 10111011111000011101110110010110 | 32 | 0xbbe1dd96 | OK
+Pref1 | 0xa3e1dd16 | 10100011111000011101110100010110 | 32 | 0xa3e1dd16 | OK
+More0 | 0x3a7168 | 1110100111000101101000 | 22 | 0x3a7168 | OK
+More1 | 0x327168 | 1100100111000101101000 | 22 | 0x327168 | OK
+Semaphore | 0x1a0e | 1101000001110 | 13 | 0x1a0e | OK
+group@0x3c3a9 | 0x3c3a9 | 111100001110101001 | 18 | 0x3c3a9 | OK
+[PASS] G4c every emitted default string re-parses to its mask under 0x628720's law (6/6)
+
+-- G5  consumer: the options dialog fields and the APPLY OR --
+getter | call sites | dispatch
+0x493b0b | ->0x58e640 | +1 | mov | DWORD PTR [esi+0xa30],eax
+0x493b16 | ->0x58e6c0 | +1 | mov | DWORD PTR [esi+0xa34],eax
+0x493b21 | ->0x58e640 | +1 | mov | DWORD PTR [esi+0xa38],eax
+0x493b2c | ->0x58e6c0 | +1 | mov | DWORD PTR [esi+0xa3c],eax
+0x493b37 | ->0x58e640 | +1 | mov | DWORD PTR [esi+0xa40],eax
+0x493b42 | ->0x58e6c0 | +1 | mov | DWORD PTR [esi+0xa44],eax
+0x493b4d | ->0x58e640 | +1 | mov | DWORD PTR [esi+0xa4c],eax
+0x493b58 | ->0x58e6c0 | +1 | mov | DWORD PTR [esi+0xa50],eax
+0x493b63 | ->0x58e740 | +1 | mov | DWORD PTR [esi+0xa48],eax
+0x493b6e | ->0x58e640 | +1 | mov | DWORD PTR [esi+0xa54],eax
+0x493b79 | ->0x58e6c0 | +3 | mov | DWORD PTR [esi+0xa58],eax
+[PASS] G5a getter A 5 sites, getter B 5 sites, ALL 11 dispatches inside 0x493b0b..0x493b79
+field map | {'0xa30': '0x58e640', '0xa34': '0x58e6c0', '0xa38': '0x58e640', '0xa3c': '0x58e6c0', '0xa40': '0x58e640', '0xa44': '0x58e6c0', '0xa48': '0x58e740', '0xa4c': '0x58e640', '0xa50': '0x58e6c0', '0xa54': '0x58e640', '0xa58': '0x58e6c0'}
+store order measured | [('0xa30', '0x58e640'), ('0xa34', '0x58e6c0'), ('0xa38', '0x58e640'), ('0xa3c', '0x58e6c0'), ('0xa40', '0x58e640'), ('0xa44', '0x58e6c0'), ('0xa4c', '0x58e640'), ('0xa50', '0x58e6c0'), ('0xa48', '0x58e740'), ('0xa54', '0x58e640'), ('0xa58', '0x58e6c0')]
+store order declared | [('0xa30', '0x58e640'), ('0xa34', '0x58e6c0'), ('0xa38', '0x58e640'), ('0xa3c', '0x58e6c0'), ('0xa40', '0x58e640'), ('0xa44', '0x58e6c0'), ('0xa4c', '0x58e640'), ('0xa50', '0x58e6c0'), ('0xa48', '0x58e740'), ('0xa54', '0x58e640'), ('0xa58', '0x58e6c0')]
+[PASS] G5b all 11 dispatch sites match the declared order both ways: +0xa30/+0xa38/+0xa40/+0xa4c/+0xa54 <- getterA, +0xa34/+0xa3c/+0xa44/+0xa50/+0xa58 <- getterB, +0xa48 <- getterC (0x3c3a9)
+APPLY final stores | {'0x92befc': (['0xa20', '0xa30', '0xa38', '0xa40', '0xa4c', '0xa54'], '@0x492464'), '0x92bf00': (['0xa24', '0xa34', '0xa3c', '0xa44', '0xa50', '0xa58'], '@0x49246f')}
+Preferences  <- | 0x92befc | ['0xa20', '0xa30', '0xa38', '0xa40', '0xa4c', '0xa54']
+MorePrefs    <- | 0x92bf00 | ['0xa24', '0xa34', '0xa3c', '0xa44', '0xa50', '0xa58']
+[PASS] G5c APPLY: the store at 0x492464 writes ds:0x92befc from an OR incl. the getter-A field +0xa30 and the store at 0x49246f writes ds:0x92bf00 from an OR incl. the getter-B field +0xa34 (disjoint sets; the OR chain is measured by dataflow, not by name)
+
+-- G6  rivals (each must FAIL on the printed numbers) --
+R1 Laptop only toggles the difficulty bit 0x20       holds=False  0x18000080 / 0x80000
+R2 one Laptop delta serves both groups               holds=False  0x18000080 vs 0x80000
+R3 Laptop!=0 is a superset (adds options)            holds=False  added P=[] added M=[]
+R4 the default string is a fixed 32 chars            holds=False  lens 32 / 22
+R5 the getters apply the same Difficulty gate        holds=False  getterA=0xbbe1dd96 gate bit present=False
+R6 Laptop is read once and forwarded                 holds=False  read sites 4
+R7 the emitted string is the value stored to the cell as text holds=False  re-parse 0xbbe1dd96 == mask 0xbbe1dd96
+[PASS] G6 7/7 rivals FALSIFIED by the printed numbers
+
+tables digest c742bc131105fb25  (71 rows)
+PASS M355: 7/7 gates

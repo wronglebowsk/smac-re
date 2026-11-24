@@ -676,3 +676,28 @@ whether a facility completion stamps at all.
   `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py
   --verify` PASS) before `## M354` landed.
 - OPEN: game nouns of +0x25..+0x28; bit2 = prototype build INFERRED.
+
+## Session 329-chain3 (2026-11-24) — M355: `Laptop` = the DEFAULT bit-vectors of `Preferences` / `More Preferences`
+
+- **ACCEPT** `python3 -u scripts/m355_laptop_masks.py` -> **`PASS M355: 7/7`**, digest
+  `c742bc131105fb25`, sha1 `d3f17cc9` x2 identical (`evidence/m355_x2.txt:3-4`);
+  `m355_mutate.py` -> **24/24 killed**, 2 NO-OP green (`evidence/m355_mutate.txt`).
+- **`Laptop`** = 4 read sites (0x58e9f3/0x58eb0c loader; 0x58e688/0x58e708 in getters 0x58e640/
+  0x58e6c0, one each), 2 VAs both "Laptop"; `neg`/`sbb` -> 0/-1 = `atoi != 0`; absent == explicit 0
+  (lpDefault = the zeroed 0x997120, zeroed before the call).
+- **MASKS** (from the encoded `and`/`add` immediates; the register is proven to be the read's atoi
+  return, G2e): Preferences 0xbbe1dd96 / 0xa3e1dd16; More Preferences 0x3a7168 / 0x327168.
+  Laptop!=0 CLEARS bits {7,27,28} resp. {19} — it removes options, never adds.
+- **ROLE**: the mask is the lpDefault of two bit-string reads (0x58eaf7 `Preferences`, 0x58ec0d
+  `More Preferences`), emitted as '1'/'0' over bits 31..0 by a downward loop (`shl edx,cl`, `test
+  <mask>,edx`, leading zeros >bit 8 dropped); parser 0x628720 (`v=v*2+(c-0x30)`) gives the dword.
+- **GATE**: `Difficulty` (ds:0x92bde8) < 2 ORs Preferences bit 5 — LOADER default only, on the jcc
+  fall-through; B block and both getters hold 0 refs.
+- **CONSUMER**: getters feed one dialog block (0x493b0b..0x493b79, 5+5 sites, 11-field order
+  measured both ways) storing +0xa30..+0xa58; APPLY 0x4923d0 ORs +0xa30 into ds:0x92befc @0x492464
+  and +0xa34 into ds:0x92bf00 @0x49246f. `Laptop` changes DEFAULTS only.
+- **REVIEW (PR #380)**: 10 findings closed by tightening G1a/G1b/G1d/G2e/G3a/G4a/G4b/G5b/G5c and
+  the rotate guard; 8 new mutants (MU17-24), no check weakened.
+- **PROTOCOL**: NAMED headroom 4,204 B (< 5 KB trigger) -> `m355_named_rotate.py` rotated `## M293`
+  VERBATIM (block sha1 `e548f949`) to `docs/named-archive-m355-rows.md`.
+- **OPEN**: the option NAME of each set bit; whether another path re-derives 0x92befc/0x92bf00.

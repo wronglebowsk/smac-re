@@ -594,39 +594,15 @@ WALK. Live 26-turn window (m54b_clean t0): FOUND=9 ALL via the hub leg
 HUBFOUND tile, 2 walked pods, own-flag law 29/29.
 Instrument: scripts/m292_pod_movement.py.
 
-## M293 (s240, CORRECTION, MERGED #250) - three verified Greptile P1s fixed; two registry claims retracted
-- D1 hub dispatch (the M290/B13 correction above; bytes re-derived from the
-  disasm cache): msg block [0x563d4e,0x563d7d] entered ONLY by the esi==0 +
-  flag!=0 fallthrough - no branch in .text targets it from outside
-  (scripts/m290_hub_decision.py:160, G4 = real CFG parse: branch table
-  0x563d40->0x563e48, 0x563d48->0x563dfa, 0x563d57->0x563d82,
-  0x563d7d->0x56c925, 0x563e04->0x563e12; [ebp-0xa4] single writer
-  0x55f6d6, producer chain 0x55f6b0/0x55f6c0/0x55f6c6/0x55f6cd/0x55f6d1
-  bytes asserted). The OLD G4 sliced its own address table at
-  0x563d4e..0x563d81 - vacuous (the founder je-target 0x563d82 abuts the
-  end). ACCEPTANCE: python3 scripts/m290_hub_decision.py
-  programs/saves/m54b_clean.SAV evidence/m289_gdb_raw.log
-  evidence/trace_m289_20261110_071759.jsonl -> PASS M290: 9/9
-  (evidence/m290_hub_decision.txt:33). 3 runs; runs 1-2 were the
-  instrument (byte transcription; in-block skip), floors never cut.
-- D1b read-only /proc probe (pid 4087359, TracerPid 0): ds:0x920434=0,
-  ds:0x91b5b4=3, ds:0x9208f8=0 -> the msg leg is UNREACHABLE in this solo
-  save; name of 0x920434 OPEN (scenario/multiplayer gate?).
-- D2 sim/hubfound.py:94 legs (distant/msg/found): ACCEPTANCE
-  python3 -m sim.selftest --b13 programs/saves/m54b_clean.SAV -> PASS
-  B13: 12/12 (evidence/b13_hubfound.txt:4).
-- D3 guards >=0x1000000 -> >=0x400000 in m284_dialog_dispatch.py:246,
-  m285_chooser_dispatch.py:185, m286_reallyquit_dispatch.py:181,
-  m287_menu_dispatch.py:279; M284-M287 live claims now carry INVALID
-  banners in their blocks. Static closure (0 direct callers of
-  FUN_005f6aa3, create/key-path containment) UNAFFECTED.
-- D4 sim/selftest.py:177 (run_save): walk() returns (rows, notes) and
-  prints nothing - the old redirect+splitlines()[-1] raised IndexError
-  every run (the except caught only SystemExit). ACCEPTANCE
-  python3 -m sim.selftest --sav programs/saves/m54b_clean.SAV -> PASS
-  B2: 7/7 (evidence/s240_b2_run.txt:2 "21 sections, 0 problems").
-- Cites per AGENTS.md:50 (path:line) added to every claim touched here.
-
+## M293 (STUB - block VERBATIM: `docs/named-archive-m355-rows.md`, sha1 `e548f949cfd953c8`)
+| claim | ev | conf |
+|---|---|---|
+| D1 hub dispatch (the M290/B13 correction above | archive:1 | archived |
+| D1b read-only /proc probe (pid 4087359, TracerPid 0) | archive:2 | archived |
+| D2 sim/hubfound.py:94 legs (distant/msg/found) | archive:3 | archived |
+| D3 guards >=0x1000000 -> >=0x400000 in m284_dialog_dispatch.py:246, | archive:4 | archived |
+| D4 sim/selftest.py:177 (run_save) | archive:5 | archived |
+| Cites per AGENTS.md:50 (path:line) added to every claim touched here. | archive:6 | archived |
 ## B14 (s241, BUILD 10/10) - the hub scan + walk dispatch EXECUTABLE: sim/podscan.py
 Ring tables as literals RING_DX/RING_DY (25 entries; provenance
 evidence/b14_ring_table.txt, the file-image dump of .rdata 0x67850c dx /
@@ -1547,7 +1523,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | read = 5 fns / 5 refs / 35 keys; 13/13 written keys read; `Laptop`+`Language` read, written NOWHERE (33 write sites) | `:47-122` | V MU8,MU9,MU12 |
 | RETRACT M350: `ds:0x6926ec` = the .data literal "Prefs Format"; lpKeyName at 7 push sites; no store names the VA, 0 materialisations | `:124-131` | V MU10,MU11 |
 | rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
-| OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b); twins return 0x3a7168/0x327168 | `:97` | lead |
+| ~~OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b)~~ ANSWERED by `## M355`: the DEFAULT bit-vectors of `Preferences`/`More Preferences`; twins return 0x3a7168/0x327168 | `:97` | V (M355) |
 
 ## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 11/11, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
 
@@ -1576,3 +1552,12 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | **RETRACTION (narrows M349/M351):** the decoder legs are identified by their TABLES: `test ecx,ecx`/`jge 0x4efa2c`/`neg ecx` pinned, head<0 reads the 0x984d38/0x30 cost +0x0c (M337 `#FACILITIES`), head>=0 LOADS+STORES the 0x98ad88 row +0x30. M349's per-leg nouns (neg=UNIT, +2=FACILITY) and M351's "unit row" for section B are INVERTED; the arithmetic and the sign split stand | `:42-54,81` | V MU15,MU16,MU23 |
 | ACCEPT `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 11/11`** `dd5e689e8d9af320`, x2 identical (`evidence/m354_x2.txt:91`); `scripts/m354_mutate.py` **23/24 scored, NO-OP ['MU25']**, measured coverage ALL 11 gates {G1,G2,G3,G4,G5,G6,G6b,G7,G8,G9,G10} | `:91`, `evidence/m354_mutate.txt:30` | V MU0 |
 | OPEN: the game noun of +0x25..+0x28; whether the +0x30 bit2 stamp is the prototype build (INFERRED); NAMED M312 rotated VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py --verify` PASS) | - | lead |
+
+## M355 (s329-c3, 7/7) — `Laptop` = the DEFAULT bit-vectors of `Preferences`/`More Preferences`
+| `Laptop` = 4 read sites, 2 VAs (0x58e9f3/0x58eb0c loader, 0x58e688/0x58e708 getters); `neg`/`sbb` -> 0/-1; absent==0 | `evidence/m355_laptop_masks.txt:17,31` | V MU5,MU14,MU19 |
+| masks from the `and`/`add` immediates: Preferences 0xbbe1dd96/0xa3e1dd16, More Preferences 0x3a7168/0x327168; reg = the read's atoi return | `:43,50` | V MU1,MU8,MU10,MU20 |
+| `Laptop`!=0 CLEARS Preferences {7,27,28}, More Preferences {19}; nothing added | `:48-51` | V MU15 |
+| default = '1'/'0' over bits 31..0 (leading zeros >8 dropped), re-parsed by 0x628720 `v=v*2+(c-'0')` | `:66-77` | V MU12,MU13,MU22,MU24 |
+| `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
+| APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
+| OPEN: bit->option NAMES; other re-derivers | - | lead |
