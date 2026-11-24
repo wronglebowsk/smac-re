@@ -716,27 +716,24 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 
 ## Session 335-chain2 (2026-11-24) — M366: relation bits 0x10 / 0x20 — 0x10 = AT WAR (V), 0x20 = the human-branch war record (INF)
 
-- **ACCEPT** `python3 -u scripts/m366_bitnouns.py` -> **`PASS M366: 26/26 gates` `bc58f707128a8b15`**
-  (`evidence/m366_bitnouns.txt:587`), re-run byte-identical; `scripts/m366_mutate.py` ->
-  **29/29** (28 named mutants + MU0 NO-OP, `evidence/m366_mutate.txt:31`). Static only, 0 box time.
+- **ACCEPT** `python3 -u scripts/m366_bitnouns.py` -> **`PASS M366: 29/29 gates` digest
+  `c36db3d154a5ea1b`** (`evidence/m366_bitnouns.txt:597`, digest computed by the instrument),
+  re-run byte-identical; `scripts/m366_mutate.py` -> **32/32** (31 named mutants + MU0,
+  `evidence/m366_mutate.txt:33`). Static only, 0 box time.
 - **CENSUS** (`:23`): 0x10 = 37 bare / 52 total / 16 fns; 0x20 = 18 bare / 30 total / 5 fns;
-  0x20's askers are exactly {FUN_004f6030, FUN_00546800, FUN_0058fa40} and the naming MENU
-  (FUN_00442320) is NOT among them (`:566`) — which is why 0x20 gets no string noun.
-  Both-bit masks: 0x30, 0x31, 0x40c31 — never fused into one id.
-- **WRITERS** (`:40`): set-writer FUN_00551a20 `test bl,0x10` -> `and edx,0xfaeef378` (clears
+  0x20's askers are exactly {FUN_004f6030, FUN_00546800, FUN_0058fa40} — the naming MENU
+  (FUN_00442320) is NOT among them (`:574`), which is why 0x20 gets no string noun. The decoder
+  is gated (`:28`): 214/232 sites are 3-push cdecl, 212 pop `add esp,0xN`>=0xc, 2 inline-result.
+- **WRITERS** (`:36-46`): `FUN_00551a20` `test bl,0x10` -> `and edx,0xfaeef378` (clears
   {1,2,4,0x80,0x400,0x800,0x10000,0x100000,0x1000000,0x4000000}) + `or ebx,0x80000108` (sets
-  0x8|0x100|0x80000000); clear-writer FUN_005518f0 `test dl,0x10` -> `or 0x8040`.
-  0x20's clear rule drops dword B's 0xc00; FUN_00551c40's 0x20 rule drops B's 0x40.
-- **WAR PATH** (`:549-552`): FUN_00507ce0 inlines the predicate on the peace group 0x7, calls
-  FUN_005076d0, then SETs 0x8010. FUN_005076d0 pushes 0x10 to the A-setter on both exits
-  (0x507abc, 0x507c71) and fires the .data keys at 0x68d67c/0x68d684 = `INCITED` /
-  `VENDETTAWARNING` (bytes read from the file, not the decompiler); on the human branch it also
-  SETs 0x20 through FUN_00551cf0(...,0x20,**1**) at 0x507aad / 0x507c52.
-- **READ SIDE** (`:558`): 0x51ef55 `test [pair],0x40020` picks `ECONOMICLOSE2` (tiny cubicle)
-  over `ECONOMICLOSE` (country estate) — a SET bit means the winner holds a grievance.
-- **ANSWER**: **0x10 = at war / vendetta in force (V)**; **0x20 = the human-facing war record
-  (INF)** — set only when a human faction is party to the declaration, tied into the dword-B
-  ladder 0x20->0x400->0x800, and half of the harsh-ending test.
-- **RETRACTED mid-fire**: FUN_00551cf0 / FUN_00551d70 are 4-arg and their **4th argument selects
-  SET vs CLEAR**; reading them as clear-writers inverts the 0x20 story (caught before commit).
-- **OPEN**: the noun WORD for 0x20; whether 0x80000000 (set with 0x10) is a timer/serial.
+  0x8|0x100|0x80000000); `FUN_005518f0` `test dl,0x10` -> `or 0x8040`.
+- **WAR PATH** (`:545-561`): FUN_00507ce0 inlines the predicate on 0x7, calls FUN_005076d0,
+  then SETs 0x8010; FUN_005076d0 sets 0x10 on both exits (0x507abc/0x507c71) and fires the .data
+  keys 0x68d67c/0x68d684 = `INCITED` / `VENDETTAWARNING` (bytes read from the image). Its
+  0x551cf0 call is `(_,_,0x20,1)`; FUN_00551cf0's 4th arg picks CLEAR by `je`, so 1 = SET.
+- **READ SIDE** (`:566-573`): 0x51ef55 `test [pair],0x40020` + `jne` past the mild load ->
+  SET keeps `ECONOMICLOSE2` ("tiny cubicle"), CLEAR `ECONOMICLOSE` ("country estate").
+- **ANSWER**: 0x10 = at war / vendetta in force (V); 0x20 = the human-facing war record (INF).
+- **RETRACTED mid-fire**: FUN_00551cf0/0x551d70 are 4-arg and the 4th arg selects SET vs CLEAR;
+  reading them as clear-writers inverts the 0x20 story (caught before the first commit).
+- **OPEN**: the noun WORD for 0x20; the role of 0x80000000 (set with 0x10).

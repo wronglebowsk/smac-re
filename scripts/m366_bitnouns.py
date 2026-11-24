@@ -24,6 +24,7 @@ Gates:
 import bisect
 import collections
 import csv
+import hashlib
 import os
 import re
 import sys
@@ -145,7 +146,9 @@ def call_sites():
                 continue
             break
         mask = imm(args[2][0]) if len(args) == 3 else None
-        sites.append({"a": ins["a"], "fn": owner(ins["a"]), "n": n, "mask": mask})
+        tail = INS[n + 1] if n + 1 < len(INS) else {"t": ""}
+        sites.append({"a": ins["a"], "fn": owner(ins["a"]), "n": n, "mask": mask,
+                      "pushes": len(args), "cleanup": tail["t"]})
     return sites
 
 
@@ -213,6 +216,17 @@ def g1(sites):
     gate("G1d", both == [0x30, 0x31, 0x40C31],
          f"the masks that ask BOTH bits: {[hex(m) for m in both]} -> the two bits are "
          f"asked together but never fused")
+    three = [x for x in sites if x["pushes"] == 3]
+    pops = []
+    for x in three:
+        nxt = [INS[x["n"] + k]["cleanup"] if False else INS[x["n"] + k]["t"] for k in (1, 2)]
+        pops.append(any(t.startswith("add    esp,0x") and imm(t.split(",")[-1].strip()) is not None
+                        and imm(t.split(",")[-1].strip()) >= 0xC for t in nxt))
+    odd = sorted(x["a"] for x, ok in zip(three, pops) if not ok)
+    gate("G1e", len(three) == 214 and sum(pops) == 212 and odd == [0x54C0BA, 0x54C963],
+         f"{len(three)} sites resolve to exactly 3 pushed arguments; {sum(pops)} are followed by "
+         f"`add esp,0xN` (N>=0xc) and the 2 exceptions are the inline-result sites {[hex(a) for a in odd]}"
+         f" -> the decoded mask is always the cdecl 3rd argument")
 
 
 # ------------------------------------------------------------------ G2 writers
@@ -300,68 +314,110 @@ def g3():
     setcalls = [i for i in vb if i["op"] == "call" and i["arg"].lower() == "0x%x" % SET_A]
     tens = [mask_arg(c) for c in setcalls]
     gate("G3b", tens.count(0x10) == 2 and len(tens) == 2,
-         f"FUN_005076d0: {len(setcalls)} setter calls with masks {[hex(t) if t is not None else '?' for t in tens]} -> "
-         f"0x10 is written on BOTH exits of the war routine")
+         f"FUN_005076d0: {len(setcalls)} setter calls with masks "
+         f"{[hex(t) if t is not None else '?' for t in tens]} -> 0x10 is written on BOTH exits")
     lits = {}
     for va in (0x68D67C, 0x68D684):
         lits[va] = cstr(va)
-    print(f"    .data literals in FUN_005076d0: " + ", ".join(f"{hex(v)}={s!r}" for v, s in lits.items()))
+    print(f"    .data literals in FUN_005076d0: "
+          + ", ".join(f"{hex(v)}={k!r}" for v, k in lits.items()))
     gate("G3c", lits[0x68D67C] == "INCITED" and lits[0x68D684] == "VENDETTAWARNING",
          f"the two message keys the war routine fires are {lits[0x68D684]!r} / {lits[0x68D67C]!r}"
          f" (read from the file image, not the decompiler)")
-    gate("G3d", any(i["op"] == "push" and imm(i["arg"]) in (0x68D67C, 0x68D684) for i in vb),
-         "both literals are pushed from inside FUN_005076d0's own window")
-    # the 0x20 write: FUN_00551cf0(a, b, 0x20, 1) - the 4th argument 1 selects its SET branch
+    pushed = {imm(i["arg"]) for i in vb if i["op"] == "push" and imm(i["arg"]) is not None}
+    gate("G3d", {0x68D67C, 0x68D684} <= pushed,
+         "BOTH literals are pushed from inside FUN_005076d0's own window "
+         "(VENDETTAWARNING and INCITED), not just one of them")
+    # the 0x20 write: FUN_00551cf0(a, b, 0x20, 1).  Two things must come from the bytes:
+    #   (1) FUN_00551cf0's 4th parameter selects SET vs CLEAR, and (2) the call passes 1 there.
+    w = window(0x551CF0, 0x551CF0 + size_of("FUN_00551cf0"))
+    print("    FUN_00551cf0 argument selector (decoded):")
+    for i in w[:5]:
+        print(f"      {i['a']:#010x}  {i['t']}")
+    sel = next((i for i in w if i["op"] == "mov" and "[ebp+0x14]" in i["arg"]), None)
+    branch = next((i for i in w if i["op"] in ("je", "jne")), None)
+    tgt = imm(branch["arg"]) if branch else None
+    fall = [i for i in w if sel and branch and sel["a"] < i["a"] < tgt]
+    at_tgt = [i for i in w if tgt is not None and tgt <= i["a"] < tgt + 70]
+    set_side = (any(i["op"] == "or" and "[" not in i["arg"] for i in fall)
+                and any(i["op"] == "mov" and "0x94d448" in i["arg"] for i in fall))
+    clr_side = any(i["op"] == "not" for i in at_tgt) and any(i["op"] == "and" for i in at_tgt)
+    print(f"    selector {sel['t'] if sel else '-'} -> {branch['t'] if branch else '-'};"
+          f" !=0 block ORs into the pair={set_side}, ==0 block has not+and={clr_side}")
+    gate("G3e", bool(sel) and bool(branch) and branch["op"] == "je" and set_side and clr_side,
+         f"FUN_00551cf0 reads its 4th parameter at [ebp+0x14] and `{branch['t'] if branch else '-'}` "
+         f"to the not/and (CLEAR) block -> the non-zero path is SET (or into +0x94d448)")
     c20 = []
     for i in vb:
         if i["op"] == "call" and i["arg"].lower() == "0x%x" % 0x551CF0:
-            back = [INS[POS[i["a"]] - k] for k in range(1, 6)]
-            masks = [imm(b["arg"]) for b in back if b["op"] == "push" and imm(b["arg"]) is not None]
-            c20.append((i["a"], masks))
+            back = []
+            for k in range(1, 12):
+                b = INS[POS[i["a"]] - k]
+                if b["op"] in ("call", "add", "jmp", "ret", "je", "jne", "test", "cmp"):
+                    break
+                back.append(b)
+            pushes = [b for b in back if b["op"] == "push"]
+            imms = [imm(b["arg"]) for b in pushes if imm(b["arg"]) is not None]
+            c20.append((i["a"], len(pushes), imms))
     print("    0x551cf0 calls in the war routine: "
-          + ", ".join(f"{a:#x} masks={[hex(m) for m in m_]}" for a, m_ in c20))
-    gate("G3e", len(c20) >= 1 and any(0x1 in m_ and 0x20 in m_ for _, m_ in c20),
-         f"0x20 is written through FUN_00551cf0 with its 4th argument = 1 (the SET branch), i.e. the "
-         f"same routine that declares the war also SETS 0x20")
+          + ", ".join(f"{a:#x} pushes={np} imms={[hex(x) for x in m_]}" for a, np, m_ in c20))
+    gate("G3f", any(np_ == 4 and m_ == [0x20, 0x1] for _, np_, m_ in c20),
+         "the war routine calls FUN_00551cf0 with 4 pushes whose immediates are arg3=0x20, "
+         "arg4=1 -> 0x20 is SET and the SET branch is chosen")
 
 
 def g4(sites):
     print("\nG4  read-side witnesses: what the two bits select")
     site = next(i for i in INS if i["a"] == 0x51EF55)
     print(f"    ending selector {site['a']:#x}: {site['t']}")
+    parts = [x.strip() for x in site["arg"].split(",")]
+    mask = imm(parts[-1]) if len(parts) == 2 else None
     near = window(0x51EF55, 0x51EF80)
     movs = [i for i in near if i["op"] == "mov" and "0x68e" in i["arg"]]
-    print("    and its two string operands: "
-          + ", ".join(f"{i['a']:#x} {i['t']}" for i in movs))
     strs = {imm(i["arg"].split(",")[1]): cstr(imm(i["arg"].split(",")[1])) for i in movs}
     print("    -> " + ", ".join(f"{hex(k)}={v!r}" for k, v in sorted(strs.items())))
-    jne = [i for i in near if i["op"] == "jne"]
-    ec2, ec1 = 0x68E908, 0x68E918
-    gate("G4a", sorted(strs.values()) == ["ECONOMICLOSE", "ECONOMICLOSE2"] and jne,
-         f"`test [pair],0x40020` selects {strs.get(ec2, strs.get(ec1))!r} vs "
-         f"{strs.get(ec1, '?')!r}: the mask picks WHICH defeat text is shown")
-    sure = [i for i in near if i["op"] in ("jne", "je") and "0x51ef6c" in i["arg"]]
-    gate("G4b", bool(sure) and sure and "0x51ef6c" in sure[0]["arg"],
-         f"the branch is `{sure[0]['t'] if sure else '-'}` -> taken when the bit is SET, and the "
-         f"SET path keeps 0x68e908 (ECONOMICLOSE2)")
+    gate("G4a", site["op"] == "test" and mask == 0x40020 and "0x94d448" in site["arg"],
+         f"the instruction at 0x51ef55 IS `test <pair dword>,{mask:#x}` -> 0x20 is half of the "
+         f"tested mask and the dword is the relations pair")
+    br = [i for i in near if i["op"] in ("je", "jne")][:1]
+    harsh = next((i for i in near if i["op"] == "mov"
+                  and imm(i["arg"].split(",")[-1]) == 0x68E908), None)
+    mild = next((i for i in near if i["op"] == "mov"
+                 and imm(i["arg"].split(",")[-1]) == 0x68E918), None)
+    print(f"    branch {br[0]['t'] if br else '-'}; harsh load {harsh['t'] if harsh else '-'};"
+          f" mild load {mild['t'] if mild else '-'}")
+    gate("G4b", bool(br) and br[0]["op"] == "jne" and bool(harsh) and bool(mild)
+         and site["a"] < harsh["a"] < br[0]["a"] < mild["a"]
+         and imm(br[0]["arg"]) == mild["a"] + 5,
+         "the branch is `jne` taken PAST the mild load: bit SET -> eax keeps 0x68e908 "
+         "(ECONOMICLOSE2), bit CLEAR -> 0x68e918 (ECONOMICLOSE)")
     txt = open(SCRIPT, "rb").read().decode("latin-1")
     recs = dict(re.findall(r"#(ECONOMICLOSE2?)\r?\n(.*?)(?=\r?\n#[A-Z])", txt, re.S))
-    body = {}
-    for k, v in recs.items():
-        body[k] = " ".join(l for l in v.splitlines() if not l.startswith("#"))
+    body = {k: " ".join(l for l in v.splitlines() if not l.startswith("#")) for k, v in recs.items()}
     print(f"    Script.txt ECONOMICLOSE  = {body['ECONOMICLOSE'][:70]!r}")
     print(f"    Script.txt ECONOMICLOSE2 = {body['ECONOMICLOSE2'][:70]!r}")
-    print(f"                (tail)        {body['ECONOMICLOSE2'][-60:]!r}")
-    gate("G4c", "small country" in body["ECONOMICLOSE"] and "tiny" in body["ECONOMICLOSE2"]
-         and "estate" in body["ECONOMICLOSE"] and "Recycling" not in body["ECONOMICLOSE"],
-         "the 2-variant is the HARSH ending (tiny cubicle / Recycling Tanks) and the plain one "
-         "the mild one (country estate) -> a set bit means the winner holds a grievance")
+    gate("G4c", "estate" in body["ECONOMICLOSE"] and "tiny" not in body["ECONOMICLOSE"]
+         and "tiny cubicle" in body["ECONOMICLOSE2"],
+         "MILD = 'small country estate', HARSH = 'tiny cubicle' -> a SET bit means the winner "
+         "holds a grievance strong enough to change the defeat text")
     fns10 = {s["fn"] for s in sites if s["mask"] == 0x10}
-    combat = "FUN_00502cd0" in fns10
-    print(f"    0x10 askers include the combat resolver: {combat}")
-    gate("G4d", combat,
-         "FUN_00502cd0 (the resolver whose literals are PACTATTACKED / PACTATTACKING / "
-         "VENDETTAREPORT) asks 0x10 -> the read-side of 0x10 is 'are these two at war'")
+    win = window(0x502CD0, 0x502CD0 + size_of("FUN_00502cd0"))
+    keys = set()
+    for i in win:
+        if i["op"] not in ("push", "mov"):
+            continue
+        for part in i["arg"].split(","):
+            v = imm(part)
+            if v is not None and DATA_VMA <= v < DATA_VMA + 0x20000:
+                t = cstr(v, 20)
+                if len(t) > 4 and t.isupper():
+                    keys.add(t)
+    want = {"PACTATTACKED", "PACTATTACKING", "VENDETTAREPORT"}
+    print(f"    FUN_00502cd0 carries {len(keys)} upper-case .data keys; war keys present: "
+          f"{sorted(want & keys)}")
+    gate("G4d", "FUN_00502cd0" in fns10 and want <= keys,
+         "FUN_00502cd0 asks 0x10 AND carries PACTATTACKED/PACTATTACKING/VENDETTAREPORT (read "
+         "from the image) -> the read side of 0x10 is 'are these two at war'")
     fns20 = {s["fn"] for s in sites if s["mask"] == 0x20}
     gate("G4e", "FUN_00442320" not in fns20 and len(fns20) == 3,
          f"0x20's askers are {sorted(fns20)} - the diplomacy MENU that named 0x1/0x8 is NOT "
@@ -369,6 +425,23 @@ def g4(sites):
 
 
 # ------------------------------------------------------------------ G5 immediates
+def writer_calls():
+    """every call site of the six writers, with its pushed immediates (mask = arg3)."""
+    out = []
+    for n, ins in enumerate(INS):
+        if ins["op"] != "call" or ins["arg"].lower() not in {"0x%x" % w for w in WRITERS}:
+            continue
+        imms = []
+        for back in range(n - 1, max(-1, n - 9), -1):
+            b = INS[back]
+            if b["op"] == "push" and imm(b["arg"]) is not None:
+                imms.append(imm(b["arg"]))
+            if len(imms) == 2:
+                break
+        out.append((ins["a"], int(ins["arg"], 16), imms))
+    return out
+
+
 def g5():
     print("\nG5  direct-immediate access to the pair dwords (outside the predicate)")
     cnt = collections.Counter()
@@ -380,20 +453,28 @@ def g5():
             continue
         for part in ins["arg"].split(","):
             v = imm(part)
-            if v is not None and v in (0x10, 0x20, 0x8040, 0x40020, 0x8010):
+            if v is not None and v in (0x10, 0x20, 0x8010, 0x8040, 0x40020):
                 cnt[(v, ins["op"])] += 1
                 forms[v].add(ins["op"])
     for v in (0x10, 0x20, 0x8010, 0x8040, 0x40020):
-        print(f"    {v:#08x}: " + ", ".join(f"{op}={cnt[(v, op)]}"
-                                            for op in sorted(forms[v])) if forms[v] else f"    {v:#08x}: none")
-    gate("G5a", sum(cnt.values()) > 0 and (0x10, "test") in cnt and (0x20, "test") in cnt,
-         f"{sum(cnt.values())} direct instructions name one of these five immediates")
+        print(f"    {v:#08x}: " + (", ".join(f"{op}={cnt[(v, op)]}" for op in sorted(forms[v]))
+                                    if forms[v] else "none"))
+    gate("G5a", cnt[(0x10, "test")] == 62 and cnt[(0x20, "test")] == 37
+         and cnt[(0x40020, "test")] == 3,
+         f"direct tests: 0x10 x{cnt[(0x10, 'test')]}, 0x20 x{cnt[(0x20, 'test')]}, "
+         f"0x40020 x{cnt[(0x40020, 'test')]} -- M364's G6 census (62/37) reproduced exactly")
     gate("G5b", (0x8010, "test") not in cnt,
          "the composite 0x8010 never appears as a direct test -> it is a WRITE mask, proving the "
          "war path writes 0x8000|0x10 rather than reading it")
+    calls = writer_calls()
+    bare8 = [(a, w) for a, w, m in calls if m and m[0] == 0x8]
+    print(f"    writer call sites: {len(calls)}; passing mask 0x8 alone: {len(bare8)}"
+          f" ({[hex(a) for a, _ in bare8][:6]})")
+    gate("G5c", len(bare8) >= 2 and any(w == SET_A for _, w in bare8),
+         f"{len(bare8)} writer calls pass 0x8 alone, {sum(w == SET_A for _, w in bare8)} of them "
+         f"to the A-setter {SET_A:#x} -> 0x8 is settable WITHOUT 0x10")
 
 
-# ------------------------------------------------------------------ G6 rivals
 def g6(sites, rules):
     print("\nG6  RIVALS (each measured, each must FAIL on these numbers)")
     named = {(w, tm, op, v) for w, tm, op, v, _ in rules}
@@ -414,11 +495,10 @@ def g6(sites, rules):
     # R3: 0x10 == 0x8
     bare8 = len([s for s in sites if s["mask"] == 0x8])
     bare10 = len([s for s in sites if s["mask"] == 0x10])
-    set8 = [w for w, tm, op, v in named if op == "or" and tm == 0x8]
-    r3 = bare8 != bare10 and (0x8, 0x10, "or", 0x8) not in named
+    r3 = bare8 != bare10 and (0x551A20, 0x8, "or", 0x2) not in named
     print(f"    R3 '0x10 and 0x8 are the same bit': bare asks 0x8={bare8} vs 0x10={bare10}; a bare-8 "
           f"set exists without 0x10 -> {'REFUTED' if r3 else 'stands'}")
-    gate("G6c", r3 and (0x551A20, 0x8, "or", 0x2) not in named,
+    gate("G6c", r3,
          f"R3 refuted: 0x8 and 0x10 are asked at different rates ({bare8} vs {bare10}) and set independently; "
          "the implication runs one way only (0x10 set -> 0x8 set)")
     # R4: the menu names every bit
@@ -446,7 +526,9 @@ def main():
     g5()
     g6(sites, writer_rules())
     bad = [g for g in GATES if not g[1]]
-    print(f"\n{'FAIL' if bad else 'PASS'} M366: {sum(g[1] for g in GATES)}/{len(GATES)} gates")
+    digest = hashlib.sha256("\n".join(f"{n}|{int(v)}|{m}" for n, v, m in GATES).encode()).hexdigest()[:16]
+    print(f"\n{'FAIL' if bad else 'PASS'} M366: {sum(g[1] for g in GATES)}/{len(GATES)} gates"
+          f" digest {digest}")
     return 1 if bad else 0
 
 

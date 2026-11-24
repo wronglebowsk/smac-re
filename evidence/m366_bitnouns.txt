@@ -25,6 +25,7 @@ G1  the ask census for bits 0x10 / 0x20 (every site of FUN_00426d60)
     dword-B ids ['0x8', '0x2000']
   G1c   PASS  13 editor ids; 0x10 and 0x20 are dword-A ids; the only dword-B twins are ['0x8', '0x2000']
   G1d   PASS  the masks that ask BOTH bits: ['0x30', '0x31', '0x40c31'] -> the two bits are asked together but never fused
+  G1e   PASS  214 sites resolve to exactly 3 pushed arguments; 212 are followed by `add esp,0xN` (N>=0xc) and the 2 exceptions are the inline-result sites ['0x54c0ba', '0x54c963'] -> the decoded mask is always the cdecl 3rd argument
 
 G2  the six relation writers: `test m` then `or s` / `and ~c` (re-derived)
     writer      test-mask  op   value       dest
@@ -544,25 +545,32 @@ G3  the declare-vendetta chain: FUN_00507ce0 -> FUN_005076d0 -> SET(dwordA, 0x10
     0x00507cd5  ret
 
   G3a   PASS  FUN_00507ce0: entry test `test   BYTE PTR [ecx*4+0x94d448],0x7` (the predicate inlined, asking the peace group 0x7), 1 call to the vendetta routine, 1 setter call with push ['0xffffffff', '0x8010'] (0x8000|0x10)
-  G3b   PASS  FUN_005076d0: 2 setter calls with masks ['0x10', '0x10'] -> 0x10 is written on BOTH exits of the war routine
+  G3b   PASS  FUN_005076d0: 2 setter calls with masks ['0x10', '0x10'] -> 0x10 is written on BOTH exits
     .data literals in FUN_005076d0: 0x68d67c='INCITED', 0x68d684='VENDETTAWARNING'
   G3c   PASS  the two message keys the war routine fires are 'VENDETTAWARNING' / 'INCITED' (read from the file image, not the decompiler)
-  G3d   PASS  both literals are pushed from inside FUN_005076d0's own window
-    0x551cf0 calls in the war routine: 0x507aad masks=['0x20', '0x1'], 0x507c52 masks=['0x20', '0x1'], 0x507caf masks=['0x40', '0x1']
-  G3e   PASS  0x20 is written through FUN_00551cf0 with its 4th argument = 1 (the SET branch), i.e. the same routine that declares the war also SETS 0x20
+  G3d   PASS  BOTH literals are pushed from inside FUN_005076d0's own window (VENDETTAWARNING and INCITED), not just one of them
+    FUN_00551cf0 argument selector (decoded):
+      0x00551cf0  push   ebp
+      0x00551cf1  mov    ebp,esp
+      0x00551cf3  mov    eax,DWORD PTR [ebp+0x14]
+      0x00551cf6  test   eax,eax
+      0x00551cf8  je     0x551d36
+    selector mov    eax,DWORD PTR [ebp+0x14] -> je     0x551d36; !=0 block ORs into the pair=True, ==0 block has not+and=True
+  G3e   PASS  FUN_00551cf0 reads its 4th parameter at [ebp+0x14] and `je     0x551d36` to the not/and (CLEAR) block -> the non-zero path is SET (or into +0x94d448)
+    0x551cf0 calls in the war routine: 0x507aad pushes=4 imms=['0x20', '0x1'], 0x507c52 pushes=4 imms=['0x20', '0x1'], 0x507caf pushes=4 imms=['0x40', '0x1']
+  G3f   PASS  the war routine calls FUN_00551cf0 with 4 pushes whose immediates are arg3=0x20, arg4=1 -> 0x20 is SET and the SET branch is chosen
 
 G4  read-side witnesses: what the two bits select
     ending selector 0x51ef55: test   DWORD PTR [ecx*4+0x94d448],0x40020
-    and its two string operands: 0x51ef60 mov    eax,0x68e908, 0x51ef67 mov    eax,0x68e918
     -> 0x68e908='ECONOMICLOSE2', 0x68e918='ECONOMICLOSE'
-  G4a   PASS  `test [pair],0x40020` selects 'ECONOMICLOSE2' vs 'ECONOMICLOSE': the mask picks WHICH defeat text is shown
-  G4b   PASS  the branch is `jne    0x51ef6c` -> taken when the bit is SET, and the SET path keeps 0x68e908 (ECONOMICLOSE2)
+  G4a   PASS  the instruction at 0x51ef55 IS `test <pair dword>,0x40020` -> 0x20 is half of the tested mask and the dword is the relations pair
+    branch jne    0x51ef6c; harsh load mov    eax,0x68e908; mild load mov    eax,0x68e918
+  G4b   PASS  the branch is `jne` taken PAST the mild load: bit SET -> eax keeps 0x68e908 (ECONOMICLOSE2), bit CLEAR -> 0x68e918 (ECONOMICLOSE)
     Script.txt ECONOMICLOSE  = '$TITLE0 $NAME1 of the $FACTION2 corners the Global Energy Market! All '
     Script.txt ECONOMICLOSE2 = '$TITLE0 $NAME1 of the $FACTION2 corners the Global Energy Market! All '
-                (tail)        '$NAME1 provides you with a tiny cubicle for your retirement.'
-  G4c   PASS  the 2-variant is the HARSH ending (tiny cubicle / Recycling Tanks) and the plain one the mild one (country estate) -> a set bit means the winner holds a grievance
-    0x10 askers include the combat resolver: True
-  G4d   PASS  FUN_00502cd0 (the resolver whose literals are PACTATTACKED / PACTATTACKING / VENDETTAREPORT) asks 0x10 -> the read-side of 0x10 is 'are these two at war'
+  G4c   PASS  MILD = 'small country estate', HARSH = 'tiny cubicle' -> a SET bit means the winner holds a grievance strong enough to change the defeat text
+    FUN_00502cd0 carries 22 upper-case .data keys; war keys present: ['PACTATTACKED', 'PACTATTACKING', 'VENDETTAREPORT']
+  G4d   PASS  FUN_00502cd0 asks 0x10 AND carries PACTATTACKED/PACTATTACKING/VENDETTAREPORT (read from the image) -> the read side of 0x10 is 'are these two at war'
   G4e   PASS  0x20's askers are ['FUN_004f6030', 'FUN_00546800', 'FUN_0058fa40'] - the diplomacy MENU that named 0x1/0x8 is NOT among them, so no string key names 0x20
 
 G5  direct-immediate access to the pair dwords (outside the predicate)
@@ -571,8 +579,10 @@ G5  direct-immediate access to the pair dwords (outside the predicate)
     0x008010: none
     0x008040: none
     0x040020: test=3
-  G5a   PASS  102 direct instructions name one of these five immediates
+  G5a   PASS  direct tests: 0x10 x62, 0x20 x37, 0x40020 x3 -- M364's G6 census (62/37) reproduced exactly
   G5b   PASS  the composite 0x8010 never appears as a direct test -> it is a WRITE mask, proving the war path writes 0x8000|0x10 rather than reading it
+    writer call sites: 169; passing mask 0x8 alone: 7 (['0x42999d', '0x4dae13', '0x4dae37', '0x4db132', '0x523f6c', '0x56f5ad'])
+  G5c   PASS  7 writer calls pass 0x8 alone, 4 of them to the A-setter 0x551a20 -> 0x8 is settable WITHOUT 0x10
 
 G6  RIVALS (each measured, each must FAIL on these numbers)
     R1 '0x10 is a treaty/pact bit': the 0x10 set-rule clears ['0x1', '0x2', '0x4', '0x80', '0x400', '0x800', '0x10000', '0x100000', '0x1000000', '0x4000000'] -> REFUTED
@@ -584,4 +594,4 @@ G6  RIVALS (each measured, each must FAIL on these numbers)
   G6d   PASS  R4 (control, must STAND): the menu does ask 0x8 - so the ABSENCE of the menu from 0x20's askers is a real signal, not a census gap
   G6e   PASS  R5 '0x20 and 0x40000 are one flag' refuted: the composite 0x40020 is asked 3x but 0x20 alone 18x and 0x40000 alone 3x -> two bits, one shared test
 
-PASS M366: 26/26 gates
+PASS M366: 29/29 gates digest c36db3d154a5ea1b

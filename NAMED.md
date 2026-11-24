@@ -1645,14 +1645,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | QUALIFIES `## B31`: its "one NEGATIVE at a facility-range head" is real but is 3 boundaries, and it did not flag the 3 vacuous rows | `:54-59` | V MU1,MU2,MU7 |
 | OPEN: which grant/copy call site fired in the run (no call stack in the trace); `FUN_0059ce10`'s 11 literal items (1 caller `FUN_005a0fa0`) | - | lead |
 
-## M366 (s335-chain2, STATIC 26/26) — 0x10 = AT WAR / vendetta in force (V); 0x20 = the human-branch war record (INF). ev `evidence/m366_bitnouns.txt:587`
+## M366 (s335-chain2, STATIC 29/29) — 0x10 = AT WAR / vendetta in force (V); 0x20 = the human-branch war record (INF). ev `evidence/m366_bitnouns.txt:597`
 | claim | ev | conf |
 |---|---|---|
-| 0x10: 37 bare / 52 total asks in 16 fns; 0x20: 18 bare / 30 total in 5 fns; both-bit masks 0x30/0x31/0x40c31; both are dword-A editor ids (0x8/0x2000 are the only B twins) | `:13-28` | V MU1,2,3,4 |
-| set-writer `FUN_00551a20`: `test 0x10 -> and 0xfaeef378` clears {1,2,4,0x80,0x400,0x800,0x10000,0x100000,0x1000000,0x4000000} and `or 0x80000108` sets {0x8,0x100,0x80000000}; clear-writer `FUN_005518f0`: `test 0x10 -> or 0x8040` | `:36-44` | V MU5,6,7,ALG2 |
-| 0x10 = the bit the declare-vendetta path writes: `FUN_00507ce0` tests 0x7 inline -> `FUN_005076d0` -> `FUN_00551a20(...,0x10)` on BOTH exits (0x507abc/0x507c71); that routine fires `VENDETTAWARNING`/`INCITED` (0x68d684/0x68d67c, bytes from the image) | `:545-551` | V MU10,11,12,13,ALG1 |
-| 0x20 is SET by the same routine through `FUN_00551cf0(...,0x20,1)` (4th arg = SET branch) at 0x507aad/0x507c52, only on the `ds:0x985b10` bit branch; its clear rule drops dword B's 0xc00 and `FUN_00551c40`'s 0x20 rule drops B's 0x40 | `:552,:36-44` | V MU8,9,14 |
-| read side: `0x51ef55 test [pair],0x40020` picks `ECONOMICLOSE2` ("tiny cubicle") over `ECONOMICLOSE` ("country estate"); `FUN_00502cd0` (PACTATTACKED/PACTATTACKING/VENDETTAREPORT) asks 0x10; the naming menu is NOT among 0x20's 3 askers | `:554-566` | V MU15,16,17,18,19 |
-| RIVALS refuted on the numbers: 0x10 as a peace bit (its set-rule clears 1/2/4); 0x10 == 0x20 (different clear-side effects); 0x10 == 0x8 (20 vs 37 bare asks, 0x8 settable alone); 0x20 == 0x40000 (18 vs 3 bare) | `:568-586` | V MU20-26 |
-| ACCEPT `python3 -u scripts/m366_bitnouns.py` -> 26/26 `bc58f707128a8b15` x2; harness 29/29 | `evidence/m366_bitnouns.txt:587`, `evidence/m366_mutate.txt:31` | V MU0 |
-| INF: the noun WORD for 0x20 (&#x27;war record&#x27; is INFERRED from the human branch + B-ladder + ending text); 0x80000000's role | - | INF |
+| asks: 0x10 = 37 bare / 52 total in 16 fns; 0x20 = 18 bare / 30 total in 5 fns; both-bit masks 0x30/0x31/0x40c31; both are dword-A ids (0x8/0x2000 the only B twins) | `:13-23` | V MU1,2,3,4 |
+| the ask decoder is sound: 214/232 sites are 3-push cdecl, 212 pop with `add esp,0xN` (N>=0xc), 2 inline-result sites named | `:28` | V MU5 |
+| set-writer `FUN_00551a20` `test bl,0x10 -> and 0xfaeef378` clears {1,2,4,0x80,0x400,0x800,0x10000,0x100000,0x1000000,0x4000000} and `or 0x80000108` sets {0x8,0x100,0x80000000}; clear-writer `FUN_005518f0` `test dl,0x10 -> or 0x8040`; 0x20's rules drop B's 0xc00 / B's 0x40 | `:36-46` | V MU6,7,8,9,10,ALG2 |
+| 0x10 is what the declare-vendetta path writes: `FUN_00507ce0` tests 0x7 inline -> `FUN_005076d0` -> setter with push 0x8010, and the routine pushes 0x10 on BOTH exits (0x507abc/0x507c71) while firing `VENDETTAWARNING`/`INCITED` (0x68d684/0x68d67c, bytes from the image) | `:545-556` | V MU11,12,13,14,ALG1 |
+| 0x20 is SET by that same routine: `FUN_00551cf0`'s 4th arg at [ebp+0x14] selects the CLEAR (not/and) block by `je`, and the call site pushes 4 args with arg3=0x20, arg4=1 (0x507aad/0x507c52) | `:559-561` | V MU15,16 |
+| read side: the instruction at 0x51ef55 IS `test <pair dword>,0x40020`; `jne` skips the mild load so SET keeps `ECONOMICLOSE2` ("tiny cubicle") over `ECONOMICLOSE` ("estate"); `FUN_00502cd0` asks 0x10 and carries PACTATTACKED/PACTATTACKING/VENDETTAREPORT; the naming menu is NOT among 0x20's 3 askers | `:566-574` | V MU17,18,19,20,21 |
+| direct tests 62 (0x10) / 37 (0x20) / 3 (0x40020) reproduce M364's G6; 0x8010 is never a direct test (write mask); 7 writer calls pass 0x8 alone, 4 to the A-setter | `:579-585` | V MU22,23,24 |
+| RIVALS refuted: 0x10 as a peace bit (its set-rule clears 1/2/4); 0x10 == 0x20 (different clear side-effects); 0x10 == 0x8 (20 vs 37 bare, 0x8 settable alone, implication one-way); 0x20 == 0x40000 (18 vs 3 bare) | `:588-596` | V MU25-29 |
+| ACCEPT `python3 -u scripts/m366_bitnouns.py` -> 29/29 `c36db3d154a5ea1b` x2; harness 32/32 | `evidence/m366_bitnouns.txt:597`, `evidence/m366_mutate.txt:33` | V MU0 |
+| INF: the noun WORD for 0x20 (inferred from the human branch + B-ladder + ending text); 0x80000000's role | - | INF |
