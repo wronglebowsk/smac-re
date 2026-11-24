@@ -1,0 +1,34 @@
+MU0   NO-OP rc=0 red=none  -> PASS
+MU1   G1a  rc=1 red=['G1a'] -> RED as named
+MU2   G1b  rc=1 red=['G1b'] -> RED as named
+MU3   G1c  rc=1 red=['G1c'] -> RED as named
+MU4   G1d  rc=1 red=['G1d'] -> RED as named
+MU5   G1e  rc=1 red=['G1e'] -> RED as named
+MU6   G2a  rc=1 red=['G2a'] -> RED as named
+MU7   G2b  rc=1 red=['G2b'] -> RED as named
+MU8   G2c  rc=1 red=['G2c'] -> RED as named
+MU9   G2d  rc=1 red=['G2d'] -> RED as named
+MU10  G2e  rc=1 red=['G2e'] -> RED as named
+MU11  G3a  rc=1 red=['G3a'] -> RED as named
+MU12  G3b  rc=1 red=['G3b'] -> RED as named
+MU13  G3c  rc=1 red=['G3c'] -> RED as named
+MU14  G3d  rc=1 red=['G3d'] -> RED as named
+MU15  G3e  rc=1 red=['G3e'] -> RED as named
+MU16  G3f  rc=1 red=['G3f'] -> RED as named
+MU17  G4a  rc=1 red=['G4a'] -> RED as named
+MU18  G4b  rc=1 red=['G4b'] -> RED as named
+MU19  G4c  rc=1 red=['G4c'] -> RED as named
+MU20  G4d  rc=1 red=['G4d'] -> RED as named
+MU21  G4e  rc=1 red=['G4e'] -> RED as named
+MU22  G5a  rc=1 red=['G5a'] -> RED as named
+MU23  G5b  rc=1 red=['G5b'] -> RED as named
+MU24  G5c  rc=1 red=['G5c'] -> RED as named
+MU25  G6a  rc=1 red=['G6a'] -> RED as named
+MU26  G6b  rc=1 red=['G6b'] -> RED as named
+MU27  G6c  rc=1 red=['G6c'] -> RED as named
+MU28  G6d  rc=1 red=['G6d'] -> RED as named
+MU29  G6e  rc=1 red=['G6e'] -> RED as named
+ALG1  G3b  rc=1 red=['G3b'] -> RED as named
+ALG2  G2c  rc=1 red=['G2c'] -> RED as named
+
+PASS M366-harness: 32/32 (31 mutants + 1 NO-OP, 0 bad)

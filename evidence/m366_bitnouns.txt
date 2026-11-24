@@ -1,0 +1,597 @@
+
+G1  the ask census for bits 0x10 / 0x20 (every site of FUN_00426d60)
+    mask       n  bare  askers
+    0x00000010  37  yes  14 fns
+    0x00000011   4  NO   ['FUN_00546800']
+    0x00000014   1  NO   ['FUN_00546800']
+    0x00000017   1  NO   ['FUN_004a5eb0']
+    0x00000020  18  yes  ['FUN_004f6030', 'FUN_00546800', 'FUN_0058fa40']
+    0x00000021   1  NO   ['FUN_00546800']
+    0x00000030   5  NO   ['FUN_004266c0', 'FUN_004f6030', 'FUN_00546800']
+    0x00000031   1  NO   ['FUN_00546800']
+    0x00000050   1  NO   ['FUN_00546800']
+    0x00000060   1  NO   ['FUN_00546800']
+    0x00010013   1  NO   ['FUN_00546800']
+    0x00040020   3  NO   ['FUN_004f6030', 'FUN_00546800']
+    0x00040c31   1  NO   ['FUN_004282d0']
+    the 13 editor ids (FUN_004db1b0):
+     0x8@0x18 0x10@0x18 0x4@0x18 0x2@0x18 0x1@0x18 0x1000@0x18 0x2000@0x18 0x20@0x18 0x2000000@0x18 0x400@0x18 0x40000@0x18 0x80000008@0x38 0x80002000@0x38
+    0x10: 52 sites (37 bare) in 16 functions; composites ['0x10013', '0x11', '0x14', '0x17', '0x30', '0x31', '0x40c31', '0x50']
+    0x20: 30 sites (18 bare) in 5 functions; composites ['0x21', '0x30', '0x31', '0x40020', '0x40c31', '0x60']
+    masks carrying BOTH bits: ['0x30', '0x31', '0x40c31']
+  G1a   PASS  232 predicate sites, 35 distinct constant masks (rest register-passed)
+  G1b   PASS  0x10 = 37 bare / 52 total in 16 fns; 0x20 = 18 bare / 30 total in 5 fns
+    dword-A ids ['0x1', '0x2', '0x4', '0x8', '0x10', '0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']
+    dword-B ids ['0x8', '0x2000']
+  G1c   PASS  13 editor ids; 0x10 and 0x20 are dword-A ids; the only dword-B twins are ['0x8', '0x2000']
+  G1d   PASS  the masks that ask BOTH bits: ['0x30', '0x31', '0x40c31'] -> the two bits are asked together but never fused
+  G1e   PASS  214 sites resolve to exactly 3 pushed arguments; 212 are followed by `add esp,0xN` (N>=0xc) and the 2 exceptions are the inline-result sites ['0x54c0ba', '0x54c963'] -> the decoded mask is always the cdecl 3rd argument
+
+G2  the six relation writers: `test m` then `or s` / `and ~c` (re-derived)
+    writer      test-mask  op   value       dest
+    0x005518f0  0x00000010  or   0x00008040  edx
+    0x005518f0  0x00000020  and  0xfffff3ff  edi
+    0x00551a20  0x00000010  and  0xfaeef378  edx
+    0x00551a20  0x00000010  or   0x80000108  ebx
+    0x00551a20  0x00000017  and  0xff7fffff  edx
+    0x00551c40  0x00000020  and  0xffffffbf  esi
+    masks 0x10 / 0x20 are the only ones in this table with a dword-B side-effect
+  G2a   PASS  clear-writer 0x5518f0: `test 0x10 -> or 0x8040` == SET 0x8000|0x40 when 0x10 is dropped
+  G2b   PASS  clear-writer 0x5518f0: `test 0x20 -> and 0xfffff3ff` == CLEAR 0xc00 in dword B
+  G2c   PASS  set-writer 0x551a20: `test 0x10 -> and 0xfaeef378` CLEARS ['0x1', '0x2', '0x4', '0x80', '0x400', '0x800', '0x10000', '0x100000', '0x1000000', '0x4000000'] and `or 0x80000108` SETS ['0x8', '0x100', '0x80000000']
+  G2d   PASS  dword-B SET-writer 0x551c40: `test 0x20 -> and 0xffffffbf` drops B's 0x40 before ORing param_3 into B
+    rules on SET paths whose test mask includes 0x20: []
+  G2e   PASS  0 of 4 set-side rules fire on a 0x20 test -> no writer ever SETS anything *because* 0x20 is being set
+
+G3  the declare-vendetta chain: FUN_00507ce0 -> FUN_005076d0 -> SET(dwordA, 0x10)
+  FUN_00507ce0:
+    0x00507ce0  push   ebp
+    0x00507ce1  mov    ebp,esp
+    0x00507ce3  push   ebx
+    0x00507ce4  push   esi
+    0x00507ce5  mov    esi,DWORD PTR [ebp+0xc]
+    0x00507ce8  mov    ebx,DWORD PTR [ebp+0x8]
+    0x00507ceb  mov    eax,esi
+    0x00507ced  push   edi
+    0x00507cee  shl    eax,0x6
+    0x00507cf1  add    eax,esi
+    0x00507cf3  xor    edi,edi
+    0x00507cf5  lea    ecx,[esi+eax*2]
+    0x00507cf8  shl    ecx,0x4
+    0x00507cfb  sub    ecx,esi
+    0x00507cfd  add    ecx,ebx
+    0x00507cff  test   BYTE PTR [ecx*4+0x94d448],0x7
+    0x00507d07  je     0x507d1a
+    0x00507d09  push   0xffffffff
+    0x00507d0b  push   esi
+    0x00507d0c  push   ebx
+    0x00507d0d  call   0x5076d0
+    0x00507d12  add    esp,0xc
+    0x00507d15  mov    edi,0x1
+    0x00507d1a  push   0x8010
+    0x00507d1f  push   esi
+    0x00507d20  push   ebx
+    0x00507d21  call   0x551a20
+    0x00507d26  add    esp,0xc
+    0x00507d29  mov    eax,edi
+    0x00507d2b  pop    edi
+    0x00507d2c  pop    esi
+    0x00507d2d  pop    ebx
+    0x00507d2e  pop    ebp
+    0x00507d2f  ret
+
+  FUN_005076d0:
+    0x005076d0  push   ebp
+    0x005076d1  mov    ebp,esp
+    0x005076d3  sub    esp,0xc
+    0x005076d6  mov    eax,ds:0x920434
+    0x005076db  push   ebx
+    0x005076dc  mov    ebx,DWORD PTR [ebp+0xc]
+    0x005076df  push   esi
+    0x005076e0  mov    esi,DWORD PTR [ebp+0x8]
+    0x005076e3  push   edi
+    0x005076e4  test   eax,eax
+    0x005076e6  je     0x5078eb
+    0x005076ec  mov    eax,ds:0x91b5b4
+    0x005076f1  mov    edx,DWORD PTR [ebp+0x10]
+    0x005076f4  cmp    ebx,eax
+    0x005076f6  jne    0x50782a
+    0x005076fc  test   edx,edx
+    0x005076fe  jle    0x50782a
+    0x00507704  lea    eax,[edx+edx*4]
+    0x00507707  push   0xffffffff
+    0x00507709  push   0xffffffff
+    0x0050770b  mov    DWORD PTR ds:0x99aa20,0x0
+    0x00507715  lea    edi,[eax+eax*8]
+    0x00507718  shl    edi,0x3
+    0x0050771b  sub    edi,edx
+    0x0050771d  shl    edi,0x2
+    0x00507720  mov    eax,DWORD PTR [edi+0x927590]
+    0x00507726  lea    ecx,[edi+0x9275dc]
+    0x0050772c  push   ecx
+    0x0050772d  push   0x0
+    0x0050772f  mov    ds:0x99aa1c,eax
+    0x00507734  call   0x626634
+    0x00507739  mov    edx,DWORD PTR [edi+0x927590]
+    0x0050773f  push   0xffffffff
+    0x00507741  lea    eax,[edi+0x9275c4]
+    0x00507747  push   0xffffffff
+    0x00507749  push   eax
+    0x0050774a  push   0x1
+    0x0050774c  mov    DWORD PTR ds:0x99aa1c,edx
+    0x00507752  mov    DWORD PTR ds:0x99aa20,0x0
+    0x0050775c  call   0x626634
+    0x00507761  mov    ecx,DWORD PTR [edi+0x92788c]
+    0x00507767  mov    edx,DWORD PTR [edi+0x927890]
+    0x0050776d  push   0xffffffff
+    0x0050776f  lea    eax,[edi+0x927874]
+    0x00507775  push   0xffffffff
+    0x00507777  push   eax
+    0x00507778  push   0x2
+    0x0050777a  mov    DWORD PTR ds:0x99aa1c,ecx
+    0x00507780  mov    DWORD PTR ds:0x99aa20,edx
+    0x00507786  call   0x626634
+    0x0050778b  lea    eax,[esi+esi*4]
+    0x0050778e  push   0xffffffff
+    0x00507790  push   0xffffffff
+    0x00507792  mov    DWORD PTR ds:0x99aa20,0x0
+    0x0050779c  lea    edi,[eax+eax*8]
+    0x0050779f  shl    edi,0x3
+    0x005077a2  sub    edi,esi
+    0x005077a4  shl    edi,0x2
+    0x005077a7  mov    ecx,DWORD PTR [edi+0x927590]
+    0x005077ad  lea    edx,[edi+0x9275dc]
+    0x005077b3  push   edx
+    0x005077b4  push   0x3
+    0x005077b6  mov    DWORD PTR ds:0x99aa1c,ecx
+    0x005077bc  call   0x626634
+    0x005077c1  mov    eax,DWORD PTR [edi+0x927590]
+    0x005077c7  add    esp,0x40
+    0x005077ca  lea    ecx,[edi+0x9275c4]
+    0x005077d0  mov    ds:0x99aa1c,eax
+    0x005077d5  push   0xffffffff
+    0x005077d7  push   0xffffffff
+    0x005077d9  push   ecx
+    0x005077da  push   0x4
+    0x005077dc  mov    DWORD PTR ds:0x99aa20,0x0
+    0x005077e6  call   0x626634
+    0x005077eb  mov    edx,DWORD PTR [edi+0x92788c]
+    0x005077f1  mov    eax,DWORD PTR [edi+0x927890]
+    0x005077f7  push   0xffffffff
+    0x005077f9  lea    ecx,[edi+0x927874]
+    0x005077ff  push   0xffffffff
+    0x00507801  push   ecx
+    0x00507802  push   0x5
+    0x00507804  mov    DWORD PTR ds:0x99aa1c,edx
+    0x0050780a  mov    ds:0x99aa20,eax
+    0x0050780f  call   0x626634
+    0x00507814  add    esp,0x20
+    0x00507817  push   0x0
+    0x00507819  push   0x0
+    0x0050781b  push   0x1388
+    0x00507820  push   0x68d67c
+    0x00507825  jmp    0x5078e1
+    0x0050782a  cmp    ebx,eax
+    0x0050782c  jne    0x5078ee
+    0x00507832  mov    eax,0x1
+    0x00507837  mov    ecx,esi
+    0x00507839  shl    eax,cl
+    0x0050783b  mov    cl,BYTE PTR ds:0x985b10
+    0x00507841  test   cl,al
+    0x00507843  je     0x5078ee
+    0x00507849  lea    edi,[esi+esi*4]
+    0x0050784c  push   0xffffffff
+    0x0050784e  push   0xffffffff
+    0x00507850  mov    DWORD PTR ds:0x99aa20,0x0
+    0x0050785a  lea    edi,[edi+edi*8]
+    0x0050785d  shl    edi,0x3
+    0x00507860  sub    edi,esi
+    0x00507862  shl    edi,0x2
+    0x00507865  mov    edx,DWORD PTR [edi+0x927590]
+    0x0050786b  lea    eax,[edi+0x9275dc]
+    0x00507871  push   eax
+    0x00507872  push   0x0
+    0x00507874  mov    DWORD PTR ds:0x99aa1c,edx
+    0x0050787a  call   0x626634
+    0x0050787f  mov    ecx,DWORD PTR [edi+0x927590]
+    0x00507885  push   0xffffffff
+    0x00507887  lea    edx,[edi+0x9275c4]
+    0x0050788d  push   0xffffffff
+    0x0050788f  push   edx
+    0x00507890  push   0x1
+    0x00507892  mov    DWORD PTR ds:0x99aa1c,ecx
+    0x00507898  mov    DWORD PTR ds:0x99aa20,0x0
+    0x005078a2  call   0x626634
+    0x005078a7  mov    eax,DWORD PTR [edi+0x92788c]
+    0x005078ad  mov    ecx,DWORD PTR [edi+0x927890]
+    0x005078b3  push   0xffffffff
+    0x005078b5  lea    edx,[edi+0x927874]
+    0x005078bb  push   0xffffffff
+    0x005078bd  push   edx
+    0x005078be  push   0x2
+    0x005078c0  mov    ds:0x99aa1c,eax
+    0x005078c5  mov    DWORD PTR ds:0x99aa20,ecx
+    0x005078cb  call   0x626634
+    0x005078d0  add    esp,0x30
+    0x005078d3  push   0x0
+    0x005078d5  push   0x0
+    0x005078d7  push   0x1388
+    0x005078dc  push   0x68d684
+    0x005078e1  mov    ecx,0x7ff5b8
+    0x005078e6  call   0x483470
+    0x005078eb  mov    edx,DWORD PTR [ebp+0x10]
+    0x005078ee  mov    eax,ebx
+    0x005078f0  mov    ecx,esi
+    0x005078f2  shl    eax,0x6
+    0x005078f5  shl    ecx,0x6
+    0x005078f8  add    eax,ebx
+    0x005078fa  add    ecx,esi
+    0x005078fc  lea    edi,[ebx+eax*2]
+    0x005078ff  lea    eax,[esi+ecx*2]
+    0x00507902  shl    edi,0x4
+    0x00507905  shl    eax,0x4
+    0x00507908  sub    edi,ebx
+    0x0050790a  sub    eax,esi
+    0x0050790c  add    edi,esi
+    0x0050790e  lea    ecx,[eax+ebx*1]
+    0x00507911  shl    edi,0x2
+    0x00507914  shl    ecx,0x2
+    0x00507917  mov    DWORD PTR [edi+0x94d4f4],0x0
+    0x00507921  mov    DWORD PTR [ebp+0x8],ecx
+    0x00507924  mov    ecx,DWORD PTR [ecx+0x94d448]
+    0x0050792a  mov    DWORD PTR [ebp+0xc],edi
+    0x0050792d  test   ecx,0x40000
+    0x00507933  mov    DWORD PTR [ebp-0xc],ecx
+    0x00507936  jne    0x507958
+    0x00507938  mov    ecx,ebx
+    0x0050793a  mov    DWORD PTR [ebp-0x4],0x0
+    0x00507941  shl    ecx,0x6
+    0x00507944  add    ecx,ebx
+    0x00507946  lea    ecx,[ebx+ecx*2]
+    0x00507949  shl    ecx,0x4
+    0x0050794c  sub    ecx,ebx
+    0x0050794e  cmp    DWORD PTR [ecx*4+0x94d608],0x0
+    0x00507956  je     0x50795f
+    0x00507958  mov    DWORD PTR [ebp-0x4],0x1
+    0x0050795f  test   edx,edx
+    0x00507961  mov    DWORD PTR [ebp-0x8],0x0
+    0x00507968  jl     0x5079a7
+    0x0050796a  add    eax,edx
+    0x0050796c  shl    eax,0x2
+    0x0050796f  mov    ecx,DWORD PTR [eax+0x94d448]
+    0x00507975  test   cl,0x1
+    0x00507978  je     0x507982
+    0x0050797a  test   BYTE PTR [ebp-0xc],0x1
+    0x0050797e  jne    0x5079a1
+    0x00507980  jmp    0x50799a
+    0x00507982  test   cl,0x2
+    0x00507985  je     0x50798f
+    0x00507987  test   BYTE PTR [ebp-0xc],0x2
+    0x0050798b  jne    0x5079a1
+    0x0050798d  jmp    0x50799a
+    0x0050798f  test   cl,0x4
+    0x00507992  je     0x5079a1
+    0x00507994  test   BYTE PTR [ebp-0xc],0x4
+    0x00507998  jne    0x5079a1
+    0x0050799a  mov    DWORD PTR [ebp-0x8],0x1
+    0x005079a1  inc    DWORD PTR [eax+0x94d55c]
+    0x005079a7  mov    ecx,DWORD PTR [ebp+0x8]
+    0x005079aa  mov    eax,DWORD PTR [ecx+0x94d448]
+    0x005079b0  test   al,0x1
+    0x005079b2  je     0x507acf
+    0x005079b8  test   BYTE PTR [ecx+0x94d468],0x20
+    0x005079bf  jne    0x507ab5
+    0x005079c5  mov    eax,esi
+    0x005079c7  shl    eax,0x6
+    0x005079ca  add    eax,esi
+    0x005079cc  lea    eax,[esi+eax*2]
+    0x005079cf  shl    eax,0x4
+    0x005079d2  sub    eax,esi
+    0x005079d4  shl    eax,0x2
+    0x005079d7  mov    ecx,DWORD PTR [eax+0x94d558]
+    0x005079dd  lea    edi,[ecx-0x1]
+    0x005079e0  xor    ecx,ecx
+    0x005079e2  test   edi,edi
+    0x005079e4  setl   cl
+    0x005079e7  dec    ecx
+    0x005079e8  and    ecx,edi
+    0x005079ea  mov    DWORD PTR [eax+0x94d558],ecx
+    0x005079f0  mov    ecx,DWORD PTR [eax+0x94d438]
+    0x005079f6  test   ecx,ecx
+    0x005079f8  je     0x507a20
+    0x005079fa  mov    ecx,DWORD PTR [ebp-0x4]
+    0x005079fd  test   ecx,ecx
+    0x005079ff  jne    0x507a20
+    0x00507a01  mov    ecx,DWORD PTR [ebp-0x8]
+    0x00507a04  test   ecx,ecx
+    0x00507a06  jne    0x507a20
+    0x00507a08  mov    edi,DWORD PTR [eax+0x94d554]
+    0x00507a0e  inc    edi
+    0x00507a0f  mov    DWORD PTR [eax+0x94d554],edi
+    0x00507a15  mov    edi,DWORD PTR [ebp+0xc]
+    0x00507a18  inc    DWORD PTR [edi+0x94d59c]
+    0x00507a1e  jmp    0x507a23
+    0x00507a20  mov    edi,DWORD PTR [ebp+0xc]
+    0x00507a23  test   edx,edx
+    0x00507a25  jge    0x507a53
+    0x00507a27  mov    ecx,DWORD PTR [ebp-0x4]
+    0x00507a2a  test   ecx,ecx
+    0x00507a2c  jne    0x507a34
+    0x00507a2e  inc    DWORD PTR [eax+0x94d554]
+    0x00507a34  mov    eax,DWORD PTR [ebp+0x8]
+    0x00507a37  mov    ecx,DWORD PTR [eax+0x94d57c]
+    0x00507a3d  inc    ecx
+    0x00507a3e  mov    DWORD PTR [eax+0x94d57c],ecx
+    0x00507a44  mov    eax,DWORD PTR [edi+0x94d59c]
+    0x00507a4a  inc    eax
+    0x00507a4b  mov    DWORD PTR [edi+0x94d59c],eax
+    0x00507a51  jmp    0x507a5f
+    0x00507a53  push   0xfffffffc
+    0x00507a55  push   esi
+    0x00507a56  push   edx
+    0x00507a57  call   0x5314b0
+    0x00507a5c  add    esp,0xc
+    0x00507a5f  mov    al,ds:0x985b10
+    0x00507a64  mov    edx,0x1
+    0x00507a69  mov    ecx,esi
+    0x00507a6b  shl    edx,cl
+    0x00507a6d  test   al,dl
+    0x00507a6f  je     0x507ab5
+    0x00507a71  mov    eax,DWORD PTR [edi+0x94d468]
+    0x00507a77  test   ah,0x4
+    0x00507a7a  je     0x507a8d
+    0x00507a7c  push   0x1
+    0x00507a7e  push   0x800
+    0x00507a83  push   esi
+    0x00507a84  push   ebx
+    0x00507a85  call   0x551d70
+    0x00507a8a  add    esp,0x10
+    0x00507a8d  test   BYTE PTR [edi+0x94d448],0x20
+    0x00507a94  je     0x507aa7
+    0x00507a96  push   0x1
+    0x00507a98  push   0x400
+    0x00507a9d  push   esi
+    0x00507a9e  push   ebx
+    0x00507a9f  call   0x551d70
+    0x00507aa4  add    esp,0x10
+    0x00507aa7  push   0x1
+    0x00507aa9  push   0x20
+    0x00507aab  push   esi
+    0x00507aac  push   ebx
+    0x00507aad  call   0x551cf0
+    0x00507ab2  add    esp,0x10
+    0x00507ab5  push   ebx
+    0x00507ab6  push   esi
+    0x00507ab7  call   0x5339e0
+    0x00507abc  push   0x10
+    0x00507abe  push   ebx
+    0x00507abf  push   esi
+    0x00507ac0  call   0x551a20
+    0x00507ac5  add    esp,0x14
+    0x00507ac8  pop    edi
+    0x00507ac9  pop    esi
+    0x00507aca  pop    ebx
+    0x00507acb  mov    esp,ebp
+    0x00507acd  pop    ebp
+    0x00507ace  ret
+    0x00507acf  test   BYTE PTR [ecx+0x94d468],0x20
+    0x00507ad6  jne    0x507c6d
+    0x00507adc  test   al,0x6
+    0x00507ade  je     0x507bff
+    0x00507ae4  test   eax,0x10000
+    0x00507ae9  jne    0x507b7d
+    0x00507aef  mov    ecx,esi
+    0x00507af1  xor    edx,edx
+    0x00507af3  shl    ecx,0x6
+    0x00507af6  add    ecx,esi
+    0x00507af8  push   0x0
+    0x00507afa  push   esi
+    0x00507afb  lea    edi,[esi+ecx*2]
+    0x00507afe  shl    edi,0x4
+    0x00507b01  sub    edi,esi
+    0x00507b03  shl    edi,0x2
+    0x00507b06  mov    eax,DWORD PTR [edi+0x94d558]
+    0x00507b0c  dec    eax
+    0x00507b0d  test   eax,eax
+    0x00507b0f  setl   dl
+    0x00507b12  dec    edx
+    0x00507b13  and    eax,edx
+    0x00507b15  mov    DWORD PTR [edi+0x94d558],eax
+    0x00507b1b  call   0x531090
+    0x00507b20  add    esp,0x8
+    0x00507b23  test   eax,eax
+    0x00507b25  jne    0x507b49
+    0x00507b27  cmp    DWORD PTR [edi+0x94d434],0x6
+    0x00507b2e  jl     0x507b74
+    0x00507b30  mov    eax,ebx
+    0x00507b32  shl    eax,0x6
+    0x00507b35  add    eax,ebx
+    0x00507b37  lea    ecx,[ebx+eax*2]
+    0x00507b3a  shl    ecx,0x4
+    0x00507b3d  sub    ecx,ebx
+    0x00507b3f  cmp    DWORD PTR [ecx*4+0x94d434],0x4
+    0x00507b47  jg     0x507b74
+    0x00507b49  mov    eax,DWORD PTR [ebp+0x10]
+    0x00507b4c  test   eax,eax
+    0x00507b4e  jge    0x507b74
+    0x00507b50  mov    eax,DWORD PTR [ebp-0x4]
+    0x00507b53  test   eax,eax
+    0x00507b55  jne    0x507b74
+    0x00507b57  mov    edx,DWORD PTR [edi+0x94d554]
+    0x00507b5d  mov    eax,DWORD PTR [ebp+0xc]
+    0x00507b60  inc    edx
+    0x00507b61  mov    DWORD PTR [edi+0x94d554],edx
+    0x00507b67  mov    ecx,DWORD PTR [eax+0x94d59c]
+    0x00507b6d  inc    ecx
+    0x00507b6e  mov    DWORD PTR [eax+0x94d59c],ecx
+    0x00507b74  mov    edi,DWORD PTR [ebp+0xc]
+    0x00507b77  mov    edx,DWORD PTR [ebp+0x10]
+    0x00507b7a  mov    ecx,DWORD PTR [ebp+0x8]
+    0x00507b7d  mov    eax,esi
+    0x00507b7f  shl    eax,0x6
+    0x00507b82  add    eax,esi
+    0x00507b84  lea    eax,[esi+eax*2]
+    0x00507b87  shl    eax,0x4
+    0x00507b8a  sub    eax,esi
+    0x00507b8c  shl    eax,0x2
+    0x00507b8f  cmp    DWORD PTR [eax+0x94d438],0x0
+    0x00507b96  je     0x507bb7
+    0x00507b98  cmp    DWORD PTR [ebp-0x4],0x0
+    0x00507b9c  jne    0x507bb7
+    0x00507b9e  cmp    DWORD PTR [ebp-0x8],0x0
+    0x00507ba2  jne    0x507bb7
+    0x00507ba4  inc    DWORD PTR [eax+0x94d554]
+    0x00507baa  mov    eax,DWORD PTR [edi+0x94d59c]
+    0x00507bb0  inc    eax
+    0x00507bb1  mov    DWORD PTR [edi+0x94d59c],eax
+    0x00507bb7  test   edx,edx
+    0x00507bb9  jge    0x507bc1
+    0x00507bbb  inc    DWORD PTR [ecx+0x94d57c]
+    0x00507bc1  mov    eax,0x1
+    0x00507bc6  mov    ecx,esi
+    0x00507bc8  shl    eax,cl
+    0x00507bca  mov    cl,BYTE PTR ds:0x985b10
+    0x00507bd0  test   cl,al
+    0x00507bd2  je     0x507c5d
+    0x00507bd8  mov    eax,DWORD PTR [edi+0x94d468]
+    0x00507bde  test   ah,0x4
+    0x00507be1  je     0x507bf4
+    0x00507be3  push   0x1
+    0x00507be5  push   0x800
+    0x00507bea  push   esi
+    0x00507beb  push   ebx
+    0x00507bec  call   0x551d70
+    0x00507bf1  add    esp,0x10
+    0x00507bf4  test   BYTE PTR [edi+0x94d448],0x20
+    0x00507bfb  je     0x507c4c
+    0x00507bfd  jmp    0x507c3b
+    0x00507bff  test   edx,edx
+    0x00507c01  jl     0x507c6d
+    0x00507c03  mov    eax,0x1
+    0x00507c08  mov    ecx,esi
+    0x00507c0a  shl    eax,cl
+    0x00507c0c  mov    cl,BYTE PTR ds:0x985b10
+    0x00507c12  test   cl,al
+    0x00507c14  je     0x507c5d
+    0x00507c16  mov    eax,DWORD PTR [edi+0x94d468]
+    0x00507c1c  test   ah,0x4
+    0x00507c1f  je     0x507c32
+    0x00507c21  push   0x1
+    0x00507c23  push   0x800
+    0x00507c28  push   esi
+    0x00507c29  push   ebx
+    0x00507c2a  call   0x551d70
+    0x00507c2f  add    esp,0x10
+    0x00507c32  test   BYTE PTR [edi+0x94d448],0x20
+    0x00507c39  je     0x507c4c
+    0x00507c3b  push   0x1
+    0x00507c3d  push   0x400
+    0x00507c42  push   esi
+    0x00507c43  push   ebx
+    0x00507c44  call   0x551d70
+    0x00507c49  add    esp,0x10
+    0x00507c4c  push   0x1
+    0x00507c4e  push   0x20
+    0x00507c50  push   esi
+    0x00507c51  push   ebx
+    0x00507c52  call   0x551cf0
+    0x00507c57  mov    edx,DWORD PTR [ebp+0x10]
+    0x00507c5a  add    esp,0x10
+    0x00507c5d  test   edx,edx
+    0x00507c5f  jl     0x507c6d
+    0x00507c61  push   0xfffffffe
+    0x00507c63  push   esi
+    0x00507c64  push   edx
+    0x00507c65  call   0x5314b0
+    0x00507c6a  add    esp,0xc
+    0x00507c6d  push   0x10
+    0x00507c6f  push   ebx
+    0x00507c70  push   esi
+    0x00507c71  call   0x551a20
+    0x00507c76  mov    edx,DWORD PTR [ebp+0x8]
+    0x00507c79  add    esp,0xc
+    0x00507c7c  test   BYTE PTR [edx+0x94d468],0x20
+    0x00507c83  jne    0x507ccf
+    0x00507c85  mov    eax,ds:0x985b10
+    0x00507c8a  mov    edx,0x1
+    0x00507c8f  mov    ecx,esi
+    0x00507c91  mov    edi,0x1
+    0x00507c96  shl    edx,cl
+    0x00507c98  mov    ecx,ebx
+    0x00507c9a  and    eax,0xff
+    0x00507c9f  shl    edi,cl
+    0x00507ca1  and    edx,eax
+    0x00507ca3  and    edi,eax
+    0x00507ca5  cmp    edx,edi
+    0x00507ca7  je     0x507cc5
+    0x00507ca9  push   0x1
+    0x00507cab  push   0x40
+    0x00507cad  push   ebx
+    0x00507cae  push   esi
+    0x00507caf  call   0x551cf0
+    0x00507cb4  mov    ecx,DWORD PTR [ebp+0x8]
+    0x00507cb7  mov    eax,ds:0x985afc
+    0x00507cbc  add    esp,0x10
+    0x00507cbf  mov    DWORD PTR [ecx+0x94d4a8],eax
+    0x00507cc5  push   esi
+    0x00507cc6  push   ebx
+    0x00507cc7  call   0x507460
+    0x00507ccc  add    esp,0x8
+    0x00507ccf  pop    edi
+    0x00507cd0  pop    esi
+    0x00507cd1  pop    ebx
+    0x00507cd2  mov    esp,ebp
+    0x00507cd4  pop    ebp
+    0x00507cd5  ret
+
+  G3a   PASS  FUN_00507ce0: entry test `test   BYTE PTR [ecx*4+0x94d448],0x7` (the predicate inlined, asking the peace group 0x7), 1 call to the vendetta routine, 1 setter call with push ['0xffffffff', '0x8010'] (0x8000|0x10)
+  G3b   PASS  FUN_005076d0: 2 setter calls with masks ['0x10', '0x10'] -> 0x10 is written on BOTH exits
+    .data literals in FUN_005076d0: 0x68d67c='INCITED', 0x68d684='VENDETTAWARNING'
+  G3c   PASS  the two message keys the war routine fires are 'VENDETTAWARNING' / 'INCITED' (read from the file image, not the decompiler)
+  G3d   PASS  BOTH literals are pushed from inside FUN_005076d0's own window (VENDETTAWARNING and INCITED), not just one of them
+    FUN_00551cf0 argument selector (decoded):
+      0x00551cf0  push   ebp
+      0x00551cf1  mov    ebp,esp
+      0x00551cf3  mov    eax,DWORD PTR [ebp+0x14]
+      0x00551cf6  test   eax,eax
+      0x00551cf8  je     0x551d36
+    selector mov    eax,DWORD PTR [ebp+0x14] -> je     0x551d36; !=0 block ORs into the pair=True, ==0 block has not+and=True
+  G3e   PASS  FUN_00551cf0 reads its 4th parameter at [ebp+0x14] and `je     0x551d36` to the not/and (CLEAR) block -> the non-zero path is SET (or into +0x94d448)
+    0x551cf0 calls in the war routine: 0x507aad pushes=4 imms=['0x20', '0x1'], 0x507c52 pushes=4 imms=['0x20', '0x1'], 0x507caf pushes=4 imms=['0x40', '0x1']
+  G3f   PASS  the war routine calls FUN_00551cf0 with 4 pushes whose immediates are arg3=0x20, arg4=1 -> 0x20 is SET and the SET branch is chosen
+
+G4  read-side witnesses: what the two bits select
+    ending selector 0x51ef55: test   DWORD PTR [ecx*4+0x94d448],0x40020
+    -> 0x68e908='ECONOMICLOSE2', 0x68e918='ECONOMICLOSE'
+  G4a   PASS  the instruction at 0x51ef55 IS `test <pair dword>,0x40020` -> 0x20 is half of the tested mask and the dword is the relations pair
+    branch jne    0x51ef6c; harsh load mov    eax,0x68e908; mild load mov    eax,0x68e918
+  G4b   PASS  the branch is `jne` taken PAST the mild load: bit SET -> eax keeps 0x68e908 (ECONOMICLOSE2), bit CLEAR -> 0x68e918 (ECONOMICLOSE)
+    Script.txt ECONOMICLOSE  = '$TITLE0 $NAME1 of the $FACTION2 corners the Global Energy Market! All '
+    Script.txt ECONOMICLOSE2 = '$TITLE0 $NAME1 of the $FACTION2 corners the Global Energy Market! All '
+  G4c   PASS  MILD = 'small country estate', HARSH = 'tiny cubicle' -> a SET bit means the winner holds a grievance strong enough to change the defeat text
+    FUN_00502cd0 carries 22 upper-case .data keys; war keys present: ['PACTATTACKED', 'PACTATTACKING', 'VENDETTAREPORT']
+  G4d   PASS  FUN_00502cd0 asks 0x10 AND carries PACTATTACKED/PACTATTACKING/VENDETTAREPORT (read from the image) -> the read side of 0x10 is 'are these two at war'
+  G4e   PASS  0x20's askers are ['FUN_004f6030', 'FUN_00546800', 'FUN_0058fa40'] - the diplomacy MENU that named 0x1/0x8 is NOT among them, so no string key names 0x20
+
+G5  direct-immediate access to the pair dwords (outside the predicate)
+    0x000010: test=62
+    0x000020: test=37
+    0x008010: none
+    0x008040: none
+    0x040020: test=3
+  G5a   PASS  direct tests: 0x10 x62, 0x20 x37, 0x40020 x3 -- M364's G6 census (62/37) reproduced exactly
+  G5b   PASS  the composite 0x8010 never appears as a direct test -> it is a WRITE mask, proving the war path writes 0x8000|0x10 rather than reading it
+    writer call sites: 169; passing mask 0x8 alone: 7 (['0x42999d', '0x4dae13', '0x4dae37', '0x4db132', '0x523f6c', '0x56f5ad'])
+  G5c   PASS  7 writer calls pass 0x8 alone, 4 of them to the A-setter 0x551a20 -> 0x8 is settable WITHOUT 0x10
+
+G6  RIVALS (each measured, each must FAIL on these numbers)
+    R1 '0x10 is a treaty/pact bit': the 0x10 set-rule clears ['0x1', '0x2', '0x4', '0x80', '0x400', '0x800', '0x10000', '0x100000', '0x1000000', '0x4000000'] -> REFUTED
+  G6a   PASS  R1 refuted: setting 0x10 REMOVES 0x1|0x2|0x4 (the peace group), so 0x10 cannot itself be a peace flag
+    R2 '0x10 and 0x20 are one flag': dropping 0x10 raises 0x8000|0x40 while dropping 0x20 clears B's 0xc00 -> REFUTED
+  G6b   PASS  R2 refuted: the two bits have DIFFERENT clear-side effects (0x10-bearing rule ORs 0x8040; 0x20-bearing rule clears dword B's 0xc00) -> two flags, one event
+    R3 '0x10 and 0x8 are the same bit': bare asks 0x8=20 vs 0x10=37; a bare-8 set exists without 0x10 -> REFUTED
+  G6c   PASS  R3 refuted: 0x8 and 0x10 are asked at different rates (20 vs 37) and set independently; the implication runs one way only (0x10 set -> 0x8 set)
+  G6d   PASS  R4 (control, must STAND): the menu does ask 0x8 - so the ABSENCE of the menu from 0x20's askers is a real signal, not a census gap
+  G6e   PASS  R5 '0x20 and 0x40000 are one flag' refuted: the composite 0x40020 is asked 3x but 0x20 alone 18x and 0x40000 alone 3x -> two bits, one shared test
+
+PASS M366: 29/29 gates digest c36db3d154a5ea1b
