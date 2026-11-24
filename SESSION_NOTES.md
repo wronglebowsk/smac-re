@@ -369,3 +369,31 @@ printers of measured values need the same None-guard as the gate.
   row patched in place (the row order is alpha's).
 - PITFALL: a value-only rival does NOT discriminate on the five pinned rows (upkeeps 0,0,1,1,1);
   the NAME is the discriminator and G4 prints the rival's 3/5 so the gap is measured, not hidden.
+
+## Session 320-chain1 (2026-11-24) — M340: FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6
+
+- **ANSWER:** the Difficulty path in FUN_0058e7f0 clamps NOTHING. Of its 18 six-arg profile
+  reads exactly one carries key 0x692718 = PE `"Difficulty"` (0x58e8a1), default = the itoa(0)
+  buffer (push 0x0 @0x58e865), value stored `ds:0x92bde8,eax` @0x58e8c6 — the only store to
+  that cell in the function. Insns 0x58e8a9..0x58e8c6 are straight line and eax there IS
+  0x6287e2's return (wrappers 0x5ea484/0x5eaa53: 0 jcc, 0 eax write after their call).
+- **The chain compares CHARACTER CLASSES only** (atoi 0x64c360, tokeniser 0x5ea985, radix
+  0x6287e2/0x628720/0x62876b): constants {0x0,0x1,0x2b,0x2c,0x2d,0x30,0x31,0x36}, and the
+  intersection with the value space {2..6} is EMPTY (G4).
+- **POSITIVE CONTROL:** the SAME function's `Language` consumer 0x628130 IS bounded —
+  `cmp [ebp-0x4],0x4` + `ja` + jump table. Same classifier: bound 4 there, none here (G5).
+- **CONSEQUENCE:** 6 rows measured from the ladder's loop bound (0x57c6cb `cmp esi,0x6`);
+  k=5 -> 0x94d2c0 last legal, k=6 -> 0x94d2c4 == TABLE_END; the three pref-fed readers
+  0x48678f / 0x44a1c8 / 0x599405 index TABLE at scale 4 from MEMORY loads, no clamp (G7).
+- ACCEPT `python3 -u scripts/m340_pref_admission.py` -> **PASS M340: 7/7**, rows
+  `277483c12bd5cc44`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2nd run
+  diff-identical (`evidence/m340_pref_admission.txt:60-71`); `scripts/m340_mutate.py` ->
+  **PASS HARNESS M340: 9/9**, 7/7 gates covered, NO-OP `[]` `b25e0bc3a09693f5`
+  (`evidence/m340_mutate.txt:13`), `--selftest` OK.
+- **ID:** `milestone/m339` is chain 2's worktree branch (~/reverse/wt-chain2), so this fire
+  took M340. NAMED headroom: M332 rotated VERBATIM to `docs/named-archive-m340-rows.md:5`
+  (sha1 `3ef265e11aca`, `scripts/m340_named_rotate.py --verify`); M335/M338 OPEN rows
+  patched IN PLACE.
+- PITFALL: a sub-register write (`mov dl,BYTE PTR [eax+0x20]`) is not "a write to edx" to a
+  first-operand test — widen to the register family or the def-use gate finds the earlier
+  `xor edx,edx` and reads a bounded index as unclamped for the wrong reason.
