@@ -1,4 +1,6 @@
-# NAMED.md `## M350` - ROTATED VERBATIM (byte-exact) by scripts/m352_named_rotate.py
+# NAMED.md `## M350` — ROTATED VERBATIM by `scripts/m352_named_rotate.py`
+# (content byte-exact after trailing-newline normalisation; the M352 correction to the
+#  OPEN row was made IN NAMED.md before this rotation and is preserved below)
 <!-- block: every byte below is the original NAMED.md block -->
 sha1=57fc3a064e5044d474055cef54a45ee9d60eb982 bytes=1498 rows=6
 

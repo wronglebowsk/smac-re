@@ -1489,7 +1489,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | RETRACTION: FUN_00636b1e = multiplayer Create Session dialog (labels 0x6998b0/c0/d4, strlen(slot1)<=0x10, jmp 0x63724e); M346's 'drainer' withdrawn | `:63-69` | V MU12 |
 
 
-# M350 (STUB — rows VERBATIM: `docs/named-archive-m352-rows.md`)
+# M350 (STUB — rows VERBATIM: `docs/named-archive-m352-rows.md`; `:N` = a line of `evidence/m350_pref_cowriters.txt:1-162`)
 | claim | ev | conf |
 |---|---|---|
 | FUN_0058e7f0 = the block's only profile-backed INITIALISER | `:3-16,162` | V MU1,2,14,15 |
@@ -1497,7 +1497,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | 57 co-refs / 32 scalar co-stores in 14 scalar fns (10 store + 4 read-only) | `:70-95` | V MU8,11,12,13 |
 | LAW | `:96-133,160` | V MU6,7,9,15 |
 | publisher 0x58f3d0 | `:144-155` | V MU10 |
-| ANSWERED (M352): `ds:0x6926ec` = literal "Prefs Format"; 8 `call edi` = WritePrivateProfileStringA | `## M352` | V MU10,MU2 |
+| ANSWERED (M352): `ds:0x6926ec` = literal "Prefs Format"; 8 `call edi` = WritePrivateProfileStringA | `evidence/m352_persist_writeback.txt:124-131` | V M352 MU10,MU2 |
 ## M347 (s324-chain2, STATIC 12/12) — M341's OPEN `+0x59f4` WRITER: the `+0x5970` child selector; the page bound IS 7
 
 | claim | evidence | conf |
@@ -1525,12 +1525,12 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | rivals DEAD: -(design-192) -> -4 vs trace -6 (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`), "-39 sentinel", logical shift | `:92-97` | V MU8,MU18,MU22 |
 | ACCEPT `scripts/m349_unit_id.py` `PASS M349: 13/13` `fa2d81797551dae5` x2; harness 22/22, 13/13 | `:101-102`, `evidence/m349_mutate.txt:30` | V MU0 |
 
-## M352 (s328-c3, static; ACCEPT `scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7`** `0e8c83ec`, x2 `b2998791`; harness 13/13)
+## M352 (s328-c3, static; ACCEPT `scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7`** `d553194a`, x2 `c8bbfda4` (`evidence/m352_x2.txt:4`); harness 13/13; `:N` = a line of `evidence/m352_persist_writeback.txt:1-140`)
 | claim | ev | conf |
 |---|---|---|
 | 8 `call edi` = 1 target: edi@0x58f106 from `ds:0x6710fc` = KERNEL32!WritePrivateProfileStringA (.rdata import slot; its own dword names it); 0 mem-indirect | `:18-25` | V MU1,MU2,MU13 |
-| 13 write keys = 8 direct + 5 via FUN_0058f030; 12 cell-backed (11/11 scalars + Custom World array), `Prefs Format` = itoa(0xb) stamp | `:27-44` | V MU3-MU7 |
-| read = 5 fns / 5 refs / 35 keys; 13/13 written keys read; `Laptop`+`Language` read, written NOWHERE (33 write sites) | `:46-121` | V MU8,MU9,MU12 |
-| RETRACT M350: `ds:0x6926ec` = the .data literal "Prefs Format"; lpKeyName at 7 push sites; 0 stores image-wide | `:123-130` | V MU10,MU11 |
-| rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:132-140` | V MU1,MU13 |
+| 13 write keys = 8 direct + 5 via FUN_0058f030; 12 blocks LOAD a block cell (11/11 scalars + Custom World array; window presence), `Prefs Format` = itoa(0xb) stamp | `:27-45` | V MU3-MU7 |
+| read = 5 fns / 5 refs / 35 keys; 13/13 written keys read; `Laptop`+`Language` read, written NOWHERE (33 write sites) | `:47-122` | V MU8,MU9,MU12 |
+| RETRACT M350: `ds:0x6926ec` = the .data literal "Prefs Format"; lpKeyName at 7 push sites; no store names the VA, 0 materialisations | `:124-131` | V MU10,MU11 |
+| rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
 | OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b); twins return 0x3a7168/0x327168 | `:97` | lead |

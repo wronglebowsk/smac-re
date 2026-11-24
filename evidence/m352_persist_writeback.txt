@@ -41,7 +41,8 @@ slot dword -> thunk | 0x2877bc | 0x6877bc | section | .rdata | name at thunk | W
 keys written | 13 | distinct | 13
 scalar cells loaded | 11 | 0x92bde8,0x92bdec,0x92bdf4,0x92bdf8,0x92befc,0x92bf00,0x92bf04,0x92bf08,0x92bf0c,0x92bf10,0x92bf14
 stamp | ['0x58f11b'] | value | CONST 0xb
-[PASS] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 cell-backed writes, 1 CONST 0xb stamp; 11/11 scalar cells loaded
+blocks that LOAD a block cell | 12 | of | 13 | stamps | 1
+[PASS] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 blocks LOAD a block cell (window presence, not value provenance), 1 CONST 0xb stamp; 11/11 scalar cells loaded
 
 -- G4 read census: every GetPrivateProfileStringA key in the image --
 IAT refs | 5 | ['0x58e5bc', '0x58e68e', '0x58e70e', '0x58e7cc', '0x58e82f']
@@ -86,7 +87,7 @@ read keys | 35 | sites | 52 | unresolved | 2
   unresolved | FUN_0058e760 | 0x58e7cc | ('unknown', 'mov    eax,DWORD PTR [ebp+0x8]')
 Laptop pushes | ['0x58e688', '0x58e708', '0x58e9f3', '0x58eb0c'] | declared | [(5826184, 6891260), (5826312, 6891268), (5827059, 6891260), (5827340, 6891268)]
 Language pushes | ['0x58e841'] | declared | [(5826625, 6891276)]
-format gates cmp eax,0xb | 7 | ['0x58e5e5', '0x58eab9', '0x58ebcf', '0x58ec71', '0x58edc5', '0x58eeb1', '0x58ef7f']
+format gates cmp eax,0xb | 7 | ['0x58e5e5', '0x58eab9', '0x58ebcf', '0x58ec71', '0x58edc5', '0x58eeb1', '0x58ef7f'] | cmp eax,0xd | 0
 write-only keys | 0 | []
 read-only keys (image) | 22 | {'8BitMovieSound': 2, 'Base Sort': 1, 'DirectDraw': 2, 'Firaxis': 2, 'Gamma Correction': 1, 'InterludeFontSize': 1, 'Language': 2, 'Laptop': 4, 'Latest Map': 1, 'Latest Save': 1, 'Latest Scenario': 1, 'Main Volume': 1, 'MainFontSize': 1, 'Multi Debug': 1, 'Music Volume': 1, 'Net Name': 2, 'Net Session': 1, 'SFX Volume': 1, 'Vehicle Groups': 1, 'Video Mode': 1, 'Voice Volume': 1, 'WinsFileBox': 2}
 loader reads | 15 | sites | 21
@@ -127,7 +128,7 @@ byte hits of the VA | 7 | all `<68> + VA` | True
 key slot | ['0x58e5ce', '0x58eaa2', '0x58ebb8', '0x58ec5a', '0x58edae', '0x58ee9a', '0x58ef68']
 PE bytes @0x6926ec | b'Prefs Format\x00'
 PE bytes @0x6926e8 | b'0\x00\x00\x00'
-[PASS] G6 0 stores, 7 lpKeyName pushes, VA bytes = 'Prefs Format' -> no writer exists
+[PASS] G6 no store NAMES the VA; 7 uses all lpKeyName pushes; the 7 four-byte VA occurrences are all push imm32 -> no writer materialises it at all
 
 -- G7 rivals (each must FAIL on the printed numbers) --
 R1 vtable/unknown targets | REFUTED | 8 calls, 1 slot, .rdata, WritePrivateProfileStringA
@@ -136,5 +137,5 @@ R3 read set == write set | REFUTED | 35 read vs 13 written
 R4 0x6926ec is a mutable pointer | REFUTED | 0 stores, 7 uses
 [PASS] G7 R1/R2/R4 refuted, R3 refuted by the measured 35-vs-13 set difference
 
-tables digest 0e8c83ec949a639e  (114 rows)
+tables digest d553194a9f6ddce9  (115 rows)
 RESULT: PASS M352: 7/7 gates

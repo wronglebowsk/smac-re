@@ -466,11 +466,16 @@ row("keys written", len(write_rows), "distinct", len(set(measured_keys.values())
 row("scalar cells loaded", len(scalars), ",".join(hex(c) for c in scalars))
 row("stamp", [hex(r[0]) for r in stamp_rows],
     "value", stamp_rows[0][3] if stamp_rows else "-")
+cell_rows = [r for r in write_rows if r[4]]
+row("blocks that LOAD a block cell", len(cell_rows), "of", len(write_rows),
+    "stamps", len(stamp_rows))
 chk("G3", measured_keys == WRITE_KEYS and len(set(measured_keys.values())) == 13
     and len(stamp_rows) == 1 and stamp_rows[0][3] == "CONST 0xb"
-    and len(array_rows) == 1 and len(scalars) == CELL_LOAD_EXPECT,
-    "13 keys = 11 scalar names + Prefs Format + Custom World; 12 cell-backed"
-    " writes, 1 CONST 0xb stamp; %d/11 scalar cells loaded" % len(scalars))
+    and len(array_rows) == 1 and len(scalars) == CELL_LOAD_EXPECT
+    and len(cell_rows) == 12,
+    "13 keys = 11 scalar names + Prefs Format + Custom World; 12 blocks LOAD a"
+    " block cell (window presence, not value provenance), 1 CONST 0xb stamp;"
+    " %d/11 scalar cells loaded" % len(scalars))
 
 # ---------------- G4: read-key census, image-wide ----------------
 print("\n-- G4 read census: every GetPrivateProfileStringA key in the image --")
@@ -521,9 +526,12 @@ lang = [(i["a"], int(i["arg"].strip(), 16)) for i in INS if i["op"] == "push"
         and i["arg"].strip() == "0x69270c"]
 row("Laptop pushes", [hex(a) for a, v in lap], "declared", LAPTOP_PUSHES)
 row("Language pushes", [hex(a) for a, v in lang], "declared", LANGUAGE_PUSH)
-gates = [i for i in INS if i["op"] == "cmp" and i["arg"].strip() in
-         ("eax,0xb", "eax,0xd") and fnof(i["a"])[0] in ("FUN_0058e7f0", "FUN_0058e5a0")]
-row("format gates cmp eax,0xb", len(gates), [hex(i["a"]) for i in gates])
+gates = [i for i in INS if i["op"] == "cmp" and i["arg"].strip() == "eax,0xb"
+         and fnof(i["a"])[0] in ("FUN_0058e7f0", "FUN_0058e5a0")]
+other_gates = [i for i in INS if i["op"] == "cmp" and i["arg"].strip() == "eax,0xd"
+               and fnof(i["a"])[0] in ("FUN_0058e7f0", "FUN_0058e5a0")]
+row("format gates cmp eax,0xb", len(gates), [hex(i["a"]) for i in gates],
+    "cmp eax,0xd", len(other_gates))
 wo = sorted(set(WRITE_KEYS.values()) - set(read_keys))
 ro = {k: read_keys[k] for k in sorted(set(read_keys) - set(WRITE_KEYS.values()))}
 row("write-only keys", len(wo), wo)
@@ -541,7 +549,8 @@ chk("G4", len(refs) == N_IAT_READ_REFS and len(ref_fns) == 5
     and len(read_keys) == IMG_READ_KEYS and not wo
     and loader == LOADER_READS and pref_ro == READONLY_PREF
     and [tuple(x) for x in lap] == LAPTOP_PUSHES
-    and [tuple(x) for x in lang] == LANGUAGE_PUSH and len(gates) == 7,
+    and [tuple(x) for x in lang] == LANGUAGE_PUSH and len(gates) == 7
+    and len(other_gates) == 0,
     "5 refs in 5 fns; %d read keys / %d sites; 13/13 written keys read; 0"
     " write-only; loader reads 15 keys (Laptop x2, Language x1 have no writer)"
     % (len(read_keys), len(read_sites)))
@@ -590,13 +599,21 @@ chk("G5", len(wrefs) == 3 and len(wsites) == 25 and len(wkeys) == 20
 # ---------------- G6: ds:0x6926ec is a string literal, not a variable ----------------
 print("\n-- G6 ds:0x6926ec (M350 OPEN: who sets it) --")
 uses = [i for i in INS if "0x6926ec" in i["arg"].lower()]
-stores = []
-for i in uses:
-    op, by = i["op"], i["by"]
-    if op in ("mov", "or", "and", "add", "sub", "xor", "inc", "dec", "not", "xchg") \
-            and "ds:0x6926ec" in i["arg"] and i["arg"].split(",")[0].strip() != "0x6926ec":
-        if not (by and by[0] in ("a1", "a0", "8b", "8a")):
-            stores.append(i)
+STORE_OPS = ("mov", "or", "and", "add", "sub", "xor", "inc", "dec", "not", "xchg")
+
+
+def dst_is_va(ins, va):
+    """TEXT-ONLY: the FIRST operand names the VA (moffs and mem-dest forms)."""
+    if "," not in ins["arg"]:
+        return False
+    dst = ins["arg"].split(",")[0].strip()
+    for pre in ("BYTE PTR ", "DWORD PTR ", "WORD PTR "):
+        if dst.startswith(pre):
+            dst = dst[len(pre):]
+    return dst == "ds:0x%x" % va
+
+
+stores = [i for i in uses if i["op"] in STORE_OPS and dst_is_va(i, 0x6926EC)]
 pat = struct.pack("<I", 0x6926EC)
 hits, o = [], 0
 while True:
@@ -615,8 +632,10 @@ row("PE bytes @0x6926ec", PE[va2off(0x6926EC):va2off(0x6926EC) + 13])
 row("PE bytes @0x6926e8", PE[va2off(0x6926E8):va2off(0x6926E8) + 4])
 chk("G6", len(uses) == 7 and not stores and len(hits) == 7
     and all(i["op"] == "push" and i["arg"].strip() == "0x6926ec" for i in uses)
+    and all(PE[h - 1] == 0x68 for h in hits)
     and cstr(0x6926EC) == "Prefs Format" and cstr(0x6926E8) == "0",
-    "0 stores, 7 lpKeyName pushes, VA bytes = 'Prefs Format' -> no writer exists")
+    "no store NAMES the VA; 7 uses all lpKeyName pushes; the 7 four-byte VA"
+    " occurrences are all push imm32 -> no writer materialises it at all")
 
 # ---------------- G7: rivals, each failing on the numbers above ----------------
 print("\n-- G7 rivals (each must FAIL on the printed numbers) --")
