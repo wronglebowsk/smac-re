@@ -421,7 +421,9 @@ build track. Protocol, validated end to end:
 - **One cron job per endpoint**, each in its own worktree: `git worktree add ~/reverse/wt-<chain> -b
   milestone/<id> origin/main`, then symlink the untracked dirs the instruments read (`ghidra_out`,
   `scratch`, `programs`). Pinning quirk (`pinned=true` captures the config default, not the chat
-  model) and the jobs.json fix: hermes-agent `references/background-systems.md` §Cron.
+  model) and the jobs.json fix: hermes-agent `references/background-systems.md` §Cron. The live pair
+  (2026-11-24): `smac-re-loop` = job `789931d4b621` in the main checkout, `smac-re-chain2` = job
+  `9a0b613bb1ac` in `~/reverse/wt-chain2`, both pinned to `deepseek/deepseek-v4.1-flash-1017` / `nous`.
 - **Name the ownership in BOTH prompts**: which picks each chain owns, and that neither touches the
   other's worktree or `sim/` (the build track). Disjoint picks prevent collisions; the ownership
   check is the backstop.
@@ -462,6 +464,26 @@ build track. Protocol, validated end to end:
   model" premise: say the new model in the override, and update the stored prompt when it also names
   wrong picks/ownership. End the turn once both are live; the completion reports re-enter the chat and
   polling only burns calls. Generic cron traps: hermes-agent `references/background-systems.md` §Cron.
+- **N rounds on one model ("do 10 more rounds, report each time").** Keep the ROUND LEDGER outside the
+  repo (`~/reverse/artifacts/<batch>-rounds.md`): one row per round with base gauge -> measured gauge,
+  each lane's result/PR/commit, time, calls, tokens, estimate. It survives context compression and the
+  repo's doc caps; nothing in it belongs in NAMED.md. Per round: `resume` -> `run` (lane-specific
+  transient footing) -> `pause` both jobs, then verify at the destination (`git log`, `gh pr view`, the
+  acceptance file AT the merge commit) and report ONE screen per fire as it lands. Fire the next round
+  only when BOTH lanes have closed — a lane still mid-review is not a closed round. Before firing,
+  clear the worktree: `milestone.py start` refuses on UNTRACKED files too, so move each UNTRACKED PR
+  review sidecar to `~/reverse/artifacts/pr<N>_review/` first. If `git status` shows the sidecars as a
+  DELETION, they are TRACKED (the fire committed them) — restore with `git checkout -- <paths>` and leave
+  them in the repo; moving a tracked file out dirties the tree instead of cleaning it. **In the linked worktree `start` then dies at
+  `git checkout main` — `fatal: 'main' is already used by worktree at /home/paul/reverse/smac`; create the
+  branch directly instead (`git checkout -b milestone/<ID> origin/main`) and continue.** Put that in the
+  chain-2 kickoff or the fire spends calls rediscovering it. A lane's PR showing `CONFLICTING` means main
+  moved under it — report it as a state; the fire rebases, the parent neither merges nor force-pushes.
+  **GitHub also schedules NO PR run while the PR is dirty**, so `no checks reported` on a conflicting
+  branch is the conflict, not an outage: merging origin/main in flips it to MERGEABLE and the run appears
+  on the push (`references/git-workflow.md` §A dirty PR).
+  On a metered endpoint, measure the plan windows per round (hermes-agent
+  `references/subscription-usage.md`) and stop early when the binding gauge passes the user's ceiling.
 
 ## Taking over a cut-off fire (s287, B24)
 

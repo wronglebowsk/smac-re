@@ -1414,17 +1414,27 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | ACCEPT `python3 -u scripts/m339_modal_runner.py` -> `PASS M339: 7/7` `d76a5e83770b77bb` x2, `text_sha256=eb9f463e…` (`evidence/m339_modal_runner.txt:49-50`); harness `m339_mutate.py` 13/13 `927a1c66c322709e`, `--selftest` 3/3 | `evidence/m339_mutate.txt:17` | V |
 | OPEN: the writer of `[screen+0xa40]` (outside the runner and outside FUN_004ddaa0); call site 0x57dd45 pushes ONE dword against `ret 0x8` (frame restore tolerates it); the MFC `DoModal` identity is INFERRED from shape only | - | lead |
 
-## M341 (s321-chain2, STATIC 10/10) — the HoF record window is `5*n - 5 + s`: THREE .text sites decode to the same law, so the 35 records at 0x983a10 are 7 blocks x 5 rows and page index 8 lands on the terminator — `evidence/m341_hof_window.txt:1`
+## M341 (s321-chain2, STATIC 10/10; ACCEPT `python3 -u scripts/m341_hof_window.py` -> `PASS M341: 11/11`, `digest=1cfdea39295dadce`, 2 runs identical; harness `scripts/m341_mutate.py` 19/19 `e1c003e81552f53f`) - the HoF record window is `5*n - 5 + s`: THREE .text sites decode to the same law, so the 35 records at 0x983a10 are 7 blocks x 5 rows and page index 8 lands on the terminator. FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m343-rows.md:5` (sha1 `bcf9ba24a3eb4efb`); this stub governs, one line per claim
+
+| # | claim (one line) | conf |
+|---|---|---|
+| 1 | SITE A 0x449793/96 = `5*[obj+0x59f4] + [obj+0xa918] - 5`, 0 other ebx defs | V MU1,MU2,MU8,MU9,ALG1 |
+| 2 | SITE B 0x44af9b/9e = `5*[obj+0xa4c] + slot - 5`; `[obj+0xa4c]` <- `ds:0x91b5b4` at 0x44aed9 | V MU3,MU11,MU13,MU14,MU15 |
+| 3 | SITE C 0x44b5a7..b9 insert-shift: dst = src + 0x8c, k in {0..3} | V MU10,MU16,MU17 |
+| 4 | extent: base 0x983a10 / stride 0x8c / 35 records = 7x5 / index 35 = terminator 0x984d34 | V MU4,MU5,MU6,MU7 |
+| 5 | NO CLAMP: the only direct 0x59f4 ref in 781,379 insns is the load 0x44970f | V MU8 |
+| 6 | the 6-probe loop tests COLUMNS of ONE record (reload 0x449982), 6 != rows | V MU12,MU18 |
+| 7 | OPEN: +0x59f4's writer (lead: a control at obj+0x5970); page 1..7 = faction block is INFERRED | lead |
+## M343 (s323-chain2, STATIC 9/9, review #365 hardened) — the M339 OPEN `[obj+0xa40]` writer: THREE dialog-family methods publish the SELECTED item there; the runner only reads it
 
 | claim | evidence | conf |
 |---|---|---|
-| SITE A 0x449793/0x449796 `lea ecx,[eax+ebx*4]` + `lea ecx,[ebx+ecx*1-0x5]` decodes to 5*page + slot - 5; inputs exactly [obj+0x59f4] (0x44970f) and [obj+0xa918] (0x449715, spill 0x449728, reload 0x44978d), 0 other ebx definitions | `:2-10` | V MU1,MU2,MU8,MU9,ALG1 |
-| SITE B 0x44af9b/0x44af9e = 5*[obj+0xa4c] + slot - 5; the cell's DATAFLOW is read: `mov eax,ds:0x91b5b4` @0x44aecb -> `mov [esi+0xa4c],eax` @0x44aed9 with 0 eax writes between; slot from the rank scan seeded 4 with the `jge 0x44af2b` back-edge (5 probes) | `:20-26` | V MU3,MU11,MU13,MU14,MU15 |
-| SITE C 0x44b5a7..0x44b5b9 insert-shift: src index 5n+k-5, dst 5n+k-4 (delta +1); BOTH address chains (*8, sub, *5, *4+0x983a10) evaluate at (n=2,k=3) to 0x983a10+idx*0x8c and the dst = src+0x8c; k in {0..3} from four pushes each followed by `call 0x44b450` | `:11-19` | V MU10,MU16,MU17 |
-| extent MEASURED at FIVE zero-init/fault sites: all base 0x983a10 / stride 0x8c / inner 5 / term 0x984d34; 0x1324 = 35*0x8c = 7*0x2bc; {1..7}x{0..4} is a bijection onto 0..34; index 35 = 0x984d34 | `:22-31` | V MU4,MU5,MU6,MU7 |
-| NO CLAMP: over the 781,379 parsed insns the only direct 0x59f4 reference is the load 0x44970f; the 12 other hits are the indexed form of a DIFFERENT array (every one `[reg+reg*4+0x59f4]`, printed); 0 cmp/test on ebx between the load and the lea | `:32-33` | V MU8 |
-| the 6-iteration loop is COLUMNS: the probes {1,2,4,8,0x10,0x20} sit at the exact addresses {0x449915,0x449985,0x4499f1,0x449a5c,0x449ac8,0x449b34} on byte +1 of the ONE record, and the run has exactly ONE ebx definition — the reload `mov ebx,[ebp-0x1c]` @0x449982 | `:34-35` | V MU12,MU18 |
-| rivals dead: 0-based page (indices 35..39), 6 rows/page (36 cells, hi 35), flat list (three sites + k<=3), base 0x983984 (end 0x984ca8 != term) | `:36-40` | V MU1,MU3,MU4 |
-| ACCEPT `python3 -u scripts/m341_hof_window.py` -> `PASS M341: 11/11` two runs diff-identical; harness 19/19 `e1c003e81552f53f` (baseline re-run = the NO-OP control), ST 4/4 | `:45-58`, `evidence/m341_mutate.txt:21` | V MU1,ALG1 |
-| OPEN: +0x59f4's writer — no named store exists in .text (INFERRED: a control at obj+0x5970); the page's upper bound is therefore not established statically; reading "page 1..7" as faction-block numbering is INFERRED from the shared 5-block law | - | lead |
+| census: 97 refs name displacement 0xa40 = 25 indexed (12 fns) + 72 field, all dword (47 stores / 25 reads); 0 `lea reg,[..+0xa40]` and 0 `,0xa40` immediate -> both pointer-form store evasions absent | `evidence/m343_a40_writer.txt:5-22` | V MU1 |
+| writers: `FUN_005f5759` (+0xa8 of 0x67164c/0x6717cc/0x6728c0, +0xb0 of 0x671644) x4, `FUN_005f58fa` (+0x64 of the five class vtables; 0x671644 carries it at +0x6c) x3, `FUN_005f5a11` (receiver `ds:0x9977f0`) x2; runner `FUN_005f1394` = 1 READ 0x5f3f45, 0 stores; ctor `FUN_00405ef0` = 0 refs | `:66-77`, `:24-26` | V MU4,MU5,MU2 |
+| receiver fingerprint = the PAIR {[+0x21d0] container, [+0x2350] state}: exactly 4 functions carry it (runner + 3 writers); ">=3 of {21d0,2350,30a8,3100}" wrongly admits `FUN_005ee350` + `FUN_005eede6` | `:28-64` | V MU3,MU9 |
+| identity: 0x5f13b2 [ebp-0x394]=ecx -> 0x5f3d6a reload -> 0x5f3d70 `ds:0x9977f0` -> 0x5f3e02 restore -> 0x5f3f45 `[ebp-0x394]+0xa40`; 5a11 loads `ds:0x9977f0` into its own local and both stores reload it (10-link chain, adjacency asserted) | `:79-88` | V MU7,MU10 |
+| value law: each writer publishes {0 reset, the `[this+0x2228]` -> `[+8]` -> `+0xec` member, `FUN_005fdcf7` on the `+0x21d0` container}; 5a11 has no reset; the -1 at 0x5f581c is reached only from arg == -2 with `[this+0x30a8] & 0x40` | `:66-77`, `:89-99` | V MU6,MU8,MU11 |
+| ACCEPT `python3 -u scripts/m343_a40_writer.py` -> `PASS M343: 9/9` `digest=bcdace84a0352b4a` x2; harness `m343_mutate.py` 12/12, NO-OP `[]` | `:118`, `evidence/m343_mutate.txt:25` | V MU0 |
+| OPEN: dispatcher of the +0x64 slot (19 `call [reg+0x64]` sites image-wide, 0 direct); the container's item record past +0xec; any consumer of `[this+0x3100]` (5759 stages the arg) | - | lead |
+
 
