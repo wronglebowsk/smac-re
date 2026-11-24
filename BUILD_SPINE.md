@@ -1532,19 +1532,20 @@ and each API has a measured field home, an arg guard and a verb. This rung extra
 from the dump, censuses every relation store in each, and runs the peace host's own three-call
 sequence on a constructed pair of words.
 
-`python3 -u -m sim.relapi` must print `PASS B39: <n>/<n> gates` with: **G0** pins (text dump and
-`terran.exe` sha1, the four API entries and their byte extents); **G1** the STORE CENSUS per body —
-every relation displacement printed, and the field homes separated (`0x551a20`→A, `0x551cf0`→A+lease,
-`0x551c40`→B, `0x551d70`→B); **G2** the index algebra decoded from each body's `shl/add/lea/sub`
-chain equals the 2095-dword row scale for all four, and `0x94d468-0x94d448 = 0x20` = 8 dwords;
-**G3** the guards measured as immediates: `test bl,0x7` (`0x551a20`), `test bl,0x20` (`0x551c40`),
-post-OR `test cl,0x40` arming the lease (`0x551cf0`), the mode arg at `+0x14` choosing SET vs CLEAR
-(`0x551d70`); **G4** the model EXECUTES: verb applied to field, per measured guard, four scenarios,
-and a mask carrying `0x40` through `0x551cf0` writes the lease cell `0x32` — parity with the
-constant B37 recorded; **G5** the peace host: its three call sites in order with their masks, the
-three guards (`test al,0x1` on the A-row, `test eax,0x2000000` as a skip, `cmp esi,edi; je` skipping
-only the `0x1` call) and the resulting word pair; **G6** four rivals FAIL on the printed numbers
-(one-matrix, B-as-mirror-of-A, unconditional `0x1`, `0x94d468` as padding); **G7** digests twice.
-DECLARED UNMODELED: the ladder body of `0x551a20` (B36 owns it — only its field home and stores are
-censused here); what noun each of the four APIs' bits carries on word B; which readers read B. No box
-time, no /proc, no gdb.
+`python3 -u -m sim.relapi` must print `PASS B39: <n>/<n> gates` with: **G0** pins (dump row count,
+the four entries, each body push-ebp..ret at a pinned instruction count); **G1** the STORE CENSUS per
+body — every relation displacement printed with its verb and partner register, field homes separated
+(`0x551a20`->A, `0x551cf0`->A+lease, `0x551c40`->B, `0x551d70`->B) and `0x551c40`'s two OR stores
+proved to take DIFFERENT partner registers; **G2** the index algebra decoded from each body's
+`shl/add/lea/sub` chain equals the 2095-dword row scale for all four, and `0x94d468-0x94d448 = 0x20`
+= 8 dwords; **G3** the arg guards measured as immediates (`test bl,0x7`, `test bl,0x20`,
+`test cl,0x40`, the mode arg at `+0x14`); **G3b** the lease store's own immediate (`0x32`) and the
+`0x20` arm's AND constant (`0xffffffbf`) read out of the census, not the model; **G4** the model
+EXECUTES the measured verbs including the census immediate; **G5a** the peace block's call sequence
+with its masks; **G5b** the `je 0x523f46` skipping both the `0x1` and the `0x2000` write; **G5c** the
+executed truth table (pair / self-pair / bit0 clear / bit0+`0x2000000` / `0x2000000` without bit0);
+**G5d** the three host guards pinned by address, operand and target; **G6** four rivals FAIL on the
+printed numbers (one-matrix, B-as-mirror, unconditional `0x1`, `0x94d468` as padding); **G7** digests
+twice. DECLARED UNMODELED: the ladder body of `0x551a20` (B36 owns it — only its field home and
+stores are censused here); the noun of the `0x1` write on A; every noun on word B; B's readers. No
+box time, no /proc, no gdb.

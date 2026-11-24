@@ -109,9 +109,8 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
 - OPEN LEADS: who SETS 0x400 (M382); ds:0x985ba0's writer (M334); the two peace writers (pick above).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
-- M382 (s341-c2): 0xc00 cluster = 15 readers (0x5468c7 is NOT one - bits 2|16). 35/35 `90cb89f84ce7feeb`. Next: who SETS 0x400.
 - M381 (s341-c3): 0x2000 = PEACE; setter A 0x50393d (PACT third party + peace/commlink + strict might(ecx) > might(esi), peer's own scalar); setter B 0x506cf1 = not-at-war only; both rows. 9/9 `2fa1a4100ec6f4f6`, 20/20.
 - B38 (s342) MERGED: `#SOCIO` 4x4x11 grid in `sim/socio.py` - M376's two vectors reproduced field-for-field, settings -> 11 totals, signature 12 add/4 reject; `0x92babc` does NOT feed `0x94e48c`. 9/9 `e0bb2deb53ecb96c`, 12 mutants. NEXT: pick (a).
-- B39 (s343-c1) MERGED: `sim/relapi.py` - four relation APIs, TWO words (A `0x94d448` / B `0x94d468`, 8 dwords apart, same 2095 row scale); the peace block writes `0x2000` into B both ways, self-pair skipped. 10/10 `57987f64b83e3289`, 9 mutants. NEXT: `0x53fcb3`.
+- B39 (s343-c1) MERGED: `sim/relapi.py` - four relation APIs, TWO words (A `0x94d448` / B `0x94d468`, 8 dwords apart, same 2095 row scale); `0x551c40` writes B both ways, the peace block `0x523f3c/4c/58` = `551a20(0x50)`+`551a20(0x1)`+`551c40(0x2000)`, `0x2000000` skips only when A-row bit0 is set. 12/12 `1c0a06e178521ef3`, 12 mutants. NEXT: `0x53fcb3`.
 
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.

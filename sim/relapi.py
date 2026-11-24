@@ -25,10 +25,18 @@ WORD_B = 0x94D468          # the sibling the peace host actually writes
 LEASE = 0x94D4C8           # B37's 50-tick cell
 BLOCK_DWORDS = 2095        # M297: the per-faction block is f*2095 dwords
 APIS = [0x551A20, 0x551C40, 0x551CF0, 0x551D70]
+EXTENTS = {0x551A20: 161, 0x551C40: 57, 0x551CF0: 41, 0x551D70: 37}
 HOST_SITE = 0x523F4C       # M368's open peace writer
 HOST_BLOCK = 0x523F23      # the guarded block inside the host that carries the three calls
 FIELDS = {WORD_A: "A", WORD_B: "B", LEASE: "L"}
 REGS = ("eax", "ebx", "ecx", "edx", "esi", "edi")
+
+# the host's guard chain, pinned:  (addr, "mnem operands", jcc mnemonic, jcc target)
+HOST_GUARDS = [
+    (0x523F2D, "test al,0x1", "je", 0x523F38),           # bit0 SET -> consult 0x2000000
+    (0x523F31, "test eax,0x2000000", "jne", 0x523F7A),   # 0x2000000 set -> skip the whole block
+    (0x523F44, "cmp esi,edi", "je", 0x523F60),           # self-pair -> skip the 0x1 and 0x2000 writes
+]
 
 OK = []
 FAIL = []
@@ -75,7 +83,7 @@ MEM_RE = re.compile(r"\[([^\]]+)\]")
 
 
 def row_scale(body):
-    """The f*2095 row scale, decoded from the fixed shl6/add/lea/ shl4/sub chain.
+    """The f*2095 row scale, decoded from the fixed shl6/add/lea/shl4/sub chain.
 
     (((f<<6)+f)*2+f)<<4 - f  =  ((64+1)*2+1)<<4 - 1 = 2095.
     """
@@ -84,8 +92,7 @@ def row_scale(body):
         if not (mn == "shl" and len(p) == 2 and p[1] == "0x6"):
             continue
         x = p[0]
-        win = [w for w in body[k + 1:k + 9]
-               if w[1] in ("add", "lea", "shl", "sub")]
+        win = [w for w in body[k + 1:k + 9] if w[1] in ("add", "lea", "shl", "sub")]
         if len(win) >= 4:
             a = regs_of(win[0][2])
             l = regs_of(win[1][2])
@@ -98,50 +105,65 @@ def row_scale(body):
 
 
 def stores(body):
-    """[(addr, field, verb, imm)] - every write whose destination is a relation field.
+    """[(addr, field, verb, imm, partner_reg)] - every write whose destination is a relation field.
 
-    The field is either a literal displacement in the store operand or (the common form here)
-    a literal displacement folded into a pointer by a preceding `lea`; the pointer map is
-    invalidated the moment the register is re-defined without a relation displacement.
+    The field is either a literal displacement in the store operand or (the common form here) a
+    literal displacement folded into a pointer by a preceding `lea`; the pointer map is invalidated
+    the moment the register is re-defined without a relation displacement.  The VERB is adopted
+    only from an RMW that writes THE REGISTER THE STORE STORES, or from the store's own immediate -
+    a neighbouring `or` of some other register is not evidence about this store.  The partner
+    register is the register last `add`ed into the store's row base, which is what makes the two
+    directions of a symmetric API measurable instead of assumed.
     """
     out = []
     ptr = {}
+    verb = {}
     prev = []
     for addr, mn, op in body:
         parts = regs_of(op)
         if not parts:
             prev.append((addr, mn, op))
             continue
+        if mn in ("or", "and") and len(parts) == 2:
+            verb[parts[0]] = (mn.upper(), parts[1])
         if mn == "lea" and len(parts) == 2:
             f = FIELD_RE.findall(parts[1])
             if f:
-                ptr[parts[0]] = int(f[0], 16)
+                base = parts[1].strip("[]").split("*")[0].split("+")[0].strip()
+                partner = None
+                for paddr, pmn, pop in reversed(prev[-6:]):
+                    q = regs_of(pop)
+                    if pmn == "add" and len(q) == 2 and q[0] == base and q[1] != base:
+                        partner = q[1]
+                        break
+                ptr[parts[0]] = (int(f[0], 16), partner)
             else:
                 ptr.pop(parts[0], None)
         elif mn in ("mov", "add", "sub") and len(parts) == 2 and parts[0] in ptr:
-            f = FIELD_RE.findall(parts[1])
-            if f:
-                ptr[parts[0]] = int(f[0], 16)
+            if FIELD_RE.findall(parts[1]):
+                ptr[parts[0]] = (int(FIELD_RE.findall(parts[1])[0], 16), ptr[parts[0]][1])
             else:
                 ptr.pop(parts[0], None)
         if mn in ("mov", "or", "and") and "[" in parts[0]:
             m = MEM_RE.search(parts[0])
-            field = None
+            field = partner = None
             if m:
                 fs = FIELD_RE.findall(m.group(1))
                 if fs:
                     field = int(fs[0], 16)
                 else:
                     base = m.group(1).split("*")[0].split("+")[0].strip()
-                    field = ptr.get(base)
+                    if base in ptr:
+                        field, partner = ptr[base]
             if field:
-                verb, imm = "COPY", parts[1] if len(parts) > 1 else "?"
-                for paddr, pmn, pop in reversed(prev[-5:]):
-                    p = regs_of(pop)
-                    if pmn in ("or", "and") and p and p[0] in REGS and not p[0].startswith("["):
-                        verb, imm = pmn.upper(), p[1]
-                        break
-                out.append((addr, field, verb, imm))
+                src = parts[1] if len(parts) > 1 else "?"
+                if src in verb:
+                    v, imm = verb[src]
+                elif re.match(r"^0x[0-9a-f]+$", src):
+                    v, imm = "SETI", src
+                else:
+                    v, imm = "COPY", src
+                out.append((addr, field, v, imm, partner))
         prev.append((addr, mn, op))
     return out
 
@@ -204,12 +226,12 @@ def api_551c40(B, f, p, mask):
         B[p][f] |= mask
 
 
-def api_551cf0(A, cell, f, p, mask, mode=1):
-    """0x551cf0: OR the mask into word A; a mask carrying 0x40 arms the lease cell to 0x32."""
+def api_551cf0(A, cell, f, p, mask, mode=1, lease_imm=0x32):
+    """0x551cf0: OR the mask into word A; a mask carrying 0x40 arms the lease cell."""
     if mode:
         A[f][p] |= mask
         if mask & 0x40:
-            cell[f][p] = 0x32
+            cell[f][p] = lease_imm
 
 
 def api_551d70(B, f, p, mask, mode=1):
@@ -220,15 +242,23 @@ def api_551d70(B, f, p, mask, mode=1):
         B[f][p] &= ~mask & 0xFFFFFFFF
 
 
-def peace_host(A, B, cell, cur=0, partner=1, arow=0x1):
-    """0x523f23's block, executed: bit0 of the A-row gates it, 0x2000000 skips it."""
-    if not (arow & 0x1):
-        return "gated: A-row bit0 clear"
-    if arow & 0x2000000:
-        return "gated: A-row 0x2000000 set"
+def peace_host(A, B, cell, cur=0, partner=1, arow=0x1, lease_imm=0x32):
+    """0x523f23's block, executed exactly as the pinned guard chain reads it.
+
+    bit0 SET -> consult 0x2000000 (set = skip the whole block, clear = run it); bit0 CLEAR -> run it
+    without consulting 0x2000000; a self-pair skips the 0x1 and 0x2000 writes only.
+    """
+    if (arow & 0x1) and (arow & 0x2000000):
+        return "skipped: A-row bit0 set and 0x2000000 set"
     if cur != partner:
         A[cur][partner] |= 0x1            # 0x551a20(cur, partner, 0x1): ladder, body UNMODELLED
         api_551c40(B, cur, partner, 0x2000)
+    return "ok"
+
+
+def peace_host_naive(B, cur=0, partner=1):
+    """RIVAL: the pair-equality guard ignored - a self-pair still gets both writes."""
+    api_551c40(B, cur, partner, 0x2000)
     return "ok"
 
 
@@ -251,20 +281,27 @@ def accept(quiet=False):
             entry, len(body), row_scale(body),
             ",".join(sorted(FIELDS.get(s[1], hex(s[1])) for s in st)), len(st)))
         for s in st:
-            print("        %07x -> %s %s %s" % s)
+            print("        %07x -> %s %s %s partner=%s" % s)
 
-    # G0 - pins
-    gate("G0", len(ins) > 100000 and all(api[a]["body"] for a in APIS),
-         "pins: %d dump rows, four API bodies resolved to %s instructions" %
+    # G0 - pins: four bodies, prologue..ret, extents pinned
+    pin_ok = all(api[a]["body"] and api[a]["body"][0][1] == "push" and api[a]["body"][0][2] == "ebp"
+                 and api[a]["body"][-1][1] == "ret" and len(api[a]["body"]) == EXTENTS[a] for a in APIS)
+    gate("G0", len(ins) > 100000 and pin_ok,
+         "pins: %d dump rows; four bodies push-ebp..ret at pinned extents %s" %
          (len(ins), [len(api[a]["body"]) for a in APIS]))
 
-    # G1 - field homes separated
+    # G1 - field homes, store counts, and the two directions of 0x551c40 from the operands
     homes = {a: sorted(set(s[1] for s in api[a]["stores"])) for a in APIS}
+    counts = {a: len(api[a]["stores"]) for a in APIS}
+    or_partners = [s[4] for s in api[0x551C40]["stores"] if s[2] == "OR"]
+    sym = len(or_partners) == 2 and or_partners[0] != or_partners[1] \
+        and all(p in ("eax", "ecx") for p in or_partners)
     gate("G1", homes[0x551A20] == [WORD_A] and homes[0x551CF0] == sorted([WORD_A, LEASE])
          and homes[0x551C40] == [WORD_B] and homes[0x551D70] == [WORD_B]
-         and len(api[0x551C40]["stores"]) == 4 and len(api[0x551D70]["stores"]) == 2,
-         "field homes %s (551c40 4 stores = 2 per path, 551d70 2 = one per mode)" %
-         {hex(k): [FIELDS.get(v, hex(v)) for v in homes[k]] for k in APIS})
+         and counts == {0x551A20: 8, 0x551C40: 4, 0x551CF0: 3, 0x551D70: 2} and sym,
+         "homes %s counts %s; 0x551c40's OR stores take partner registers %s" %
+         ({hex(k): [FIELDS.get(v, hex(v)) for v in homes[k]] for k in APIS},
+          [counts[a] for a in APIS], or_partners))
 
     # G2 - index algebra
     scales = {a: api[a]["scale"] for a in APIS}
@@ -273,7 +310,7 @@ def accept(quiet=False):
          "row scale %s == %d dwords; WORD_B-WORD_A = 0x%x = %d dwords" %
          (sorted(set(scales.values())), BLOCK_DWORDS, off, off // 4))
 
-    # G3 - arg guards
+    # G3 - API arg guards
     g = {a: [(p0, imm) for _, p0, imm in api[a]["guards"]] for a in APIS}
     mode_arg = any("ebp+0x14" in op for _, _, op in api[0x551D70]["body"])
     gate("G3", ("bl", "0x7") in g[0x551A20] and ("bl", "0x20") in g[0x551C40]
@@ -281,22 +318,29 @@ def accept(quiet=False):
          "guards 551a20=%s 551c40=%s 551cf0=%s 551d70 4th-arg mode=%s" %
          (g[0x551A20], g[0x551C40], g[0x551CF0], mode_arg))
 
+    # G3b - the lease constant and the mask arm's AND constant, both READ OUT of the census above
+    lease_imm = [int(s[3], 16) for s in api[0x551CF0]["stores"] if s[1] == LEASE]
+    and_verbs = [s[3] for s in api[0x551C40]["stores"] if s[2] == "AND"]
+    gate("G3b", lease_imm == [0x32] and set(and_verbs) == {"0xffffffbf"},
+         "the lease store's own immediate = %s; the 0x20 arm's AND constant = %s (dump bytes, "
+         "not the model)" % ([hex(v) for v in lease_imm], sorted(set(and_verbs))))
+
     # G4 - the model executes the measured verbs
     A, B, cell = blank(), blank(), blank()
     api_551c40(B, 0, 1, 0x2000)
     B[2][3] = 0x2050
     api_551c40(B, 2, 3, 0x2020)
-    api_551cf0(A, cell, 0, 1, 0x40)
+    api_551cf0(A, cell, 0, 1, 0x40, lease_imm=lease_imm[0])
     api_551d70(B, 4, 5, 0x800, mode=1)
     api_551d70(B, 4, 5, 0x800, mode=0)
     print()
-    print("    exec 551c40(0x2000) B[0][1]=%#x B[1][0]=%#x | 551c40(0x2040) B[2][3]=%#x "
-          "(seeded 0x2050, the 0x20 arm clears 0x40 and does NOT set 0x20) | 551cf0(0x40) A[0][1]=%#x cell=%#x | "
+    print("    exec 551c40(0x2000) B[0][1]=%#x B[1][0]=%#x | 551c40(0x2020) on seeded 0x2050 -> B[2][3]=%#x "
+          "(clears 0x40, does NOT set 0x20) | 551cf0(0x40) A[0][1]=%#x cell=%#x | "
           "551d70 set-then-clear B[4][5]=%#x" % (B[0][1], B[1][0], B[2][3], A[0][1], cell[0][1], B[4][5]))
     gate("G4", B[0][1] == 0x2000 and B[1][0] == 0x2000 and B[2][3] == 0x2010
-         and A[0][1] == 0x40 and cell[0][1] == 0x32 and B[4][5] == 0,
-         "verbs: 551c40 sets BOTH directions; 0x20-arm clears 0x40; 551cf0 arms cell 0x32; "
-         "551d70 mode 0 clears")
+         and A[0][1] == 0x40 and cell[0][1] == lease_imm[0] and B[4][5] == 0,
+         "verbs: 551c40 sets BOTH directions; the 0x20 arm clears 0x40; 551cf0 arms cell %#x "
+         "(the census immediate); 551d70 mode 0 clears" % lease_imm[0])
 
     # G5 - the peace host
     host = find_host(ins, idx)
@@ -306,33 +350,62 @@ def accept(quiet=False):
           (host[0][0], host[-1][0], [(hex(a), hex(p), m) for a, p, m in sites]))
     seq = [(p, m[0]) for a, p, m in sites[:3]]
     gate("G5a", seq == [(0x551A20, "0x50"), (0x551A20, "0x1"), (0x551C40, "0x2000")],
-         "peace block call sequence %s" % [(hex(p), m) for p, m in seq])
-    jeskip = [x for x in host if x[1] == "je" and HOST_BLOCK <= x[0] <= 0x523F50
-              and int(x[2], 16) > 0x523F58]
-    gate("G5b", len(jeskip) == 1 and int(jeskip[0][2], 16) > 0x523F58,
-         "the `je` at %07x skips BOTH the 0x1 call (%07x) and the 0x2000 call (%07x)" %
-         (jeskip[0][0] if jeskip else 0, 0x523F4C, 0x523F58))
-    A2, B2, c2 = blank(), blank(), blank()
-    r_ok = peace_host(A2, B2, c2, cur=0, partner=1, arow=0x1)
-    A3, B3, c3 = blank(), blank(), blank()
-    r_self = peace_host(A3, B3, c3, cur=1, partner=1, arow=0x1)
-    A4, B4, c4 = blank(), blank(), blank()
-    r_gate = peace_host(A4, B4, c4, cur=0, partner=1, arow=0x2000000)
-    print("    exec pair(0,1) B=%#x/%#x | self-pair B=%#x/%#x | A-row 0x2000000 -> %s" %
-          (B2[0][1], B2[1][0], B3[1][0], B3[1][1], r_gate))
-    gate("G5c", r_ok == "ok" and B2[0][1] == 0x2000 and B2[1][0] == 0x2000
-         and r_self == "ok" and B3[1][0] == 0 and B3[1][1] == 0 and r_gate.startswith("gated"),
-         "host execution: pair gets 0x2000 both ways, self-pair gets none, 0x2000000 gates it")
+         "peace block call sequence %s (mask = the FIRST push byte, i.e. the last argument written)" %
+         [(hex(p), m) for p, m in seq])
 
-    # G6 - rivals
+    # G5d - the three guards, pinned by address and target and read from the bytes
+    gd = []
+    for addr, want_op, jmn, jtgt in HOST_GUARDS:
+        i = idx[addr]
+        cur = "%s %s" % (ins[i][1], ins[i][2])
+        nxt = ins[i + 1]
+        gd.append((hex(addr), cur, nxt[1], hex(int(nxt[2], 16))))
+        if not (cur == want_op and nxt[1] == jmn and int(nxt[2], 16) == jtgt):
+            gd.append("MISMATCH")
+    print("    guards %s" % gd[:3])
+    gate("G5d", "MISMATCH" not in gd,
+         "host guard chain: `test al,0x1 / je 0x523f38`, `test eax,0x2000000 / jne 0x523f7a`, "
+         "`cmp esi,edi / je 0x523f60`")
+
+    je = [x for x in host if x[1] == "je" and HOST_BLOCK <= x[0] <= 0x523F50 and int(x[2], 16) == 0x523F60]
+    gate("G5b", len(je) == 1 and ins[idx[je[0][0]] - 1][1] == "cmp",
+         "the `je` at %s (preceded by `%s %s`) skips BOTH the 0x1 call (%s) and the 0x2000 call (%s)" %
+         (hex(je[0][0]) if je else "?", ins[idx[je[0][0]] - 1][1] if je else "?",
+          ins[idx[je[0][0]] - 1][2] if je else "?", hex(0x523F4C), hex(0x523F58)))
+
+    def run(arow, cur=0, partner=1):
+        A2, B2, c2 = blank(), blank(), blank()
+        r = peace_host(A2, B2, c2, cur=cur, partner=partner, arow=arow, lease_imm=lease_imm[0])
+        return r, A2, B2
+
+    r_pair, A_pair, B_pair = run(0x1, 0, 1)
+    r_self, A_self, B_self = run(0x1, 1, 1)
+    r_nobit, A_nobit, B_nobit = run(0x0, 0, 1)
+    r_skip, A_skip, B_skip = run(0x2000001, 0, 1)
+    r_skip0, A_skip0, B_skip0 = run(0x2000000, 0, 1)
+    print("    exec pair B=%#x/%#x | self-pair B=%#x/%#x | bit0 clear B=%#x/%#x | bit0+0x2000000 -> %s | "
+          "0x2000000 WITHOUT bit0 B=%#x/%#x" %
+          (B_pair[0][1], B_pair[1][0], B_self[1][0], B_self[1][1], B_nobit[0][1], B_nobit[1][0],
+           r_skip, B_skip0[0][1], B_skip0[1][0]))
+    gate("G5c", r_pair == "ok" and B_pair[0][1] == 0x2000 and B_pair[1][0] == 0x2000
+         and B_self[1][0] == 0 and B_self[1][1] == 0
+         and B_nobit[0][1] == 0x2000 and B_nobit[1][0] == 0x2000
+         and r_skip.startswith("skipped") and B_skip[0][1] == 0
+         and B_skip0[0][1] == 0x2000,
+         "host execution: pair 0x2000 both ways; self-pair none; bit0 clear still writes; "
+         "0x2000000 skips ONLY when bit0 is set")
+
+    # G6 - rivals, each executed and compared to the measured numbers
     r1 = homes[0x551C40] == [WORD_A]
     r2 = any(s[1] == WORD_A for s in api[0x551C40]["stores"])
-    r3 = B3[1][0] == 0x1
-    r4 = len(api[0x551C40]["stores"]) == 0 or len(api[0x551D70]["stores"]) == 0
-    r5 = 0x2000 in [s[1] for s in api[0x551A20]["stores"]]
+    Bn = blank()
+    peace_host_naive(Bn, cur=1, partner=1)
+    r3 = Bn[1][1] == B_self[1][1]
+    r4 = counts[0x551C40] == 0 or counts[0x551D70] == 0
+    r5 = any(s[1] == WORD_A and s[3].lower() == "0x2000" for a in APIS for s in api[a]["stores"])
     gate("G6", not r1 and not r2 and not r3 and not r4 and not r5,
-         "rivals fail: one-matrix=%s B-is-mirror=%s unconditional-0x1=%s padding=%s "
-         "peace-on-A=%s" % (r1, r2, r3, r4, r5))
+         "rivals fail: one-matrix=%s B-is-mirror=%s unconditional-0x1(self-pair B %#x vs measured %#x)=%s "
+         "padding=%s peace-on-A=%s" % (r1, r2, Bn[1][1], B_self[1][1], r3, r4, r5))
 
     # G7 - digests twice
     d1 = sha16(["%x:%s:%s" % (a, m, o) for a, m, o in ins] + ["%s" % (s,) for s in api[0x551C40]["stores"]])

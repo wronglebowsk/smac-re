@@ -1,10 +1,13 @@
-ok   MU1 reddens ['G1', 'G2']   the one-matrix rival made real: the sibling displacement IS 0x94d448, so both words collapse and the padding rival stops differing
-ok   MU2 reddens ['G1', 'G6']   the folded-pointer census switched off: 0x551c40 and 0x551d70 store through a register the preceding `lea` set, so their field homes read empty
+ok   MU1 reddens ['G1', 'G2']   the one-matrix rival made real: the sibling displacement IS 0x94d448, so the two words collapse in the homes table and the row offset
+ok   MU2 reddens ['G1', 'G3b', 'G6']   the folded-pointer census switched off: 0x551c40 and 0x551d70 store through a register the preceding `lea` set, so their homes read empty and the padding rival comes back to life
 ok   MU3 reddens ['G4']   the 0x20 arm tested against 0x40 instead: the seeded 0x2050 keeps 0x40 and G4's 0x2010 expectation reddens
-ok   MU4 reddens ['G5b']   the skip-target filter dropped: the first in-block `je` (0x523f2f) is selected and the 'skips both calls' claim reddens
-ok   MU5 reddens ['G5c']   the pair-equality guard removed: a self-pair now gets the 0x1 and 0x2000 writes
+ok   MU4 reddens ['G5b']   the skip target mistyped: the bit0 `je 0x523f38` is selected instead of `je 0x523f60`, and its predecessor is a `test`, not the pair-equality `cmp`
+ok   MU5 reddens ['G5c', 'G6']   the pair-equality guard removed: a self-pair now gets the 0x1 and 0x2000 writes, and the naive rival stops differing from the measurement
 ok   MU6 reddens ['G2']   the row scale off by one: the 2095-dword identity from M297 is no longer reproduced
 ok   MU7 reddens ['G3']   the arg-guard extractor switched off: test bl,0x7 / bl,0x20 / cl,0x40 all vanish
 ok   MU8 reddens ['G7']   the first digest's input gets a constant the second decode does not: the two decodes no longer agree
+ok   MU10 reddens ['G5a']   the argument position flipped: the decoded masks become the destination registers, so the call sequence no longer reads 0x50 / 0x1 / 0x2000
+ok   MU11 reddens ['G5c']   the bit0 precondition dropped: 0x2000000 now skips the block even for an uncontacted pair, and the 'WITHOUT bit0' scenario reddens
+ok   MU12 reddens ['G5d']   a guard immediate mistyped: the bit0 test is pinned as al,0x2, which the bytes do not carry
 ok   MU9 NO-OP   NO-OP: a docstring space changes nothing, so every gate must stay green
-RUN PASS 9 mutants, NO-OP MU9
+RUN PASS 12 mutants, NO-OP MU9
