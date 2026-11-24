@@ -596,3 +596,32 @@ whether a facility completion stamps at all.
   (the facility setter stays UNVERIFIED and is now CONTRASTED: side-by-side unit completions DO
   stamp). Pitfall: a new module's `HEAD_OFF` is dead code if it reads through `fa.head_of` - the
   head-offset mutant scored green until the module unpacked its own constant.
+
+## Session 328-chain3 (2026-11-24) — M352: the writeback — its target, the key matrix, and `ds:0x6926ec` RETRACTED
+
+- **ACCEPT** `python3 -u scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7 gates`**,
+  tables digest `d553194a9f6ddce9`; x2 byte-identical (sha1 `c8bbfda4`,
+  `evidence/m352_x2.txt:4`, `evidence/m352_persist_writeback.txt:140`); `m352_mutate.py` -> **13/13** killed, NO-OP green
+  (`evidence/m352_mutate.txt`).
+- **THE 8 `call edi`** (0x58f11b..0x58f3a8) are ONE target: edi loaded once @0x58f106 from
+  `ds:0x6710fc` = KERNEL32!WritePrivateProfileStringA (import dir; slot in .rdata, not writable;
+  the slot's own dword is a .rdata RVA naming the same function). 0 mem-indirect calls; 20 direct.
+- **WRITE keys = 13**: Prefs Format, Difficulty, Map Type, Top Menu, Faction, Preferences,
+  More Preferences, Custom World (8 direct) + Semaphore/Announce/Rules/Customize/Time Controls
+  (5 via FUN_0058f030). 12 write blocks LOAD a block cell (11/11 scalars + the 7-dword array;
+  window presence, not value provenance); `Prefs Format` is `__itoa(0xb)` — a hardcoded stamp, NOT a cell. **The persist
+  writes no cell it never read.**
+- **READ asymmetry (image-wide, total):** 5 `GetPrivateProfileStringA` refs in 5 fns (0x58e5a0,
+  0x58e640, 0x58e6c0, 0x58e760, 0x58e7f0); 52 attributed sites -> 35 keys. 13/13 written keys are
+  read (0 write-only). Read but written NOWHERE (33 write sites / 28 keys): **`Laptop`**
+  (0x6926fc/0x692704; twins + 2 loader sites) and **`Language`** (0x69270c).
+- **RETRACTION (M350 OPEN "who sets ds:0x6926ec")**: nobody — it is not a variable. No store names the
+  VA (moffs/mem-dest forms) and nothing materialises it as data; 7 uses all `push 0x6926ec` in the lpKeyName
+  slot (the 7 four-byte VA occurrences are all push imm32, so nothing even materialises
+  the address as data); the VA holds the literal `Prefs Format` (0x6926e8 = the `"0"` default of the same call).
+  M350's "first read takes its key pointer from ds:0x6926ec" restated: the read's KEY IS it.
+- **PROTOCOL**: `Prefs Format`=11 written once, read at 7 sites; `cmp eax,0xb` gates the 6 inline
+  loader reads and all of FUN_0058e5a0 (mismatch -> caller's default); FUN_0058e760 (23 callers)
+  reads ints with NO gate.
+- **OPEN**: what `Laptop` selects (its atoi feeds masks @0x58ea12/0x58eb2b); the twins'
+  0x3a7168/0x327168 return; whether any completion path re-persists.

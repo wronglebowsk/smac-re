@@ -1,0 +1,141 @@
+== M352 persist FUN_0058f0d0 ==
+extent | 0x58f0d0 | FUN_0058f0d0 | 758 | insns | 222
+[PASS] G0 five function extents in ghidra index.csv == declared sizes
+
+-- G1 call census in FUN_0058f0d0 (site | form | target) --
+0x58f11b | call reg | call   edi
+0x58f15f | call reg | call   edi
+0x58f1a2 | call reg | call   edi
+0x58f1e4 | call reg | call   edi
+0x58f228 | call reg | call   edi
+0x58f292 | call reg | call   edi
+0x58f2fc | call reg | call   edi
+0x58f3a8 | call reg | call   edi
+direct | 20 | ['0x58f030', '0x64b9e0', '0x64f980']
+indirect-mem | 0 | []
+edi writes | 1 | ['mov    edi,DWORD PTR ds:0x6710fc']
+target slot | 0x6710fc
+[PASS] G1 8 `call edi`, 1 edi load (0x58f106), 0 mem-indirect -> 1 distinct target
+
+-- G2 IAT slot 0x6710fc (PE import directory) --
+slot | 0x6710fc | KERNEL32.dll | WritePrivateProfileStringA
+neighbour | 0x671100 | KERNEL32.dll | GetPrivateProfileStringA
+section | .rdata | write-bit | clear
+slot dword -> thunk | 0x2877bc | 0x6877bc | section | .rdata | name at thunk | WritePrivateProfileStringA
+[PASS] G2 target = KERNEL32.dll!WritePrivateProfileStringA; slot in .rdata (not writable), its own dword names WritePrivateProfileStringA
+
+-- G3 write keys (site | key VA | key text | value source | cells loaded) --
+0x58f11b | 0x6927ec | Prefs Format | CONST 0xb | -
+0x58f15f | 0x6927fc | Difficulty | CELL | 0x92bde8
+0x58f1a2 | 0x692808 | Map Type | CELL | 0x92bdf4
+0x58f1e4 | 0x692814 | Top Menu | CELL | 0x92bdf8
+0x58f228 | 0x692820 | Faction | CELL | 0x92bdec
+0x58f292 | 0x692828 | Preferences | CELL | 0x92befc
+0x58f2fc | 0x692834 | More Preferences | CELL | 0x92bf00
+0x58f3a8 | 0x692874 | Custom World | ARRAY | 0x92bf18
+0x58f30b | 0x692848 | Semaphore | HELPER | 9617164
+0x58f31e | 0x692854 | Announce | HELPER | 9617156
+0x58f331 | 0x692860 | Rules | HELPER | 9617160
+0x58f343 | 0x692868 | Customize | HELPER | 9617172
+0x58f3b7 | 0x692884 | Time Controls | HELPER | 9617168
+keys written | 13 | distinct | 13
+scalar cells loaded | 11 | 0x92bde8,0x92bdec,0x92bdf4,0x92bdf8,0x92befc,0x92bf00,0x92bf04,0x92bf08,0x92bf0c,0x92bf10,0x92bf14
+stamp | ['0x58f11b'] | value | CONST 0xb
+blocks that LOAD a block cell | 12 | of | 13 | stamps | 1
+[PASS] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 blocks LOAD a block cell (window presence, not value provenance), 1 CONST 0xb stamp; 11/11 scalar cells loaded
+
+-- G4 read census: every GetPrivateProfileStringA key in the image --
+IAT refs | 5 | ['0x58e5bc', '0x58e68e', '0x58e70e', '0x58e7cc', '0x58e82f']
+functions | 5 | ['FUN_0058e5a0', 'FUN_0058e640', 'FUN_0058e6c0', 'FUN_0058e760', 'FUN_0058e7f0']
+read key | 8BitMovieSound | 2 | ['0x4c65a3', '0x4c67a9']
+read key | Announce | 1 | ['0x58eeef']
+read key | Base Sort | 1 | ['0x4d7000']
+read key | Custom World | 1 | ['0x58efbc']
+read key | Customize | 1 | ['0x58ed0e']
+read key | Difficulty | 1 | ['0x58e8a7']
+read key | DirectDraw | 2 | ['0x466461', '0x4c6dd8']
+read key | Faction | 1 | ['0x58e9d3']
+read key | Firaxis | 2 | ['0x404b50', '0x404ca7']
+read key | Gamma Correction | 1 | ['0x4565cf']
+read key | InterludeFontSize | 1 | ['0x57b79c']
+read key | Language | 2 | ['0x58e847', '0x5802bb']
+read key | Laptop | 4 | ['0x58e68e', '0x58e70e', '0x58e9ff', '0x58eb16']
+read key | Latest Map | 1 | ['0x599ab4']
+read key | Latest Save | 1 | ['0x59911d']
+read key | Latest Scenario | 1 | ['0x5990ff']
+read key | Main Volume | 1 | ['0x491a20']
+read key | MainFontSize | 1 | ['0x57b789']
+read key | Map Type | 1 | ['0x58e90b']
+read key | More Preferences | 1 | ['0x58ec0d']
+read key | Multi Debug | 1 | ['0x5222d4']
+read key | Music Volume | 1 | ['0x491ab6']
+read key | Net Name | 2 | ['0x4e27d2', '0x4e2bd2']
+read key | Net Session | 1 | ['0x4e27b1']
+read key | Preferences | 1 | ['0x58eaf7']
+read key | Prefs Format | 7 | ['0x58e5d4', '0x58eaa8', '0x58ebbe', '0x58ec60', '0x58edb4', '0x58eea0', '0x58ef6e']
+read key | Rules | 1 | ['0x58ee03']
+read key | SFX Volume | 1 | ['0x491a7e']
+read key | Semaphore | 1 | ['0x58ecae']
+read key | Time Controls | 1 | ['0x58efe9']
+read key | Top Menu | 1 | ['0x58e96f']
+read key | Vehicle Groups | 1 | ['0x4d9af6']
+read key | Video Mode | 1 | ['0x46644d']
+read key | Voice Volume | 1 | ['0x491a4f']
+read key | WinsFileBox | 2 | ['0x5988b3', '0x599229']
+read keys | 35 | sites | 52 | unresolved | 2
+  unresolved | FUN_0058e5a0 | 0x58e62a | ('unknown', 'mov    edx,DWORD PTR [ebp+0x8]')
+  unresolved | FUN_0058e760 | 0x58e7cc | ('unknown', 'mov    eax,DWORD PTR [ebp+0x8]')
+Laptop pushes | ['0x58e688', '0x58e708', '0x58e9f3', '0x58eb0c'] | declared | [(5826184, 6891260), (5826312, 6891268), (5827059, 6891260), (5827340, 6891268)]
+Language pushes | ['0x58e841'] | declared | [(5826625, 6891276)]
+format gates cmp eax,0xb | 7 | ['0x58e5e5', '0x58eab9', '0x58ebcf', '0x58ec71', '0x58edc5', '0x58eeb1', '0x58ef7f'] | cmp eax,0xd | 0
+write-only keys | 0 | []
+read-only keys (image) | 22 | {'8BitMovieSound': 2, 'Base Sort': 1, 'DirectDraw': 2, 'Firaxis': 2, 'Gamma Correction': 1, 'InterludeFontSize': 1, 'Language': 2, 'Laptop': 4, 'Latest Map': 1, 'Latest Save': 1, 'Latest Scenario': 1, 'Main Volume': 1, 'MainFontSize': 1, 'Multi Debug': 1, 'Music Volume': 1, 'Net Name': 2, 'Net Session': 1, 'SFX Volume': 1, 'Vehicle Groups': 1, 'Video Mode': 1, 'Voice Volume': 1, 'WinsFileBox': 2}
+loader reads | 15 | sites | 21
+loader read-only keys | {'Language': 1, 'Laptop': 2} | declared | {'Laptop': 2, 'Language': 1}
+[PASS] G4 5 refs in 5 fns; 35 read keys / 52 sites; 13/13 written keys read; 0 write-only; loader reads 15 keys (Laptop x2, Language x1 have no writer)
+
+-- G5 write surface: every WritePrivateProfileStringA key in the image --
+write key | Announce | 1 | ['0x58f31e']
+write key | Base Sort | 1 | ['0x4d85b6']
+write key | Customize | 1 | ['0x58f343']
+write key | Gamma Correction | 1 | ['0x493ab3']
+write key | InterludeFontSize | 1 | ['0x57b7bb']
+write key | Latest Map | 2 | ['0x599c25', '0x59a077']
+write key | Latest Save | 3 | ['0x598c64', '0x5992c9', '0x5a0fba']
+write key | Latest Scenario | 1 | ['0x5a0fc9']
+write key | Main Volume | 1 | ['0x492498']
+write key | MainFontSize | 1 | ['0x57b7ae']
+write key | Music Volume | 1 | ['0x4924be']
+write key | Net Name | 2 | ['0x4e2912', '0x4e2c3c']
+write key | Net Session | 1 | ['0x4e2903']
+write key | Rules | 1 | ['0x58f331']
+write key | SFX Volume | 1 | ['0x4924d1']
+write key | Semaphore | 1 | ['0x58f30b']
+write key | Time Controls | 1 | ['0x58f3b7']
+write key | Vehicle Groups | 1 | ['0x4d9e51']
+write key | Voice Volume | 1 | ['0x4924ab']
+write key | WinsFileBox | 2 | ['0x5988c1', '0x599237']
+IAT write refs | 3 | ['0x58f027', '0x58f0c3', '0x58f106']
+write sites | 25 | = 16 helper + 9 wrapper | distinct keys | 20
+write sites total | 33 | = 16 + 9 + 8 persist | distinct keys | 28
+poorly-resolved | []
+[PASS] G5 3 API refs; 33 keyed write sites / 28 distinct keys; Laptop and Language are written by NONE of them
+
+-- G6 ds:0x6926ec (M350 OPEN: who sets it) --
+text uses | 7 | ['push   0x6926ec', 'push   0x6926ec', 'push   0x6926ec']
+stores | 0
+byte hits of the VA | 7 | all `<68> + VA` | True
+key slot | ['0x58e5ce', '0x58eaa2', '0x58ebb8', '0x58ec5a', '0x58edae', '0x58ee9a', '0x58ef68']
+PE bytes @0x6926ec | b'Prefs Format\x00'
+PE bytes @0x6926e8 | b'0\x00\x00\x00'
+[PASS] G6 no store NAMES the VA; 7 uses all lpKeyName pushes; the 7 four-byte VA occurrences are all push imm32 -> no writer materialises it at all
+
+-- G7 rivals (each must FAIL on the printed numbers) --
+R1 vtable/unknown targets | REFUTED | 8 calls, 1 slot, .rdata, WritePrivateProfileStringA
+R2 write-only key exists | REFUTED | 13 writes, 0 write-only
+R3 read set == write set | REFUTED | 35 read vs 13 written
+R4 0x6926ec is a mutable pointer | REFUTED | 0 stores, 7 uses
+[PASS] G7 R1/R2/R4 refuted, R3 refuted by the measured 35-vs-13 set difference
+
+tables digest d553194a9f6ddce9  (115 rows)
+RESULT: PASS M352: 7/7 gates

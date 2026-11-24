@@ -1487,16 +1487,15 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | RETRACTION: FUN_00636b1e = multiplayer Create Session dialog (labels 0x6998b0/c0/d4, strlen(slot1)<=0x10, jmp 0x63724e); M346's 'drainer' withdrawn | `:63-69` | V MU12 |
 
 
-## M350 (s326-chain3, ANALYSE, static; ACCEPT `scripts/m350_pref_cowriters.py` -> **`PASS M350: 6/6`** `23794d22`, x2 (`m350_pref_cowriters.txt:16` + `m350_x2.txt:4`); harness 15/15 (`m350_mutate.txt:36`)) — pref block = 11 scalars + a 7-dword `Custom World` list, END **0x92bf34**; co-writes are screen COMMITs. `:N` = a line of the ACCEPT's evidence file.
+# M350 (STUB — rows VERBATIM: `docs/named-archive-m352-rows.md`; `:N` = a line of `evidence/m350_pref_cowriters.txt:1-162`)
 | claim | ev | conf |
 |---|---|---|
-| FUN_0058e7f0 = the block's only profile-backed INITIALISER: 11 stores, 1/cell, eax from a 0x5ea484/93 parse with no eax write between; the 11 co-STORE fns make 0 profile reads (loader 18 of 84 image-wide). Parse consumed the PUSHED key = INFERRED | `:3-16,162` | V MU1,2,14,15 |
-| EXTENT: 7 dwords by POINTER (`esi=0x92bf18`,`add esi,4`,`cmp 0x92bf34`) under `Custom World`; writeback re-reads the loop; 0 disp refs -> why the old census ended at 0x92bf14 | `:54-69,157` | V MU3-5 |
-| 57 co-refs / 32 scalar co-stores in 14 scalar fns (10 store + 4 read-only); +1 at Custom World[0]; byte scan 88 == 82 text + 6 materialisations | `:70-95` | V MU8,11,12,13 |
-| LAW: 24 COMMIT / 9 TAIL-NONE of 33; in-function value 0/11 loader vs 28/33 co (5 call-fed); 31 outside, 2 self-RMW | `:96-133,160` | V MU6,7,9,15 |
-| publisher 0x58f3d0: 3 direction-checked, register-matched stores 0x92befc/bf00/bf04 -> 0x985ab8/abc/c0 | `:144-155` | V MU10 |
-| OPEN: who sets ds:0x6926ec; which API the writeback's 8 `call edi` use | `:162` | lead |
-
+| FUN_0058e7f0 = the block's only profile-backed INITIALISER | `:3-16,162` | V MU1,2,14,15 |
+| EXTENT | `:54-69,157` | V MU3-5 |
+| 57 co-refs / 32 scalar co-stores in 14 scalar fns (10 store + 4 read-only) | `:70-95` | V MU8,11,12,13 |
+| LAW | `:96-133,160` | V MU6,7,9,15 |
+| publisher 0x58f3d0 | `:144-155` | V MU10 |
+| ANSWERED (M352): `ds:0x6926ec` = literal "Prefs Format"; 8 `call edi` = WritePrivateProfileStringA | `evidence/m352_persist_writeback.txt:124-131` | V M352 MU10,MU2 |
 ## M347 (s324-chain2, STATIC 12/12) — M341's OPEN `+0x59f4` WRITER: the `+0x5970` child selector; the page bound IS 7
 
 | claim | evidence | conf |
@@ -1533,3 +1532,13 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | before OR mask == the recorded after window at 4/4 unit boundaries; only the mapper byte moves | `:35-39`, `:47` | V MU6,MU13 |
 | facility side: 321 -> byte 40 (off the 8-byte map, 1 refusal); facility 2 at Virgin Soil predicts `04 00 00 08 00` vs recorded `10 00 00 00 00` | `:34`, `:37`, `:48` | V MU10 |
 | 2 losses, both on the 2 non-unit rows; each unit row's gain set is exactly its bit | `:49` | V MU9 |
+
+## M352 (s328-c3, static; ACCEPT `scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7`** `d553194a`, x2 `c8bbfda4` (`evidence/m352_x2.txt:4`); harness 13/13; `:N` = a line of `evidence/m352_persist_writeback.txt:1-140`)
+| claim | ev | conf |
+|---|---|---|
+| 8 `call edi` = 1 target: edi@0x58f106 from `ds:0x6710fc` = KERNEL32!WritePrivateProfileStringA (.rdata import slot; its own dword names it); 0 mem-indirect | `:18-25` | V MU1,MU2,MU13 |
+| 13 write keys = 8 direct + 5 via FUN_0058f030; 12 blocks LOAD a block cell (11/11 scalars + Custom World array; window presence), `Prefs Format` = itoa(0xb) stamp | `:27-45` | V MU3-MU7 |
+| read = 5 fns / 5 refs / 35 keys; 13/13 written keys read; `Laptop`+`Language` read, written NOWHERE (33 write sites) | `:47-122` | V MU8,MU9,MU12 |
+| RETRACT M350: `ds:0x6926ec` = the .data literal "Prefs Format"; lpKeyName at 7 push sites; no store names the VA, 0 materialisations | `:124-131` | V MU10,MU11 |
+| rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
+| OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b); twins return 0x3a7168/0x327168 | `:97` | lead |
