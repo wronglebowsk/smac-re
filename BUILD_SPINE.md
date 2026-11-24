@@ -1406,3 +1406,41 @@ carries no call stack - the attribution is entry-level); what item 26 grants and
 20 was born empty while 19/21 got bit 1 (an empty birth falsifies "item 1 is
 unconditional" - the route that skipped it is OPEN); which mid-round caller of `0x4e44f0`
 (27 sites in 8 hosts) added bits 3 and 6 at r5/r7. No box time, no /proc, no gdb.
+
+**B36 - THE FACTION-RELATIONS STATE MACHINE: the 13 bits M364-M370 named are a LATTICE with a
+writer, not a set of flags** (`sim/relations.py` = the state machine and its gates; s336-chain1
+authors this rung, as B14-B35 did). B35 closed the grant family; the diplomacy bits stayed
+names without a transition model, and M368's ladder ("truce < treaty < pact") was a reading of
+the classifier, never an executable. This rung extracts FUN_00551a20's 161 instructions from
+the SAME dump the static milestones used and runs them as a program: each `test bl,imm` is a
+block predicate evaluated on the CURRENT ebx, each `and edx,imm` a clear on BOTH directions,
+each `or ebx,imm` a mask upgrade, and the tail `or edx,ebx` an UNCONDITIONAL write at the join
+its `je` jumps over. `Relations.set()` is written independently, with the immediates as
+literals, so the two implementations can disagree and the sweep says so.
+
+`python3 -u -m sim.relations` must print `PASS B36: 10/10 gates` (and `python3 -u -m
+sim.selftest --b36` only relays) with: **G0** the window is 161 insns, 8 dword stores and 9
+anchor instructions byte-exact, digest printed twice from two decodes; **G1** the extracted
+program is five `test bl` blocks in address order (0x7/0x1/0x10/0x17/0x1f) plus the
+unconditional tail, and the CLEAR SETS are computed from `~imm` - peace 0xffee7faf clears
+exactly {0x10,0x40,0x8000,0x10000,0x100000}, war 0xfaeef378 clears the ladder, the 0x17 block
+clears 0x800000; **G2** parity on 16 pre-states x 2,560 masks = 40,960 pairs, 0 disagreements;
+**G3** the named transitions: pact alone = 0x3, truce-after-war = 0x8000010c (commlink 0x8 and
+0x100 SURVIVE), pact+war in ONE call = 0x8000011b (the tail OR re-adds the upgraded mask);
+**G4** a 16-event three-faction diplomatic transcript replayed step by step, every post-word
+equal to the program's and symmetric; **G5** on 40,976 transitions the pact write always
+carries treaty, a war-only write always leaves the ladder empty, and every step is symmetric
+and idempotent; **G6** FUN_005076d0's chain (0x507975..0x5079a7 - the three ladder tests, the mismatch
+store and the scored inc) walked as an interpreter agrees
+with `Relations.classify` on all 65,536 (current, wanted) byte pairs, and pact+treaty does NOT
+satisfy a want of treaty - ordered EQUALITY, M368's law; **G7** the three peace hosts decode to
+(4, 0x691144)/(2, 0x691150)/(1, no poster) and the action layer maps pact->0x3,
+vendetta->0x80000118; **G8** five rivals (independent flags, set-replaces, war-as-plain-OR,
+clears-after-OR, numeric-rank classifier) each differ on printed cases; **G9** the window and
+transcript digests are pinned and reproduced on a second decode. Each gate has a named mutant
+in `scripts/b36_mutate.py`.
+DECLARED UNMODELED: the noun of 0x800000 ("lock/proposal", cleared by every 0x17 write) and of
+0x40/0x8000/0x10000/0x100000 (the peace clear's other four bits); which site fires each
+transition in a live game (the census is 169 call sites, M368); the 0x94d5dc slot's meaning
+(M365: deadlines) and why war zeroes it only when a ladder bit was set. No box time, no /proc,
+no gdb.

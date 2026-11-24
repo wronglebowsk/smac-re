@@ -1,0 +1,16 @@
+MU1   ok   red=['G0'] want=['G0']  the store count unpinned: a changed writer body would still read as the same function
+MU2   ok   red=['G1', 'G2'] want=['G1', 'G2']  0x40 folded into the peace clear mask: the AND would stop clearing it
+MU3   ok   red=['G2', 'G4', 'G5'] want=['G2', 'G4', 'G5']  the peace pre-clear applied to one direction only: the pair goes asymmetric
+MU4   ok   red=['G3'] want=['G3']  the one-call combined-mask word unpinned: a dropped commlink would slide by
+MU5   ok   red=['G2', 'G3', 'G4'] want=['G2', 'G3', 'G4']  the pact=>treaty upgrade dropped from the program: sim and dump disagree on every pact
+MU6   ok   red=['G2', 'G4', 'G5'] want=['G2', 'G4', 'G5']  the OR applied to one direction only: symmetry dies
+MU7   ok   red=['G6'] want=['G6']  the classifier precedence reversed: the dump chain says 1 then 2 then 4
+MU8   ok   red=['G7'] want=['G7']  the two poster keys swapped: the action layer would name the wrong state
+MU9   ok   red=['G8'] want=['G8']  a rival made equal to the truth: the rival sweep stops falsifying anything
+MU10  ok   red=['G9'] want=['G9']  the window digest unpinned: a dump drift would slip past
+MU11  ok   red=['G1', 'G2', 'G3', 'G4'] want=['G1', 'G2', 'G3', 'G4']  tail detection disabled: the unconditional OR is gated on 0x17 and contact becomes a no-op
+MU12  ok   red=['G0', 'G1', 'G2'] want=['G0', 'G1', 'G2']  the extractor's clear window truncated: the 0x800000 clear disappears from the pinned op table and the store count no longer equals the stored ops
+MU13  ok   red=['G6'] want=['G6']  the classifier window unpinned: a wider chain would still pass
+NOOP  ok   red=[] want=[]  identity: nothing may redden
+
+RUN PASS 14 mutants, NO-OP []
