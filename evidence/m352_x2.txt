@@ -1,0 +1,7 @@
+M352 acceptance, run TWICE — replay determinism (the acceptance cap: 2 invocations used)
+cmd: python3 -u scripts/m352_persist_writeback.py
+run1: sha1 c8bbfda49153a40be5900a22f66a645d13408a37  evidence/m352_persist_writeback.txt
+run2: sha1 c8bbfda49153a40be5900a22f66a645d13408a37  (scratch copy, deleted after the diff)
+IDENTICAL: yes (byte-for-byte)
+tables digest d553194a9f6ddce9  (115 rows)
+RESULT: PASS M352: 7/7 gates
