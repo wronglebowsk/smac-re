@@ -1604,3 +1604,27 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | **RETRACTIONS:** (M354) +0x24 is the CHASSIS ORDINAL, not "domain", and (this draft) "one-way latch" is FALSE — 0x4396e6 `xor dx,0x4` toggles bit 2 | `:50,66` | V MU11,22,25 |
 | ACCEPT `python3 -u scripts/m356_prototype_stamp.py` -> 17/17 `c1a2beb794cec9f8`; harness 27/27, NO-OP MU29, all 17 gates covered | `:103`, `evidence/m356_mutate.txt:32` | V MU0 |
 | OPEN: nouns of +0x27/+0x28; bit2's UI reading (prototype) INFERRED; alpha.txt 21/10/9 corroboration printed only | `:99` | lead |
+
+## M359 (s332-chain2, STATIC 14/14) — +0x28 = CARRY CAPACITY (V), +0x27 = REACTOR LEVEL (INFERRED); M356's "+0x28 single writer" RETRACTED (anchored census: 2 writers). `:N` = line of `evidence/m359_x1.txt:1-114`
+
+| claim | ev | conf/mutant |
+|---|---|---|
+| builder 0x595b10 arg->field map: +0x24<-arg0xc, +0x25<-arg0x10, +0x26<-arg0x14, +0x27<-arg0x1c, +0x20<-arg0x18; +0x29<-ret(0x595820) | `:26-35` | V MU2,13,19 |
+| #UNITS loader 0x579f40 pushes 6 args to 0x595b10 and its 5th design field is the CONSTANT 1; Plan/Cost/Carry/Icon land at +0x2a/+0x29/+0x28/+0x2e, guarded `test`+`jl` (plan<0) / `test`+`je` (cost,carr==0) with the jump after the store | `:38-55` | V MU3,4,14 |
+| +0x28 = CARRY CAPACITY: auto-value gated `cmp byte [wep+0x02],0x7` (weapon index<<4; alpha Mode 7 = Transport; same base +0x00==99 Planet Buster); 0x570860 = chassis+0x03 x reactor, /2 on 0x800000, (3v+1)/2 on 0x80000 | `:61-90` | V MU6,7,15,17 |
+| +0x28 has TWO writers (anchored-register census: absolute-displacement form + literal base advanced by 0x34): 0x595d1c + 0x57a041 — M356 G14 row RETRACTED | `:57-59,105` | V MU5,12 |
+| +0x27 = reactor level INFERRED: constant 1 for basic units; 127 loads, compare band {1:53,3:54} over 52 clamp sites; UI health `clamp(v,1,3)*10/3` with the input written only by the clamp | `:92-96` | I (MU8,9,18 pin band+chain) |
+| +0x2a = PLAN (M354 called it "class"): loader Plan token -> +0x2a; Planet-Buster branch hard-sets +0x2a=5 (alpha Plan 5); 49 sites (4 base regs) compare it with 12 | `:98-101` | V MU10,11 |
+| RIVALS: "+0x27 is the Plan column" FAILS (plan is +0x2a, +0x27 gets a literal); "+0x28 one writer" FAILS | `:103-106` | V MU3,5 |
+| OPEN: #REACTORS has 4 rows but the health readers clamp 1..3; +0x27's noun rests on elimination + the constant 1 | `:92` | lead |
+## M358 (s332, STATIC 10/10) — the 52-byte `0x98ad88` row atlas + row-63 prototype; `0x9267e4` = 128 dwords, NOT 64-byte rows. `:N` = `evidence/m358_row_layout.txt:1-77`
+| claim | ev | conf/mutant |
+|---|---|---|
+| row 0x98ad88 stride 0x34 (756 imul-0x34 sites); row63 base 0x98ba54 | `:20-23` | V MU1 |
+| 17 offsets, 1,907 mem refs/227 fns: name[0x20] +0x00 (NUL +0x1f), dword +0x20, bytes +0x24..2e, word +0x30 (+0x31 hi), word +0x32; 0x2f/0x33 unused | `:2-18` | V MU2-4 |
+| prototype FUN_00435610: src +0x141fc/200/204/20c -> +0x24/25/26/27, +0x14208d -> +0x20, 0xff -> +0x2e (pairs parsed store-by-store) | `:24-35` | V MU12,MU15 |
+| 0x9267e4 = 128 dwords (both builders' parsed loop bound 0x80), entry=(slot<0x40?0:owner<<6)+(slot&0x3f); 7 mem refs ALL `[reg*4+base]` -> NOT 64-byte rows | `:67-77,85` | V MU7-9,MU14 |
+| flags bit8: 1 clear (`and [..31],0xfe`) + 3 sets (`or [..31],0x1`), immediates decoded; noun OPEN | `:16,82-83` | V MU11,MU16/INF |
+| RETRACT "64-byte row"/"0x98adb8+0x34*i": +0x08..+0x14 = 16 cmp-only sentinels of 0x1c scans (backward jl, 24 iters), NOT fields | `:36-56,86-87` | V MU5,6 |
+| CROSS-REF `## M359` (same row): +0x27 = reactor level (INF), +0x28 = carry capacity (V), +0x2a = plan (M354's "class"); the labels printed at `:2-18` are pre-M359 placeholders | `## M359` | ref |
+| A: 0x80 slots -> cand[idx] -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34; ACCEPT 10/10 `1af1dcb6fcd4a4b6` x2 | `:57-66,98` | V MU10 |

@@ -1,1 +1,1 @@
-B33 | accept `python3 -u -m sim.facilityleg` -> PASS 12/12 `b89b9e6bd940e8d3` (`evidence/b33_facilityleg.txt:65`), harness 11/11 | MERGED #381 `8cb969b` | next: (x6) other writers of the `0x92bde8..0x92bf14` pref block; B34 = where a facility completion stamps `+0x8c` (0x4f3ebc/0x4f3f4c, the 0x98adb8 row)
+M358 | accept `python3 -u scripts/m358_row_layout.py` -> PASS 10/10 `1af1dcb6fcd4a4b6` (`evidence/m358_row_layout.txt:98`), harness 15/16 NO-OP MU13 | MERGED #386 `19393db` | next: (x6) pref-block writers; B34 = facility `+0x8c` / the 24-record 0x1c table

@@ -1,0 +1,98 @@
+== 0x98ad88 row: 1991 refs (1907 mem) in 227 functions; span 0xd00 = 64 rows ==
+  +0x00 n= 88 w=    acc=addr:88                  fns=38 rows<=  0 b[0x20] name       
+  +0x1f n=  1 w=b   acc=write:1                  fns= 1 rows<=  0 b NUL terminator   0x005741e9 mov BYTE PTR [ebx+0x98ada7],0x0
+  +0x20 n=198 w=bd  acc=read:196,write:2         fns=66 rows<= 63 d ability mask     0x00435660 mov ds:0x98ba74,eax
+  +0x24 n=417 w=b   acc=addr:1,read:414,write:2  fns=126 rows<= 63 b chassis idx      0x00435625 mov BYTE PTR ds:0x98ba78,cl
+  +0x25 n=236 w=b   acc=read:234,write:2         fns=89 rows<= 63 b weapon idx       0x00435634 mov ds:0x98ba79,al
+  +0x26 n= 95 w=b   acc=read:93,write:2          fns=47 rows<= 63 b armour idx       0x00435642 mov BYTE PTR ds:0x98ba7a,dl
+  +0x27 n=136 w=b   acc=read:134,write:2         fns=44 rows<= 63 b comp3 (noun OPEN) 0x00435651 mov BYTE PTR ds:0x98ba7b,cl
+  +0x28 n= 12 w=b   acc=read:11,write:1          fns= 7 rows<=  0 b comp4 (noun OPEN) 0x00595d1c mov BYTE PTR [esi+0x98adb0],al
+  +0x29 n= 29 w=b   acc=read:28,write:1          fns=24 rows<=  0 b weight           0x00595ce7 mov BYTE PTR [esi+0x98adb1],al
+  +0x2a n=367 w=b   acc=addr:2,read:351,write:14 fns=99 rows<=  0 b class            0x00574142 mov BYTE PTR [ebx+0x98adb2],0x3
+  +0x2b n= 47 w=b   acc=read:34,write:13         fns=17 rows<=  0 b ord2 (cmp 0x15)  0x0057413a mov BYTE PTR [ebx+0x98adb3],al
+  +0x2c n= 64 w=b   acc=addr:2,read:54,write:8   fns=26 rows<=  2 b owner mask       0x00438c0a mov BYTE PTR [edx+0x98adb4],cl
+  +0x2d n=  6 w=b   acc=read:2,write:4           fns= 2 rows<=  0 b small (2 writers) 0x0050728e mov BYTE PTR [eax*4+0x98adb5],bl
+  +0x2e n= 10 w=b   acc=read:4,write:6           fns= 6 rows<= 63 b (proto 0xff)     0x00435665 mov BYTE PTR ds:0x98ba82,0xff
+  +0x30 n=160 w=bw  acc=addr:2,read:112,rmw:21,write:25 fns=46 rows<=  0 w flags            0x00437492 mov WORD PTR [ecx+0x98adb8],dx
+  +0x31 n=  4 w=b   acc=rmw:4                    fns= 3 rows<=  0 b flags>>8         0x004ef398 and BYTE PTR [ebx+0x98adb9],0xfe
+  +0x32 n= 37 w=w   acc=read:37                  fns=23 rows<=  3 w pre-req tech     
+
+== stride ==
+  imul reg,reg,0x34 sites=756 ; row63 base = 0x98ba54 ; prototype stores at 0x98ba74..0x98ba82
+  0x00422890 FUN_00422730 | imul ecx,ecx,0x34
+  0x0042289a FUN_00422730 | imul edx,edx,0x34
+== prototype FUN_00435610 ==
+  0x0043561f mov cl,BYTE PTR [eax+0x141fc]
+  0x00435625 mov BYTE PTR ds:0x98ba78,cl
+  0x0043562e mov al,BYTE PTR [edx+0x14200]
+  0x00435634 mov ds:0x98ba79,al
+  0x0043563c mov dl,BYTE PTR [ecx+0x14204]
+  0x00435642 mov BYTE PTR ds:0x98ba7a,dl
+  0x0043564b mov cl,BYTE PTR [eax+0x1420c]
+  0x00435651 mov BYTE PTR ds:0x98ba7b,cl
+  0x0043565a mov eax,DWORD PTR [edx+0x14208]
+  0x00435660 mov ds:0x98ba74,eax
+  0x00435665 mov BYTE PTR ds:0x98ba82,0xff
+== sentinels (cmp immediates sharing the row window) ==
+  +0x08 refs=12 cmp=12 want=12
+  +0x0c refs=2 cmp=2 want=2
+  +0x10 refs=1 cmp=1 want=1
+  +0x14 refs=1 cmp=1 want=1
+== the 0x1c scans (stride / backward jl / static start / iterations) ==
+  0x0040ec2b +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d2427 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d27b9 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d2db7 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004d2e81 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004ef0c6 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x004ef1a2 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x0052b76d +0x10 stride=0x1c back=True start=0x98aaf8 end=0x98ad98 iters=24
+  0x005736a6 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x0057376c +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x00573923 +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x005739ea +0x08 stride=0x1c back=True start=0x98aaf0 end=0x98ad90 iters=24
+  0x0057a6c8 +0x0c stride=0x1c back=True start=0x98aaf4 end=0x98ad94 iters=24
+  0x0059599c +0x14 stride=0x1c back=True start=0x98aafc end=0x98ad9c iters=24
+  16 sentinel refs: 14 carry a static start, 16 have a backward jl
+== A loop: slot -> item -> row ==
+  0x004956c6 cmp DWORD PTR [ebp-0x28],0x80
+  0x004956d6 mov edx,DWORD PTR [ecx*4+0x9267e4]
+  0x004956dd mov DWORD PTR [ebp-0x2c],edx
+  0x004956f0 mov eax,DWORD PTR [ebp-0x2c]
+  0x004956f4 call 0x5a73f0
+  0x0049571b imul edx,edx,0x34
+  0x0049571e add edx,0x98ad88
+  0x004957e2 imul ecx,ecx,0x34
+  0x004959be imul ecx,ecx,0x34
+== 0x9267e4: 10 refs, 7 mem, table dwords 128 ==
+  mem 0x0043dcc6 FUN_0043dc60           cmp eax,DWORD PTR [edx*4+0x9267e4]
+  mem 0x0043df1c FUN_0043dd30           mov eax,DWORD PTR [edx*4+0x9267e4]
+  mem 0x0043ec9e FUN_0043ec10           mov eax,DWORD PTR [edx*4+0x9267e4]
+  mem 0x0043ece2 FUN_0043ec10           mov edx,DWORD PTR [ecx*4+0x9267e4]
+  mem 0x004956d6 FUN_004954e0           mov edx,DWORD PTR [ecx*4+0x9267e4]
+  imm 0x005774a2 FUN_00577280           mov eax,0x9267e4
+  mem 0x00596037 FUN_00596000           mov DWORD PTR [ecx*4+0x9267e4],ebx
+  imm 0x00596140 FUN_00596000           push 0x9267e4
+  mem 0x00596199 FUN_00596160           mov DWORD PTR [edx*4+0x9267e4],esi
+  imm 0x0059627c FUN_00596160           push 0x9267e4
+== builders ==
+  0x596000 anchors=[9, 12, 16, 22, 94]
+  0x596160 anchors=[13, 17, 23]
+  entry(owner=2, slot=0x41)=0x81 != slot; entry(owner=1, slot=0x41)=0x41
+== flags high byte (bit 8) ==
+  +0x31 rmw sites: [('0x4ef398', 'and BYTE PTR [ebx+0x98adb9],0xfe'), ('0x4f05bd', 'or BYTE PTR [eax+0x98adb9],0x1'), ('0x5a7d00', 'or BYTE PTR [eax*4+0x98adb9],0x1'), ('0x5a7f67', 'or BYTE PTR [eax*4+0x98adb9],0x1')]
+== RIVALS (each must FAIL on the printed numbers) ==
+  R1 '0x9267e4 is a 64-byte record array': refs=10, mem=7, mem with a non-*4 index=0, refs at a 0x40 stride=0 -> REFUTED
+  R2 'the row starts at 0x98adb8 (only +0x30/+0x32 are fields)': mem refs below +0x30 = 1706 across 14 offsets, name NUL at +0x1f -> REFUTED
+  R3 '+0x08/+0x0c/+0x10/+0x14 are row fields': 16/16 are cmp-immediate sentinels of 0x1c scans -> REFUTED
+PASS G1: stride 0x34: 756 imul sites, row63 base 0x98ba54 (=0x98ba54)
+PASS G2: 17 field offsets ['0x00', '0x1f', '0x20', '0x24', '0x25', '0x26', '0x27', '0x28', '0x29', '0x2a', '0x2b', '0x2c', '0x2d', '0x2e', '0x30', '0x31', '0x32']; census 1991 refs / 1907 mem / 227 fns
+PASS G3: +0x20={d,b}, +0x24..2e=b, +0x30={w,b}, +0x31=b, +0x32=w; 0x2f/0x33 unaddressed
+PASS G4: name char[0x20]: one NUL store at +0x1f ('mov BYTE PTR [ebx+0x98ada7],0x0'), no mem ref +0x01..+0x1e
+PASS G5: 16 cmp-only sentinels, all stride 0x1c + backward jl; 14 static scans over 4 starts, all 24 iterations
+PASS G6: 0x9267e4: 10 refs, 7 mem all [reg*4+base]; both builders bound the loop at the parsed 0x80 dwords
+PASS G7: both builders match the 14-insn band sequence ('ecx', 'ebx', 6, 2147483711)/('edx', 'esi', 6, 2147483711); parsed shift=6 mask=0x8000003f give owner2 slot41 -> 0x81
+PASS G8: A: cmp 0x80 -> cand load -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34 -> add 0x98ad88
+PASS G9: flags bit8: 4 sites = 1 and 0xfe + 3 or 0x1 (decoded immediates)
+PASS G10: FUN_00435610 source->dest pairs [('0x20', 'src', '0x14208'), ('0x24', 'src', '0x141fc'), ('0x25', 'src', '0x14200'), ('0x26', 'src', '0x14204'), ('0x27', 'src', '0x1420c'), ('0x2e', 'imm', '0xff')]
+PASS M358: 10/10 gates  1af1dcb6fcd4a4b6
