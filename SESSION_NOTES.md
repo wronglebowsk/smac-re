@@ -402,7 +402,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **PARITY/REPLAY** (`:35-49`): 2048 pairs 0 disagreements, expiry at tick 50; re-arm t30, status t40, expiry
   ONCE at t79.
 - **PEACE vs WAR** (`:51-55`): `0xffee7faf & 0x40 = 0` but **`0xfaeef378 & 0x40 = 0x40`** (0x78 keeps bit 6):
-  PEACE clears 0x40 so its lease expires as a **NULL write (49/49)**; WAR keeps it so its expiry is a **real
+  PEACE clears 0x40 so its lease expires as a **NULL write (50/50)**; WAR keeps it so its expiry is a **real
   clear (0/49)**; 0 of 11 cell refs inside FUN_00551a20. **CORRECTS M375's `evidence/m375_relation_bits.txt:41`
   presentation (a list, not a claim): 0xfaeef378 clears 0x10/0x1, NOT 0x40.**
 - **TREATY ON** (`:57-61`): an exhaustive 256-mask sweep - 240/240 masks carrying a 0x17 bit clear 0x800000,
@@ -793,11 +793,11 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
 - **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).
 
-## Session 343-chain2 — M389: the 0x4dadxx family's five OPEN masks are verbs (49/49)
+## Session 343-chain2 — M389: the 0x4dadxx family's five OPEN masks are verbs (50/50)
 
-- **ACCEPT** `python3 -u scripts/m389_family_mask.py` -> **`PASS M389: 49/49`** `05a36a50540466f3`
+- **ACCEPT** `python3 -u scripts/m389_family_mask.py` -> **`PASS M389: 50/50`** `05a36a50540466f3`
   (`evidence/m389_family_mask.txt:101`), x2 same; `python3 -u scripts/m389_mutate.py` -> **21/21**
-  (`evidence/m389_mutate.txt:26`).
+  (`evidence/m389_mutate.txt:25`).
 - **THE FIVE SITES** (M384): the four register masks resolve INSIDE FUN_004dadd0 —
   `mov ebx,0x4`@0x4daea3 -> 0x4daedd, `mov ebx,0x2`@0x4daf07 -> 0x4daf41, `mov edi,0x1000`@0x4dafcf -> 0x4db02d,
   `mov edi,0x2000`@0x4db035 -> 0x4db08d, zero intervening writes (`:13-17`). 0x4dad30's mask is
