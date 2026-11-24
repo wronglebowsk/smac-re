@@ -657,4 +657,5 @@ whether a facility completion stamps at all.
   Ghidra's size; G2 pins 3,482 edges; G3 pins the three sets as nested; G4 reads the local from the
   census; G11 asserts the `cmp ebx,0x40`/`jl` split; the parser folds wrapped bytes and marks
   indirect calls `ind`; cites repointed (`:65`).
+- **MERGED** #381 as `8cb969b` (squash) after the #381 triage; CI gate pass.
 - **OPEN** facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the `0x98adb8` row; loss 27.
