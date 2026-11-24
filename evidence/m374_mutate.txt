@@ -11,7 +11,13 @@ MU9    0x5a1150|test   DWORD PTR ds:0x985 expect=G4     rc=1 red=G4         KILL
 MU10   0x5a1160|mov    ecx,0x10           expect=G4     rc=1 red=G4         KILLED
 MU11   0x4dc8c3|mov    DWORD PTR ds:0x92b expect=G1     rc=1 red=G1         KILLED
 MU12   0x4dc786|mov    eax,ds:0x99aa3c    expect=G5     rc=1 red=G5         KILLED
+MU13                                      expect=G5     rc=1 red=G5         KILLED
+MU14   0x4dc5f6|mov    ecx,DWORD PTR ds:0 expect=G2     rc=1 red=G2         KILLED
+MU15   0x4dc208|or     al,0x40            expect=G3     rc=1 red=G3         KILLED
+MU16   0x5a120d|add    edi,0x5bc          expect=G4     rc=1 red=G4         KILLED
+MU17   0x5a1446|test   DWORD PTR ds:0x985 expect=G4     rc=1 red=G4         KILLED
+MU18   0x4dc6fb|push   0x68c80c           expect=G5     rc=1 red=G5         KILLED
 ALGO1  1                                  expect=G3     rc=1 red=G3         KILLED
 ALGO2  2                                  expect=G2     rc=1 red=G2         KILLED
 
-HARNESS PASS 14/14 killed, cov=True, 1 declared NO-OP (G0 anchors)
+HARNESS PASS 20/20 killed, cov=True, 1 declared NO-OP (G0 anchors)

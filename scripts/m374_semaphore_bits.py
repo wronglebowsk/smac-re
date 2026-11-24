@@ -41,7 +41,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.environ.get("M374_TEXT", os.path.join(ROOT, "scratch/m574/text.txt"))
 EXE = os.path.join(ROOT, "programs/terran.exe")
 SCRIPT = os.environ.get("M374_SCRIPT", os.path.join(ROOT, "programs/Script.txt"))
-INI = os.path.join(ROOT, "programs/Alpha Centauri.Ini")
+INI = os.environ.get("M374_INI", os.path.join(ROOT, "programs/Alpha Centauri.Ini"))
 ALGO = int(os.environ.get("M374_ALGO", "0") or 0)
 
 ADDR = re.compile(r"^\s*([0-9a-f]{6,8}):\s+((?:[0-9a-f]{2} )+)\s*\t(.*)$")
@@ -96,6 +96,34 @@ def bitof(v):
 
 def win(lo, hi):
     return [a for a in ORDER if lo <= a <= hi]
+
+
+def pe_sections():
+    d = open(EXE, "rb").read()
+    p = struct.unpack_from("<I", d, 0x3C)[0]
+    opt = p + 24
+    base = struct.unpack_from("<I", d, opt + 28)[0]
+    q = opt + struct.unpack_from("<H", d, p + 20)[0]
+    secs = []
+    for _ in range(struct.unpack_from("<H", d, p + 6)[0]):
+        vs, va, rs, ra = struct.unpack_from("<IIII", d, q + 8)
+        secs.append((base + va, vs, ra, rs))
+        q += 40
+    return d, secs
+
+
+def cstr(va, lim=64):
+    d, secs = pe_sections()
+    for v, vs, ra, rs in secs:
+        if v <= va < v + vs:
+            o = ra + va - v
+            try:
+                e = d.index(b"\x00", o, o + lim)
+            except ValueError:
+                return None
+            t = d[o:e].decode("latin1")
+            return t if t and all(32 <= ord(c) < 127 for c in t) else None
+    return None
 
 
 ROWS = []
@@ -168,6 +196,9 @@ rec_bits = set(x[0] for x in legs)
 row("G2", "record bits the 2 semaphore legs add", sorted(rec_bits))
 allbits = sorted(rules_bits | rec_bits)
 row("G2", "union", allbits)
+row("G2", "Rules-cell load @0x4dc5f6", txt(0x4DC5F6))
+row("G2", "ecx writes in the pack block", sum(1 for a in win(0x4DC5F6, 0x4DC6CC)
+                                               if txt(a).startswith("mov    ecx,")))
 row("G2", "other-path clear mask @0x4dc604", hex(imm(txt(0x4DC604))))
 
 # ------------------------------------------------------- G3 item<->bit law
@@ -204,7 +235,8 @@ for a in win(0x4DC1B9, 0x4DC26B):
         b = bitof(v)
         if b is not None:
             ai_bits.add(b)
-row("G3", "AIEDITOR record bits (pack block)", len(ai_bits))
+row("G3", "AIEDITOR record bits (pack block)", sorted(ai_bits))
+row("G3", "AIEDITOR leg @0x4dc208 (field bit 4)", txt(0x4DC208))
 idx = 1 if ALGO == 1 else 0
 row("G3", "ALGO item-index base", idx)
 
@@ -212,11 +244,8 @@ row("G3", "ALGO item-index base", idx)
 rA = win(0x59EF22, 0x59EF8C)
 n_randA = sum(1 for a in rA if "call   0x64c6f0" in txt(a))
 fieldsA = [x for x in (0x94D80C, 0x94D810, 0x94D814, 0x94D818, 0x94D81C)]
-n_fieldstores = 0
-for a in win(0x59EF22, 0x59EF92):
-    for f in fieldsA:
-        if ("[esi+%#x]" % f) in txt(a).replace("0x94d8", "0x94d8") and "mov" in txt(a):
-            n_fieldstores += 1
+STORE_RX = re.compile(r"^mov\s+DWORD PTR \[esi\+0x94d8(0c|10|14|18|1c)\],")
+n_fieldstores = sum(1 for a in win(0x59EF22, 0x59EF92) if STORE_RX.match(txt(a)))
 row("G4", "bit23 gate @0x59ef11", txt(0x59EF11))
 row("G4", "its eax source @0x59eedc", txt(0x59EEDC))
 row("G4", "rand calls in the gated block", n_randA)
@@ -232,13 +261,15 @@ row("G4", "bit24 block zeroes N dwords", imm(txt(0x5A1160)))
 row("G4", "bit24 stride insn", txt(0x5A120D))
 row("G4", "bit24 loop bound", imm(txt(0x5A1213)))
 row("G4", "bit24 rand calls", sum(1 for a in blk if "call   0x64c6f0" in txt(a)))
+row("G4", "bit23 second gate @0x5a1446", txt(0x5A1446))
+row("G4", "pairing pushes of 0x200", sum(1 for a in arm if txt(a) == "push   0x200"))
 
 # ------------------------------------------------------- G5 rivals + keys
 orimm = []
 for a in ORDER:
     if re.match(r"or\s+ecx,0x[0-9a-f]+$", txt(a)) and imm(txt(a), 0) in (0x800000, 0x1000000):
         nxt = [b for b in ORDER if a < b <= a + 12]
-        if any("mov    DWORD PTR ds:0x985ae8" in txt(b) for b in nxt):
+        if any(txt(b) == "mov    DWORD PTR ds:0x985ae8,ecx" for b in nxt):
             orimm.append((a, imm(txt(a), 0)))
 row("G5", "or ecx,bit23/24 sites", ["%x:%#x" % (a, v) for a, v in orimm])
 row("G5", "eax source @0x4dc786", txt(0x4DC786))
@@ -250,7 +281,9 @@ row("G5", "shipped INI Semaphore", m.group(1) if m else None)
 keys = []
 for va in (0x68C824, 0x68C80C, 0x68C818, 0x68C82C):
     keys.append((va, None))
-row("G5", "script keys (RULES/AIEDITOR/AIEDITOR2/SCENRULES) @", " ".join("%x" % k for k, _ in keys))
+key_names = [(va, cstr(va)) for va, _ in keys]
+row("G5", "script keys (PE strings)", key_names)
+row("G5", "RULES key push @0x4dc6fb", txt(0x4DC6FB))
 row("G5", "0x4dc8b7 mask (=~0x1800000?)", hex(mask ^ 0xFFFFFFFF))
 
 # ------------------------------------------------------------------- print
@@ -275,6 +308,9 @@ ok &= check("G1", sorted((x[0], x[1]) for x in pack) == [(16, 23), (17, 24)],
 ok &= check("G1", mask == 0x1800000 and imm(txt(0x4DC8C3), 0) == CELL,
             "the cell store keeps ONLY bits 23/24 (mask %#x) -> 0x92bf0c" % mask)
 
+ok &= check("G2", txt(0x4DC5F6) == "mov    ecx,DWORD PTR ds:0x985ac4" and
+            sum(1 for a in win(0x4DC5F6, 0x4DC6CC) if txt(a).startswith("mov    ecx,")) == 1,
+            "the 16 legs read the Rules cell 0x985ac4 through one ecx load")
 ok &= check("G2", allbits == list(range(18)) and len(rules_bits) == 16,
             "the RULES record is an 18-bit word: Rules-cell bits 0..15 + semaphore bits 16/17")
 if ALGO == 2:
@@ -285,6 +321,8 @@ else:
 
 ok &= check("G3", len(rules_items) == 18,
             "#RULES in Script.txt has 18 items = the record's 18 bits")
+ok &= check("G3", ai_bits == set(range(11)) and txt(0x4DC208) == "or     al,0x10",
+            "the AIEDITOR bits are the contiguous set 0..10 (leg 0x4dc208 sets bit 4)")
 ok &= check("G3", len(ai_items) == 11 and len(ai_bits) == 11,
             "#AIEDITOR has 11 items and its pack touches 11 bits (contract holds for a 2nd key)")
 tail = (rules_items or [])[16 + idx:18 + idx]
@@ -302,12 +340,21 @@ ok &= check("G4", txt(0x5A1150) == "test   DWORD PTR ds:0x985ae8,0x1000000",
             "bit 24 reader tests ds:0x985ae8 bit 24 directly")
 ok &= check("G4", imm(txt(0x5A1160)) == 0xC and "rep stos" in txt(0x5A116F),
             "the gated block is the 12-slot assignment (zeroes 0xc dwords)")
+ok &= check("G4", txt(0x5A120D) == "add    edi,0x59c" and imm(txt(0x5A1213)) == 8,
+            "the assignment walks 8 faction records at stride 0x59c")
+ok &= check("G4", txt(0x5A1446) == "test   DWORD PTR ds:0x985ae8,0x800000" and
+            sum(1 for a in arm if txt(a) == "push   0x200") == 4,
+            "the 0x5a1446 arm re-tests bit 23 and makes its 4 fixed pairing calls")
 
 ok &= check("G5", orimm == [(0x4DC892, 0x800000), (0x4DC8A5, 0x1000000),
                             (0x57CC35, 0x800000), (0x57CC48, 0x1000000)],
             "only TWO blocks write each bit (4 or-sites, all from the record's 16/17)")
 ok &= check("G5", txt(0x4DC786) == "mov    eax,ds:0x99aa38",
             "the writer's eax is the script record's staging dword, not a 0x41a9xx read")
+ok &= check("G5", key_names == [(0x68C824, "RULES"), (0x68C80C, "AIEDITOR"),
+                                (0x68C818, "AIEDITOR2"), (0x68C82C, "SCENRULES")] and
+            txt(0x4DC6FB) == "push   0x68c824",
+            "the record keys are PE strings and FUN_004dc5f0 pushes RULES")
 ok &= check("G5", m is not None and m.group(1).strip() == "00000000",
             "shipped INI Semaphore=00000000 -> the loader alone sets neither bit")
 

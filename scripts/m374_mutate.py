@@ -16,6 +16,7 @@ import tempfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPT = os.path.join(ROOT, "scripts/m374_semaphore_bits.py")
 BASE = os.path.join(ROOT, "programs/Script.txt")
+INI = os.path.join(ROOT, "programs/Alpha Centauri.Ini")
 
 MUT = [
     ("MU1", "code", "0x4dc892|or     ecx,0x400000", "G1,G5"),
@@ -30,6 +31,12 @@ MUT = [
     ("MU10", "code", "0x5a1160|mov    ecx,0x10", "G4"),
     ("MU11", "code", "0x4dc8c3|mov    DWORD PTR ds:0x92bf08,ecx", "G1"),
     ("MU12", "code", "0x4dc786|mov    eax,ds:0x99aa3c", "G5"),
+    ("MU13", "ini", "", "G5"),
+    ("MU14", "code", "0x4dc5f6|mov    ecx,DWORD PTR ds:0x985ae8", "G2"),
+    ("MU15", "code", "0x4dc208|or     al,0x40", "G3"),
+    ("MU16", "code", "0x5a120d|add    edi,0x5bc", "G4"),
+    ("MU17", "code", "0x5a1446|test   DWORD PTR ds:0x985ae8,0x1000000", "G4"),
+    ("MU18", "code", "0x4dc6fb|push   0x68c80c", "G5"),
     ("ALGO1", "algo", "1", "G3"),
     ("ALGO2", "algo", "2", "G2"),
 ]
@@ -57,6 +64,12 @@ def main():
             env["M374_PATCH"] = payload
         elif kind == "algo":
             env["M374_ALGO"] = payload
+        elif kind == "ini":
+            dst = os.path.join(tmpd, "Alpha Centauri.Ini")
+            body = open(INI, "r", errors="replace").read()
+            body = body.replace("Semaphore=00000000", "Semaphore=00000001")
+            open(dst, "w").write(body)
+            env["M374_INI"] = dst
         else:
             dst = os.path.join(tmpd, "Script.txt")
             lines = open(BASE, "r", errors="replace").read().splitlines()
