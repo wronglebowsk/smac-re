@@ -82,7 +82,7 @@ BLOCKS = [
             ("arity {0:3,1:5,5:8,6:3}: 5 fit ret 4 = 3 MEMBER + 2 self, none a dialog", "`:59-65,:100`", "V MU8,MU9"),
             ("module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64`", "`:67-77,:102`", "V MU7,MU10"),
             ("ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 `[]`",
-             "`:104`, `evidence/m345_mutate.txt:25`", "V MU0"),
+             "`:104`, `evidence/m345_mutate.txt:17`", "V MU0"),
             ("OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped", "-", "lead"),
         ],
     },
