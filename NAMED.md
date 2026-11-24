@@ -1604,4 +1604,4 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | 0x9267e4 = 128 dwords, entry=(slot<0x40?0:owner<<6)+(slot&0x3f); 7 mem refs ALL `[reg*4+base]` -> NOT 64-byte rows | `:46-62,64` | V MU7-9 |
 | flags bit8: 1 clear (`and [..31],0xfe`) + 3 sets (`or [..31],0x1`); noun OPEN | `:16,33` | V MU11/INF |
 | RETRACT "64-byte row"/"0x98adb8+0x34*i": +0x08..+0x14 = 16 cmp sentinels of 0x1c scans (4 loops = 24 iters), NOT fields | `:36-43,65-66` | V MU5,6 |
-| A: 0x80 slots -> cand[idx] -> 0x5a73f0 -> imul 0x34; ACCEPT 10/10 `1af1dcb6fcd4a4b6` x2, harness 12/13 NO-OP MU13 | `:44,77` | V MU10,MU0 |
+| A: 0x80 slots -> cand[idx] -> 0x5a73f0 -> imul 0x34; ACCEPT 10/10 `1af1dcb6fcd4a4b6` x2, harness 12/13 NO-OP MU13 | `:44,77` | V MU10 |
