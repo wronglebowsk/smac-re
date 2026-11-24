@@ -1616,4 +1616,5 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | 0x9267e4 = 128 dwords (both builders' parsed loop bound 0x80), entry=(slot<0x40?0:owner<<6)+(slot&0x3f); 7 mem refs ALL `[reg*4+base]` -> NOT 64-byte rows | `:67-77,85` | V MU7-9,MU14 |
 | flags bit8: 1 clear (`and [..31],0xfe`) + 3 sets (`or [..31],0x1`), immediates decoded; noun OPEN | `:16,82-83` | V MU11,MU16/INF |
 | RETRACT "64-byte row"/"0x98adb8+0x34*i": +0x08..+0x14 = 16 cmp-only sentinels of 0x1c scans (backward jl, 24 iters), NOT fields | `:36-56,86-87` | V MU5,6 |
+| CROSS-REF `## M359` (same row): +0x27 = reactor level (INF), +0x28 = carry capacity (V), +0x2a = plan (M354's "class"); the labels printed at `:2-18` are pre-M359 placeholders | `## M359` | ref |
 | A: 0x80 slots -> cand[idx] -> [ebp-0x2c] -> call 0x5a73f0 -> imul 0x34; ACCEPT 10/10 `1af1dcb6fcd4a4b6` x2 | `:57-66,98` | V MU10 |

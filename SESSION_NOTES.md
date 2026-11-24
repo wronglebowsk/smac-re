@@ -659,6 +659,7 @@ whether a facility completion stamps at all.
 - **flags bit8**: one clearer (`and [+0x31],0xfe` @0x4ef398) and three setters
   (`or [+0x31],0x1` @0x4f05bd/0x5a7d00/0x5a7f67) -> bit 0x100 is a real state
   flag; its noun is OPEN.
-- OPEN: +0x27/+0x28/+0x2b/+0x2d/+0x2e nouns; the 24-record 0x1c table's identity
+- CROSS-REF M359 (chain2, same row): +0x27 = reactor level, +0x28 = carry capacity, +0x2a = plan.
+- OPEN: +0x2b/+0x2d/+0x2e nouns; the 24-record 0x1c table's identity
   (it ends at 0x98ad90..0x98ad9c); bit8 noun. NEXT: (x6) pref-block writers;
   B34 = facility +0x8c.
