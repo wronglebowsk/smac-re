@@ -647,3 +647,28 @@ whether a facility completion stamps at all.
   MU15 = pred mutant, MU14 = read-probe mutant.
 - **Docs:** NAMED 243,972 B (M314 4,399 B VERBATIM -> `docs/named-archive-m350-rows.md`, sha1
   `decdd34b`, `--verify` PASS). OPEN: who sets ds:0x6926ec.
+
+## Session 328-chain2 (2026-11-24) — M351: the CHOOSER-side producer — a unit row IS the negated TYPE ORDINAL (milestone/m351)
+- ANSWER (`python3 -u scripts/m351_type_producer.py`): the modal 0x496ad0 returns **+item when
+  (flags & 0x20) != 0**, **-item when clear** (`and eax,0x20` @0x49772a, `je` @0x49772f,
+  `neg eax` @0x49777c); item = row+4 (0x401940), flags = row payload+8 (0x495480); same law in
+  9 insns at 0x494e61-0x494e8f.
+- THE ROW LIST IS TWO SECTIONS. A: idx 0..0x7f, item = cand[idx] @0x9267e4 (k<0x40 -> k,
+  k>=0x40 -> owner*0x40|(k&0x3f)), flags |0x20 -> +item. B: i = 1..0x47,
+  item = **i**, flags = 0x4960f0(i)|0x10 -> -i; 0x4960f0 returns only {0,1,2,3}, so 0x20 is
+  ALWAYS clear on a B row — every B row negates unconditionally.
+- WHICH FIELD: i is the **TYPE ORDINAL** — the same counter indexes `0x984d38 + 0x30*i` (name)
+  and `0x984d44 + 0x30*i` (cost, M349's array; G10 cross-checks both parses). The design-id
+  space (cand 192+, owner 3) is section A and returns POSITIVE.
+- CHOOSER ALREADY SPEAKS -i: affordability asked with -i (`neg ecx`/`call 0x4e4350` @0x495c2f),
+  and the base queue slot ds:0x8f0d60+0x50+4*[sub+0xb68] is tested against -i
+  (`neg edx`/`cmp edx,[ebp-0x30]` @0x495e5c) while A tests +item @0x495aef. 0x418b54-0x418b57
+  writes the return to base+0x50 when pos==0; 0 negs in the 381-insn path → sign made upstream.
+- **RETRACTION (narrows M349):** M68's "cell 6 = item 195 -> -3" is a STALE cell read —
+  the trace's verdict says "the candidate array re-sorted between the read and the click". The
+  cell is a ROW counter (sub+0xa818 -> sub+0xa774 @0x495b00) and rows are FILTERED (0x5a6e70,
+  `jne` skip @0x495b69), so cell != item. -3/-6 stand as type ordinals; 195/196 does not.
+- ACCEPT `PASS M351: 15/15` `c23a0d70f80d757e`, x2 identical (`evidence/m351_x2.txt:2-4`,
+  sha1 `39c60a48`); harness 20/20 NO-OP ['MU20'] (`evidence/m351_mutate.txt:27`).
+- OPEN: section A = "designs" is INFERRED (trace names only); which B31 loss is a raze;
+  whether a completion stamps.

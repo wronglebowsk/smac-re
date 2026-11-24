@@ -187,6 +187,20 @@ def main():
         if s.startswith("mov eax,") or s.startswith("xor eax,eax"):
             rets[a] = 0 if s.startswith("xor") else imm(s, r"eax,(0x[0-9a-f]+|\d+)")
     unit_flags_vals = sorted(set(rets.values()))
+    # ---------------------------------------------------------------- TABLE 0 the two sections
+    print("TABLE 0  the row list the modal resolves is TWO sections, appended in this order")
+    print("  A  0x%x..0x%x  idx<0x%x  item = cand[idx] @0x%x (k<0x40 -> k, k>=0x40 -> owner*0x40|(k&0x3f))"
+          % (0x4956C6, 0x495B24, fac_bound or 0, cand_base or 0))
+    print("      flags = 0x496050(item) | 0x20  ->  (flags & 0x20) != 0  ->  return +item")
+    print("  B  0x%x..0x%x  i = %s..0x%x  item = i (TYPE ordinal: 0x%x + 0x%x*i, cost at +0x%x)"
+          % (0x495B27, 0x495E91, loop_init, (loop_bound or 1) - 1, base_name or 0,
+             stride_name or 0, (base_cost or 0) - (base_name or 0)))
+    print("      flags = 0x4960f0(i) | 0x10, 0x4960f0 in %s  ->  bit 0x20 ALWAYS clear  ->  return -i"
+          % (unit_flags_vals,))
+    print("  then 0x418b5x stores that return into ds:0x%x + 0x%x (the base record's queue slot 0)"
+          % (BASE_CUR, store_off or 0))
+    print()
+
     print("TABLE 3  the sign law, computed over the whole flag space")
     print("  0x4960f0 return immediates: %s  (from %d sites)" % (unit_flags_vals, len(rets)))
     rows = []
@@ -195,15 +209,18 @@ def main():
     rows.append((FLAG_POS | 0, "facility row (0x496050(item)|0x20)", 0))
     rows.append((FLAG_POS | FLAG_MISC | 0, "facility row, 0x80 also set", 0))
     sign_rows = []
+    sign_bit = FLAG_UNIT if MUT == "sign" else FLAG_POS      # MU21: classifier mutant
+    if MUT == "sign":
+        print("  [mutant sign] classifier sign bit = 0x%02x instead of 0x%02x" % (sign_bit, FLAG_POS))
     for flags, label, _ in rows:
         for item in (1, 3, 6, 71):
-            ret = item if (flags & FLAG_POS) else -item
+            ret = item if (flags & sign_bit) else -item
             sign_rows.append((flags, item, ret))
     print("  flags 0x20 set?  item  ->  returned")
     for flags, item, ret in sign_rows:
         if item in (3, 6):
             print("    0x%02x  %-3s %6d  ->  %+d" % (flags, "yes" if flags & FLAG_POS else "no", item, ret))
-    n_neg = sum(1 for f, i, r in sign_rows if not (f & FLAG_POS) and r < 0)
+    n_neg = sum(1 for f, i, r in sign_rows if not (f & sign_bit) and r < 0)
     print("  unit flags (0x10|0..3) negative: %d/%d items" % (n_neg, 4 * len(unit_flags_vals)))
     print()
 
@@ -295,7 +312,8 @@ def main():
 
     # G10 same array as M349's decode
     m349 = read_m349()
-    agree = (m349.get("base") == TYPE_COST and m349.get("stride") == TYPE_STRIDE)
+    agree = (m349.get("base") == TYPE_COST and m349.get("stride") == TYPE_STRIDE
+             and base_cost == m349.get("base") and stride_cost == m349.get("stride"))
     gate("G10 the row builder indexes the SAME type array M349's cost read uses", agree,
          "M349 cost base=%s stride=%s ; here base=%s stride=%s"
          % (hex(m349.get("base") or 0), m349.get("stride"), hex(TYPE_COST), stride_name))
