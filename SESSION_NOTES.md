@@ -642,3 +642,32 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **Pitfalls**: `lea`-form writers need register-follow (`mov BYTE PTR [eax],cl` has no bitmap constant — a
   constant-only grep finds 11 of 20); `4f49e1` is a `mov` here (M342 said `and`); head 0 = empty queue, not item 0.
 - NAMED 247,680 → 245,677 B by rotating `## B22` verbatim (`scripts/b34_named_rotate.py`, sha1 `524f63de`).
+
+## Session 333-chain2 (2026-11-24) — M361: the A/V radio flags — 4 rows' pending state, 4 reader functions, relabel terminal = GENERIC set-label 0x5fa1e8
+
+- **ACCEPT** `python3 -u scripts/m361_radio_flags.py` -> **`PASS  M361: 38/38 gates`
+  `b92f1a61c041ae87`** (`evidence/m361_radio_flags.txt:165`), rerun byte-identical;
+  `scripts/m361_mutate.py` -> **30/30 RED, NO-OP none** (`evidence/m361_mutate.txt:66`).
+  Review #391 (10 findings, 3 P1) reworked the instrument: function-extent windows from
+  index.csv, the commit scan is GLOBAL, "both ways" is now measured, census covers every
+  addressing form, read mnemonics are broadened, mutant gate names are exact.
+- **GEOMETRY**: flags = `widget+0xa18`, widgets `0x12cbc + k*0xb4c` (table 0x493fe0:
+  0x4b->0x493f9d 0x136d4/0x12cbc, 0x4c->0x493f1c 0x14220/0x13808, 0x4d->0x493edc
+  0x14d6c/0x14354, 0x4e->0x493f5d 0x158b8/0x14ea0). Ctor 0x48fed0 zeroes all four (`:75-85`);
+  the 3 children are vtable objects (`call [eax+0xf0]`), master row 0x12cbc is not.
+- **RELABEL TERMINAL**: 0x493ec0 -> `FUN_0061482f(0x997b28,id)` -> 0x5fa1e8(widget,text),
+  which frees `[ecx+0xa7c]`, allocs strlen+1, strcpy; **10 call sites/4 fns, 0 flag
+  displacements** -> generic set-label, not flag-aware.
+- **READERS** 17 sites/4 fns: 0x493ec0 (4), 0x493ff0 (4), 0x492940 (3), 0x492030 (1 load +
+  2 cmp); WRITERS 38/8 fns; 3 loner 0x14220 sites are BYTE stores in other classes (`:86-92`).
+- **COMMIT** 0x492940: 0x14d6c -> `[+0xa50] |= 0x4000`; 0x14220 -> `[+0xa4c] |= 0x400` (ebx
+  by def-use); 0x158b8 -> `[+0xa4c] |= 0x800`. Master 0x136d4 is never committed — 0x492030
+  recomputes it as OR of the children (store 0, then 1 per cmp!=0).
+- **TOGGLE** 0x493ff0: master-off clears all four + `and ch,0xf3`/`and ah,0xbf` (load from and
+  store back to 0x985ab8/0x985abc; 0x400|0x800 / 0x4000 = the commit bits). Propagation runs
+  BOTH ways: child ON -> master, and the master toggle -> all three children. **SEED**
+  0x4930e0 reads `[+0xa50]` bits, writes each child flag + its relabel cmd.
+- **RETRACTED**: none — M360's 0x4e/0x4c/0x4d reading holds; cmd 0x4b is the master row.
+- **OPEN**: each row's noun (label text is runtime; 0x997b20's table is not in the file);
+  0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 = audio on/off (INFERRED).
+- NAMED: `## M360` rotated VERBATIM (docs/named-archive-m360-rows.md, sha1 e504b483); 247,881 B.
