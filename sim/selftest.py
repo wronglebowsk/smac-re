@@ -1692,6 +1692,17 @@ def run_b27(sav_path, results):
     return 0
 
 
+def run_b29(sav_path, results):
+    """Rung B29: the runtime ITEM TABLE DERIVED from alpha through M337's loader law.  The module
+    authors every number and its own gates; this hook calls `sim.itemtable.main` directly, so
+    `--b29` and `python3 -u -m sim.itemtable` cannot print different text."""
+    import os as _os
+    from . import itemtable as sit
+    if not _os.path.exists(sav_path):
+        return fail("B29: missing input: %s" % sav_path)
+    return sit.main([sav_path])
+
+
 def run_b28(sav_path, results):
     """Rung B28: FUN_004f47f0's per-item upkeep charge, EXECUTABLE - the loop runs on the
     save's own base records, the price-path gate is read out of the container, and the carried
@@ -1876,6 +1887,9 @@ def main(argv=None):
                     help="rung B26 (save/load boundary); optional SAV MAP LOG TRACE")
     ap.add_argument("--b27", nargs="*", metavar="ARG",
                     help="rung B27: the ENERGY round, executable and carried (defaults: <SAV>)")
+    ap.add_argument("--b29", nargs="*", metavar="ARG",
+                    help="rung B29: the item table DERIVED from alpha through the M337 loader "
+                         "law (defaults: <SAV>)")
     ap.add_argument("--b28", nargs="*", metavar="ARG",
                     help="rung B28: the UPKEEP FEEDER executable, the carried half-unit "
                          "persisted through the writer (defaults: <SAV>)")
@@ -1967,6 +1981,9 @@ def main(argv=None):
     if args.b27 is not None:
         sav = args.b27[0] if args.b27 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b27(sav, results)
+    if args.b29 is not None:
+        sav = args.b29[0] if args.b29 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b29(sav, results)
     if args.b28 is not None:
         sav = args.b28[0] if args.b28 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b28(sav, results)

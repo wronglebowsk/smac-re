@@ -1,24 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-300-305.md` (7 sessions: Session 300-chain2, Session 301, Session 301-chain2, Session 302-chain2, Session 303-chain2, Session 304, Session 305). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 307.
-
-## Session 307 (2026-11-19, M329 CLOSED, pick (viii), STATIC, zero box) — `FUN_0041a8f0` = `ui_governor_options_pane(widget, page)`; `NAMED ## M329` governs
-
-- **Ownership first**: `git status --short --branch` (branch `milestone/m329`, from main `198d1b5`), `gh pr list --state open` (chain 2's #336 M328 = the parallel lane, untouched; no chain-1 PR open), `tail -5 SESSION_CURSOR.md`, and the collision checks `git log --oneline | grep -i m329` (mine only) + `grep -n '^## M329' NAMED.md` (none before this block). `sqlite3 ~/.hermes/cron/executions.db` is not installed on this host (exit 127), so ownership was established from the branch/PR/collision checks rather than the executions table.
-- **MODE DEVIATION, recorded honestly**: `python3 scripts/track_mode.py` at close reads **`MODE=BUILD analyse_since_build=3 last_build=B26 next_rung=B27 — this fire BUILDS`**. It printed at the head of the fire too but I did not capture the line. I did NOT pivot: `BUILD_SPINE.md`'s B27 rung has no spine text (s306 STATE), and pick (viii) was already committed and green by then. The next fire should author the B27 spine before taking another analysis pick.
-- **ACCEPT** `python3 -u scripts/m329_scratchtree.py` → `== M329: 13/13 ==` `evidence/m329_scratchtree.txt:127`, DIGEST `757e40a7ed04abda` `:125`; re-run → `diff` clean (2 invocations). **HARNESS** `python3 -u scripts/m329_mutate.py` → `HARNESS PASS 26/26` `evidence/m329_mutate.txt:31`, base `reddened=[] ('13','13')` `:2`, coverage `True (uncovered=-)` `:29`, the one declared NO-OP `MU26` `:28,:30`.
-- **The law**: 1,403-byte thiscall member of the widget singleton `0x6a9480` (spill `0x41a8fa`, reload `0x41ae4c` → `call [edx+0xf0]` `0x41ae51`), 5 call sites / 4 owners, 3 chains over the own-faction **base array** (`ds:0x91b5b4 >> 2 → *2095`, count `[0x985af4]`, rank `[0x985ae8]>>2 & 3`), the `ds:0x99aa38` scratch dword is the **pack staging**: 19 legs, 19 distinct masks, 19 bits 0..18, exactly 1 identity leg ⇒ **permutation**; publish store `0x41ad94` through the `(own>>2)*2095` fold, gated by `and ecx,0xf000000` at `0x41abdc` = **exactly 4 bits**, bit-disjoint from both faction-create defaults → **REFINES `## M321`** (patched in place, row 4), does not retract it.
-- **M241 boundary respected** (per the fire's instruction): `## M241` is not in `NAMED.md` (archive-only, `docs/pick-archive.md:150-166`, #180 FAIL 2/5 at `0x99aa1c`); M329 claims only the scratch dword's use inside this frame + the `[rec+0x38]` writer census — not the tagged record's role in the save stream.
-- **HEADROOM WAS THE REAL RISK**: NAMED 247,028/250,000 → the M329 block alone put it at **250,214 (OVER the fail line)**, caught by `wc -c` at commit, not by the gate (the gate runs after the commit). Two verbatim rotations fixed it: `scripts/m329_named_rotate.py` (`## M255-M258`, 6,734 B, sha1 `9111d3b24758`) and `scripts/m329_named_rotate2.py` (`## Method that worked`, 12,564 B, sha1 `16cd10eb5fc0`) → **240,534 B**. LAW: rotate FIRST, then add the block — the pre-add size is the only safe reading.
-- **Tooling**: `M329_PATCH` applies the mutant to the parsed instruction list **in memory** (the exe and `scratch/m574/text.txt` are never written); `M329_EV` points the writer at the harness's temp tree, so a mutant can never overwrite canonical evidence. Mutant sets are **measured** (`M329_MUT_MEASURE=1`), never declared from intent.
-- STATE: (v)/(vi)/(vii)/(viii) answered. B27 spine still unauthored; track_mode next_rung **B27** (BUILD) after one more analysis. NAMED 240,534/250k. Chain 2's #336 (M328) open.
-
-
-- **#337 merged -> `ae64526` on main** (squash; `milestone.py merge 337` verdict GREEN, CI `gate pass 14s`). Verified the merged head == the reviewed head: `gh pr view --json headRefOid` = `1b58c7a` == local `HEAD`.
-- **Title governance, 3rd occurrence**: the squash message reads `digest ee77ddb39e8ec202; harness 23/23` because `milestone.py submit` snapshots `--title` at submit time, while the merged tree carries **`91f58f3de03090c1` / 24/24** (re-measured in the review round). PR title corrected post-merge via `gh api -X PATCH` (`gh pr edit` dies on the projects-classic GraphQL error); the commit message cannot be fixed without rewriting main, which cron does not do. **`NAMED ## M327` carries the current numbers.**
-- **`submit` auto-rotates SESSION_NOTES** and commits it (`M327: checkpoint` `d9330af`, 67,122 -> 59,265 chars, Sessions 287-289 -> `docs/sessions/sessions-287-289.md`) — a section a fire wrote can leave the head file under it.
-- Review count for the record: local Strata on #337 = **3 P1 + 5 P2, 8/8 accepted, 0 dismissed** (`evidence/ai_review/pr337_20261119_235407.md`, sidecar folded here as with pr328/pr329/pr332). All three P1s were **gates that could not fail**: G1 re-ran the instrument's own offset formula (X==X), `cover_ok` re-tested the window list against itself, and a printed "C matches B on 4/4" was only checked as A==B. `review_lint` cannot see this class by design (it checks naming/existence), and the mutation harness did not see P1-1 either — MU20 still reddened 7 gates, just not the one it should have. Worth carrying into B27's instrument review.
-- STATE: (v)/(vi)/(vii) answered; **(viii) `FUN_0041a8f0` OPEN**; **B27 spine text still NOT authored** (track_mode: next BUILD rung). NAMED 247,028/250,000 B — **rotate BEFORE adding a block**.
+Older sessions: `docs/sessions/sessions-307-307.md` (1 sessions: Session 307). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 304-chain2.
 
 ## Session 304-chain2 (2026-11-19, M328 CLOSED, STATIC: the two HURRY globals named)
 
@@ -294,6 +276,7 @@ printers of measured values need the same None-guard as the gate.
   tokens and re-syncs per row (`0x5ea448` -> fgets).
 - Chain 2 owns `milestone/m336` (wt-chain2); NAMED rotation = M277 ->
   `docs/named-archive-m337-rows.md:8` (sha1 `653c93cda817`, pinned in `m337_named_rotate.py`).
+
 ## Session 318-chain2 (2026-11-24) — M336: ds:0x8f0090 = difficulty byte of PLAYER RECORD 1; one UNCLAMPED #DIFF reader
 
 - **ANSWER (pick (x6)):** record 1, byte +2 of an 8-record array at FRAME `0x8eff18`, stride
@@ -359,3 +342,30 @@ printers of measured values need the same None-guard as the gate.
 - PITFALL: a fold decoder keyed on the exact disassembly string crashes on the mutant that
   changes one immediate — decode the immediates and let the gate FAIL instead of asserting the
   text shape.
+
+## Session 319-chain1 (2026-11-24) — B29: the item table DERIVED through M337's loader law
+
+- **ANSWER:** `sim/itemtable.py` replays `0x57a7ef..0x57a899` over `data/alpha.json`: 72 records,
+  branch rec 39, 71 iterations, token widths 42/2/27 — all four parsed out of the M337 census and
+  REPRODUCED from the file (G2). The derived table equals `sim.economy.upkeep_table` on 38/38 ids
+  by name AND upkeep, so `ALPHA_SHIFT = 1` is now a CONSEQUENCE of the loader, not B4's assumption
+  (G3; the shift-0 rival differs 22 ids by value and 38/38 by name).
+- **B4's four `table-later` DIFFERS rows CLOSED as a convention artifact:** read at the ALPHA
+  INDEX the derived table reproduces all four M46 values (Fusion Lab 4, Nanoreplicator 4, Quantum
+  Converter 6, Quantum Lab 3), at index+1 zero of four — M46 numbered its rows by alpha line (G5).
+  The same convention puts the wrong NAME at all five ids B4 pinned, so one convention cannot
+  explain both sets.
+- **BOUNDARY:** records 39..71 (33 past the branch) are built and unreachable — the feeder's
+  bounds 1..34 charge 0 of them; consumer bound 39 == the branch (G6).
+- ACCEPT `python3 -u -m sim.selftest --b29` -> **PASS B29: 9/9**, rows `e4b1c98e68ff8685`,
+  print `377094bc16aa8f27`, table `fa829fcd87cf43d5`, alpha sha `bac04f33eb692085`, 2 runs
+  byte-identical and the direct entry prints the same text (`evidence/b29_item_table.txt:85-86`);
+  `scripts/b29_mutate.py` -> **HARNESS PASS 9/9** `ae1f8e0292a59ed3`, NO-OP `[]`, ST 4/4
+  (`evidence/b29_mutate.txt:10`).
+- **REUSE:** B28's whole run fed the DERIVED table reproduces its anchors `705a4520c08c4062` /
+  `99c52201f073499d` / `38bba29ab857654b` with honest touch `[]` (G7) — nothing loosened.
+- NAMED headroom: M334 block rotated VERBATIM to `docs/named-archive-b29-rows.md:5`
+  (sha1 `579f90da7d8c`, `scripts/b29_named_rotate.py --verify`); B4's OPEN row and B27's UNMODELED
+  row patched in place (the row order is alpha's).
+- PITFALL: a value-only rival does NOT discriminate on the five pinned rows (upkeeps 0,0,1,1,1);
+  the NAME is the discriminator and G4 prints the rival's 3/5 so the gap is measured, not hidden.
