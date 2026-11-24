@@ -730,16 +730,14 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | [ebp-0xc] has NO caller writer (M294 question REFUTED) | archive:2 | archived |
 | M294 phrasing FIXED | archive:3 | archived |
 
-## B18 (s252, BUILD 10/10) - the site-gate VALUE SOURCE + MAX STORES named, pinned and executable (sim/sitegate.py)
-| claim | evidence | conf |
-|---|---|---|
-| the FUN_0051dcb0 value feed is a 4-bit LAZY NIBBLE CACHE: `edi = BYTE[rec+2]>>4`, and the pinned `jne 0x51dfac` (0x51df8d) skips BOTH the 525-insn FUN_005aff90 call and the FUN_00582cc0 write-back on a cache hit; the write-back target rec2+2 IS the byte the pod-scan score getter 0x46e770 reads (address identity on 4096/4096 tiles; s253: the byte is graded against the INDEPENDENTLY shipped podscan Grid.rb view and the callee fold DECODES to the 44-B stride / +2 field from the pinned text) | `evidence/s251_statics_fn51dcb0.txt:4` (64 pins), `evidence/b18_sitegate.txt:1` | V |
-| the cache is an OVERWRITE, not an accumulator: no cmp/test/branch anywhere in the 19-insn callee, and against the recorded vals the live nibble moves BOTH ways (182 rows below / 31 above). Sticky law over the recorded walk: 2288 cached hits / 0 zero-nibble-zero-val lazy resolutions / 1 lazy write-back / 32 adopted live mutations of 2321 rows over 101 tiles (s253: ANY zero nibble takes the lazy path, whatever the val); the replayed end-state nibble still matches the s249 dump on 86/101 tiles (the A5 drift on the 15) | `evidence/b18_sitegate.txt:3` , `:6` | V (law), MEASURED (classes) |
-| the nibble-split is visible in the recorded map: of the 177 records whose byte2 HIGH nibble moved y2150->y2212, 103 kept the LOW nibble; a whole-byte store is refuted by the pinned `and dl,0xf` + `or dl,cl`; the lazy class in the snapshot is 0 (a recorded nonzero val never meets a zeroed nibble) - M297 S3's numbers reproduced by the shipped model | `evidence/b18_sitegate.txt:5` | V (bytes), corroborated (live) |
-| the store index `[ebp-0xc]` = `BYTE[rec+3]` (graded rows carry {1: 2253, 9: 68}, max site under the 128-entry per-region bound, 1026/1026 visits single-site) and the cell's block index = `BYTE[rec+7]`, the record's owner byte: the -1 sentinel clamps to 0 and block 0 SKIPS the cell store (277 recorded rows) while the slot store stands - and NO record in either view carries a legitimate 0 owner, so the skip class is exactly the unowned tiles. M294's retracted 4x-value stride is refuted by the stride DECODED from the pinned chain (28 = (8-1)<<2, the counter dword at +4 INSIDE the slot) | `evidence/b18_sitegate.txt:7` | V (bytes), MEASURED (populations) |
-| BOTH stores are MAX by BRANCH POLARITY (`cmp edi,eax` / `jle L` landing over the `mov eax,edi` take and at-or-before the store, with no branch between L and the store; a MIN store would need `jge`) - decoded by the shipped checker WITH the old loads graded (cell: `xor eax,eax`+`mov al,[ecx]` zero-extension immediately before the cmp; slot: the full-dword load) - not asserted; the recorded walk leaves every table monotone, each slot AND every (block, site) cell at the recorded per-pair MAX (0 disagreements), and the last-write / min / owner-block-blind rivals diverge on 1 slot / 1 slot + 5 cells / 4 cells | `evidence/b18_sitegate.txt:8` | V (polarity) |
-| OPEN (LEAD): the CONTENTS of 0x989ce8 / 0x94eca8 were never dumped (a read-only /proc window grades the funnel absolutely); the slot's `[+4]` visit counter (its ++ is gated on call 0x5832b0); ebx's walked-table provenance beyond the owner-byte reading | - | lead |
-| ACCEPTANCE `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> **PASS B18: 10/10** (no box, no /proc, no gdb) | `evidence/b18_sitegate.txt:11` | V |
+## B18 (s252, BUILD 10/10) - ROTATED VERBATIM to `docs/named-archive-b18-rows.md` (sha1 `da5bb857bde045636cf3b79e191b9ce487246f36`): the site-gate value source is a 4-bit lazy nibble cache and both stores are MAX. One line per claim, each with its full `path:line`.
+- LAZY NIBBLE CACHE: `edi = BYTE[rec+2]>>4`; the pinned `jne 0x51dfac` skips the 525-insn call AND the write-back; the target byte is the pod-scan getter's byte (4096/4096; 64 pins) - V (`evidence/s251_statics_fn51dcb0.txt:4`, `evidence/b18_sitegate.txt:1`)
+- OVERWRITE, not accumulator: no cmp/test/branch in the 19-insn callee; the live nibble moves both ways (182 below / 31 above); 2288 cache hits, 1 lazy write-back, 32 adopted mutations - V (`evidence/b18_sitegate.txt:3,6`)
+- NIBBLE SPLIT visible in the recording: 103 of 177 moved records kept the low nibble; a whole-byte store is refuted by `and dl,0xf` + `or dl,cl` - V (`evidence/b18_sitegate.txt:5`)
+- STORE INDEX `[ebp-0xc] = BYTE[rec+3]` ({1:2253, 9:68}, 1026/1026 single-site); block index = owner byte `+7`, the -1 sentinel clamps and block 0 skips the cell store; M294's 4x stride retracted (28 = (8-1)<<2) - V (`evidence/b18_sitegate.txt:7`)
+- BOTH STORES ARE MAX BY POLARITY (`cmp edi,eax`/`jle`; a MIN store needs `jge`), graded with the old loads; last-write / min / owner-blind rivals diverge - V (`evidence/b18_sitegate.txt:8`)
+- ACCEPTANCE `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> PASS B18: 10/10 - V (`evidence/b18_sitegate.txt:11`)
+- LEAD: contents of 0x989ce8 / 0x94eca8 never dumped; the slot's `[+4]` visitor counter; ebx provenance - lead
 ## M299 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
 ## M300 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
 ## M301 (s256, STATIC, zero box) - the lead "ebx's walked table 0x51de2c-0x51df1d" REFUTED: it is a base_array walk, not a table
@@ -1107,17 +1105,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | REVIEW ROUND #317 + the squash title: the title's 459f47e3178f439d / 12-12+1 are the PRE-REVIEW harness; the ACCEPT row is what held at merge head (same defect as M314's "20/20"). Governance note - adds no byte claim | - | lead |
 | OPEN (one lane CLOSED by M321): what gates the 8 - `BYTE PTR [eax+0x38],0x40` x3 is now NAMED (base_array field 56 bit 6, gating the FUN_004f41f0 talent-request leg: `NAMED ## M321`, `evidence/m321_memo_owners.txt:30-34`); still unnamed: al,0x10; eax,0x1; ecx,eax. Also open: 0x4f3f7f callers; never live. Caveat: `guarded()` accepts via-copy on copy-liveness AT THE JCC (over-approximation) - the 4/8 split stands on agreement with M315 + the pinned kinds | - | lead |
 
-## M318 (s289, STATIC, zero box; 12/12+1 NO-OP) - pick (iv) ANSWERED: the selection-REFRESH PAIR = FUN_004e8d60 (selected-base UNIT-SUPPORT CENSUS) then FUN_004e78e0 (selected-base PANE REFRESH); both void(void), driven by the CURRENT selection
-
-| claim | evidence | conf |
-|---|---|---|
-| PAIR: 12 back-to-back sites (gap 5) in 7 owners = M315's 12 memo sites; each follows a ds:0x68cbb4 store within 17 B of the SECOND call (worst = 17); the REFRESH tuple holds TARGETS | G2/G3 (`evidence/m318_refresh_pair.txt:6-35`) | V |
-| A = UNIT-SUPPORT CENSUS: unit walk (count ds:0x985af0, stride 0x34), faction + home-base filter (unit+0x2e == ds:0x68cbb0); yield triad 4e6960/4e6d40/4e7070 switched on unit+0x26; over-capacity bit 0x10 (limit 94d684 clamp 0..7); foreign-tile bits 0x400000/0x200000 (4e3b50 owner, keyed 94d690 ==-3/<-3); 6-store bank 8f0c2c..8f0cc8 | C1/C2 (`:37-53,55-75`) | V (structure) / INFERRED (nouns) |
-| B = PANE REFRESH: first call 4e63b0 scan-pool rebuild @4e78e9; rows from faction array 94dc34 into pane+0xbc..; dispatcher 4e75f0 x7; region bits 507410 x5 (first 0x1d); base flags +0x95da9c x5 halve unimproved rows; 15 selection reads; 8f0c68 countdown | C1/C3 (`:37-53,77-86`) | V (structure) / INFERRED (display) |
-| KIND LAW SHARED: dispatcher 4e75f0 switch (cmp 3) = same triad + case-3 ds:0x8f0cc8=0, identical to A's inline switch | C4 (`:88-91`) | V |
-| ACCEPT: `m318_refresh_pair.py` twice-equal, PRINTED digest 2e81643277e3a23b (`:100`, green `:102`); `m318_mutate.py` 17/17+1 NO-OP 39e6ce9f2334fe87 (`evidence/m318_mutate.txt:21`) | as cited | V |
-| REVIEW #311 (3 P2 accepted): condition pins added (home-base cmp/je, 94d684 clamp chain, dispatcher ja + jump-table BYTES from the PE); G3 reach measured store->SECOND call (worst 17, was implicitly 22); digest now computed+printed by the instrument (was an external file hash). MU14-MU18 gate the fixes | `evidence/m318_mutate.txt:15-20` | V |
-| OPEN: kinds' game words (resource triad candidate); unit+0x26; the 52-B array 98ada8 indexed by unit+0xa; pane+3 clamp byte | - | lead |
+## M318 — VERBATIM at `docs/named-archive-m371-rows.md` (sha1 `3f2a4dfaf04a31685049d1e5864f516f48435e09`, 2070 B); this stub governs: the selection-REFRESH PAIR = FUN_004e8d60 (selected-base unit-support census) then FUN_004e78e0 (pane refresh)
 
 ## M317 (s288, STATIC, zero box; 22/22+1 NO-OP post-review) - pick (iii') ANSWERED: FUN_00556690(faction) = per-faction AI STRATEGY PASS: decides goals-at-bases/units, region-state flips, inline unit orders, goal cancels
 
@@ -1658,3 +1646,24 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | `FUN_005076d0` pushes 0x10 on both exits (0x507abc/0x507c6d), 0 push 0x8: the war record carries 8 only via the setter's implication | `:117-121` | V MU13,14 |
 | RIVALS refuted: AT WAR (pod/council set it with war bits clear), high-dword label (0x80000008/0x80002000 = other texts), bookkeeping flag (row 1 is a page noun), case-8 membership (same guard on a non-war option) | `:123-140` | V MU13,16,18,20,37 |
 | INF: is 0x8 also the AI's "can address them" predicate inside the 0x18/0x88000008 war writes? | - | INF |
+
+## B36 (s337-chain1, BUILD 10/10, zero box; 14 mutants, review #402 hardened) — the relations STATE MACHINE: FUN_00551a20 extracted and RUN. ACCEPT `python3 -u -m sim.relations` -> `PASS B36: 10/10` `b20f5818dee2d861` x2 (`evidence/b36_relations.txt:82`); harness 14/14 NO-OP `[]` (`evidence/b36_mutate.txt:16`).
+| claim | ev | conf |
+|---|---|---|
+| WRITER: SIX blocks — predicates 0x7/1/0x10/0x17/0x1f on the CURRENT ebx then an UNCONDITIONAL tail @0x551bc7; the flat op list equals the pinned 10-entry address table; 8 stores == the 8 stored ops (one per direction), 161 insns | `evidence/b36_relations.txt:14,28` | V MU1,2,10,11,12 |
+| TRANSITIONS: pact=0x3; truce-after-war=0x8000010c (0x8/0x100 survive); war on a pre-state carrying 0x7|commlink=0x80000118; combined 0x11=0x8000011b (the tail OR re-adds the mask) — each equals BOTH the dump program and its literal | `evidence/b36_relations.txt:40` | V MU4,11 |
+| PARITY: setter == dump program on 40,960 (state,mask) pairs, 0 dis; a FLAT address-ordered executor (no block grouping) agrees on 8,192 more | `evidence/b36_relations.txt:29-31` | V MU2,3,5,6,12 |
+| 40,976 transitions: pact=>treaty keyed on the WRITE, all 2,563 war-only writes (0x10, no ladder bit) leave the ladder empty, symmetry + idempotence | `evidence/b36_relations.txt:59-60` | V MU3,5,6 |
+| TRANSCRIPT 16/16 (`ac8c2caad0d71d55`); classifier chain @0x507975..0x5079a7 (16 insns) == sim.classify on 65,536 pairs; pact+treaty does NOT satisfy a want of treaty | `evidence/b36_relations.txt:58,61-68` | V MU3,7,13 |
+| ACTION LAYER (4,0x691144)=(ENEMYTRUCE), (2,0x691150)=(ENEMYTREATY), (1,none) — the BYTES read through the PE table at image base 0x400000; 5 rivals differ, min 2,424 | `evidence/b36_relations.txt:69-78` | V MU8,9 |
+| UNMODELED: the nouns of 0x800000 / 0x40 / 0x8000 / 0x10000 / 0x100000; which site fires each transition in a live game | - | lead |
+
+## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..128) of `evidence/m371_war_contact.txt:8`.
+| claim | evidence | conf |
+|---|---|---|
+| HOSTS/SETTER: 6/10 host setter calls carry bit 8 — FUN_00554350 0x80000008@0x554389 + 0x88000008@0x554426, FUN_00554d10 0x18@0x554e88, FUN_005551e0 0x88000008@0x55566e/0x555bb9, FUN_00507460 0x80000018@0x507653; `test bl,0x10`@0x551abf -> measured `or ebx,0x80000108`@0x551b11 stores war+contact both ways 0x551be6/0x551c09 | `:8-40` G1a,G2a,G2b | V MU1-2,5-8 |
+| WAR ALONE: 16 callers name 0x10/0x8010/0x50 with NO bit 8 (both FUN_005076d0 exits) — contact is supplied by the setter, never requested | `:64-68` G3b | V MU9-12 |
+| PEACE keeps bit 8 (only 0xffee7faf clears 0x10, of three masks x2 sites); CONTACT ALONE: 4 exact-0x8 writes (new game 0x5a7c0a, council 0x42999d, commit 0x4dae13, pod 0x56f5ad) | `:35-40,:69-76` G2c,G4a | V MU3-4,13-15 |
+| READ AS PREDICATE: `(rel&0x40018)==8`@0x555491, `(rel&0x18)==8`@0x555502; FUN_00554d10 `test al,0x10`@0x554e6b before 0x18 | `:74-80` G4b,G4c | V MU16-18 |
+| NOUNS id 8 = labels.txt:886 "Commlink", 0x10 = :657 "Vendetta"; RIVAL '8=war companion' DEAD on 3 predictions; pending masks measured (3x0x88000008, 1x0x80000008, no 0x10) | `:88-123` G5a,R1-R2 | V MU19-20,26-27 |
+| ACCEPT `PASS M371: 18/18 digest 4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`), twice byte-identical (`evidence/m371_twice.txt:4`); harness 27/27 (`evidence/m371_mutate.txt:35`); OPEN: 0x88000008 bits 27/31 (INF), 24 carried sites, 0x100 | as cited | V |

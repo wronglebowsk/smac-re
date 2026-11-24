@@ -1,0 +1,35 @@
+CONTROL  unbiased run: PASS (PASS M371: 18/18 gates digest 4e82206112fe63ad)
+M371 mutation harness - 27 mutants
+  mutant gate   verdict   claim
+  MU1    G2a    KILLED    the 0x80000108 OR lives inside the test-bl-0x10 (war) branch  [red: G2a]
+  MU2    G2b    KILLED    the war branch sets bit 8 through 0x80000108 (the MEASURED immediate)  [red: G2a,G2b,R3]
+  MU26   R2     KILLED    FUN_005551e0's pending-vendetta mask is 0x88000008, no war bit  [red: G1a,G1b,G3a,G3c,R2]
+  MU27   G2c    KILLED    the 0xff7fffff clear mask keeps 0x10 (only the peace mask clears it)  [red: G2c]
+  MU3    G2c    KILLED    the peace clear mask keeps bit 8  [red: G2c]
+  MU4    G2c    KILLED    the war clear mask keeps bit 8 (it clears pact/treaty/truce)  [red: G2c,R1]
+  MU5    G1a    KILLED    the atrocity host writes mask 0x18 (war + contact)  [red: G1a,G1b,G3a,G3b,R2]
+  MU6    G1a    KILLED    the aid host writes mask 0x80000018  [red: G1a,G1b,G3a,G3b,R2]
+  MU7    G1a    KILLED    FUN_00554350's vendetta-pending write is 0x88000008 (no war bit)  [red: G1a,G1b,G3a,G3c,R2]
+  MU8    G1a    KILLED    FUN_005551e0's pending-vendetta writes carry no war bit  [red: G1a,G1b,G3a,G3c,R2]
+  MU9    G3b    KILLED    one declare-path exit requests war ALONE (mask 0x10)  [red: G3a,G3b]
+  MU10   G3b    KILLED    the second declare-path exit is also a war-alone request  [red: G3a,G3b,G3c,G4a]
+  MU11   G3b    KILLED    FUN_00507ce0 requests war (0x8010) without contact  [red: G3a,G3b]
+  MU12   G3b    KILLED    mask 0x50 is a war-alone request (the 16th)  [red: G3a,G3b]
+  MU13   G4a    KILLED    the goody pod writes contact alone (exact mask 8)  [red: G3a,G3c,G4a]
+  MU14   G4a    KILLED    the council sweep writes contact alone  [red: G3a,G3c,G4a]
+  MU15   G4a    KILLED    the new-game host writes contact alone  [red: G3a,G3c,G4a]
+  MU16   G4b    KILLED    the AI war gate masks 0x40018 and requires == 8 (contact, no war)  [red: G4b]
+  MU17   G4b    KILLED    the third-faction test masks 0x18 and compares to 8  [red: G4b]
+  MU18   G4c    KILLED    the atrocity host tests the WAR bit 0x10 before writing 0x18  [red: G4c]
+  MU19   G5a    KILLED    id 0x8 -> element 875 -> line 886 'Commlink'
+  MU20   G5a    KILLED    id 0x10 -> element 646 -> line 657 'Vendetta'
+  MU21   G1a    KILLED    the argument-push lookback window is 14 instructions (0x554426 proves it)
+  MU22   G5a    KILLED    the label line is 11+elem (line 10 is the count) - tracer mutated
+  MU23   G1a    KILLED    the host-call classifier selects bit 8 or war 0x10
+  MU24   G3b    KILLED    the war-alone classifier selects 0x10, not 0x18
+  MU25   G2b    KILLED    the bit decomposer enumerates the whole mask (3 bits for 0x80000108)
+  MU0           NO-OP     the NO-OP control: target absent, nothing may change
+
+killed 27/27 scored (1 NO-OP control reported, never counted)
+
+PASS M371-MUT: 27/27
