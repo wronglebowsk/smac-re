@@ -233,7 +233,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **PARITY/REPLAY** (`:35-49`): 2048 pairs 0 disagreements, expiry at tick 50; re-arm t30, status t40, expiry
   ONCE at t79.
 - **PEACE vs WAR** (`:51-55`): `0xffee7faf & 0x40 = 0` but **`0xfaeef378 & 0x40 = 0x40`** (0x78 keeps bit 6):
-  PEACE clears 0x40 so its lease expires as a **NULL write (49/49)**; WAR keeps it so its expiry is a **real
+  PEACE clears 0x40 so its lease expires as a **NULL write (50/50)**; WAR keeps it so its expiry is a **real
   clear (0/49)**; 0 of 11 cell refs inside FUN_00551a20. **CORRECTS M375's `evidence/m375_relation_bits.txt:41`
   presentation (a list, not a claim): 0xfaeef378 clears 0x10/0x1, NOT 0x40.**
 - **TREATY ON** (`:57-61`): an exhaustive 256-mask sweep - 240/240 masks carrying a 0x17 bit clear 0x800000,
@@ -654,6 +654,53 @@ unpinned extents, host guards not read from bytes) all fixed at head `1c0a06e1`,
 Pitfall: the dump's store operand usually has NO displacement — the field is folded into a register
 by the preceding `lea`; a displacement grep alone reports zero stores for `0x551c40`/`0x551d70`.
 
+## Session 343-chain3 — M390: FUN_004dabb0 is DEAD-INF by every dispatch form a PE32 has; 0x551cf0's 4th arg is SET/CLEAR polarity
+
+- **ACCEPT** `python3 -u scripts/m390_entry_noun.py` -> **`PASS M390: 47/47`** `bafd75107d142bc4`
+  (`evidence/m390_entry_noun.txt:188`), twice byte-identical (`evidence/m390_twice.txt:3`);
+  harness **16/16 killed** (`evidence/m390_mutate.txt:36`); static, zero box.
+- **Q1, mechanism named**: `FUN_004dabb0` (122 B, 48 insns) has ZERO of every
+  entry mechanism - 0 `call` (`:79`), 0 `jmp`/`jcc` (`:80`), 0 branch into the body from
+  outside, 0 VA immediates, 0 stored dwords in 3,067,904 B (`:89`), 0 register-indirect
+  sites loading a family address (`:109`).
+  Predecessor is `ret 4` at 0x4dabad, prologue is the family signature (identical to the
+  CALLED sibling 0x4dac30) -> it is a real entry, not a mid-body landing pad.
+- **WHY THE CENSUS IS COMPLETE (new law)**: ImageBase 0x400000, `DllCharacteristics=0x0`
+  (no DYNAMIC_BASE), reloc dir `(0,0)` - never relocated, so any pointer holds the literal
+  dword. Control: live sibling **0x4dab90 IS stored once**, .rdata VA 0x677ff8, inside a
+  187-entry .text-pointer run (`:98`); 14,754 .text addresses stored image-wide.
+- **Q2 ANSWERED**: `FUN_00551cf0(a,b,mask,flag)` — `flag!=0` -> `or` the mask in (SET) and,
+  if mask has 0x40, stamp 0x94d4c8=0x32; `flag==0` -> `not`+`and` (CLEAR), no timer touch.
+  Single row `idx=a*0x82f+b`. Callers: 36 sites = 26 push 1, 6 push 0, 4 pass a runtime
+  register (`:158`); M385's gate corroborates (0x4dad05 bit-clear->push 1, 0x4dad30
+  bit-set->push 0). Noun = SET/CLEAR polarity, not "arm the timer".
+- **Retraction**: M385 grouped 0x4dabb0 with 0x4dacc0/0x4dac30; the field splits them -
+  0x4dabb0 writes 0x94d448, 0x4dac30 writes 0x94d468.
+- **OPEN**: an address built arithmetically (split immediates) is not excluded; no evidence.
+- **PITFALLS**: the linear dump covers data bytes (104 out-of-section absolute operands);
+  backward push collection yields `[arg1..arg4]` - arg4 is the LAST element.
+## Session 343-chain2 - M389: the 0x4dadxx family's five OPEN masks are verbs (60/60)
+
+- **ACCEPT** `python3 -u scripts/m389_family_mask.py` -> **`PASS M389: 60/60`** `05a36a50540466f3`
+  (`evidence/m389_family_mask.txt:113`), `python3 -u scripts/m389_mutate.py` -> **27/27**
+  (`evidence/m389_mutate.txt:31`).
+- **REVIEW** #425: 10 findings, all fixed at head - site-level operand gates (0x4dad30's 2nd push = edi; guard window = 1 push + 1 `mov ecx`), operand-verified verbs, PE-mapped VA, cites re-pointed (60 checks, 27 mutants).
+- **THE FIVE SITES** (M384): the four register masks resolve INSIDE FUN_004dadd0 —
+  `mov ebx,0x4`@0x4daea3 -> 0x4daedd, `mov ebx,0x2`@0x4daf07 -> 0x4daf41, `mov edi,0x1000`@0x4dafcf -> 0x4db02d,
+  `mov edi,0x2000`@0x4db035 -> 0x4db08d, zero intervening writes (`:19-23`). 0x4dad30's mask is
+  edi=[ebp+8] of FUN_004dacc0; its 4 callers push {0x20,0x2000000,0x400,0x40000} (`:26-34`).
+- **THE LADDER** `:43-52`: FUN_004dadd0 = 7 arms keyed by `FUN_0x6051fa(this+0x15a0,mask)`, ladder
+  {1,2,4,8,0x10,0x1000,0x2000}, two `test [pair]` sites per arm; eax!=0 -> SET, eax==0 -> CLEAR on every arm.
+  Five lows SET 0x551a20 (`or`) / CLEAR 0x5518f0 (`not`+`and`); 0x1000/0x2000 = ONE 0x551cf0 call whose
+  [ebp+0x14] flag picks OR vs AND (`:70-74`).
+- **0x400** `:79-83`: exactly one `push 0x400` in the family (0x4db0aa into the FUN_004dacc0 gate); no arm can
+  ask 0x400 or 0x800.
+- **ENTRY** `:87-96`: FUN_004dadd0 has two direct callers — 0x4dab96 in FUN_004dab90 (0 call sites; 1 .rdata pointer, VA 0x677ff8 by PE map)
+  and 0x4dbc5a in FUN_004db480 (1 call site). Live path = FUN_004db480; FUN_004dab90 = indirect dispatch only.
+- **OPEN**: guard noun ([ecx]->[+8]->+0xbc); 3 out-of-arm applies (0x4db101, 0x4db11b, 0x4db165) (`:64`).
+- **PITFALLS**: (1) a backward def walk must clobber eax/ecx/edx ONLY — with callee-saved ebx/edi clobbered the
+  four masks go opaque (MA1). (2) a 4-arg API's direction lives in a pushed flag, not the call site: two arms
+  share ONE 0x551cf0 call for both directions.
 ## Session 343-chain4 — M391: `and 0xfaeef378` is 3 gated masks x 2 rows, not a blanket; the 0xc00 clears use the other API half
 
 - **ACCEPT** `python3 -u scripts/m391_blanket_clear.py` -> **`PASS M391: 53/53`** `76148839fd85b66e`
@@ -670,10 +717,10 @@ by the preceding `lea`; a displacement grep alone reports zero stores for `0x551
   `FUN_00551cf0(...,set=0)` -- 0x4db11b (0xc20), 0x519bb5 (0xc00) -- a `not`+`and reg,reg` with
   **zero immediates**. 0 of **65** resolved masks to FUN_00551a20 carry 0xc00, so all **24**
   WAR-arm callers drop the pair; the 5 setters use FUN_00551cf0 set=1.
-- **SURVIVAL** (`:74-119`): WAR net `0xfa6e7328`, TRUCE net `0xff6e7faf` (0xc00 kept). Vectors
-  (0x80000f18,0x10)->0x80000318, (,0x4)->0x80000f0c, (,0x11)->0x80000319; 0x80000108 survives.
+- **SURVIVAL** (`:74-124`, masks read off the stream): all-arms net `0xfa6e7328`, TRUCE net
+  `0xff6e7faf`; vectors (0x80000f18,0x10)->0x80000318, (,0x4)->0x80000f0c, (,0x11)->0x80000319.
 - **PITFALLS**: the +0x20 sibling `0x94d468` has its own 2 ANDs in FUN_00551c40 (a field-blind scan
   reads them as pair clears); a whole-binary census over-counts (46 vs 6), scope to the body;
   `and r,imm` KEEPS every bit set in imm, so cleared = complement.
-- **OPEN**: 3 opaque set=0 masks to FUN_00551cf0 (0x4dad30/0x4db02d/0x4db08d) could still name
-  0xc00; 0x400/0x800 nouns stay INFERRED.
+- **OPEN**: 0x4dad30 (FUN_004dacc0 clear leg) CAN carry 0x400 per M389 -> a 6th, dynamic bit10 clear;
+  0x4db02d/0x4db08d unresolved; 0x800 reachable nowhere; 0x400/0x800 nouns stay INFERRED.

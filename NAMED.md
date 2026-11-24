@@ -28,6 +28,16 @@
 - `0x585720` `unit_action_resolve(unit, param, mode)` — per-unit action executor (AI + end of turn) (M)
 - `0x5abb40` `unit_array_compact()` — slides records down with `rep movsd` (H)
 
+## M389 (s343-c2, 60/60) — 5 OPEN mask args = verbs. `scripts/m389_family_mask.py` -> **`PASS M389: 60/60`** `05a36a50540466f3` (`evidence/m389_family_mask.txt:113`); 27/27 (`evidence/m389_mutate.txt:31`).
+| claim | ev | conf |
+|---|---|---|
+| 4 reg masks resolve in-fn @0x4daea3 `ebx=4`, 0x4daf07 `2`, 0x4dafcf `edi=0x1000`, 0x4db035 `0x2000` | `:19-23` `:32-34` | V MU1-3 MU15 MA1 MA5 |
+| 7 FUN_0x6051fa-keyed arms; ladder {1,2,4,8,0x10,0x1000,0x2000}; SET on eax!=0; fall-through jmp past CLEAR | `:49-62` | V MU5 MU6 MU9 MU16 MU17 MA2 MA6 |
+| 5 lows: 0x551a20 ORs ebx<-[ebp+0x10]; 0x5518f0 NOTs+ANDs; big arms: 1 0x551cf0 call, flag picks OR/AND | `:70-74` | V MU8 MU10 MU11 MU18 MU19 MA3 |
+| 0x4dad30 mask = edi=[ebp+8] (2nd push); 4 callers push {0x20,0x2000000,0x400,0x40000}; 0x400 pushed once (0x4db0aa) | `:26-34` `:79-83` | V MU4 MU12 MU20 |
+| entry FUN_004db480 live; FUN_004dab90 0 call sites + 1 .rdata slot VA 0x677ff8 | `:87-96` | V MU13 MA7 |
+| OPEN: guard noun + 3 out-of-arm applies | `:64` | OPEN |
+
 ## M388 (s342-chain6, 39/39) — slot 0's agenda pair has NO writer; the SE commit writes the live grid only. **`PASS M388: 39/39`** `e03bfb351d33c64e` (`evidence/m388_agenda_slot0.txt:164`), x2 same; 19/19 (`evidence/m388_mutate.txt:22`).
 | claim | ev | conf/mutant |
 |---|---|---|
@@ -671,16 +681,7 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 - LEAD: contents of 0x989ce8 / 0x94eca8 never dumped; the slot's `[+4]` visitor counter; ebx provenance - lead
 ## M299 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
 ## M300 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
-## M301 (s256, STATIC, zero box) - the lead "ebx's walked table 0x51de2c-0x51df1d" REFUTED: it is a base_array walk, not a table
-| claim | evidence | conf |
-|---|---|---|
-| ZERO entries: the lead's range is 0xf3 = 243 B of .text ending on the last byte of `test ebx,ebx` 0x51df1d - 60 dword slots + 3 B leftover, 0 dwords (aligned OR at any byte offset) resolving into .text; the span tiles gap-free as 81 instructions = 68 of ONE loop (0x51de27-0x51deef, sole back edge `jl 0x51de27`) + 13 of its exit block, and holds 4 `call 0x64b870` | `scripts/m301_ebxtable.py` A1/A2, `evidence/m301_ebxtable.txt:95-104` | V |
-| nature = EXECUTABLE CODE, not addresses/pointers/masks/offsets: the same 243 B read from the PE file image (programs/terran.exe .text, file off 0x11de2c) are byte-identical to the dump; Ghidra n_insns 386 == the dump's insn count over the function window; 0 indirect jmp/call in FUN_0051dcb0; 0 lea/mov/push of any range address image-wide; all 4 external edges target the exit block 0x51defd, none enters the walk | A0/A3/A7, `evidence/m301_ebxtable.txt:115,:191` | V |
-| what it walks = the NAMED base_array 0x95da10 (NAMED.md:74): cursor eax = 0x95da12 (base+2, init 0x51de1f, spill [ebp-0x14]), rows `add eax,0x130` 0x51dee2 = 304 B, index = trip counter [ebp-0x18] vs the BSS row count ds:0x985af4; body reads row x(+0)/y(+2)/flag(+4) + the 44-B tile-record view; the compared ebx = BYTE[304*i + 0x95da14] (0x51ddff), i = FUN_004e37f0's return (0x51ddb1) - scale chain 0x51ddf2/f7/fa evaluates to 304*i | A4/A5 | V |
-| it GATES NOTHING of the 0x51dffd decision: 4 bypass legs land on its exit block which falls through to the call; of 11 branches between the range exit and the call, 0 land past it (ebx==0 leg `je 0x51dff5` 0x51dfd1 = the pre-call block); ebx feeds only the cell stores 0x51dfc9/0x51dfd3-e0 and the post-store byte read 0x51e02c, never the counter address (esi = the 28-B fold of [ebp-0xc], M299); FUN_005832b0's eax has one consumer (`test eax,eax` 0x51e005), is overwritten 0x51e024, and 0 backward edges from after the call reach the range | A6 | V |
-| OPEN: whose record the exit block's BYTE[edi+0x7] is (edi = [ebp-0x4], sole pre-range writer 0x51dd28); the walk's meaning (tile-class filter 0x51de5b-61 + distance vs ds:0x8f0d34 0x51dece-0x51ded0 + 3 `or ebx,-1` sentinels) - shape V, semantics INFERRED | `evidence/m301_ebxtable.txt:132-146` | lead |
-| ACCEPTANCE `python3 scripts/m301_ebxtable.py` -> **PASS M301: 8/8** (zero box, zero /proc, zero gdb) | `evidence/m301_ebxtable.txt` tail | V |
-
+## M301 (s256, STATIC, zero box) - the lead "ebx's walked table 0x51de2c-0x51df1d" REFUTED: it is a base_array walk, not a table - ROTATED VERBATIM at `docs/named-archive-m391-m301-rows.md` (sha1 `da6716023e5457bf449e9e8e01a7c7d4349140c8`, 2546 B); this stub governs.
 ## B19 (s257, BUILD 10/10) - ROTATED VERBATIM to `docs/named-archive-b19-rows.md` (sha1 `f12ca5e5df2a5a7d9a4c25f2bbd52b9b5d8be8e8`): the slot [+4] visit counter is executable (`sim/visitcounter.py`). One line per claim, each with its full `path:line`.
 - GATED INC: `[0x989ce8+28*site+4]++` IFF `FUN_005832b0(x,y) != 0`@0x51dffd; inc block 0x51e00d-0x51e01b entered ONLY by fall-through (`je 0x51e11d`); field DECODES to MAX +4 on the pinned 28-B esi; two agreeing impls + the recorded 36/36 theorem - V (`evidence/b19_visitcounter.txt:10`, `evidence/b19_visitcounter.txt:13`, `evidence/m299_visitgate.txt:5`, `evidence/m299_visitgate.txt:53`)
 - REPLAY 2321 rows: sites {1:2253, 9:68} == B18 anchor; census {'branchA':1099,'rung1':1222}; 1222 CERTAIN-refuse / 0 accept / 1099 possible; baseline = 20 eax=2, 1079 undecided; eax=1 STRUCTURAL-ONLY (0 rows) - V law, LIVE side OPEN (`evidence/b19_visitcounter.txt:5-9`, `evidence/b19_visitcounter.txt:17-18`)
@@ -1547,7 +1548,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 |---|---|---|
 | countdown = 10 insns 0x5552b6..0x5552d4 (`and al,0xbf`@0x5552d1) with ONE exit 0x5552d9, so a zero cell stores NOTHING; 4 arms of 0x32 (0x551d22 caller-mask whose `je 0x551d64` skips the arm; 0x552ce6 `or al,0x40`; 0x5553f3/0x5556eb `and 0xfffdfbff`+`or 0x840`); byte source pinned by size+sha256 | `evidence/b37_treaty.txt:14,:33` | V MU1-4 MU13 |
 | parity 2048 pairs, 0 disagreements, expiry at tick 50; replay: re-arm t30, status t40, expires ONCE at t79 | `evidence/b37_treaty.txt:39,:49` | V MU5-7 MU12 |
-| PEACE 0xffee7faf clears 0x40 -> NULL expiry (49/49); WAR 0xfaeef378 KEEPS it (0x78) -> real clear (0/49); 0 of 11 cell refs inside FUN_00551a20; corrects M375's list presentation only | `evidence/b37_treaty.txt:55` | V MU8 |
+| PEACE 0xffee7faf clears 0x40 -> NULL expiry (50/50); WAR 0xfaeef378 KEEPS it (0x78) -> real clear (0/49); 0 of 11 cell refs inside FUN_00551a20; corrects M375's list presentation only | `evidence/b37_treaty.txt:55` | V MU8 |
 | 0x800000 TREATY ON: an exhaustive 256-mask sweep - 240/240 masks with a 0x17 bit clear it, the 16 without keep it; expiry cannot (`0xbf & 0x800000 = 0`) | `evidence/b37_treaty.txt:61` | V MU9 |
 | six rivals differ (min 1 config); ACCEPTANCE `python3 -u -m sim.treaty` PASS 8/8 `5dd4119bd1882d1d`, twice identical | `evidence/b37_treaty.txt:76`, `evidence/b37_twice.txt:2-3` | V MU10-11 |
 | UNMODELED: nouns of 0x800/0x20000/0x400; FUN_00552970's role; one upkeep pass == one turn | docstring | lead |
@@ -1634,7 +1635,17 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | RETRACTION: 0x5552ff not the sole 0x400 reader (3 total, pop 15->17) | `:124-131` | V MU24-25 |
 | 0x574a66 masks {0x20,0x30} | `:59-82` | V MU11 MU12 MA2 |
 | 0x800 / 0xc00 pair at no PROVEN site | `:96-98` | V MU18 MA3 |
-| OPEN: FUN_004dabb0 entry; 0x551cf0 arg noun | - | OPEN |
+| OPEN: FUN_004dabb0 entry; 0x551cf0 arg noun -> ANSWERED by M390 (`## M390`) | - | CLOSED |
+## M390 (s343-c3) - 0x4dabb0 DEAD-INF, every PE32 dispatch form; 0x551cf0 arg4 = SET/CLEAR. `scripts/m390_entry_noun.py` -> **`PASS M390: 47/47`** `bafd75107d142bc4` (`evidence/m390_entry_noun.txt:188`), 16/16 mutants (`evidence/m390_mutate.txt:36`). `:N` = that file.
+| claim | ev | conf/mutant |
+|---|---|---|
+| 0 `call`/`jmp`/VA-imm; predecessor `ret 4`; of 4288 indirect sites, 0 family address | `:65-113` | V MU1 MU2 MU3 MU5 MU16 |
+| 0 stored VA in 3,067,904 B; CTRL 0x4dab90 once at .rdata 0x677ff8 (187 run) | `:89-99` | V MU3 MU4 MU12 |
+| CENSUS LAW: ImageBase 0x400000, DllCharacteristics 0x0, reloc dir (0,0) | `:5-10` | V MU6 |
+| not a fold: 6/48 match 0x4dac30; fields 0x94d448 / 0x94d468 | `:132-134` | V MU7 MU15 |
+| 0x551cf0: flag!=0 = OR + 0x40 -> 0x94d4c8=0x32; ==0 = NOT+AND; 1 row a*0x82f+b | `:141-155` | V MU8 MU10 |
+| callers 36 = 26 one / 6 zero / 4 reg; 28/36 `add esp,0x10`; M385 gate 0x4dad05=1, 0x4dad30=0 | `:158-180` | V MU9 MU11 MU13 |
+| OPEN: arithmetic address (split imms) | - | OPEN |
 ## M386 (s342-c4, 55/55) — +0x94d820 = X of a per-faction PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's guard reads the PARTNER row. ACCEPT `scripts/m386_marker_pair.py` `401580f3c8ad292e` (`evidence/m386_marker_pair.txt:143`), 15 mutants (`evidence/m386_mutate.txt:19`). `:N` = same file.
 | claim | ev | conf |
 |---|---|---|
@@ -1686,4 +1697,4 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | explicit 0xc00 clears are **not** the blanket: both are `FUN_00551cf0(...,set=0)` calls — 0x4db11b mask 0xc20, 0x519bb5 mask 0xc00 — a `not`+`and reg,reg` (zero immediates) | `:59-73` | V MU5 |
 | 0 of 65 resolved masks to FUN_00551a20 carry 0xc00, so all 24 WAR-arm callers drop 0xc00; the 5 setters pass 0xc00 through FUN_00551cf0 | `:59-73` | V MU5 |
 | survival (masks read off the stream, G5.0): all-arms net `0xfa6e7328`; a TRUCE write preserves 0xc00 (`0xff6e7faf`); vectors (0x80000f18,0x10)->0x80000318, (,0x4)->0x80000f0c, (,0x11)->0x80000319; final `or edx,ebx` restores every mask bit and 0x80000108 survives its own AND | `:74-119` | V MU3 MU6 MU7 |
-| OPEN: 3 opaque set=0 masks to FUN_00551cf0 (0x4dad30/0x4db02d/0x4db08d) could still name 0xc00; nouns of 0x400/0x800 unchanged (INF) | `:64` | OPEN |
+| OPEN: 3 opaque set=0 masks to FUN_00551cf0 -- 0x4dad30 is FUN_004dacc0's clear leg and CAN carry 0x400 (M389: masks {0x20,0x2000000,0x400,0x40000}), so bit10 has a 6th, dynamic clear; 0x4db02d/0x4db08d unresolved; 0x800 reachable nowhere; nouns stay INF | `:64` | OPEN |

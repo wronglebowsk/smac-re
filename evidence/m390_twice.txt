@@ -1,0 +1,3 @@
+M390 twice: two independent invocations, stdout compared byte-for-byte
+
+IDENTICAL sha1=9d526615e81069c289e39d80602598e0c2a5264a
