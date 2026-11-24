@@ -740,17 +740,7 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | ACCEPTANCE `python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV` -> **PASS B20: 10/10** (G10 two runs byte-identical; zero box, zero /proc, zero gdb) | `evidence/b20_bytecounter.txt:39` (9/9 module line; G10 in selftest stdout) | V |
 | DECLARED UNMODELED: live byte-table contents; block upper bound (<8 implied); per-call zero-rebuild cadence (FUN_0051dcb0 callers OPEN); dispatch/settle-nest meaning (M303 S7, M304); save-carry vs rebuild; 8380-B siblings | docstring + BUILD_SPINE §B20 | lead |
 
-## M305 (s263, ANALYSE, zero box) - FUN_0051dcb0 = the zero-rebuild OWNER: 11 single-site callers, one loop-enclosed, a round-mod-4 gate
-| claim | evidence | conf |
-|---|---|---|
-| IDENTITY: FUN_0051dcb0 zeroes-then-rebuilds BOTH counter tables. Zero window covers BYTE base 0x94eca8 stride 8380(=0x20bc) x 8 blocks x 128 entries (term 0x95f288) and DWORD 0x989ce8 x 128 slots x 28 B {MAX@+0,CNT@+4} (term 0x98aae8), residual 0 both | `evidence/m305_identity.txt:29` (byte), `:31` (dword), A1-A5 @`:36-40` | V |
-| REBUILD: the walk re-visits all 2048 tile records EXACTLY ONCE (32/row uniform, W=H=64, mult=32, x=(y&1), x+=2, shared cursor) with 0 fold mismatches vs `base+0x2c*(32*y+(x>>1))`; the decoded cursor step IS the 44-B stride (2048 gapless byte offsets, span 0x16000); rival x-stride-1 (4064 visits, 4063 mismatches), outer-bound-1 (32), cursor-reset-per-row (2016) all FAIL on the printed numbers | `evidence/m305_identity.txt:73-83` (walk, 4 rivals, A18) | V |
-| CALLERS: 11 direct sites == index.csv n_callers=11, in 11 DISTINCT functions, each calling ONCE; 0 stored-dword occurrences of the VA in terran.exe -> no vtable/callback entry (a rel32 call never stores it). RIVAL "one hub calls it repeatedly" FAILS (max mult 1). Loop enclosure (P1 fix - the first scan was vacuous): exactly 1 site, 0x59dd3a in FUN_0059ce10 (back-jump 0x59e2a6 -> 0x59ce92) | `evidence/m305_identity.txt:120-139` (census, A10-A14) | V |
-| CADENCE: 5/11 sites sit under a decompiled conditional, 2 are skipped by the immediately-preceding branch, 4 are top-level; 0x51f71e gated `(round & 3) == bl` with bl==1 on a path that reaches the gate (the only competing ebx write, `pop ebx` 0x51f5a2, is an exit path - `inc;ret` follows) -> once per 4 rounds at round%4==1; 0x5b09f6 gated `ds:0x99180c==0`; triad `call 0x5a2ae0/add esp,8/call` at 0x4f3e08+0x508b48+0x543bc6; row-table builder (loop writing ds:0x985af4) runs immediately before 0x59b8ce | `evidence/m305_identity.txt:122-127`, A15/A16 @`:136-137`, A19 @`:139` | V (static); live per-turn cadence unmeasured |
-| EXPORT HOLE: site 0x4f3e08 is outside its index.csv owner FUN_004f34b0(+298 -> 0x4f35da); the sole prologue in the gap is 0x4f35e0, a real 2673-B function spanning [0x4f35e0,0x4f4051) with NO index row of its own -> index.csv is not a total function map. **CORRECTED by M306**: the code IS decompiled — Ghidra folded the region into FUN_004f4060's body via the tail-jump 0x4f4133 -> 0x4f35e0, so the earlier "no body" phrasing was wrong (body exists, mis-parented) | `evidence/m305_identity.txt:130`, A17 @`:138`; refuted-in-part by `evidence/m306_owner.txt` A17/A21 | V (coverage), owner body UNKNOWN |
-| ACCEPTANCE `python3 scripts/m305_identity.py` -> **19/19 OK**, exit 0; rerun diff = 0 lines. Zero box, zero /proc, zero gdb | `evidence/m305_identity.txt:154` | V |
-| DECLARED UNKNOWN: U1 0x4f35e0 owner guards/preds — **NARROWED by M306** (bounds/callees/no-guard settled; per-branch meaning still open); U2 per-block/per-slot MEANING (M302/M303 scope); U3 live per-turn cadence (zero box) | `evidence/m305_identity.txt` §UNKNOWN | lead |
-
+## M305 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `9bc9c82dfc0139e7`, 3108 B); noun: FUN_0051dcb0 = the zero-rebuild OWNER: 11 single-site callers, one loop-enclosed, a round-
 ## M306 (s264, STATIC, zero box) - 0x4f35e0 = a real 2673-B function absorbed by tail-jump folding; the export's "hole" is an index.csv size/containment lie
 | claim | evidence | conf |
 |---|---|---|
@@ -872,21 +862,7 @@ QUALIFIED BY B24 (s287): `fold()` in this module is now PARAMETERIZED - new hook
 | MU2's FIRST anchor reddened NOTHING (the driver's per-turn write re-composes from the container's bytes); replaced by the write-side anchor `ent["raw"] = bytearray(target_raw)` | `scripts/b24_mutate.py` comment | V |
 | OPEN: the queue content ON the founded base (the log records fac/x/y/cnt only - the seed span is a declared fixture); real income/price during t22-t29 (`D0_DECL`/`PRICE_DECL` are fixtures) | - | lead |
 
-## M311 (s274, STATIC, zero box; mutation-tested 15/15) - `ds:0x68cbb0` is the CURRENT-RECORD INDEX of the 304-B entity array; `ds:0x8f0d60` is its derived record POINTER, written in lockstep — FULL-LENGTH ROWS VERBATIM at `docs/named-archive-m311-rows.md` (moved by `scripts/m327_named_rotate.py`, sha1 `0b12d45d08a4`); this stub governs, one line per claim, same cites
-
-| claim | evidence | conf |
-|---|---|---|
-| THE INDEX: exactly 6 stores (`0x4e3476`, `0x4e4dd0`, `0x4efe8e`, `0x4f21e0`, `0x4f5a7c`, `0x4f5c36`), all `mov ds:..,reg`; cache split 6 writes / 16 tests / 318 reads = **340** refs (= `name_global.py`'s count); the field IS compared (`0x40CED9`) → no read-only-cursor claim | `evidence/m311_recidx.txt:11,33,39,60` | V |
-| THE POINTER: exactly 6 stores, 1:1 pairing — each 6-25 B after exactly one index store, none unpaired either side, same 4 functions | `evidence/m311_recidx.txt:14-20,50,56` | V |
-| STRIDE LAW in the encoding: `lea d,[n+n*8]`; `lea e,[n+d*2]`; `shl 0x4` = **304n** then `+0x95da10`; exact triplet pinned at all 5 folding sites (n=1:304, n=2:608) | `evidence/m311_recidx.txt:23-29,57` | V |
-| 5 of 6 selection sites RECOMPUTE the address; `0x4f5c36` is the exception, storing a SAVED pointer from `[ebp-0x8]` (`0x4f5c33`) | `evidence/m311_recidx.txt:58,34-49` | V |
-| THE TWO DEFERRED PICKS ARE ONE OBJECT: "304-B table at `0x95da40` bit 0x20" = `0x95da10 + 48`, field +48 of the same record (`0x4f5aab`); `0x95da10` in 310 insns, `0x95da40` in 96 | `evidence/m311_recidx.txt:30,59` | V |
-| THE SETTER `FUN_004e3470`: arg→index, fold, fold→pointer — 34 B / 11 insns / **57 callers**, all read from `ghidra_out/index.csv` by the printing gate | `evidence/m311_recidx.txt:61` | V |
-| NOT AN INVARIANT, MEASURED: `ds:0x68cbb4` stored **22**×, only **3** in an index window → pairing claimed for the pointer, REFUSED for it (CLOSED by M315: the refresh memo of `call 0x4e8d60`+`call 0x4e78e0`) | `evidence/m311_recidx.txt:62`, `evidence/m315_bb4_census.txt` | V |
-| ACCEPTANCE `python3 -u scripts/m311_recidx.py` → **PASS 8/8**, 2 runs byte-identical, digest `625cd5877271cd85`; `scripts/m311_mutate.py` → **15/15** (MU1 fold width, MU2 transcribed store, MU3 census under-count, MU4 mis-transcribed triplet, MU5 wrong base, MU6 rewritten insn, MU7 wrong pointer addr, MU8 refused pairing, MU9 decoration constant, MU10 blind write-detect, MU11 caller count) | `evidence/m311_recidx.txt:64-65` | V |
-| MATCHER CLAUSES, MEASURED (A8): only the window's RIGHT reach changes results (`0x4e4dd0`'s fold sits 78 B past the store: -24/+32→0, -24/+90→1); the `*8` operand-equality clause and 24 B proximity cap are **DECLARED INERT** — two earlier prose claims that they were load-bearing RETRACTED in the gate text | `evidence/m311_recidx.txt:53-58` | V |
-| UNPROVEN, DECLARED: the index VALUE reaching the fold's 2nd step is not established (no write tracking; a register-name rule would be FALSE at the setter) → claim stops at the arithmetic shape | `evidence/m311_recidx.txt:58` | V |
-| UNMODELED: which entity the index addresses in play; record +48's semantics; `0x68cbb4`'s 19 extra writers; who fills `[ebp-0x8]` behind `0x4f5c36` | - | lead |
+## M311 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `8ac1d711b2aaa84f`, 3180 B); noun: `ds:0x68cbb0` is the CURRENT-RECORD INDEX of the 304-B entity array; `ds:0x8f0d60` is its 
 ## M312 (s276, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d`) - the selection check (FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is UNREACHABLE from every caller; the pair is the cursor-tile neighbourhood
 
 | claim (one line each; full rows in the archive) | evidence | conf |
@@ -1660,3 +1636,13 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | STORES: 41 register stores (+0 `and/or/xor [word],imm`, +0 `mov [word],imm32` shapes) — 33 cannot clear bit 31, the ONLY 2 literal clears are the pass's own, 3 caller-mask, 3 opaque; G4c ties the sim's 3 masks to the dump's bytes | `:76-121` | V MU6,7,11,12 |
 | SECOND CLEARER: FUN_005518f0 (`not edx`) / FUN_00551cf0 (4th arg 0) clear a CALLER mask — 66 sites, 46 with a contiguous >=3-push run / 35 literal (20 undecoded, disclosed); `0x9000ff48`@0x59f176 (FUN_0059ec90 sweep) is the only LITERAL mask carrying bit 31 | `:124-132` | V MU9 |
 | UNRESOLVED: the noun of bit 13 (0x2000); 0xdd9bc3c0@0x4da404 (flag = caller's ebx) and the 20 undecoded call sites could clear bit 31; which live event fires the ARM | `:132` | OPEN MU10 |
+## M379 (s340-c2, 24/24) — +0x594 has 2 readers (AI SE scorers); 0x92a7fc is a POINTER — M376 OPEN RETRACTED.
+ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 24/24`** `3a154c8f3aea79fd` (`evidence/m379_field594.txt:75`, x2 `41e0f9c31c18e1cc`).
+| claim | ev | conf |
+|---|---|---|
+| READERS: 2 loads `[k*0x59c+0x927b24]` — 0x5a1eac (>0 adds `[0x94e488+k*0x82f*4]`, <0 rejects) / 0x54696c (`[0x94d67c+..]`, neg -> msg 0x546983) | `:59-61` | V MU7 MU8 MU11 MU12 |
+| NO static +0x594 store; 0x4ffff2 `[reg+0x594]` = a malloc'd dword array (ds:0x997b20), rival FAILS | `:56-58` | V MU15 |
+| LOOP: seed 0x9280b8, ebx 1, inc before `cmp ebx,8`/jl => 7 bodies (slots 1..7), max store 0x92a268 < 0x92a270 | `:63-65` | V MU1-MU6 MU19 |
+| RETRACTION: 0x92a7fc = terminal POINTER (seed+7*0x59c), terminal only | `:66-67` | V MU18 MU2 MU3 |
+| EXTENT: 8 rec = 0x2ce0 B (save pushes x2; walks bound 0x92a270 x2); no mirror past => no 9th slot | `:70-73` | V MU13 MU14 MU16 MU20 |
+| OPEN: copied-record readers / split displacements not excluded | `:22-23` | OPEN |

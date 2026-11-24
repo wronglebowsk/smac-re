@@ -1,0 +1,75 @@
+M379 who reads record +0x594, and the agenda loop's real write count
+tag  what                                                     value
+G0   text insns                                               781429
+G0   text sha1                                                02d578095222031e
+G0   exe sha1                                                 a889fd11be2fc4cc
+G0   0x5a116a bytes                                           bb 01 00 00 00
+G0   0x5a1171 bytes                                           bf b8 80 92 00
+G0   0x5a11c5 bytes                                           43
+G0   0x5a120d bytes                                           81 c7 9c 05 00 00
+G0   0x5a1213 bytes                                           83 fb 08
+G0   0x5a1216 bytes                                           0f 8c 5c ff ff ff
+G0   0x5a1eac bytes                                           8b 80 24 7b 92 00
+G0   0x54696c bytes                                           8b 82 24 7b 92 00
+G1   reader A stride chain 0x5a1e5a..0x5a1e67                 {'a': 1436, 'k': 0}
+G1   reader A category load @0x5a1e6a                         0x927b14
+G1   reader B stride chain 0x5468f6..0x546904                 {'a': 1436, 'k': 0}
+G1   reader B category load @0x546907                         0x927b14
+G1   field offsets from the three loads                       (1412, 1420, 1428)
+G1   record base = 0x927b24 - 0x594                           0x927590
+G1   reader A weight index chain -> edx                       {'a': 2095, 'k': 0}
+G1   reader B weight index chain -> ebx                       {'a': 2095, 'k': 0}
+G2   operands with +0x594                                     [('0x4ffff2', 'mov    edi,DWORD PTR [edx+0x594]', 'load')]
+G2   operands with +0x927b24                                  [('0x54696c', 'mov    eax,DWORD PTR [edx+0x927b24]'), ('0x5a1eac', 'mov    eax,DWORD PTR [eax+0x927b24]')]
+G2   reads of +0x927b14 (category)                            ['0x4a667b', '0x4a66ab', '0x522de1', '0x531fc2', '0x546907', '0x54b99a', '0x54bbb4', '0x54bbca', '0x54dd43', '0x54de74', '0x555dbc', '0x5a1e6a']
+G2   reads of +0x927b1c (choice)                              ['0x4a6693', '0x4a66c1', '0x522e07', '0x522e78', '0x531fcc', '0x546914', '0x54bc03', '0x54de26', '0x54de93', '0x555dc6', '0x5a1e74']
+G2   seq after reader A 0x5a1eb2..0x5a1edb                    ['test   eax,eax', 'jl     0x5a1ee0', 'mov    eax,DWORD PTR [ebp+eax*4-0x7c]', 'test   eax,eax', 'jle    0x5a1ed9', 'mov    edx,ebx', 'shl    edx,0x6', 'add    edx,ebx', 'lea    edx,[ebx+edx*2]', 'shl    edx,0x4', 'sub    edx,ebx', 'add    ecx,DWORD PTR [edx*4+0x94e488]', 'mov    DWORD PTR [ebp-0x4],ecx', 'test   eax,eax', 'jge    0x5a1ee0', 'mov    edi,0x1']
+G2   seq after reader B 0x546972..0x546983                    ['test   eax,eax', 'jl     0x5469ba', 'add    eax,ebx', 'mov    ecx,DWORD PTR [eax*4+0x94d67c]', 'test   ecx,ecx', 'jge    0x5469ba', 'mov    ebx,DWORD PTR [ebp-0x2c]']
+G2   0x4ffff2 owner base                                      mov    edx,DWORD PTR ds:0x997b20
+G2   ds:0x997b20 producer                                     ('shl    eax,0x2', 'mov    ds:0x997b20,eax')
+G2   loads of ds:0x997b20                                     649
+G3   seed pointer @0x5a1171                                   0x9280b8
+G3   loop start @0x5a116a                                     1
+G3   loop step @0x5a11c5                                      inc    ebx
+G3   loop bound @0x5a1213/0x5a1216                            (8, 'jl     0x5a1178')
+G3   stride @0x5a120d                                         0x59c
+G3   store offsets                                            [-8, 0, 8]
+G3   iterations = bound - start                               7
+G3   write bases                                              ['0x9280b8', '0x928654', '0x928bf0', '0x92918c', '0x929728', '0x929cc4', '0x92a260']
+G3   store span                                               ('0x9280b0', '0x92a268')
+G3   block end rec0+8*stride                                  0x92a270
+G3   terminal edi = seed + n*stride                           0x92a7fc
+G3   occurrences of 0x92a7fc in .text                         0
+G4   push 0x927590 sites + preceding push                     [('0x596ea9', 'push   0x2ce0'), ('0x596ec8', 'push   0x2ce0')]
+G4   0x2ce0 / stride                                          (11488, 8)
+G4   walk bounds                                              ('cmp    esi,0x92a270', 'cmp    ebx,0x92a270')
+G4   globals past the end (occurrences)                       {'0x92a2dc': 18, '0x92a2e8': 19, '0x92a2f8': 7, '0x92a39c': 8}
+G4   their would-be record-0 mirrors (occurrences)            {'0x9275fc': 0, '0x927608': 0, '0x927618': 0, '0x9276bc': 0}
+G4   9-slot end 0x92a80c occurrences                          0
+
+  G0   ok   text 781429 insns sha 02d578095222
+  G0   ok   the seed mov and the bound cmp are the bytes decoded below
+  G1   ok   reader A computes faction*0x59c and reads the category at 0x927b14
+  G1   ok   reader B computes faction*0x59c and reads the category at 0x927b14
+  G1   ok   the three loads are 8 B apart: +0x584/+0x58c/+0x594 over base 0x927590
+  G1   ok   both readers scale the faction by 0x82f dwords (= 0x20bc B block stride)
+  G2   ok   exactly 1 static +0x594 operand, a load: 0x4ffff2
+  G2   ok   RIVAL '0x4ffff2 reads the faction field' FAILS: its base is ds:0x997b20
+  G2   ok   ds:0x997b20 is malloc(count*4) - a heap dword array (649 loads), not the BSS record
+  G2   ok   exactly 2 indexed readers of record+0x594, both loads: ['0x5a1eac', '0x54696c']
+  G2   ok   reader A: skip if <0, else index the local effect vector; >0 adds the faction weight, <0 sets the reject flag
+  G2   ok   reader B: index the per-faction effect table at 0x94d67c; a negative value enters the message block at 0x546983
+  G2   ok   the stored index is the scan counter 0..0xa: 11 dwords = the #SOCIO keyword count
+  G3   ok   the loop seeds 0x9280b8, counts from 1, steps by inc and tests jl 8 after it
+  G3   ok   iterations = 8 - 1 = 7 (the bound is tested after the increment)
+  G3   ok   writes cover 0x9280b8..0x92a260; the highest stored byte is 0x92a268 < block end 0x92a270
+  G3   ok   RETRACTION: 0x92a7fc is the terminal POINTER (seed+7*stride), never dereferenced and never an immediate
+  G3   ok   RIVAL 'the loop writes 8 records / overruns 0x92a270' FAILS: it writes 7
+  G3   ok   the three stores are edi-8/+0/+8, so the initialised fields are 0x584/0x58c/0x594
+  G3   ok   slot 0 (0x927590) is skipped: the randomizer only seeds slots 1..7
+  G4   ok   the save/load path pushes size 0x2ce0 with base 0x927590 twice
+  G4   ok   0x2ce0 = 8 records x 0x59c; base+block = 0x92a270
+  G4   ok   two independent walks stop exactly at 0x92a270
+  G4   ok   RIVAL 'a 9th record exists' FAILS: the globals past 0x92a270 have no record-0 mirror and no 9-slot end address occurs
+
+PASS M379: 24/24 gates digest 3a154c8f3aea79fd
