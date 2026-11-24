@@ -732,3 +732,36 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   + one literal push; exe size asserted; "0x400 alone" == mask 0x400; population COUNTED
   from M382's evidence; second-derivation digest; rotate `--verify` full sha1.
 - **OPEN**: FUN_004dabb0's entry mechanism (INF) and 0x551cf0's boolean-arg noun.
+## Session 342-chain2 — M384: 0x400 has 7 setters; 5 of them hide behind a mask ARGUMENT
+
+- **ACCEPT** `python3 -u scripts/m384_bit400_writer.py` -> **`PASS M384: 33/33`** `341b46ff72a492b3`
+  (`evidence/m384_bit400_writer.txt:275`; re-run `cmp`-identical, `evidence/m384_twice.txt`);
+  `scripts/m384_mutate.py` -> **19/19 killed**, baseline green (`evidence/m384_mutate.txt:23`). Static, zero box.
+- **CENSUS** (`:10` `:16`): the pair dword has **42 writers** = 27 whole-dword `mov` at the
+  displacement + 15 through a `lea r,[idx*4+0x94d448]` pointer (found by a 2-pass CFG
+  dataflow, tags intersected at joins). **Zero** `and/or/xor/add` at the displacement --
+  which is why every mask grep missed the writers.
+- **THE SETTERS (7 sites, 7 functions)**: 2 hardcoded ORs -- `0x5534ae or ch,0x4`
+  (FUN_00553350) and `0x555a6b or ah,0x4` -> store `0x555a6e` (FUN_005551e0) -- plus
+  **5 mask-API callers**. `0x555a6e` sets 0x400 only when `(pair & 0xc00)==0` and bit 5 is
+  clear (bits 1/5 select the 0x800 arm instead); FUN_00553350 sets it when P1 bit4 is
+  clear and (531090()!=0 or bit5 of either side).
+- **THE API (new)**: `FUN_00551a20(owner, other, mask)` ORs `mask` into the pair after
+  `and 0xfaeef378` on its clear arm (complement `0x05110c87` carries bit 10 -> **0x400 is
+  wiped there**) and always ORs `mask|0x80000108`; `FUN_00551cf0(owner, other, mask, set?)` sets or clears `~mask` on the same
+  dword. Of **106** call sites (70 + 36) **95 masks resolve**: 5 pass 0x400 with set=1
+  (0x41b2d2 0x4cd6f6 0x5470d6 0x59aef0 mask 0x400; 0x594cf7 0x420) and 2 clear it
+  (0x4db11b 0xc20, 0x519bb5 0xc00). So the bit is written by **argument**, not by an
+  inline constant -- the run context's "writer unfound" is now a population, and the
+  M378 arms are the clear half of the same API.
+- **PITFALLS**: (1) `mov [ebp+0x8]` vs `[ebp+8]` breaks a naive slot key -- normalise the
+  offset. (2) Backward walks must follow `preds[i]`, not `i-1`: the next instruction in
+  address order after a `jmp` is another path's code and leaked `or ah,0x8` into the
+  0x555a6e set-mask (0xc00) until fixed. (3) `0x40020`/`0xc0020` are bits 18/19, NOT bit
+  10 -- the grep that "found" them was an arithmetic error the instrument refuted.
+- **OPEN / INTERSECTED**: 7 call-site masks are runtime (5 in the 0x4dadxx family, 2 load
+  `[ebx+0x18]`), 4 passthrough. One of those is now concrete: `FUN_004dacc0` is a
+  caller-mask SET/CLEAR gate (`test [pair],edi` -> `FUN_00551cf0(...,edi,1)` at 0x4dad05
+  or `(...,edi,0)` at 0x4dad30) and M385 `:55` pushes **0x400** into it at 0x4db0aa -- so
+  an 8th live 0x400 setter exists behind that argument. `0x52b9c7/0x52b9d0` remain M383's
+  two stack-copy slots.
