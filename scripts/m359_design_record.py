@@ -58,7 +58,7 @@ BUILDER = (0x595B10, 0x595D25)      # design-record builder head (stores)
 LOADER = (0x579F40, 0x57A060)       # #UNITS text loader
 CARRY_FN = (0x570860, 0x5708A6)     # 0x570860 carrier-capacity formula
 COST_FN = (0x595820, 0x595AD0)
-HP3 = (0x40F41E, 0x40F450)          # 10*clamp(v,1,3)/3 in the UI health check
+HP3 = (0x40F41E, 0x40F460)          # 10*clamp(v,1,3)/3 in the UI health check
 PB = (0x595D25, 0x595D60)           # Planet-Buster plan override
 
 INS = re.compile(r"^\s*([0-9a-f]{6,8}):\t([0-9a-f ]+)\t(.*)$")
@@ -112,23 +112,47 @@ def widen(r):
     return R8.get(r, r)
 
 
+def writes_reg(reg, t):
+    """True if the instruction writes the 32-bit register (a def, not a read)."""
+    m = re.match(r"([a-z]+)\s", t)
+    if not m:
+        return False
+    op, rest = m.group(1), t[m.end():]
+    if op in ("call", "jmp", "push", "cmp", "test"):
+        return False
+    if op.startswith("j"):
+        return False
+    # one-operand ops whose operand is the destination
+    if op in ("inc", "dec", "not", "neg", "pop", "mul", "imul") and "," not in rest:
+        return widen(rest.strip()) == reg
+    if op in ("imul", "mul") and "," not in rest:
+        return reg in ("eax", "edx")
+    dst = widen(rest.split(",")[0].strip())
+    return dst == reg and "," in rest or (dst == reg and op in ("pop", "inc", "dec", "not", "neg"))
+
+
 def resolve_arg(L, a, reg8):
-    """Where the stored register's value came from: builder arg, call result, or const."""
+    """Where the stored register's value came from: builder arg, call result, or const.
+
+    Def-use, not pattern-scan: the FIRST write to the register seen when walking
+    back from the store decides.  A call only counts when the register is eax
+    and no other write to eax lies between the call and the store (the review's
+    `call; mov al,0; store` counter-example).
+    """
     reg = widen(reg8)
     for _pa, pt in reversed(L.prev(a, 16)):
-        if pt.startswith("call "):
-            return "call " + pt.split()[-1]
-        m = re.match(r"mov %s,DWORD PTR \[ebp\+0x([0-9a-f]+)\]$" % reg, pt)
-        if m:
-            return "arg 0x" + m.group(1)
-        m = re.match(r"mov %s,0x([0-9a-f]+)$" % reg, pt)
-        if m:
-            return "const 0x" + m.group(1)
-        if re.match(r"xor %s,%s$" % (reg, reg), pt):
-            return "const 0x0"
-        if re.match(r"(mov|lea|add|sub|pop|imul|and|or|shl|shr|sar|movsx|movzx) %s," % reg, pt) \
-                or re.match(r"(inc|dec|not|neg) %s$" % reg, pt):
+        if writes_reg(reg, pt):
+            m = re.match(r"mov %s,DWORD PTR \[ebp\+0x([0-9a-f]+)\]$" % reg, pt)
+            if m:
+                return "arg 0x" + m.group(1)
+            m = re.match(r"mov %s,0x([0-9a-f]+)$" % reg, pt)
+            if m:
+                return "const 0x" + m.group(1)
+            if re.match(r"xor %s,%s$" % (reg, reg), pt):
+                return "const 0x0"
             return "other: " + pt
+        if pt.startswith("call ") and reg == "eax":
+            return "call " + pt.split()[-1]
     return None
 
 
@@ -145,6 +169,42 @@ def field_users(L):
             v = int(h, 16) - 0x88          # row 0x98ad88: absolute low byte - 0x88
             if 0 <= v < 0x34:
                 out[v].append(a)
+    return out
+
+
+def anchored_row_stores(L):
+    """Byte stores to a row field through a PROVEN row-anchored base register.
+
+    Two anchoring forms are recognised, and only these:
+      A  [reg+0x98adXX]  -- reg is a row OFFSET (builder 0x595b10: esi = 13i<<2)
+      B  reg <- literal 0x98adXX, advanced only by `add reg,0x34` (loader 0x579f40)
+    Returns {field_off: [(addr, text, form)]}.  A store through any other base is
+    NOT row-anchored and is not counted (the census is exact for these forms).
+    """
+    out = {}
+    for a, t in L.window(0, 0x800000):
+        m = re.match(r"mov BYTE PTR \[(\w+)\+(0x98ad[0-9a-f]{2})\],", t)
+        if m:
+            off = int(m.group(2), 16) - ROW
+            out.setdefault(off, []).append((a, t, "A"))
+    for a, t in L.window(0, 0x800000):
+        m = re.match(r"mov (\w+),0x(98ad[0-9a-f]{2})$", t)
+        if not m:
+            continue
+        reg, base = m.group(1), int(m.group(2), 16)
+        for b, bt in L.after(a, 80):
+            if bt.startswith(("ret", "jmp ")):
+                break
+            if re.match(r"add %s,0x34$" % reg, bt):
+                continue
+            m2 = re.match(r"mov BYTE PTR \[%s([-+]0x[0-9a-f]+)\]," % reg, bt)
+            if m2:
+                d = int(m2.group(1).replace("+", ""), 16) if m2.group(1).startswith("+") \
+                    else -int(m2.group(1)[3:], 16)
+                out.setdefault(base - ROW + d, []).append((b, bt, "B:" + reg))
+            elif re.match(r"(mov|lea|add|sub|pop|xor|and|or) %s," % reg, bt) \
+                    or re.match(r"(inc|dec) %s$" % reg, bt):
+                break
     return out
 
 
@@ -215,9 +275,13 @@ def main():
     argsv = list(reversed(pushes))
     for i, (a, t) in enumerate(argsv):
         print(" arg%d (ebp+0x%x): %-22s @%06x" % (i, 8 + 4 * i, t, a))
+    calltgt = next((t.split()[-1] for _a, t in L.window(0x57A021, 0x57A027)
+                    if t.startswith("call ")), "")
     gate("G3 5th design field is the CONSTANT 1",
-         len(argsv) == 6 and argsv[5][1] == "push 0x1",
-         "stack args %s" % [t for _a, t in argsv])
+         len(argsv) == 6 and argsv[5][1] == "push 0x1"
+         and calltgt == "0x595b10" and bmap.get(0x27) == "arg 0x1c",
+         "args %s -> call %s ; builder +0x27 <- %s"
+         % ([t for _a, t in argsv], calltgt, bmap.get(0x27)))
 
     # ---- G4 loader: Plan/Cost/Carry/Icon stores, base 0x98adba --------
     print("\n== loader post-call field stores (base literal + stride)")
@@ -243,32 +307,46 @@ def main():
          % (sorted(hex(k) for k in fields), base[0][1] if base else None,
             stride[0][1] if stride else None))
 
-    # conditional stores: Plan<0, Cost==0 and Carry==0 skip the write
+    # conditional stores: Plan<0 skips, Cost==0 and Carry==0 skip
     cond = {}
-    for off in (0x28, 0x29, 0x2A):
+    for off, jcc in ((0x2A, "jl"), (0x29, "je"), (0x28, "je")):
         a = fields[off][0] if off in fields else 0
-        pre = [t for _pa, t in L.prev(a, 7)] if a else []
-        cond[off] = bool(pre) and any(t.startswith("test ") for t in pre) and \
-            any(t.startswith("j") for t in pre[-3:])
-    print(" conditional (Plan<0 / cost==0 / carry==0 skip): %s" % cond)
+        pre = list(L.prev(a, 2)) if a else []
+        shape = [t for _pa, t in pre]
+        tgt_ok = False
+        if len(pre) == 2 and shape[0].startswith("test ") and shape[1].startswith(jcc + " "):
+            tgt_ok = int(shape[1].split()[-1], 16) == min(
+                [b for b in L.order if b > a], default=0)
+        cond[off] = tgt_ok
+    print(" conditional guard (plan<0 jl / cost==0 je / carry==0 je, jump lands after the store): %s"
+          % {hex(k): v for k, v in cond.items()})
+    gate("G12 loader stores are conditionally guarded",
+         all(cond.values()),
+         "plan test+jl over the store, cost/carry test+je over the store")
 
-    # ---- G5 +0x28 writers: literal + register-relative -----------------
+    # ---- G5 +0x28 writers: anchored-register census --------------------
+    anch = anchored_row_stores(L)
+    w28 = [a for a, _t, _f in anch.get(0x28, [])]
     lit28 = [a for a, t in L.window(0, 0x800000)
              if re.search(r"mov BYTE PTR \[[^\]]*\+0x98adb0\],", t)]
-    print("\n +0x28 writers: literal-form %s ; register-form %06x"
-          % ([hex(a) for a in lit28], fields.get(0x28, (0, "?"))[0]))
+    print("\n +0x28 writers: literal-form %s ; anchored census %s"
+          % ([hex(a) for a in sorted(set(lit28))], [hex(a) for a in sorted(set(w28))]))
+    print(" anchored census rows: %s"
+          % {hex(k): [hex(x[0]) for x in v] for k, v in sorted(anch.items())})
     gate("G5 +0x28 has TWO writers (M356 said one)",
-         lit28 == [0x595D1C] and fields.get(0x28, (0, ""))[0] == 0x57A041,
-         "literal %s + register-relative 0x57a041 ([esi-0xa], esi=0x98adba+0x34*i)"
-         % [hex(a) for a in lit28])
+         sorted(set(w28)) == [0x57A041, 0x595D1C],
+         "anchored-register census (disp form + literal base with 0x34 stride) "
+         "finds %s" % [hex(a) for a in sorted(set(w28))])
 
     # ---- G6 transport gate: weapon record +0x02 == 7 -------------------
-    g6 = [t for a, t in L.window(0x595CF0, 0x595D00)]
+    g6 = [t for a, t in L.window(0x595CEF, 0x595D00)]
     print("\n carry auto-value gate: %s" % g6)
     gate("G6 auto-carry gated on weapon Mode 7",
          any(t.startswith("cmp BYTE PTR [e") and t.endswith("+0x92b952],0x7") for t in g6)
-         and "shl eax,0x4" in " ".join(t for _a, t in L.window(0x595CF0, 0x595CF6)),
-         "weapon row (idx<<4) +0x02 == 7 == Transport (alpha #WEAPONS Mode)")
+         and "shl eax,0x4" in " ".join(t for _a, t in L.window(0x595CF0, 0x595CF6))
+         and "mov edi,eax" in g6
+         and L.at.get(0x595D31, "").startswith("cmp BYTE PTR [edi+0x92b950],0x63"),
+         "index<<4 -> weapon row +0x02 == 7 (Transport); same base +0x00 == 99 (Planet Buster)")
 
     # ---- G7 carrier formula 0x570860 ----------------------------------
     print("\n== carrier formula 0x570860")
@@ -278,10 +356,14 @@ def main():
     gate("G7 carry = chassis base * arg (reactor), ability-scaled",
          cf.get(0x57086E, "") == "mov dl,BYTE PTR [ecx+0x92ae81]"
          and cf.get(0x570874, "") == "mov al,BYTE PTR [ecx+0x92ae83]"
-         and cf.get(0x57087F, "") == "imul eax,DWORD PTR [ebp+0x10]"
          and cf.get(0x57087A, "") == "cmp dl,0x1"
-         and cf.get(0x57088E, "").startswith("cdq") or False,
-         "reads chassis +0x01/+0x03, multiplies by arg0x10 when +0x01==1")
+         and cf.get(0x57087F, "") == "imul eax,DWORD PTR [ebp+0x10]"
+         and cf.get(0x570886, "") == "test ecx,0x800000"
+         and cf.get(0x570891, "") == "sar eax,1"
+         and cf.get(0x570893, "") == "test ecx,0x80000"
+         and cf.get(0x57089B, "") == "lea eax,[eax+eax*2+0x1]"
+         and cf.get(0x5708A2, "") == "sar eax,1",
+         "chassis +0x01/+0x03, x arg0x10 when +0x01==1, /2 on 0x800000, (3v+1)/2 on 0x80000")
 
     # ---- G8 +0x27 compare band: {1,3} ----------------------------------
     loads27 = [a for a, t in L.window(0, 0x800000)
@@ -308,19 +390,27 @@ def main():
     print("\n +0x27 loads %d; compare immediates seen on the loaded reg: %s;"
           " 1-and-3 clamp sites %d" % (len(loads27), imms, len(sites_band)))
     gate("G8 +0x27 band is exactly {1,3}",
-         set(imms) == {1, 3} and len(sites_band) >= 40,
-         "immediates %s over %d clamp sites" % (imms, len(sites_band)))
+         imms == {1: 53, 3: 54} and len(sites_band) == 52 and len(loads27) == 127,
+         "loads %d, immediates %s over %d clamp sites (pinned)"
+         % (len(loads27), imms, len(sites_band)))
 
     # ---- G9 10*v/3 chain ----------------------------------------------
     h3 = dict(L.window(*HP3))
-    print("\n HP-thirds chain: %s | %s | %s | %s"
-          % (h3.get(0x40F43E, ""), h3.get(0x40F441, ""), h3.get(0x40F443, ""), h3.get(0x40F448, "")))
+    print("\n HP-thirds chain: %s | %s | %s | %s | %s | %s"
+          % (h3.get(0x40F43E, ""), h3.get(0x40F441, ""), h3.get(0x40F443, ""),
+             h3.get(0x40F448, ""), h3.get(0x40F44A, ""), h3.get(0x40F454, "")))
+    chain_in = [t for a, t in L.window(0x40F432, 0x40F43E) if t.startswith("mov eax,")]
     gate("G9 clamp(v)*10/3 chain (HP thirds)",
          h3.get(0x40F43E, "") == "lea ecx,[eax+eax*4]"
          and h3.get(0x40F441, "") == "shl ecx,1"
          and h3.get(0x40F443, "") == "mov eax,0x55555556"
-         and h3.get(0x40F448, "") == "imul ecx",
-         "lea *5, shl 1 (=*10), magic /3 0x55555556, imul ecx")
+         and h3.get(0x40F448, "") == "imul ecx"
+         and h3.get(0x40F44A, "") == "mov eax,edx"
+         and h3.get(0x40F454, "") == "shr eax,0x1f"
+         and h3.get(0x40F457, "") == "add edx,eax"
+         and sorted(chain_in) == ["mov eax,0x1", "mov eax,0x3"],
+         "input eax written only by the clamp (%s); lea *5, shl 1, magic /3, imul, sign fixup"
+         % sorted(chain_in))
 
     # ---- G10 plan at +0x2a: Planet Buster override ---------------------
     pb = dict(L.window(*PB))
@@ -333,10 +423,17 @@ def main():
 
     # ---- G11 +0x2a compared against 12 (max Plan) ----------------------
     p12 = [(a, t) for a, t in L.window(0, 0x800000)
-           if "cmp BYTE PTR [eax+0x98adb2],0xc" in t or "cmp BYTE PTR [eax+0x98adb2],0xc" == t]
-    print(" +0x2a == 12 compares: %d sites, first %s" % (len(p12), [hex(a) for a, _t in p12][:6]))
-    gate("G11 +0x2a bounded at 12 (max Plan)", len(p12) == 43,
-         "%d sites compare the plan byte with 12 (pinned)" % len(p12))
+           if re.search(r"cmp BYTE PTR \[\w+\+0x98adb2\],0xc$", t)]
+    regs = {}
+    for a, t in p12:
+        mr = re.search(r"\[(\w+)\+", t)
+        if mr:
+            regs[mr.group(1)] = regs.get(mr.group(1), 0) + 1
+    print(" +0x2a == 12 compares: %d sites by base %s, first %s"
+          % (len(p12), regs, [hex(a) for a, _t in p12][:6]))
+    gate("G11 +0x2a bounded at 12 (max Plan)", len(p12) == 49,
+         "%d sites compare the plan byte with 12 across %d base registers (pinned)"
+         % (len(p12), len(regs)))
 
     # ---- R1: +0x27 is NOT the Plan column ------------------------------
     r1 = (argsv[5][1] == "push 0x1" if len(argsv) > 5 else False) and \

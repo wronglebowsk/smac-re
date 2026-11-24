@@ -32,6 +32,21 @@ MUTANTS = [
     ("MU12", "G5", "595d1c", "0x98adb0", "0x98adb1", "literal +0x28 writer disappears"),
     ("MU13", "G2", "595cb7", "[ebp+0x18]", "[ebp+0x14]",
      "ability arg re-pointed (arg-resolution algorithm mutant)"),
+    ("MU14", "G12", "57a02b", "jl 0x57a030", "jne 0x57a030",
+     "plan's sign guard becomes an equality guard"),
+    ("MU15", "G7", "57089b", "lea eax,[eax+eax*2+0x1]", "lea eax,[eax+eax*2]",
+     "ability 3:2 scaling loses its rounding term"),
+    ("MU17", "G6", "595cf0", "shl eax,0x4", "shl eax,0x3",
+     "weapon row index scaled by 8 instead of 16"),
+    ("MU18", "G9", "40f454", "shr eax,0x1f", "shr eax,0x1e",
+     "magic-divide sign fixup shift"),
+]
+
+# insert mutants: a synthetic instruction placed after `addr` (a free address),
+# used for the resolve_arg def-use counter-example (call; mov al,0; store)
+INSERT_MUTANTS = [
+    ("MU19", "G2", "595ce3", "mov al,0x0",
+     "call result overwritten before the +0x29 store (def-use)"),
 ]
 
 
@@ -93,8 +108,24 @@ def main():
         for l in hit:
             print("        %s" % l[:110])
 
+    for mid, pref, addr, text, why in INSERT_MUTANTS:
+        patched = os.path.join(OUT, "%s.txt" % mid)
+        at = int(addr, 16)
+        out = ["  %06x:\t00\t%s" % (a, t) for a, t in src]
+        out.append("  %06x:\t00\t%s" % (at, text))
+        out.sort()
+        open(patched, "w").write("\n".join(out) + "\n")
+        rc, hit, _ = run(patched, pref)
+        verdict = "RED" if (hit and all(l.startswith("FAIL") for l in hit)) else "NO-OP"
+        if verdict == "NO-OP":
+            noop.append(mid)
+        print(" %-5s %-4s %-8s %-7s rc=%-7d %s" % (mid, pref, addr, verdict, rc, why))
+        for l in hit:
+            print("        %s" % l[:110])
+
     print("\n mutants %d, red %d, NO-OP %s"
-          % (len(MUTANTS), len(MUTANTS) - len(noop), noop or "none"))
+          % (len(MUTANTS) + len(INSERT_MUTANTS),
+             len(MUTANTS) + len(INSERT_MUTANTS) - len(noop), noop or "none"))
     return 1 if noop else 0
 
 
