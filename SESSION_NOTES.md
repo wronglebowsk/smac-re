@@ -558,6 +558,44 @@ whether a facility completion stamps at all.
 - **STILL OPEN:** which .rdata template consumes slots 1/2 (and whether a facility completion
   ever reaches a template); the unit-id decoding (M68/M69 NEG_TYPE).
 
+## Session 326 (2026-11-24) — M348: the template that consumes slots 1/2 is Script.txt, not .rdata
+
+- **Question (from M346's OPEN):** which .rdata template consumes the completion block's slots
+  1/2? **Answer:** none — the block registers the item label id and base name, then assembles a
+  *script key* and hands it to the script-text dispatcher:
+  `PRODUCEX` (0x68cfc4) + `Q` (0x68cfd0) / `G` (0x68cfd4) into 0x997120 (fallback `PRODUCE`
+  0x68cfe8), then `call 0x48f100` @0x4f122a. `FUN_0048f100` sets slot 0 = `[0x8f0d60]+0x13`
+  @0x48f20f and looks the key up in `programs/Script.txt`: `#PRODUCEXQ/XG` bodies read `$ITEM1`
+  (slot 1) + `$NUM1`; `#PRODUCE2/3` read `$<M1:$FACTIONADJ2>` (slot 2). `.rdata` holds **0**
+  `$<` templates (only the vocabulary `$LINK<` @0x673330).
+- **Setters measured:** `FUN_006265a2(index, LABEL-ID)` resolves through table 0x997b28
+  (`call 0x61482f`) then strcats; `FUN_00626634(index, LITERAL)` strcats directly; both clear the
+  slot byte, `cmp k,0x9` + `jle`, return 3 above. (0x64b9e0 is **strcat**, not strcpy — it walks
+  the destination to its NUL first.)
+- **RETRACTION:** M346's "drainer" `FUN_00636b1e` is the multiplayer **Create Session** dialog —
+  it draws `Session Name:` / `Maximum Players:` / `Session Password (Optional:)`
+  (0x6998b0/c0/d4) and re-loops while `strlen(slot1) > 0x10` (session-name bound). The slot 0/1/2
+  first-byte clears @0x63730e,15,1c are that dialog's field init. The bank itself is general:
+  63 sites in 30 functions reference 0x99a01c, 7 sites build `k<<8+0x99a01c` (4 expander, 2
+  setters, 1 modal @0x5f12ee).
+- **Acceptance:** `python3 -u scripts/m348_slot_template.py` -> **`PASS M348: 12/12 gates`**
+  digest `a3d46c017673526a`, two runs byte-identical (`evidence/m348_slot_template.txt:87`);
+  harness `scripts/m348_mutate.py` -> **13/13**, NO-OP `[]` (`evidence/m348_mutate.txt:14`).
+  Pitfall: the instrument originally wrote its evidence on EVERY run, including mutants — a
+  mutant clobbered the acceptance file; it now refuses to write when `M348_PATCH_*` is set.
+- **Docs:** NAMED 249,052 B = 948 B headroom; B28 (2,955 B), M343 (1,963 B), M345 (1,021 B),
+  M344 (1,991 B) rotated VERBATIM (`scripts/m348_named_rotate.py --verify` PASS: sha1 bd196a95 /
+  a7f9573e / 907d0705 / e7b59fa3). M346 + M344 patched in place (alert framing / drainer retraction). NEXT_PROMPT
+  11.9 KB. Archive-name collisions hit twice (b28-rows, m343-rows already held other blocks) —
+  check `docs/` before naming a rotation target.
+- **Review #371 (local Strata, 10 findings — 3 P1 / 7 P2):** all fixed, none dismissed. The P1s
+  were registry debt: the B28/M343/M345/M344 stubs carried `V` without their mutants (now each row
+  names MU/ME), and M344's row cited M346 evidence for an M348 retraction (now cites
+  `evidence/m348_slot_template.txt:63-69`). The P2s were gates claiming more than they read: G10 is
+  no longer vacuous (exactly one `$` literal, `$LINK<` @0x673330), G7 asserts the five
+  literal->0x997120 strcat triples, G5/G6 assert the edi/ebx roots, G9 gates XG and PRODUCE3, G11
+  asserts the per-function distribution, G12 reads push 0x99a11c -> call 0x64c460 -> cmp eax,0x10,
+  and the .rdata scan now reads the PE section table instead of hardcoded offsets.
 ## Session 326-chain2 (2026-11-24) — M349: M68/M69 `NEG_TYPE` ANSWERED (milestone/m349)
 - QUESTION: the queue stored **-3** for chooser entry 195 and **-6** for 196
   (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`) — not one sentinel.

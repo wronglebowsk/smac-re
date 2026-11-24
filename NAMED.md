@@ -1305,16 +1305,17 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 
 ## B28 (s316 BUILD, zero box) — the UPKEEP FEEDER made EXECUTABLE on the save's OWN base records; the CARRIED HALF-UNIT becomes a modeled block-A field (`sim/feeder.py` law, `sim/composedfeeder.py` run, spine §B28). ACCEPT `python3 -u -m sim.selftest --b28` -> **`PASS B28: 8/8 gates`** digest(rows) `705a4520c08c4062` / print `99c52201f073499d` / container `38bba29ab857654b`, 2 runs byte-identical (`evidence/b28_feeder_exec.txt:9`); harness `python3 -u scripts/b28_mutate.py` -> **`HARNESS PASS 18/18`** digest `3974d739da3af55f`, 8/8 gates covered, NO-OP `[]` (`evidence/b28_mutate.txt:20-23`). Post-#351-review: G4 asserts the pinned offset+value (244 / -1), G3 asserts the inert window against a control scan, G7 asserts the exact 7/8 and its miss, G6 measures the honest run's zero touch set.
 
-| claim | evidence | conf |
-|---|---|---|
-| `ds:0x985ba0` is CARRIED in the save's state header (file offset 244) and reads **-1** in m54b_clean — G4 ASSERTS both the offset and the value from the bytes (pinned 244 / -1, offset < block A): the 4f48dc sign skip fires, the halving runs 0 times here (MU6 drops the sign skip and reddens G4+G6+G7) | `evidence/b28_feeder_exec.txt:5` | V |
-| the container's own `+300` octet `[0,1,1,0,1,0,1,1]` IS the executable feeder's full-price total, 8/8 with the own faction's recorded disabled id (8, parsed `docs/named-archive-m32-m84e.md:272`); the no-list rival's exact 7/8 and its single miss `[own_player=3]` are ASSERTED (not merely `<8`) — MU5/MU9/MU10/ME3 redden G3/G7 | `:8` | V |
-| bounds are the PARSED immediates 1 / 0x22 / 0x27: VISITS 1..38, CHARGES 1..34, upkeep dword at row+0x10 — MU4/ME2 redden G2 | `:3` | V |
-| charged only when the bit is set in the base's own `+0x8c` bitmap (18/18); ids 32..38 inert here: the ids 32..63 window `+0x90..+0x93` is nonzero in 0 of 18 records while the SAME scan finds nonzero bytes in 14/18 control windows `+0x8c..+0x8f` — both asserted — MU5/MU9/ME6 redden G3 | `:4` | V (inert here); the bitmap WIDTH past `+0x8f` OPEN |
-| charge = `trunc((cost+carry)/2)` (the `cdq/sub/sar` shape, not a shift), the sum's parity written back into the SAME bit5; full-price leaves the carry — MU1/MU2/MU3/MU8 redden G5 | `:6` | V |
-| **FIXTURE-ONLY** persistence — the save's own run writes no carry: gate dword pointed at a base of the charged faction -> bit5 survives round 1 at 5 of 7 fixtures and changes round 2 by exactly 1 at those only (exactness measured over the differing set), 0 wrong halvings elsewhere, the zero-carry baseline licensed by a measured all-ones-carry seed tie (ME5 breaks it); the HONEST run touches `[]` and rewrites bit5 `[0,0,0,0,0,0,0,0]` unchanged; `modeled_spans()` no-arg still the pre-B27 list; unmutated build = identity — MU3/MU7/MU8/MU11/MU12/ME4/ME5 redden G6 | `:7` | V (fixture-only) |
-| the NOUN of `ds:0x985ba0`; `ebx` == the charged base's owner | M333 G6 (no .text writer); no mutant can name a noun | INFERRED |
+ROTATED VERBATIM to `docs/named-archive-b28-feeder-rows.md` (sha1 `bd196a95e56c8016`); this stub governs: one line per claim; acceptance `python3 -u -m sim.selftest --b28` -> **`PASS B28: 8/8 gates`** digest `705a4520c08c4062`, harness `scripts/b28_mutate.py` -> **18/18** `3974d739da3af55f`.
 
+| claim (one line each; full rows in the archive) | evidence | conf |
+|---|---|---|
+| `ds:0x985ba0` is CARRIED in the save's state header (file offset 244) and reads -1 in m54b_clean; the 4f48dc sign skip fires and the halving runs 0 times here | `evidence/b28_feeder_exec.txt:5` | V MU6 |
+| the container's own `+300` octet is the executable feeder's full-price total 8/8; the no-list rival's exact 7/8 and its single miss `[own_player=3]` are asserted | `:8` | V MU5/MU9/MU10/ME3 |
+| bounds are the PARSED immediates 1 / 0x22 / 0x27: VISITS 1..38, CHARGES 1..34, upkeep dword at row+0x10 | `:3` | V MU4/ME2 |
+| charged only when the bit is set in the base's own `+0x8c` bitmap (18/18); ids 32..38 inert here (0/18 in `+0x90..+0x93`, 14/18 control windows nonzero) | `:4` | V MU5/MU9/ME6; bitmap WIDTH past `+0x8f` OPEN |
+| charge = `trunc((cost+carry)/2)` (cdq/sub/sar, not a shift), parity written back into bit5; full-price leaves the carry | `:6` | V MU1/MU2/MU3/MU8 |
+| FIXTURE-ONLY persistence: no carry written by the save's own run; honest run touches `[]` and rewrites bit5 unchanged | `:7` | V MU3/MU7/MU8/MU11/MU12/ME4/ME5 (fixture-only) |
+| the NOUN of `ds:0x985ba0`; `ebx` == the charged base's owner | M333 G6 (no .text writer) | INFERRED |
 ## M335 (s317-chain2, pick (x6), STATIC 7/7) — the difficulty LADDER: `ds:0x985aec` indexes alpha.txt's six `#DIFF` names at `0x94d2ac` in file order; 4 = Thinker, 5 = Transcend
 
 | claim | evidence | conf |
@@ -1424,56 +1425,68 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | 7 | OPEN: +0x59f4's writer (lead: a control at obj+0x5970); page 1..7 = faction block is INFERRED | lead |
 ## M343 (s323-chain2, STATIC 9/9, review #365 hardened) — the M339 OPEN `[obj+0xa40]` writer: THREE dialog-family methods publish the SELECTED item there; the runner only reads it
 
-| claim | evidence | conf |
+ROTATED VERBATIM to `docs/named-archive-m343-a40-rows.md` (sha1 `a7f9573ef60c5314`); this stub governs: one line per claim; acceptance `scripts/m343_a40_writer.py` -> **`PASS M343: 9/9`** `bcdace84a0352b4a` x2; harness 12/12 `[]`.
+
+| claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
-| census: 97 refs name displacement 0xa40 = 25 indexed (12 fns) + 72 field, all dword (47 stores / 25 reads); 0 `lea reg,[..+0xa40]` and 0 `,0xa40` immediate -> both pointer-form store evasions absent | `evidence/m343_a40_writer.txt:5-22` | V MU1 |
-| writers: `FUN_005f5759` (+0xa8 of 0x67164c/0x6717cc/0x6728c0, +0xb0 of 0x671644) x4, `FUN_005f58fa` (+0x64 of the five class vtables; 0x671644 carries it at +0x6c) x3, `FUN_005f5a11` (receiver `ds:0x9977f0`) x2; runner `FUN_005f1394` = 1 READ 0x5f3f45, 0 stores; ctor `FUN_00405ef0` = 0 refs | `:66-77`, `:24-26` | V MU4,MU5,MU2 |
-| receiver fingerprint = the PAIR {[+0x21d0] container, [+0x2350] state}: exactly 4 functions carry it (runner + 3 writers); ">=3 of {21d0,2350,30a8,3100}" wrongly admits `FUN_005ee350` + `FUN_005eede6` | `:28-64` | V MU3,MU9 |
-| identity: 0x5f13b2 [ebp-0x394]=ecx -> 0x5f3d6a reload -> 0x5f3d70 `ds:0x9977f0` -> 0x5f3e02 restore -> 0x5f3f45 `[ebp-0x394]+0xa40`; 5a11 loads `ds:0x9977f0` into its own local and both stores reload it (10-link chain, adjacency asserted) | `:79-88` | V MU7,MU10 |
-| value law: each writer publishes {0 reset, the `[this+0x2228]` -> `[+8]` -> `+0xec` member, `FUN_005fdcf7` on the `+0x21d0` container}; 5a11 has no reset; the -1 at 0x5f581c is reached only from arg == -2 with `[this+0x30a8] & 0x40` | `:66-77`, `:89-99` | V MU6,MU8,MU11 |
-| ACCEPT `python3 -u scripts/m343_a40_writer.py` -> `PASS M343: 9/9` `digest=bcdace84a0352b4a` x2; harness `m343_mutate.py` 12/12, NO-OP `[]` | `:118`, `evidence/m343_mutate.txt:25` | V MU0 |
-| OPEN: dispatcher of the +0x64 slot (19 `call [reg+0x64]` sites image-wide, 0 direct); the container's item record past +0xec; any consumer of `[this+0x3100]` (5759 stages the arg) | - | lead |
-
-
-
+| census: 97 refs name 0xa40 = 25 indexed (12 fns) + 72 field, all dword (47 stores / 25 reads); 0 `lea ..+0xa40`, 0 `,0xa40` immediate | `evidence/m343_a40_writer.txt:5-22` | V MU1 |
+| writers: FUN_005f5759 x4, FUN_005f58fa x3, FUN_005f5a11 x2 (ds:0x9977f0); runner FUN_005f1394 = 1 read, 0 stores; ctor FUN_00405ef0 0 refs | `:66-77`,`:24-26` | V MU4,MU5,MU2 |
+| receiver fingerprint = {[+0x21d0] container, [+0x2350] state}: exactly 4 fns; the '>=3 of {21d0,2350,30a8,3100}' rival admits 2 more | `:28-64` | V MU3,MU9 |
+| identity chain 0x5f13b2 -> 0x5f3f45 `[ebp-0x394]+0xa40`; 5a11 reloads ds:0x9977f0 and both stores reach it (10 links, adjacency asserted) | `:79-88` | V MU7,MU10 |
+| value law: each writer publishes {0, `[this+0x2228]->[+8]->+0xec`, `FUN_005fdcf7(+0x21d0)`}; the -1 @0x5f581c needs arg==-2 and `[+0x30a8]&0x40` | `:89-99` | V MU6,MU8,MU11 |
+| ACCEPT `scripts/m343_a40_writer.py` -> `PASS M343: 9/9` `bcdace84a0352b4a` x2; harness 12/12 `[]` | `:118`, `evidence/m343_mutate.txt:25` | V MU0 |
+| OPEN: dispatcher of the +0x64 slot (19 `call [reg+0x64]`, 0 direct); the container past +0xec; consumers of `[this+0x3100]` | - | lead |
 ## M344 (s323-chain1, ANALYSE, static; ACCEPT `scripts/m344_completion_caller.py` -> **`PASS M344: 8/8 gates`**, digest `034bf0e1a1606d2c`, 2 runs identical (`evidence/m344_completion_caller.txt:148`); harness `scripts/m344_mutate.py` -> **10/10**, NO-OP `[]` (`evidence/m344_mutate.txt:14`)) — NO API caller completes production: the stamp is the base screen's inline `or` @`0x4f0ec0`.
 
-| claim | evidence | conf |
+ROTATED VERBATIM to `docs/named-archive-m344-rows.md` (sha1 `e7b59fa35e2635c8`); this stub governs: one line per claim; acceptance `scripts/m344_completion_caller.py` -> **`PASS M344: 8/8 gates`** `034bf0e1a1606d2c` x2; harness 10/10 `[]`.
+
+| claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
-| all 27 item args resolve (imm 18 / callret 3 / clamped 2 / loopctr 2 / param 2); split **16 set=1 / 8 set=0 / 3 variable** — M342's 16/7/4 read `0x40dd3c` as '?' (its `push 0x0` sits 7 insns back); only divergent row of 27 | `:4-38` | V MU1,MU2,MU3 |
-| **0/27** items' resolved class is QUEUE (the base record window `+0x4c..+0x77`); **0/8** caller functions calls the pop | `:34`,`:40-49`,`:141`,`:145` | V MU4 |
-| the 4 register-item set=1 sites: `0x41c6f8` (modal-runner return + bitmap pre-read = toggle), `0x41d8fc` (loop counter under `0x5a6e70`), `0x508c85`/`0x508cee` (1..0x26 clamp) | `:127-131` | V MU5 |
-| stamp = `or BYTE PTR [eax],cl` @`0x4f0ec0` in FUN_004ef6d0: mapper(item=`edi`) -> 304*`ds:0x68cbb0`, 10 pinned insns, **0x86** before the byte-read `call 0x4ef5d0` (pop) @`0x4f0f46` | `:51-70`,`:143`,`:145` | V MU6,MU8 |
-| the same block spends `[edx+0x40]` by `edi` (`0x4f0ca4/6`) then reads `[edi*48+0x984d38]` (`0x4f0f65-6f`), `edi` unwritten in between | `:112-124`,`:144` | V MU7 |
-| CLOSED by `## M346`: the build-finished ALERT is this same block's two posts (0x6265a2 kind 1 @0x4f0f78, 0x626634 kind 2 @0x4f0f96) into the 10-slot `$`-token table, drained by FUN_00636b1e; `0x985b10` is refuted as the channel | `evidence/m346_alert_raiser.txt:72-84` | V |
-| the 8 caller ROLES; `edx` at `0x4f0ca1` = the base record; `+0x40` = accumulated minerals; `edi` = the completed item | `:40-50` | INFERRED |
+| all 27 item args resolve (imm 18 / callret 3 / clamped 2 / loopctr 2 / param 2); split 16 set=1 / 8 set=0 / 3 variable; 0x40dd3c is the only divergent row | `:4-38` | V MU1,MU2,MU3 |
+| 0/27 items' resolved class is QUEUE; 0/8 caller fns calls the pop | `:34`,`:40-49`,`:141` | V MU4 |
+| the 4 register-item set=1 sites: 0x41c6f8, 0x41d8fc, 0x508c85/0x508cee | `:127-131` | V MU5 |
+| stamp = `or BYTE PTR [eax],cl` @0x4f0ec0 in FUN_004ef6d0; 0x86 precedes the pop @0x4f0f46 | `:51-70`,`:143` | V MU6,MU8 |
+| the block spends `[edx+0x40]` by edi then reads `[edi*48+0x984d38]`, edi unwritten between | `:112-124` | V MU7 |
+| the build-finished posts go to the text bank whose consumer M348 found (Script.txt `#PRODUCEXQ/G`); FUN_00636b1e is the Create Session dialog | `evidence/m348_slot_template.txt:63-69` | V MU12 (M348) |
+| the 8 caller ROLES; `edx` at 0x4f0ca1 = the base record; +0x40 = accumulated minerals; edi = the completed item | `:40-50` | INFERRED |
+| ACCEPT `scripts/m344_completion_caller.py` 8/8 `034bf0e1a1606d2c` x2; harness 10/10 `[]` | `:148`, `evidence/m344_mutate.txt:14` | V MU0 |
 ## M345 (s324-chain2, 12/12) — the dialog family `+0x64` commit slot has no .text dispatcher
 
-| claim | evidence | conf |
+ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`); this stub governs: one line per claim; acceptance `m345_slot64_dispatch` -> **`PASS M345: 12/12`** `833faf38e189ad40` x2; harness 11/11 `[]`.
+
+| claim (one line each; full rows in the archive) | evidence | conf |
 |---|---|---|
-| slot `0x5f58fa` = 5 data dwords, all a family vt+0x64; 0 `.text` operands (no call/thunk/lea) | `evidence/m345_slot64_dispatch.txt:3-10` | V MU1,MU3,MU2 |
+| slot `0x5f58fa` = 5 data dwords, all a family vt+0x64; 0 `.text` operands | `evidence/m345_slot64_dispatch.txt:3-10` | V MU1,MU3,MU2 |
 | ctor 0x405ef0: 0x67164c at +0, CPane 0x671644 at +0x444 -> its `+0x6c` IS the primary `+0x64` | `:16,:93` | V MU1,MU4 |
 | trio `+0x60`/`+0x64`/`+0x68` = 5f59bf ret8 / 5f58fa ret4 / 5f59e8 | `:12-15` | V MU5 |
 | universe = 19 `[r+0x64]` + 18 `[r+0x6c]` calls, 0 jmp, 0 in the dialog module | `:18-57,:86-89` | V MU6,MU10 |
 | arity {0:3,1:5,5:8,6:3}: 5 fit ret 4 = 3 MEMBER + 2 self, none a dialog | `:59-65,:100` | V MU8,MU9 |
 | module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64` | `:67-77,:102` | V MU7,MU10 |
-| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 | `:104` | V MU0 |
+| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 `[]` | `:104`, `evidence/m345_mutate.txt:17` | V MU0 |
 | OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped | - | lead |
-
-
-
-
-## M346 (s325, ANALYSE, static; ACCEPT `scripts/m346_alert_raiser.py` -> **`PASS M346: 18/18`** `ab4f0ca8123245bb` x2 (`evidence/m346_alert_raiser.txt:110`); harness 22/22 `[]` (`evidence/m346_mutate.txt:25`)) — the build-finished ALERT = 2 posts into a 10-slot `$`-token table; `0x985b10` is NOT its channel.
+## M346 (s325, ANALYSE, static; M348 qualified the 'alert' framing: the bank is the general text-variable bank; ACCEPT `scripts/m346_alert_raiser.py` -> **`PASS M346: 18/18`** `ab4f0ca8123245bb` x2 (`evidence/m346_alert_raiser.txt:110`); harness 22/22 `[]` (`evidence/m346_mutate.txt:25`)) — the build-finished ALERT = 2 posts into a 10-slot `$`-token table; `0x985b10` is NOT its channel.
 
 | claim | evidence | conf |
 |---|---|---|
 | 0x4f0f46 = `call 0x4ef5d0` (the queue pop) and between it and 0x4f0f9b the block posts exactly 2: 0x6265a2 kind 1 @0x4f0f78, 0x626634 kind 2 @0x4f0f96 (14 in FUN_004ef6d0); payloads `[edi*48+0x984d38]` / `0x927894+1436*idx` | `:5-17`,`:27-37` | V MU1,2,3,4,5 |
 | table: payload 0x999ff4+4k, owner 0x999fcc+4k, text 0x99a01c+0x100k, `cmp k,0x9` + `jle` body = TEN slots | `:41-46` | V MU6,7,8,9 |
 | expander FUN_00625b20: 4 reads 0x999fa4 + 4 `shl REG,8; add REG,0x99a01c` (same register); tokens 0x69911c `$`/`$NUMBER`/`$NUM`/`$HEX`/`$LINK<` | `:59-62` | V MU10,11,12,13,14 |
-| drainer FUN_00636b1e clears slots 0/1/2 @0x63730e,15,1c, calls runner 0x5f1394 @0x63732d, measures slot1 (0x64c460) vs 0x10 and jumps BACK to 0x63724e; reads slot1 x5, slot2 x2; 0 direct callers | `:65-78` | V MU15,16,17,21 |
+| RETRACTED by M348 (G12, MU12): FUN_00636b1e is the multiplayer CREATE SESSION dialog - it draws `Session Name:`/`Maximum Players:`/`Session Password (Optional):` (0x6998b0/c0/d4) and re-loops while strlen(slot1) > 0x10 (session-name bound), so the slot 0/1/2 first-byte clears @0x63730e,15,1c are that dialog's field init, NOT a drain | `evidence/m348_slot_template.txt:76-79` | V MU12 |
 | RETRACTION: 0x985b10 = player mask (M96,M308), not the channel: 0 refs in the 5 alert fns and the post window, 0 stores in FUN_004ef6d0 | `:81-83` | V MU18,19 |
-| no pop/consume: the only first-byte writers of the 10 text slots are the 2 publishers + the drainer | `:86-88` | V MU20 |
-| OPEN: queue-control globals in the band (the `inc/add` counter 0x999f90 family) are NOT measured; slot text = message text and payloads = name sources (0x64b9e0) are INFERRED; the template consuming slots 1/2 is OPEN | - | INFERRED |
+| no pop/consume: the only first-byte writers of the 10 text slots are the 2 publishers + the three field-init clears inside the Create Session dialog (0x63730e/15/1c) - M348 re-read | `:86-88` | V MU20 |
+| OPEN (narrowed): the `inc/add` counter 0x999f90 family is NOT measured; the template consuming slots 1/2 was ANSWERED by M348 - a Script.txt record, not .rdata (`## M348`); the bank is a general 10-slot text-variable bank (63 refs / 30 fns), not an alert-private queue | - | INFERRED |
+
+
+## M348 (s326, ANALYSE, static; ACCEPT `scripts/m348_slot_template.py` -> **`PASS M348: 12/12`** `a3d46c017673526a` x2 (`evidence/m348_slot_template.txt:87`); harness 13/13 `[]` (`evidence/m348_mutate.txt:14`)) - slots 1/2 are consumed by a Script.txt record (`#PRODUCEXQ/G`), NOT an .rdata string; M346's `drainer` RETRACTED.
+
+| claim | evidence | conf |
+|---|---|---|
+| the 10-slot bank (payload 0x999ff4, owner 0x999fcc, text 0x99a01c stride 0x100, numeric 0x999fa4, k<=9) is GENERAL: 63 sites in 30 fns, 7 sites build `k<<8+0x99a01c` (4 expander, 2 setters, 1 modal @0x5f12ee) | `:4-7`,`:58-61` | V MU1,MU11 |
+| setter A FUN_006265a2(index, LABEL-ID) resolves via table 0x997b28 (`call 0x61482f`) then strcats; setter B FUN_00626634 copies a LITERAL; both clear the slot byte, return 3 above k=9 | `:10-19` | V MU2,MU3 |
+| completion block: slot 1 = `[0x984d38+edi*48]` (item label id) @0x4f0f78; slot 2 = `0x927894+ebx*1436` (base name) @0x4f0f96 | `:21-27` | V MU4,MU5,MU6 |
+| key = `PRODUCEX`(0x68cfc4)+`Q`/`G` into 0x997120 (fallback `PRODUCE` 0x68cfe8) -> FUN_0048f100 @0x4f122a, which sets slot 0 = `[0x8f0d60]+0x13` @0x48f20f | `:29-44` | V MU7,MU8 |
+| consumer = Script.txt: `#PRODUCEXQ/XG` read slot 1 (`$ITEM1`, XQ also `$NUM1`), no slot-2; `#PRODUCE2/3` read `$<M1:$FACTIONADJ2>`; .rdata has 0 `$<` (only `$LINK<`) | `:46-55` | V MU9,MU10 |
+| RETRACTION: FUN_00636b1e = multiplayer Create Session dialog (labels 0x6998b0/c0/d4, strlen(slot1)<=0x10, jmp 0x63724e); M346's 'drainer' withdrawn | `:63-69` | V MU12 |
 
 ## M347 (s324-chain2, STATIC 12/12) — M341's OPEN `+0x59f4` WRITER: the `+0x5970` child selector; the page bound IS 7
 
