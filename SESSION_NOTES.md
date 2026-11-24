@@ -1,66 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-329-330.md` (3 sessions: Session 329-chain2, Session 329-chain3, Session 330-chain3). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 330.
-
-## Session 330 (2026-11-24) — B33: the OR at `0x4f0ec0` is UNIT-ONLY — the facility leg spends and never stamps
-
-- **ACCEPT** `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** `b89b9e6bd940e8d3`
-  (`evidence/b33_facilityleg.txt:65`), rerun byte-identical; relay `--b33` identical;
-  `scripts/b33_mutate.py` 11/11 (`evidence/b33_mutate.txt:13`).
-- **CENSUS** FUN_004ef6d0 = 3,164 insns, 12,298 B CONTIGUOUS (lengths summed), `0x4ef6d0..0x4f26da`
-  == Ghidra `size=12298` read from `ghidra_out/index.csv`; CFG 3,482 edges, 0 external, 0 indirect.
-  Fixture: `scripts/b33_extract.py --check` (objdump wrap lines folded into lengths).
-- **REACH** entry + unit branch `0x4ef8a4` reach the stamp block `0x4f0e90` (3,045 insns);
-  facility branch `0x4efa2c` reaches 886 and does NOT.
-- **DOOR** `preds(0x4f0e90)={0x4f0d94}`, `preds(0x4f0ca1)={0x4f0b80}`, `0x4f0b80` = `jg` on
-  `[ebp-0x30]`; that local is written at ONE site, `0x4ef8a4` (unit branch), never facility-reached.
-- **SPEND** facility `0x4efed8/db/dd` (`[ecx+0x40]`), unit `0x4f0ca1/a4/a6` (`[edx+0x40]`).
-- **SCORE** recorded: 4/4 unit heads gain the mapper bit, 0/2 facility-range; Virgin Soil head 2,
-  bitmap `00000008..` -> `10000000..` (bit 2 absent, 4 gained, 27 lost), `st` 2 -> 0.
-- **RIVALS** shared-OR 4/6 windows (predicts `0400000800000000`), off-map refusal 1/6, after-pop 0/6.
-- **RETRACTION (declared gap)** B32's "why a facility head does not stamp" is ANSWERED: the `jg`.
-- **PROTOCOL** `scripts/b33_named_rotate.py` rotated `## M333` VERBATIM (sha1 `be87f76187588fde
-  4268db6355ba93f44eacc0cd`, 26 tokens) to `docs/named-archive-b33-rows.md`.
-- **REVIEW (#381, 7 findings)**: all fixed - MU11 reddens G6; G1 sums byte lengths and reads
-  Ghidra's size; G2 pins 3,482 edges; G3 pins the three sets as nested; G4 reads the local from the
-  census; G11 asserts the `cmp ebx,0x40`/`jl` split; the parser folds wrapped bytes and marks
-  indirect calls `ind`; cites repointed (`:65`).
-- **MERGED** #381 as `8cb969b` (squash) after the #381 triage; CI gate pass.
-- **OPEN** facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the `0x98adb8` row; loss 27.
-
-## Session 331 (docs, 2026-11-24) — record the B33 merge; no new milestone taken
-
-- B33 merged as `8cb969b` (#381 squash) on a GREEN verdict after the local review triage; the
-  cursor said "PR pending" when it was committed pre-merge, which would send the next fire looking
-  for an open PR - it now records the squash hash.
-- Archived the #381 review artifacts under `evidence/ai_review/` (they were untracked).
-
-## Session 330-chain2 (2026-11-24) — M356: +0x30 bit 2 = state bit (11 setters, 1 toggler); +0x24/+0x25/+0x26 feed three rule tables
-
-- **ACCEPT** `scripts/m356_prototype_stamp.py` -> **`PASS M356: 17/17 gates`**,
-  digest `c1a2beb794cec9f8`, x2 same (`evidence/m356_x2.txt:103`); `m356_mutate.py` ->
-  **27/27, NO-OP ['MU29'], coverage ALL 17 gates** (`evidence/m356_mutate.txt:32`).
-- **CENSUS** (instruction shapes; last write to the stored register + flags-word load
-  provenance): 46 writes to +0x30 (= 0x98adb8); **11 bit-2 setters**, **0 AND-clears**,
-  **1 XOR-toggler 0x4396f6** (`xor dx,0x4` @0x4396e6), 0 unresolved register masks, 16 ANDs
-  all carrying immediates. First draft said "one-way latch" — the toggler REFUTES it.
-- **TWO 0->1 GUARDS**: 0x4d2ff9 load->test->jne-skips-store->OR->store->`call 0x584520`;
-  0x4efe60 stores `al|4` then tests the OLD bit, `call 0x572800` only on 0->1; both behind
-  `cmp idx,0x40 / jl` (owner band).
-- **FEEDS** (`trace_base`): **+0x24 -> 0x92ae80** chassis, stride 0x90, 188 chains; **+0x25 ->
-  0x92b950** 21 recs, 181 chains; **+0x26 -> 0x92fd18** 10 recs, 47 chains — exclusive; extents
-  DERIVED from each loop (init/stride/bound). Reference census 238/227/11, 94/88/6: every
-  non-load reference is a `cmp`, none names a table base.
-- **FINALIZER 0x595e80** compares weapon `[0x92b950][+0x25]` with armor `[0x92fd18][+0x26]`
-  (`cmp al,bl`) and assigns the +0x2b mode (3/1/4/5/10); flags init 1/0x105/0x115.
-- **RIVAL REFUTED**: "+0x27/+0x28 are 0x10-stride ordinals" — 0 table chains either; +0x28 has
-  ONE writer (0x595d1c).
-- **RETRACTIONS**: (M354) +0x24 is the CHASSIS ORDINAL, not "domain"; (this draft) bit 2 is
-  not monotone. A fixed backwards window had attributed a guard `and` to a later store —
-  classify by the LAST write to the register (0x4399c5 vs the 0x4399d8 reload).
-- **DOC CAP**: `scripts/m356_named_rotate.py` rotated `## M298` VERBATIM ->
-  `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
-- OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.
+Older sessions: `docs/sessions/sessions-330-330.md` (3 sessions: Session 330, Session 331, Session 330-chain2). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 331-chain3.
 
 ## Session 331-chain3 (2026-11-24) — M360: the four row-less ids are A/V radio rows + a swapped id in a SEVENTH widget, not a seventh page
 
@@ -624,6 +564,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (V, INF noun); 0x40 = 'SET TREATY' + 50-tick window (V, INF noun); 0x100000 = eviction
   grievance (INF); 0x8000/0x10000 = war/truce companions (OPEN). **OPEN**: 0x53bbed's role;
   0x5526b3 / 0x507d21 hosts; 0x4da404's 4th arg.
+
 ## Session 339-chain1 — B37: the treaty lifecycle; peace vs war split (review #408 hardened)
 
 - **ACCEPT** `python3 -u -m sim.treaty` -> **`PASS B37: 8/8`** `5dd4119bd1882d1d` (`evidence/b37_treaty.txt:76`),
@@ -645,8 +586,6 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   all 256 masks, the census prints the measured arm count, MU1/MU2 mutate the parsed window, the dump's sha256 is pinned.
 - **PITFALLS**: (1) `and al,0xbf` is a BYTE op; (2) a rival scored on END STATE can tie the truth - score the
   per-tick digest (first version 0/49); (3) "event then tick, one per turn" is policy, declared UNMODELED.
-
-
 
 ## Session 339-chain3 — M377: 0x8000 rides the WAR stamp, 0x10000 the first-contact truce
 
@@ -674,6 +613,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **PITFALLS**: (1) an objdump continuation line has NO third column; dropping it invents a
   phantom fall-through (0x507d06) and kills reachability; (2) `last_imm(whole operand)` matches the
   displacement — take the imm from the SOURCE; (3) a setter call's mask is push[-3].
+
 ## Session 339-chain2 — M376: the 0x92babc "12 slots" are alpha `#SOCIO`'s SE-effect matrix
 
 - **ACCEPT** `python3 -u scripts/m376_socio_grid.py` -> **`PASS M376: 29/29`** `f22d2b46cc7e9507`
