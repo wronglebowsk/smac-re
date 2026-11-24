@@ -42,9 +42,9 @@ FAC_BYTES = 4                        # the confirmed window width (sim.base.FAC_
 ITEM_LO, ITEM_HI = 1, 38             # ids the completion may stamp (0 = none, 39+ = projects)
 
 # Pinned from the first real run; G6 asserts the run reproduces them.
-ANCHOR = "TBD"
-PRINT_ANCHOR = "TBD"
-IMG_SHA = "TBD"
+ANCHOR = "234ab3d83a88dbea"        # G6: digest of the (queue rows, write, bill) tuple
+PRINT_ANCHOR = "f26ad69d86d0a319"   # G6: digest of the printed table, the G6 line excluded
+IMG_SHA = "3a503c638ba45330"       # G6: sha256 of the written container, first 16 hex
 
 
 # --- helpers ---------------------------------------------------------------------------------
@@ -158,11 +158,18 @@ def measure(sav=SAV):
     m["owned_before"] = tuple(sob.facilities(orig))
     m["owned_after"] = tuple(sob.facilities(set_facility(orig, item)))
 
-    # G2 - the setter is the reader's inverse, measured over the whole item range -------------
+    # G2 - the setter is the reader's inverse, measured over the whole item range.  The loop
+    # runs on a REFERENCE record whose four-byte window is ZERO: an id the target base already
+    # owns would otherwise mask a broken bit law (the first run's real defect), so the law is
+    # measured on a state where every id is absent and the target record is checked separately.
+    ref = bytearray(orig)
+    ref[FAC_OFF:FAC_OFF + FAC_BYTES] = b"\0" * FAC_BYTES
+    ref = bytes(ref)
+    m["ref_window_zero"] = sob.facilities(ref) == []
     rt_ok, other_bits, rt_bad = 0, 0, []
     for k in range(FAC_BYTES * 8):
-        r2 = set_facility(orig, k)
-        new = set(sob.facilities(r2)) - set(sob.facilities(orig))
+        r2 = set_facility(ref, k)
+        new = set(sob.facilities(r2))
         if new == {k}:
             rt_ok += 1
         else:
@@ -170,7 +177,7 @@ def measure(sav=SAV):
         other_bits += len(new - {k})
     m["rt_ok"], m["rt_bad"], m["other_bits"] = rt_ok, rt_bad, other_bits
     rival_hit = sum(1 for k in range(FAC_BYTES * 8)
-                    if k in sob.facilities(rival_set_facility(orig, k)))
+                    if k in sob.facilities(rival_set_facility(ref, k)))
     m["rival_hit"] = rival_hit
     m["rival_fail"] = FAC_BYTES * 8 - rival_hit
     try:
@@ -186,10 +193,7 @@ def measure(sav=SAV):
     m["delta"] = (after[diffs[0]] - orig[diffs[0]]) if diffs else 0
     m["expect_pos"] = FAC_OFF + (item >> 3)
     m["expect_delta"] = 1 << (item & 7)
-    m["other_recs_same"] = sum(
-        1 for i in range(sv.n_bases) if i != idx
-        and sv.data[sv.bases_off + so.BASE_LEN * i:sv.bases_off + so.BASE_LEN * (i + 1)]
-        == orig)
+    m["pos_in_window"] = FAC_OFF <= m["expect_pos"] < FAC_OFF + FAC_BYTES
 
     # G4 - the WRITER carries it, and the RELOAD reads it back --------------------------------
     ov = [{"identity": True} for _ in range(sv.n_bases)]
@@ -217,11 +221,19 @@ def measure(sav=SAV):
                               and im.data[im.tail_off:] == sv.data[sv.tail_off:])
     # the WRONG-BASE rival: the same write aimed at another record must not satisfy the read
     wrong = (idx + 1) % sv.n_bases
+    ov[wrong] = {"x": sv.bases[wrong]["x"], "y": sv.bases[wrong]["y"],
+             "own4": sv.bases[wrong]["own4"], "fac": sv.bases[wrong]["fac"]}
     wimg = sow.build_image(sv, bases_override=ov,
                            base_writes=[(wrong, FAC_OFF + (item >> 3),
                                          after[FAC_OFF + (item >> 3)])])
     wb = wimg[sv.bases_off + so.BASE_LEN * idx:sv.bases_off + so.BASE_LEN * (idx + 1)]
     m["wrong_base_ok"] = item not in sob.facilities(wb)
+    # every OTHER base record in the written image is byte-identical to the original file: the
+    # write touched one record and nothing else (the count is measured off the image, not assumed)
+    m["other_recs_same"] = sum(
+        1 for i in range(sv.n_bases) if i != idx
+        and img[sv.bases_off + so.BASE_LEN * i:sv.bases_off + so.BASE_LEN * (i + 1)]
+        == sv.data[sv.bases_off + so.BASE_LEN * i:sv.bases_off + so.BASE_LEN * (i + 1)])
 
     # G5 - the bill moves by the DERIVED rule, not by a constant ------------------------------
     def bill(record):
@@ -232,21 +244,19 @@ def measure(sav=SAV):
     m["bill_after"] = bill(after)
     m["bill_delta"] = m["bill_after"] - m["bill_before"]
     per_id = []
-    for k in range(FAC_BYTES * 8 + 7):
-        if not 0 <= k < 39:
-            continue
+    for k in range(FAC_BYTES * 8):
         d = bill(set_facility(orig, k)) - m["bill_before"]
         per_id.append((k, d, rule_delta(table, k, disabled, lo, chg)))
     m["per_id"] = per_id
     m["per_id_bad"] = [r for r in per_id if r[1] != r[2]]
     m["rival_constant"] = [r for r in per_id if r[1] != table[r[0]]]
     m["rival_constant_ids"] = tuple(r[0] for r in m["rival_constant"])
-    m["uncharged"] = tuple(r[0] for r in per_id if not lo <= r[0] <= chg)
+    m["rule_zero"] = tuple(r[0] for r in per_id if r[2] == 0)
 
     # G6 - the rivals scored, and determinism -------------------------------------------------
     m["nowrite_fail"] = sum(1 for (k, d, rule) in per_id if rule != 0)
     m["misread_id"] = tgt[4]
-    m["misread_wrong"] = (tgt[4] != item)
+    m["misread_wrong"] = (m["misread_id"] != item)
     rows = (tuple(qrows), idx, item, m["item_name"], m["rule"], m["owned_before"],
             m["owned_after"], m["diff_pos"], m["delta"], m["bill_before"], m["bill_after"],
             m["bill_delta"], tuple(m["diff_pos"]), m["img_sha"], m["rival_fail"])
@@ -270,20 +280,22 @@ def render(m):
                "lands on %d/%d ids (fails %d); id 39 refused %s"
                % (m["rt_ok"], FAC_BYTES * 8, m["other_bits"], m["rt_bad"], m["rival_hit"],
                   FAC_BYTES * 8, m["rival_fail"], m["refuse39"]))
-    out.append("G3 record: diff positions %s (expect [%d]) delta %d (expect %d); %d other records "
-               "byte-identical" % (m["diff_pos"], m["expect_pos"], m["delta"], m["expect_delta"],
-                                   m["other_recs_same"]))
+    out.append("G3 record: diff positions %s (expect [%d], in window %s) delta %d (expect %d)"
+               % (m["diff_pos"], m["expect_pos"], m["pos_in_window"], m["delta"],
+                  m["expect_delta"]))
     out.append("G4 writer: identity build byte-identical %s; written sha %s; file diff %s; "
                "reload owns %s; shape/tail same %s; wrong-base rival misses %s"
                % (m["identity_sha_ok"], m["img_sha"], m["img_diff"][:4], list(m["reload_owned"]),
                   m["reload_same_shape"], m["wrong_base_ok"]))
+    out.append("G4 records: %d of %d other base records byte-identical in the written image"
+               % (m["other_recs_same"], m["sv"].n_bases - 1))
     out.append("G5 bill: before %d after %d delta %d rule %d; per-id mismatches %s; "
-               "'table value' rival differs at %s (uncharged ids %s)"
+               "'table value' rival differs at %s (rule-zero ids %s)"
                % (m["bill_before"], m["bill_after"], m["bill_delta"], m["rule"], m["per_id_bad"],
-                  list(m["rival_constant_ids"]), list(m["uncharged"])))
+                  list(m["rival_constant_ids"]), list(m["rule_zero"])))
     out.append("G6 rivals: no-write fails at %d ids; +0x4c misread gives %d (wrong %s); "
                "digest %s print %s" % (m["nowrite_fail"], m["misread_id"], m["misread_wrong"],
-                                       m["digest"], print_digest(out + ["G6"])))
+                                       m["digest"], print_digest(out)))
     return out
 
 
@@ -298,19 +310,21 @@ def acceptance(m, results):
         results.append((name, bool(ok)))
 
     gate("G1 the completion is READ out of the container's own queue",
-         m["qrows"] and len(m["qrows"]) == m["sv"].n_bases and m["n_eligible"] >= 1
-         and m["target"][2] == m["own"] and ITEM_LO <= m["item"] <= ITEM_HI
+         m["qrows"] and len(m["qrows"]) == m["sv"].n_bases and m["n_eligible"] == 2
+         and m["target"][2] == m["own"] and m["item"] == 2 and ITEM_LO <= m["item"] <= ITEM_HI
          and m["item"] not in m["owned_before"])
     gate("G2 the setter is the reader's INVERSE over the whole window",
-         m["rt_ok"] == FAC_BYTES * 8 and m["other_bits"] == 0 and not m["rt_bad"]
+         m["ref_window_zero"] and m["rt_ok"] == FAC_BYTES * 8 and m["other_bits"] == 0
+         and not m["rt_bad"]
          and m["owned_after"] == tuple(sorted(m["owned_before"] + (m["item"],)))
          and m["rival_fail"] > 0 and not m["rival_hit"] == FAC_BYTES * 8
          and m["refuse39"])
     gate("G3 the write is exactly ONE byte of the 304-B record",
          m["diff_pos"] == [m["expect_pos"]] and m["delta"] == m["expect_delta"]
-         and m["expect_delta"] > 0 and m["other_recs_same"] == m["sv"].n_bases - 1)
+         and m["expect_delta"] > 0 and m["pos_in_window"])
     gate("G4 the writer carries it and the reload reads it back",
          m["identity_sha_ok"] and len(m["img_diff"]) == 1
+         and m["other_recs_same"] == m["sv"].n_bases - 1
          and m["reload_owned"] == m["owned_after"] and m["reload_same_shape"]
          and m["wrong_base_ok"])
     gate("G5 the bill moves by the DERIVED rule, not a constant",
@@ -318,7 +332,10 @@ def acceptance(m, results):
          and m["rival_constant_ids"] == tuple(sorted(m["disabled"]))
          and m["rule"] > 0)
     gate("G6 rivals fail on the printed numbers and the run is deterministic",
-         m["nowrite_fail"] > 0 and m["misread_wrong"] and m["rival_fail"] > 0
+         m["n_eligible"] == 2 and m["item"] == 2 and m["rule"] == 1
+         and m["rival_fail"] == 28 and m["rival_hit"] == 4
+         and m["rival_constant_ids"] == (8,) and m["nowrite_fail"] == 26
+         and m["misread_wrong"] and m["bill_delta"] == 1
          and m["digest"] == ANCHOR and m["img_sha"] == IMG_SHA
          and print_digest(render(m)) == PRINT_ANCHOR)
 
