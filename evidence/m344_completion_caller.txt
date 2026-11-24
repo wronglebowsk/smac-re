@@ -1,0 +1,148 @@
+M344 completion-caller census: 790695 instructions, 10284 functions in the index
+API FUN_4e44f0: 27 call sites in 8 functions
+
+TABLE 1 - the 27 API sites: item argument, its dataflow class, and local shape
+  site    function      item        class      set   bitpre pop  chain-terminal
+  40dcba  FUN_0040d7a0  edx         param      0x0   Y      0    mov    edx,DWORD PTR [ebp+0x8]
+  40dd3c  FUN_0040d7a0  edx         param      0x0   Y      0    mov    edx,DWORD PTR [ebp+0x8]
+  41c6d1  FUN_0041c4d0  esi         callret    var   Y      0    call -> return in eax
+  41c6f8  FUN_0041c4d0  esi         callret    0x1   Y      0    call -> return in eax
+  41d8fc  FUN_0041d480  esi         loopctr    0x1   -      0    mov    esi,0x1
+  5085ca  FUN_00507ef0  0x1         imm        0x1   Y      0    literal 0x1
+  5085d7  FUN_00507ef0  0x1         imm        0x0   Y      0    literal 0x1
+  508a14  FUN_00507ef0  esi         loopctr    var   Y      0    mov    esi,0x1
+  508a2c  FUN_00507ef0  0x1         imm        0x0   Y      0    literal 0x1
+  508a40  FUN_00507ef0  0x6         imm        0x0   Y      0    literal 0x6
+  508a4a  FUN_00507ef0  0x3         imm        0x0   Y      0    literal 0x3
+  508c85  FUN_00507ef0  eax         clamped    0x1   Y      0    mov    eax,0x1
+  508cee  FUN_00507ef0  eax         clamped    0x1   Y      0    mov    eax,0x1
+  582542  FUN_005823c0  0x1a        imm        0x1   Y      0    literal 0x1a
+  589157  FUN_00585720  esi         callret    0x0   Y      0    call -> return in edx
+  593dc2  FUN_0058fa40  ecx         imm        0x0   -      0    mov    DWORD PTR [ebp-0x34],0x1b
+  59d015  FUN_0059ce10  0x6         imm        0x1   -      0    literal 0x6
+  59d022  FUN_0059ce10  0x3         imm        0x1   -      0    literal 0x3
+  59d03c  FUN_0059ce10  0x7         imm        0x1   -      0    literal 0x7
+  59d056  FUN_0059ce10  0x1b        imm        0x1   -      0    literal 0x1b
+  59d070  FUN_0059ce10  0x8         imm        0x1   -      0    literal 0x8
+  59d0a2  FUN_0059ce10  0x4         imm        var   -      0    literal 0x4
+  59d8c1  FUN_0059ce10  0x6         imm        0x1   -      0    literal 0x6
+  59d8d7  FUN_0059ce10  0x3         imm        0x1   -      0    literal 0x3
+  59dc21  FUN_0059ce10  0x6         imm        0x1   -      0    literal 0x6
+  59dc2b  FUN_0059ce10  0x3         imm        0x1   -      0    literal 0x3
+  59dc35  FUN_0059ce10  0x1b        imm        0x1   -      0    literal 0x1b
+
+  set=1 16 ; set=0 8 ; variable 3 ; item classes [('callret', 3), ('clamped', 2), ('imm', 18), ('loopctr', 2), ('param', 2)]
+
+TABLE 1b - M342's 6-instruction push window re-run against this census's 16-instruction one
+  40dd3c  M342 reads set=?    (3 pushes found: 2) ; 16-insn window reads set=0x0 (3 pushes found: 3)  <- the set push sits 7 instructions back
+  rows where the two windows disagree: 1
+
+TABLE 2 - the 8 caller functions: shape features (counted) and a role INFERRED from them
+  function      size  sites set1 set0 var  bitpre queue itab pop  pred  role (INFERRED)
+  FUN_0040d7a0   1584     2    0    2   0      2     0    6    0     0  clear only
+  FUN_0041c4d0    983     2    1    0   1      2     0    0    0     1  set predicate-gated (calls the item checker)
+  FUN_0041d480   3237     1    1    0   0      0     0    0    0     1  set predicate-gated (calls the item checker)
+  FUN_00507ef0   5306     8    3    4   1      8     9    2    0     0  mixed: set + clear
+  FUN_005823c0   1609     1    1    0   0      1     0    0    0     0  set, literal item
+  FUN_00585720  22283     1    0    1   0      1     4    3    0     0  clear only
+  FUN_0058fa40  23925     1    0    1   0      0     3    5    0     0  clear only
+  FUN_0059ce10   5292    11   10    0   1      0     0    0    0     0  set, item from a register
+
+TABLE 3 - the completion block in the base screen FUN_004ef6d0
+  4f0e90  mov    edi,DWORD PTR [ebp-0x30]
+  4f0e93  mov    esi,DWORD PTR ds:0x68cbb0
+  4f0e99  lea    ecx,[ebp-0x18]
+  4f0e9c  lea    edx,[ebp-0x14]
+  4f0e9f  push   ecx
+  4f0ea0  push   edx
+  4f0ea1  push   edi
+  4f0ea2  call   0x507410
+  4f0ea7  mov    edx,DWORD PTR [ebp-0x14]
+  4f0eaa  lea    eax,[esi+esi*8]
+  4f0ead  add    esp,0xc
+  4f0eb0  lea    ecx,[esi+eax*2]
+  4f0eb3  shl    ecx,0x4
+  4f0eb6  lea    eax,[ecx+edx*1+0x95da9c]
+  4f0ebd  mov    cl,BYTE PTR [ebp-0x18]
+  4f0ec0  or     BYTE PTR [eax],cl
+  4f0ec2  cmp    edi,0x8
+  4f0ec5  jne    0x4f0f2b
+  4f0ec7  mov    eax,ds:0x8f0d60
+  4f0ecc  mov    ecx,DWORD PTR [eax+0x30]
+  4f0ecf  and    ch,0xf3
+  4f0ed2  mov    DWORD PTR [eax+0x30],ecx
+  4f0ed5  mov    eax,ds:0x8f0d60
+  4f0eda  movsx  edx,WORD PTR [eax+0x2]
+  4f0ede  movsx  eax,WORD PTR [eax]
+  4f0ee1  push   edx
+  4f0ee2  push   eax
+  4f0ee3  call   0x5ab130
+  4f0ee8  push   eax
+  4f0ee9  call   0x5a5c00
+  4f0eee  add    esp,0xc
+  4f0ef1  test   eax,eax
+  4f0ef3  jl     0x4f0f2b
+  4f0ef5  lea    ecx,[eax+eax*2]
+  4f0ef8  lea    ecx,[eax+ecx*4]
+  4f0efb  shl    ecx,0x2
+  4f0efe  movsx  edx,WORD PTR [ecx+0x933282]
+  4f0f05  lea    esi,[edx+edx*2]
+  4f0f08  lea    edx,[edx+esi*4]
+  4f0f0b  cmp    BYTE PTR [edx*4+0x98adb2],0xc
+  4f0f12  
+  4f0f13  jne    0x4f0f1c
+  4f0f15  mov    BYTE PTR [ecx+0x933289],0x0
+  4f0f1c  test   eax,eax
+  4f0f1e  jl     0x4f0f2b
+  4f0f20  movsx  eax,WORD PTR [ecx+0x9332a8]
+  4f0f27  test   eax,eax
+  4f0f29  jge    0x4f0ef5
+  4f0f2b  mov    eax,ds:0x8f0d60
+  4f0f30  push   0x2
+  4f0f32  movsx  ecx,WORD PTR [eax+0x2]
+  4f0f36  movsx  edx,WORD PTR [eax]
+  4f0f39  push   ecx
+  4f0f3a  push   edx
+  4f0f3b  call   0x4737e0
+  4f0f40  mov    eax,ds:0x68cbb0
+  4f0f45  push   eax
+  4f0f46  call   0x4ef5d0
+  4f0f4b  mov    esi,eax
+  4f0f4d  mov    eax,ds:0x91b5b4
+  spend pair:
+  4f0ca1  mov    esi,DWORD PTR [edx+0x40]
+  4f0ca4  sub    esi,edi
+  4f0ca6  mov    DWORD PTR [edx+0x40],esi
+  4f0ca9  mov    esi,DWORD PTR ds:0x8f0d60
+  item-table row consumed after the pop:
+  4f0f65  lea    ecx,[edi+edi*2]
+  4f0f68  push   0xffffffff
+  4f0f6a  shl    ecx,0x4
+  4f0f6d  push   0xffffffff
+  4f0f6f  mov    edx,DWORD PTR [ecx+0x984d38]
+  4f0f75  push   edx
+  4f0f76  push   0x1
+  4f0f78  call   0x6265a2
+
+TABLE 4 - rivals, scored on the same printed numbers
+  RIV1 'an API site is the completion call': set=1 sites whose ITEM is a register 4; of those, queue-provenance or pop-adjacent 0 -> FAILS
+       41c6f8 FUN_0041c4d0 item=esi class=callret queue=N pop-in-fn=0
+       41d8fc FUN_0041d480 item=esi class=loopctr queue=N pop-in-fn=0
+       508c85 FUN_00507ef0 item=eax class=clamped queue=N pop-in-fn=0
+       508cee FUN_00507ef0 item=eax class=clamped queue=N pop-in-fn=0
+  RIV2 'the pop stamps the bit': pop bitmap refs 0, pop->API calls 0 -> FAILS
+  RIV3 'the unnamed region 0x4f3ebc is the completion': or-stores there 2, item-table rows 0, pop calls 0, spend pair 0 -> FAILS
+
+table digest sha256[:16] = 7586ab28a3974104
+
+GATES
+ok   G1 27 sites / 8 functions; RE-DERIVED split set=1 16, set=0 8, variable 3; the only row where M342's 6-insn window differs is 0x40dd3c (its set push sits 7 back: set=0x0, not '?')
+ok   G2 every item argument resolves to a known source class (0 unresolved/27); classes [('callret', 3), ('clamped', 2), ('imm', 18), ('loopctr', 2), ('param', 2)]
+ok   G3 0/27 sites take their item from the base record's queue window (+0x4c..+0x77): []
+ok   G4 exactly 4 set=1 sites pass a REGISTER item ['0x41c6f8', '0x41d8fc', '0x508c85', '0x508cee']; 41c6f8 = call-return + bitmap pre-read (toggle), 41d8fc = loop counter under the 0x5a6e70 predicate, 508c85/508cee = the 1..0x26 clamp
+ok   G5 stamp block: 10/10 pinned instructions reproduced (mapper item=edi -> 304*ds:0x68cbb0 fold -> or BYTE [95da9c])
+ok   G6 the block spends base+0x40 by edi (0x4f0ca4/6), edi is unwritten from the stamp to the item-table row (free), and the row is [edi*48+0x984d38] (0x4f0f65-6f)
+ok   G7 stamp->pop distance 0x86 (0x4f0ec0 -> 0x4f0f46); pop calls inside the 8 API-caller functions 0
+ok   G8 digest 7586ab28a3974104 == pinned 7586ab28a3974104
+
+PASS M344: 8/8 gates; digest 7586ab28a3974104
