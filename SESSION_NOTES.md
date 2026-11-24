@@ -722,3 +722,35 @@ whether a facility completion stamps at all.
 - **DOC CAP**: `scripts/m356_named_rotate.py` rotated `## M298` VERBATIM ->
   `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
 - OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.
+
+## Session 332 (2026-11-24) — M358: the 52-byte 0x98ad88 row's full layout; 0x9267e4 is a 128-dword slot table (not 64-byte rows)
+
+- **ACCEPT** `python3 -u scripts/m358_row_layout.py` -> **`PASS M358: 10/10 gates`
+  `1af1dcb6fcd4a4b6`** (`evidence/m358_row_layout.txt:77`), rerun byte-identical;
+  `scripts/m358_mutate.py` -> **12/13 scored, NO-OP ['MU13'], coverage G1-G10**
+  (`evidence/m358_mutate.txt:19`).
+- **CENSUS**: 1,991 refs (1,907 memory) in 227 functions over the 0x98ad88 span
+  (64 rows x 0x34); 756 `imul reg,reg,0x34` sites. 17 field offsets: name
+  char[0x20] at +0x00 (the only +0x1f ref is its NUL store), dword +0x20
+  (ability mask; dword tests like 0x10000 + byte bit tests), bytes +0x24..+0x2e,
+  word +0x30 (byte bit ops on 0x30/0x31), word +0x32 (pre-req); 0x2f and 0x33 are
+  never addressed. M356's "46 writes to +0x30" = 25 movs + 21 RMWs.
+- **PROTOTYPE**: row 63 (base 0x98ba54) is written whole by FUN_00435610 from a
+  source record: +0x141fc->+0x24, +0x14200->+0x25, +0x14204->+0x26,
+  +0x14208(dword)->+0x20, +0x1420c->+0x27, and 0xff->+0x2e.
+- **0x9267e4**: 10 refs total, 7 memory, ALL `[reg*4+base]`; 128 dwords, two
+  64-slot banks (0x40 shared / owner<<6): entry = (slot<0x40 ? 0 : owner<<6) +
+  (slot&0x3f), masked by 0x8000003f with a sign repair; the 14-instruction band
+  sequence is matched in BOTH builders (0x596000 ecx/ebx, 0x596160 edx/esi).
+  The kickoff's "64-byte design row at 0x9267e4" is REFUTED — 64 is the bank
+  size, not a record stride.
+- **SENTINELS**: the 16 cmp-immediates in the row window (0x98ad90 x12, +0x0c
+  x2, +0x10 x1, +0x14 x1) are loop END checks of 0x1c-stride scans; the four
+  static loops (0x98aaf0..0xad90 etc.) are exactly 24 iterations. They are NOT
+  row fields at +0x08/+0x0c/+0x10/+0x14.
+- **flags bit8**: one clearer (`and [+0x31],0xfe` @0x4ef398) and three setters
+  (`or [+0x31],0x1` @0x4f05bd/0x5a7d00/0x5a7f67) -> bit 0x100 is a real state
+  flag; its noun is OPEN.
+- OPEN: +0x27/+0x28/+0x2b/+0x2d/+0x2e nouns; the 24-record 0x1c table's identity
+  (it ends at 0x98ad90..0x98ad9c); bit8 noun. NEXT: (x6) pref-block writers;
+  B34 = facility +0x8c.
