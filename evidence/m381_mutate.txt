@@ -8,9 +8,15 @@ MU7   ok    red=['G7']                       want=['G7']         one byte-form r
 MU8   ok    red=['G1', 'G2']                 want=['G2']         the relations chain loses its +esi - the contrast G2 measures disappears
 MU9   ok    red=['G4']                       want=['G4']         the strictness law flipped: >= would stamp
 MU10  ok    red=['G7']                       want=['G7']         the one dword-form reader re-pointed: the dword census empties
-MU11  ok    red=['G1']                       want=['G1']         the acting-row load re-pointed at the next dword: the pinned window breaks
+MU11  ok    red=['G1', 'G2']                 want=['G1']         the acting-row load re-pointed at the next dword: the pinned window breaks
 MU12  ok    red=['G1', 'G3']                 want=['G3']         the walk step off by one dword: 7 iterations become a non-integral count
 MU13  ok    red=['G0', 'G8']                 want=['G0']         a 0x94e48c operand smuggled into setter 2's guard window: the negative reddens
+MU14  ok    red=['G0']                       want=['G0']         setter 2's call target moved: the second stamp no longer feeds the setter
+MU15  ok    red=['G0']                       want=['G0']         setter 2's guard re-pointed at the commlink bit: the tested pair no longer pins
+MU16  ok    red=['G5']                       want=['G5']         a callee AND mask now clears 0x2000: the mask algebra reddens
+MU17  ok    red=['G5', 'G8']                 want=['G5']         the tail's first direction stops OR-ing the mask: the both-rows claim reddens
+MU18  ok    red=['G6']                       want=['G6']         the attitude callee subtracts the delta instead of adding it
+MU19  ok    red=['G7']                       want=['G7']         the bit-13 branch no longer skips the 0x7fffffff clear
 NOOP  ok    red=[]                           want=[]             identity: nothing may redden
 
-RUN PASS 14 mutants, 0 unexpected
+RUN PASS 20 mutants, 0 unexpected

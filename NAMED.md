@@ -923,17 +923,17 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
-## M381 (s341-c3, 9/9) — bit 13 (`0x2000`) = a PEACE stamp with TWO setters; the strength leg is a strict `>` against the peer's own scalar. **`PASS M381: 9/9`** `73c5356395ecec3e` (`evidence/m381_bit13_noun.txt:70`), re-run identical; harness 14/14 (`evidence/m381_mutate.txt:16`). `:N` = evidence line.
+## M381 (s341-c3, 9/9) — bit 13 (`0x2000`) = a PEACE stamp with TWO setters; the strength leg is a strict `>` against the peer's own scalar. **`PASS M381: 9/9`** `2fa1a4100ec6f4f6` (`evidence/m381_bit13_noun.txt:149`), re-run identical; harness 20/20 (`evidence/m381_mutate.txt:22`). `:N` = evidence line.
 | claim | ev | conf/mutant |
 |---|---|---|
-| TWO setters, both in FUN_00502cd0, both `push 0x2000` -> `call FUN_00551a20`: 0x50393d and 0x506cf1 (33 `push 0x2000` sites image-wide, 17 hosts, 6 feeding the setter) | `:3-13` | V MU1 MU6 |
-| setter A guard: skip factions [ebp-8]/[ebp-4]; table byte +7 == esi; row([ebp-8],esi) & **0x1 PACT**; row([ebp-4],esi) **0x10 clear, 0x8 set** (peace+commlink); then the strength test | `:8-11` | V MU11 |
-| **the threshold = the peer's live value**: `cmp eax,DWORD PTR [edi]`@0x503936 / `jle 0x50396a`@0x503938 — strict `>`, NO immediate and NO mul/div in the window; edi = field(esi), +0x20bc, 7 iterations | `:25-38` | V MU2 MU3 MU12 |
-| the left operand is faction ecx's OWN field: chain folds to **2095*ecx with no `add esi`**; `+esi` appears only in the two relations chains (0x5038f4 row edx, 0x50390f row ecx) | `:22-24` | V MU4 MU8 |
-| setter B's only guard is `test BYTE [row(edi,esi)],0x10 / jne` — **not at war** — with no 0x94e48c operand in its window: a strength-gap-only ("MEEK") noun is REFUTED; 0x2000 is a standing PEACE marker (noun INFERRED) | `:12-13` | V MU13 |
-| both rows written: all 6 dword AND masks in FUN_00551a20 preserve bit 13; the unconditional tail ORs `edx,ebx` at 0x551be6/0x551c09 | `:44-47` | V MU1 MU6 |
-| follow-on: if stat `+0x94f504+4*[ebp-4]` of esi has `0x800000`, `FUN_00531b0([ebp-4],esi,+3)` = attitude delta (add to `[a,b]+0x94d488`, clamp `0x14`) | `:50-54` | V MU5 |
-| readers: **5 byte-form** `test ah,0x20` (0x54820d 0x5555a0 0x55563b 0x55572d 0x555747) + **1 dword-form** 0x4db30b -> FUN_006050d4; 0x555747 leaves the bit-31 clear `and eax,0x7fffffff`@0x555750 unexecuted | `:57-60` | V MU7 MU10 |
+| TWO setters, both in FUN_00502cd0, both `push 0x2000` -> `call FUN_00551a20`: 0x50393d and 0x506cf1 (call sites 0x503944 / 0x506cf8; 33 `push 0x2000` sites image-wide, 17 hosts, 6 feeding the setter) | `:3-12` | V MU1 MU6 MU14 |
+| setter A guard: skip factions [ebp-8]/[ebp-4]; table byte +7 == esi; row([ebp-8],esi) & **0x1 PACT**; row([ebp-4],esi) **0x10 clear, 0x8 set** (peace+commlink); then the strength test | `:24-63` | V MU11 |
+| **the threshold = the peer's live value**: `cmp eax,DWORD PTR [edi]`@0x503936 / `jle 0x50396a`@0x503938 — strict `>`, NO immediate and NO mul/div in the window; edi = field(esi), +0x20bc, 7 iterations | `:101-110` | V MU2 MU3 MU12 |
+| the left operand is faction ecx's OWN field: chain folds to **2095*ecx with no `add esi`**; of the host's 5 `add eax,esi`, only 0x5038f4/0x50390f chain into a relations-row load | `:88-98` | V MU4 MU8 |
+| setter B's only guard is `test BYTE [row(edi,esi)],0x10`@0x506cde / `jne`@0x506ce6 (1 jcc in the window) with no 0x94e48c operand: a strength-gap-only ("MEEK") noun is REFUTED; 0x2000 is a standing PEACE marker (noun INFERRED) | `:10-11` | V MU13 MU15 |
+| both rows written: all 6 dword AND masks in FUN_00551a20 preserve bit 13; the unconditional tail ORs `edx,ebx` at 0x551be6/0x551c09 | `:116-119` | V MU16 MU17 |
+| follow-on: if stat `+0x94f504+4*[ebp-4]` of esi has `0x800000`, `FUN_00531b0([ebp-4],esi,+3)` = attitude delta (`add ecx,esi`@0x5314dd into `[a,b]+0x94d488`, clamp `0x14`) | `:67-72,:123-126` | V MU5 MU18 |
+| readers (3-instruction load window, 6-instruction cross-check disclosed): **5 byte-form** `test ah,0x20` (0x54820d 0x5555a0 0x55563b 0x55572d 0x555747) + **1 dword-form** 0x4db30b -> FUN_006050d4; 0x55574a -> 0x555809 skips the bit-31 clear at 0x555750 | `:131-134` | V MU7 MU10 MU19 |
 ## M380 (s340-c3, 7/7) — 0x94e48c = MIGHTY/MEEK strength scalar; hub mode-3 refusal; 2/27 rel rewrites DO drop a stamp. **`PASS M380: 7/7`** `5dfd436fe4093015` (`evidence/m380_diplo_power.txt:135`), re-run same; harness 19/19 (`evidence/m380_mutate.txt:23`).
 - block+0x105c: 70 operands (67R/3W); stride 2095 dwords measured 19/19 — V MU1 MU2 MU18 (`:9`)
 - 3 writers; create/reset zero +0x1054..+0x1068/+0x1070, zeroing proved; accumulator @0x5579ea shape 7/7 — V MU3 MU15 MU16 (`:14-26`)

@@ -41,6 +41,18 @@ MUTANTS = [
      "the walk step off by one dword: 7 iterations become a non-integral count"),
     ("MU13", {"M381_PATCH": "506cdc|mov    eax,DWORD PTR [eax*4+0x94e48c]"}, {"G0"},
      "a 0x94e48c operand smuggled into setter 2's guard window: the negative reddens"),
+    ("MU14", {"M381_PATCH": "506cf8|call   0x551a24"}, {"G0"},
+     "setter 2's call target moved: the second stamp no longer feeds the setter"),
+    ("MU15", {"M381_PATCH": "506cde|test   BYTE PTR [eax*4+0x94d448],0x8"}, {"G0"},
+     "setter 2's guard re-pointed at the commlink bit: the tested pair no longer pins"),
+    ("MU16", {"M381_PATCH": "551b98|and    edx,0xff7fdfff"}, {"G5"},
+     "a callee AND mask now clears 0x2000: the mask algebra reddens"),
+    ("MU17", {"M381_PATCH": "551be6|or     edx,esi"}, {"G5"},
+     "the tail's first direction stops OR-ing the mask: the both-rows claim reddens"),
+    ("MU18", {"M381_PATCH": "5314dd|sub    ecx,esi"}, {"G6"},
+     "the attitude callee subtracts the delta instead of adding it"),
+    ("MU19", {"M381_PATCH": "55574a|jne    0x555750"}, {"G7"},
+     "the bit-13 branch no longer skips the 0x7fffffff clear"),
     ("NOOP", {}, set(), "identity: nothing may redden"),
 ]
 

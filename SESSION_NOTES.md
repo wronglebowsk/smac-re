@@ -632,9 +632,9 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 ## Session 341-chain3 — M381: bit 13 (0x2000) is a PEACE stamp with TWO setters; the strength one is strict > vs the peer's own scalar
 
-`python3 -u scripts/m381_bit13_noun.py` -> **`PASS M381: 9/9 gates digest 73c5356395ecec3e`**
-(`evidence/m381_bit13_noun.txt:70`), second run byte-identical; harness `scripts/m381_mutate.py` ->
-**`RUN PASS 14 mutants, 0 unexpected`** (`evidence/m381_mutate.txt:16`). Static, zero box.
+`python3 -u scripts/m381_bit13_noun.py` -> **`PASS M381: 9/9 gates digest 2fa1a4100ec6f4f6`**
+(`evidence/m381_bit13_noun.txt:149`), second run byte-identical; harness `scripts/m381_mutate.py` ->
+**`RUN PASS 20 mutants, 0 unexpected`** (`evidence/m381_mutate.txt:22`). Static, zero box.
 
 - **The comparison M380 left open is confirmed and asymmetric in the right way**: at 0x50392f the
   chain folds to 2095*ecx with **no `add esi`** (`:22`), the load is faction ecx's OWN

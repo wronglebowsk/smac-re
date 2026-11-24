@@ -101,6 +101,7 @@ if patch:
     else:
         say("PATCH %08x MISSED" % a)
 
+WINDOW_BYTES = "c5b591efe37545e6"
 JCC = ("je", "jne", "jz", "jnz", "jl", "jle", "jg", "jge", "jb", "jbe", "ja",
        "jae", "js", "jns", "jp", "jnp", "jo", "jno")
 IM = re.compile(r'0x([0-9a-f]+)', re.I)
@@ -172,10 +173,22 @@ w2 = " ".join(i["ops"] for i in pre2)
 say("    setter-2 guard window: %s" % " | ".join(text_of(i["a"]) for i in pre2[-6:]))
 say("    setter-2 window carries a 0x94e48c strength operand: %s"
     % ("0x94e48c" in w2.lower()))
+b_call = INS[IDXBY[0x506CF8]]
+b_test = INS[IDXBY[0x506CDE]]
+b_jne = INS[IDXBY[0x506CE6]]
+guard_jcc = [i["a"] for i in INS[IDXBY[0x506CD7]:IDXBY[0x506CF1]] if i["mn"] in JCC]
+say("    setter-2 guard pair: %s @506cde | %s @506ce6 (conditional branches in its window: %d)"
+    % (text_of(0x506CDE), text_of(0x506CE6), len(guard_jcc)))
 if len(mine) != 2 or [a for a, _ in mine] != [0x50393D, 0x506CF1]:
     bad("G0 expected the two FUN_00502cd0 stamps (0x50393d, 0x506cf1), got %r" % mine)
-if not near or 0x50393D not in [a for a, _, _ in near]:
+elif not near or 0x50393D not in [a for a, _, _ in near]:
     bad("G0 the 0x50393d push is not followed by a call to FUN_00551a20")
+elif b_call["mn"] != "call" or b_call["ops"].strip() != hex(SETTER):
+    bad("G0 setter 2 no longer calls FUN_00551a20 (%s)" % text_of(0x506CF8))
+elif b_test["mn"] != "test" or "94d448],0x10" not in b_test["ops"].replace(" ", "") or \
+        b_jne["mn"] != "jne" or len(guard_jcc) != 1:
+    bad("G0 setter 2's guard pair changed (%s / %s / %d jcc)"
+        % (text_of(0x506CDE), text_of(0x506CE6), len(guard_jcc)))
 elif "94e48c" in w2.lower():
     bad("G0 setter 2 now carries a strength operand - the two guards would agree")
 else:
@@ -185,7 +198,7 @@ else:
 
 # ---------------------------------------------------------------- G1 window
 say("")
-say("G1  the stamp loop, byte-exact (0x5038a3..0x50397d)")
+say("G1  the stamp loop, instruction-text exact, bytes shown (0x5038a3..0x50397d)")
 WIN = [
     (0x5038A3, "mov esi,0x1"),
     (0x5038A8, "lea edx,[eax+eax*4]"),
@@ -263,18 +276,24 @@ for a, want in WIN:
         say("    %08x MISSING" % a)
         bad1 += 1
         continue
-    got = op(INS[IDXBY[a]]).replace("[ebp+0x1c]", "[ebp+0x1c]")
+    i = INS[IDXBY[a]]
+    got = op(i)
     w = want.replace(" ", "").lower()
+    mark = "ok " if got == w else "!! "
+    say("    %s%08x %-24s %s" % (mark, a, i["b"], i["mn"] + " " + i["ops"]))
     if got != w:
-        say("    %08x %-44s != %s" % (a, got, w))
         bad1 += 1
-say("    %d instructions pinned, %d mismatched" % (len(WIN), bad1))
+bdig = hashlib.sha1("|".join("%x:%s" % (a, INS[IDXBY[a]]["b"]) for a, _ in WIN
+                            if a in IDXBY).encode()).hexdigest()[:16]
+say("    %d instructions pinned, %d mismatched; raw-byte digest %s" % (len(WIN), bad1, bdig))
 if bad1:
     bad("G1 %d window instructions do not match the dump" % bad1)
+elif bdig != WINDOW_BYTES:
+    bad("G1 the window's raw bytes changed (%s != %s)" % (bdig, WINDOW_BYTES))
 else:
-    ok("G1", "%d-instruction loop byte-exact; two exit-skipped factions, PACT on the "
-             "third party's row, peace+commlink on the acting row, then the strength test"
-       % len(WIN))
+    ok("G1", "%d-instruction loop text-exact (bytes shown + digest %s): two exit-skipped "
+             "factions, PACT on the third party's row, peace+commlink on the acting row, then "
+             "the strength test" % (len(WIN), bdig))
 
 # ---------------------------------------------------------------- G2 index
 say("")
@@ -309,17 +328,33 @@ rng = [INS[k] for k in range(IDXBY[0x503920], IDXBY[0x50392F])]
 adds_esi = [i["a"] for i in rng if i["mn"] == "add" and i["ops"].replace(" ", "") == "eax,esi"]
 say("    `add eax,esi` in 0x503920..0x50392f: %d" % len(adds_esi))
 left = [i["a"] for i in rng if i["mn"] == "add" and i["ops"].replace(" ", "") == "eax,esi"]
-say("    where +esi DOES appear: 0x5038f4 (row edx) and 0x50390f (row ecx) - the relations rows")
+host_end = min([p for p in PROL if p > HOST] or [0xFFFFFFFF])
+esi_adds = [i["a"] for i in INS if HOST <= i["a"] < host_end
+            and i["mn"] == "add" and i["ops"].replace(" ", "") == "eax,esi"]
+say("    `add eax,esi` in FUN_%08x..%08x: %d -> %s"
+    % (HOST, host_end, len(esi_adds), " ".join("%x" % a for a in esi_adds)))
+row_chained = []
+for a in esi_adds:
+    k = IDXBY[a]
+    nxt = INS[k + 1]
+    rel = "94d448" in nxt["ops"]
+    say("       %x -> next load %-38s %s" % (a, nxt["mn"] + " " + nxt["ops"],
+                                              "RELATIONS ROW" if rel else "not a row"))
+    if rel:
+        row_chained.append(a)
+say("    +esi sites that chain into a relations-row load: %s" % " ".join("%x" % a for a in row_chained))
 if mul != STRIDE // 4:
     bad("G2 the chain folds to %d, not the measured 2095" % mul)
 if adds_esi:
     bad("G2 the strength chain carries +esi at %s - it would be the pair cell" % adds_esi)
-if not (INS[IDXBY[0x5038F4]]["ops"].replace(" ", "") == "eax,esi"
+if len(esi_adds) != 5 or row_chained != [0x5038F4, 0x50390F]:
+    bad("G2 the +esi census in FUN_00502cd0 moved (%d sites, rows %s)" % (len(esi_adds), row_chained))
+elif not (INS[IDXBY[0x5038F4]]["ops"].replace(" ", "") == "eax,esi"
         and INS[IDXBY[0x50390F]]["ops"].replace(" ", "") == "eax,esi"):
     bad("G2 the CONTROL chains no longer add esi - the contrast is not measured")
 else:
-    ok("G2", "left operand = field(ecx) (2095*ecx, no +esi); the +esi contrast lives only "
-             "in the two relations chains")
+    ok("G2", "left operand = field(ecx) (2095*ecx, no +esi); the host wants +esi at exactly the "
+             "two relations chains (0x5038f4, 0x50390f) and nowhere else")
 
 # ---------------------------------------------------------------- G3 walk
 say("")
@@ -416,12 +451,16 @@ say("    ebx init 0x94f504 + 4*[ebp-4], +0x20bc per iteration -> stat(+0x%x+4*[e
     % (ebx0 - FIELD))
 say("    callee head: %s | %s | %s"
     % (text_of(0x5314CF), text_of(0x5314E1), text_of(0x5314EF)))
+say("    the delta add: %s @0x5314dd, then clamp + store" % text_of(0x5314DD))
 clamp = imms(INS[IDXBY[0x5314E1]]["ops"])[0]
 delta = imms(INS[IDXBY[0x503958]]["ops"])[0]
 tmask = imms(INS[IDXBY[0x50394E]]["ops"])[0]
 say("    FUN_00531b0(a,b,delta) adds delta to [a,b]+0x94d488 and clamps to 0x%x; "
     "cdecl args here = ([ebp-4], esi, +%d); test mask 0x%x" % (clamp, delta, tmask))
-if ebx0 != 0x94F504 or tmask != 0x800000 or delta != 3 or clamp != 0x14 or \
+if INS[IDXBY[0x5314DD]]["mn"] != "add" or \
+        INS[IDXBY[0x5314DD]]["ops"].replace(" ", "") != "ecx,esi":
+    bad("G6 the attitude callee no longer adds the delta (0x5314dd: %s)" % text_of(0x5314DD))
+elif ebx0 != 0x94F504 or tmask != 0x800000 or delta != 3 or clamp != 0x14 or \
         INS[IDXBY[0x5314CF]]["ops"].replace(" ", "") != "ecx,DWORDPTR[edx*4+0x94d488]":
     bad("G6 follow-on/attitude callee changed (base 0x%x, test 0x%x, delta %d, clamp 0x%x)"
         % (ebx0, tmask, delta, clamp))
@@ -434,22 +473,32 @@ else:
 # ---------------------------------------------------------------- G7 readers
 say("")
 say("G7  bit-13 readers on a relations dword")
-byte_sites = []
-for i in INS:
-    if i["mn"] == "test" and i["ops"].replace(" ", "").lower() == "ah,0x20":
-        w = INS[IDXBY[i["a"]] - 3:IDXBY[i["a"]]]
-        if any("94d448" in j["ops"] for j in w):
-            byte_sites.append(i["a"])
-say("    byte-form (test ah,0x20 after a +0x94d448 load): %d -> %s"
+def readers(window):
+    bs, ds = [], []
+    for i in INS:
+        w = INS[max(0, IDXBY[i["a"]] - window):IDXBY[i["a"]]]
+        if not any("94d448" in j["ops"] for j in w):
+            continue
+        if i["mn"] == "test" and i["ops"].replace(" ", "").lower() == "ah,0x20":
+            bs.append(i["a"])
+        if i["mn"] in ("test", "and") and imms(i["ops"]) and imms(i["ops"])[0] == BIT13:
+            ds.append(i["a"])
+    return bs, ds
+
+
+byte_sites, dword_sites6 = readers(3)
+byte6, _ = readers(6)
+say("    byte-form (test ah,0x20 within 3 insns of a +0x94d448 load): %d -> %s"
     % (len(byte_sites), " ".join("%x" % a for a in byte_sites)))
-dword_sites = []
-for i in INS:
-    if i["mn"] in ("test", "and") and imms(i["ops"]) and imms(i["ops"])[0] == BIT13:
-        w = INS[IDXBY[i["a"]] - 3:IDXBY[i["a"]]]
-        if any("94d448" in j["ops"] for j in w):
-            dword_sites.append(i["a"])
-say("    dword-form (test/and reg,0x2000 after a +0x94d448 load): %d %s"
+say("    same census with a 6-instruction window (looser, disclosed): %d -> %s"
+    % (len(byte6), " ".join("%x" % a for a in byte6)))
+dword_sites = dword_sites6
+say("    dword-form (test/and reg,0x2000 within 3 insns of a +0x94d448 load): %d %s"
     % (len(dword_sites), dword_sites))
+skip_ok = INS[IDXBY[0x55574A]]["mn"] == "jne" and \
+    imms(INS[IDXBY[0x55574A]]["ops"])[0] > 0x555750
+say("    the bit-13 branch 0x55574a -> %s skips the clear at 0x555750: %s"
+    % (INS[IDXBY[0x55574A]]["ops"].strip(), skip_ok))
 want_byte = [0x54820D, 0x5555A0, 0x55563B, 0x55572D, 0x555747]
 say("    bit-31 clear guarded by bit 13: %s | %s | %s"
     % (text_of(0x555736), text_of(0x555747), text_of(0x555750)))
@@ -462,6 +511,8 @@ elif INS[IDXBY[0x4DB311]]["ops"].strip() != "0x2000" or \
 elif INS[IDXBY[0x555750]]["mn"] != "and" or \
         INS[IDXBY[0x555750]]["ops"].replace(" ", "") != "eax,0x7fffffff":
     bad("G7 the 0x555747 reader no longer guards the 0x7fffffff clear")
+elif not skip_ok or sorted(set(byte6) - set(byte_sites)) != [0x548451, 0x55261F]:
+    bad("G7 the reader census moved or the bit-13 branch no longer skips the clear")
 else:
     ok("G7", "5 byte-form readers (0x54820d 0x5555a0 0x55563b 0x55572d 0x555747) + 1 dword form "
              "(0x4db30b -> FUN_006050d4); 0x555747 guards the 0x80000000 clear at 0x555750")
