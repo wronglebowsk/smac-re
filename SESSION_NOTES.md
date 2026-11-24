@@ -669,7 +669,7 @@ whether a facility completion stamps at all.
 - **CONSUMER**: getters feed one dialog block (0x493b0b..0x493b79, 5+5 sites, 11-field order
   measured both ways) storing +0xa30..+0xa58; APPLY 0x4923d0 ORs +0xa30 into ds:0x92befc @0x492464
   and +0xa34 into ds:0x92bf00 @0x49246f. `Laptop` changes DEFAULTS only.
-- **REVIEW (PR #380)**: 11 findings closed by tightening G1a/G1b/G1d/G2e/G3a/G4a/G4b/G5b/G5c and
+- **REVIEW (PR #380)**: 10 findings closed by tightening G1a/G1b/G1d/G2e/G3a/G4a/G4b/G5b/G5c and
   the rotate guard; 8 new mutants (MU17-24), no check weakened.
 - **PROTOCOL**: NAMED headroom 4,204 B (< 5 KB trigger) -> `m355_named_rotate.py` rotated `## M293`
   VERBATIM (block sha1 `e548f949`) to `docs/named-archive-m355-rows.md`.
