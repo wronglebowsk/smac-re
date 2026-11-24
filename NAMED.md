@@ -61,19 +61,15 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 - +3 plane identical across 17 saves, turns 50,51,52,53,60 | G4 | V
 - +3 < 0x40 on every land tile, >= 0x41 on every water tile, 0x40 unused (19 files); index into DAT_0094eda8 (stride 0x20bc), split at 0x40 | G5 | V (census), OPEN (what names the partition; 25 ids / 47 components, 130/16626 adjacencies differ)
 - instrument `scripts/m248_region_values_census.py` -> `evidence/m248_region_values.txt` | rc=0 | H
-## B3 (s199, BUILD track, PASS 6/6) — `sim/turn.py`: M30's turn engine, executable, replays the recorded trace 67/67
-
-| claim | evidence | conf |
-|---|---|---|
-| parity rule: the recorded rows are an ORDERED SUBSEQUENCE of the engine's emissions, because the trace is a 0.2 s change-set sample (`turn_trace.py:59`) | `sim/selftest.py::run_replay`; matched=67/67, 220 emitted, 154 collapsed, 11/cycle — `evidence/b3_turn_replay.txt:2` | V |
-| the engine walks the 8 faction slots ASCENDING; our slot is 3 and is the only slot at which tf==0 is ever seen (21 rows, all cur==3; own==3 in 67/67) | G1/G2 — `evidence/b3_turn_replay.txt:1-2` | V |
-| the YEAR fires on the 7→0 edge while `cur` is still 7 (witness row 22 = t 88.631, cur 7, tf 2, year 2221); the other 7 edges score 22, 22, 10, 0, 0, 0, 6 /66 | G3 — `evidence/b3_turn_replay.txt:3` | V |
-| `tf` is cleared ONE STEP AFTER `cur_player` is written to 3 (merge them and parity is 5/66); the 4 (3,2) rows are 5, 14, 23, 40 | G4 — `evidence/b3_turn_replay.txt:4` | V |
-| 48 of 322,560 candidate models (cyclic order × year edge) reproduce the trace = 6 cyclic orders × 8 rotations; all 48 share 0→1, 1→2, 2→3, 7→0 and year@7; only {4,5,6}'s internal order is free | G5 — `evidence/b3_turn_replay.txt:5` | V |
-| 20 presses = 20 year bumps = 20 tf clears, year 2213→2233, final (3,0,2233) == last row | G6 — `evidence/b3_turn_replay.txt:6` | V |
-| OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
-| instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
-
+## B3 (s199, BUILD 6/6) - ROTATED VERBATIM to `docs/named-archive-b3-b4-rows.md` (sha1 `8c9ab788c9fc5aba551e0e274b44f53bc9fd9ddd`): `sim/turn.py` replays M30's turn trace. One line per claim, same gates and `path:line`:
+- parity rule = ORDERED SUBSEQUENCE (the trace is a 0.2 s change-set sample): matched 67/67, 220 emitted, 154 collapsed, 11/cycle - G1/G2 V (`evidence/b3_turn_replay.txt:2`)
+- the engine walks the 8 faction slots ASCENDING; our slot 3 is the only slot where tf==0 is ever seen (21 rows, all cur==3; own==3 in 67/67) - G1/G2 V (`evidence/b3_turn_replay.txt:1-2`)
+- the YEAR fires on the 7->0 edge while `cur` is still 7 (witness row 22 = t 88.631, cur 7, tf 2, year 2221); the other 7 edges score 22,22,10,0,0,0,6 /66 - G3 V (`evidence/b3_turn_replay.txt:3`)
+- `tf` clears ONE STEP AFTER `cur_player`=3 (merged: 5/66); the 4 (3,2) rows are 5,14,23,40 - G4 V (`evidence/b3_turn_replay.txt:4`)
+- 48 of 322,560 order x year-edge models reproduce the trace = 6 cyclic orders x 8 rotations; only {4,5,6}'s internal order is free - G5 V (`evidence/b3_turn_replay.txt:5`)
+- 20 presses = 20 year bumps = 20 tf clears, 2213->2233, final (3,0,2233) == last row - G6 V (`evidence/b3_turn_replay.txt:6`)
+- OPEN: the press transition (3,0)->(3,2) is unobservable (no_press variant still 66/66); `nb` (0x985AF4, 51->58) unmodelled - OPEN (cursor)
+- instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` -> `PASS B3: 6/6 gates`, rc=0, 22.3 s, one invocation - V
 ## M250-M254 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `a9fc5ea5dbca1673`, 591 B)
 ## M255-M258 (s201-s202, PASS 8/8) - ROTATED VERBATIM to `docs/named-archive-m255-m258.md`
 Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`, asserted byte-exact by `scripts/m329_named_rotate.py`; the archive holds the full rows, git history is the trail. One line per claim, gates and cites unchanged:
@@ -94,20 +90,16 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | M258: the 8-slot fold (`0x558075`-`0x5583ac`) walks WORD[0x950764 + 2*region] and BYTE[0x950664 + region] stepped by the faction stride `0x20bc`, doubling the pair per set bit of BYTE[block+0x94d44c]; accumulators `[ebp-0x60]`/`[ebp-0x6c]`, count `[ebp-0x68]` | G6, `:10` | V |
 | M258: the fold's second row is 0x200 below (`mov bx,[eax-0x200]` `0x558082` = `0x950564 + 2*region`); `0x950564` is its own table base (`lea esi,[esi*2+0x950564]` `0x4f7a0a`); both tables lie past the 3,067,904-B file image (ends VA `0x6ed000`) | G7, `:11` | V (pcs), OPEN (extents) |
 
-## B4 (s203, BUILD track, PASS 9/9) — `sim/base.py` + `sim/economy.py`: the round economy, executable
-
-| claim | evidence | conf |
-|---|---|---|
-| base record a reimplementation needs: owner byte +4, pop +6, growth +7, name +19 (NUL, within 32 B), storage +0x40, queue item id +0x50, completed-facility bitmap +0x8c (byte item>>3, bit 1<<(item&7)), totals +0xc4/+0xd4/+0xe4/+0xf4, **GROSS energy bucket +0xfc**, other buckets +0x100/+0x104/+0x108 | G4 decodes the recorded 76-dword live read (`evidence/m46e_econ.json:16215`) → 13/13 of the harness's own field values — `evidence/b4_economy.txt:20` | V |
-| the name field is 32 B, not 20: names run to 22 chars ("Morgan Energy Monopoly", "U.N. Court of Justice", "Valley of the Faithful") and `scripts/m46_econ.py:106` (`r[19:39]`) truncates them; 0/311 records over 17 saves lack a NUL in the 32-B window | G5 — `evidence/b4_economy.txt:21` | V |
-| faction round: gross = Σ base+0xfc; upkeep = Σ per-facility cost, 0 if the item is on the faction's disabled list; net = gross − upkeep; energy′ = max(0, energy + net − ledger) | G6 reproduces the game's own HUD globals (2,2,0) on both recorded rounds and the energy 19→19 — `evidence/b4_economy.txt:22` | V |
-| the aggregator also writes per-base upkeep (0x744f2c, 75 entries, nonzero only on the player's own base) and 39-wide item counts (0x745738); the engine reproduces both arrays exactly | G7 — `evidence/b4_economy.txt:23` | V |
-| item upkeep = alpha `#FACILITIES` column 3 at line (runtime id − 1), names matching, for ids 1/3/6/7/8 = 0,0,1,1,1; Σ 3 raw, 2 with item 8 disabled = the recorded 0x744f28 | G8 — `evidence/b4_economy.txt:24` | V (the five pinned ids) |
-| the model is the only one of four that matches the recorded triple: no disabled list (2,3,−1); gross from +0x100 (0,2,−2); alpha indexed without the +1 (2,3,−1) | G9 — `evidence/b4_economy.txt:25` | V |
-| an idle PRE-FOUNDING faction nets 0: 0 bases ⇒ gross 0, upkeep 0, net 0, energy 15 flat on 12/12 rounds, and the recorded HUD panel reads 0/turn on all 3 legible rounds | G1-G3 — `evidence/b4_economy.txt:17-19`, `evidence/m44d_idle.json:138,150,811` | V |
-| ANSWERED by B29: alpha's column vs M46's live table (Fusion Lab 3/4, Quantum Lab 4/3, Nanoreplicator 6/4, Quantum Converter 5/6) is M46's alpha-INDEX numbering — under rec i = alpha row i-1 the derived table reproduces all four values at that index, and the order IS alpha's for ids 1..38 (B29 G3 38/38 name+upkeep, mutants MU1/MU3; `evidence/b29_item_table.txt:78`); still OPEN: the facility bitmap's width past +0x8f; the gifts and spending-ledger terms | `evidence/b4_economy.txt:14-17` | V / OPEN |
-| instrument: `python3 -m sim.selftest --replay evidence/m44d_idle.json` → `PASS B4: 9/9 gates` | rc=0, 1.3 s, one invocation (invocation 1 failed 8/9 on the name width — that was the finding) | V |
-
+## B4 (s203, BUILD 9/9) - ROTATED VERBATIM to `docs/named-archive-b3-b4-rows.md` (sha1 `7c9671f6a1f82f54fe8a8c962c05c01d9ba73dcf`): `sim/base.py` + `sim/economy.py`, the round economy. One line per claim, same gates and `path:line`:
+- base record: owner byte +4, pop +6, growth +7, name +19 (NUL, 32 B), storage +0x40, queue id +0x50, facility bitmap +0x8c, totals +0xc4/+0xd4/+0xe4/+0xf4, GROSS bucket +0xfc, others +0x100/+0x104/+0x108 - G4 13/13 V (`evidence/b4_economy.txt:20`)
+- the name field is 32 B not 20 (names to 22 chars; `scripts/m46_econ.py:106` truncates); 0/311 records lack a NUL in 32 B - G5 V (`evidence/b4_economy.txt:21`)
+- faction round: gross = sum base+0xfc; upkeep = sum per-facility alpha `#FACILITIES` col 3 at (id-1), 0 if disabled; net = gross - upkeep; energy' = max(0, energy+net-ledger) - G6 reproduces the HUD (2,2,0) both rounds, 19->19 V (`evidence/b4_economy.txt:22`)
+- the aggregator also writes per-base upkeep 0x744f2c (75) and 39-wide item counts 0x745738; reproduced exactly - G7 V (`evidence/b4_economy.txt:23`)
+- item upkeep for ids 1/3/6/7/8 = 0,0,1,1,1; sum 3 raw, 2 with item 8 disabled = recorded 0x744f28 - G8 V (`evidence/b4_economy.txt:24`)
+- the model is the only one of four matching the recorded triple (no disabled list 2,3,-1; gross from +0x100 0,2,-2; alpha without the +1) - G9 V (`evidence/b4_economy.txt:25`)
+- idle PRE-FOUNDING faction nets 0: 0 bases, energy 15 flat on 12/12 rounds; HUD reads 0/turn on all 3 legible rounds - G1-G3 V (`evidence/b4_economy.txt:17-19`)
+- ANSWERED by B29: M46's live table is alpha-INDEX numbering (rec i = alpha row i-1), order IS alpha's for ids 1..38 - B29 G3 38/38 V (`evidence/b29_item_table.txt:78`); still OPEN: bitmap width past +0x8f; gifts and spending-ledger terms - OPEN
+- instrument: `python3 -m sim.selftest --replay evidence/m44d_idle.json` -> `PASS B4: 9/9 gates`, rc=0, 1.3 s (invocation 1 failed 8/9 on the name width - that was the finding) - V
 ## M259-M261 (s204, PASS 14/14) — the per-faction mask band, the static map views, the 0x679f98 class — FULL rows VERBATIM at `docs/named-archive-m333-rows.md:6` (§rotation-1, s313-chain1 headroom rotation, sha1 `f78e7ef04359` — the region is bounded by an explicit terminator line, its line number AND full digest re-asserted by `scripts/m333_named_rotate.py --verify`); this stub governs. Pre-mutation-law registry (no MU ids — the harness era starts at `## M308`); the G-ids are the archive rows' own gates, and the byte-reads they printed are `evidence/m259_m261_census.txt` (`:30` SUMMARY 14/14, one invocation, 3.3 s).
 - M259 the band: terrain record bytes +16..+43 (dwords 4..10) = the FACTIONS 1..7 per-faction copies of the record's `+8` master mask, `[terrain_base + 0xc + (row*0xb + fac)*4]` (faction 0 uses `+8`; both whole-array refreshes guard `test ebx,ebx / je`); writers CLOSED at 10 indexed + 1 walk store, every site named (G1-G6); 44 indexed reads in 25 functions (G7). **RETRACTS M240's "a record is two 22-byte map columns" for bytes 16..43** — the `.MP` "7 equal dwords == +8" (planetx 8192/8192) IS this band.
 - M260 the views: the live 0x224b8 spacing occurs 0 times in the 3,067,904-B image — `immediates naming 0x224b8: 0; 4-byte LE pattern ... offset -1` (G8, `evidence/m259_m261_census.txt:16-17`); view 0 is static .bss at 0x8f79e0 (sole immediate store 0x5803e1, printed by G10 at `evidence/m259_m261_census.txt:21`; ctor FUN_00518820's only call site 0x580406, G9); the ctor's stores reach `this+0x23bec` = 146,412 B > the 140,472 stride, so the stride is not an object size (G10 `evidence/m259_m261_census.txt:20-21`); the save codec walks the 8 entries as POINTERS, clearing `*(p+0x1dd74)` for entries 1..7 only (G11). **CORRECTED IN PLACE by M262 — RETRACTED: "the ~140 KB views are not allocated"**: entries 1..7 ARE allocated at startup, 0x22480 B each, by the pointer-arithmetic `mov [esi],eax` at 0x5803bb (0 only on the alloc-failure path) — M262's own rows: `docs/named-archive-m332-rows.md` (G2), `evidence/m262_m264_census.txt:24` (11/11); 0x224b8 = 0x22480 + 0x38, a 56-B heap header (INFERRED).
@@ -1611,6 +1603,17 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | 0x800000 TREATY ON: an exhaustive 256-mask sweep - 240/240 masks with a 0x17 bit clear it, the 16 without keep it; expiry cannot (`0xbf & 0x800000 = 0`) | `evidence/b37_treaty.txt:61` | V MU9 |
 | six rivals differ (min 1 config); ACCEPTANCE `python3 -u -m sim.treaty` PASS 8/8 `5dd4119bd1882d1d`, twice identical | `evidence/b37_treaty.txt:76`, `evidence/b37_twice.txt:2-3` | V MU10-11 |
 | UNMODELED: nouns of 0x800/0x20000/0x400; FUN_00552970's role; one upkeep pass == one turn | docstring | lead |
+
+## B38 (s342, BUILD 9/9, zero box; 12 mutants) — the `#SOCIO` SE-effect matrix is EXECUTABLE: `sim/socio.py` builds the 4x4x11 grid off `data/alpha.json`, applies a faction's four settings, and runs the bit-24 agenda consumer. **`PASS B38: 9/9`** `e0bb2deb53ecb96c` (`evidence/b38_socio.txt:78`), re-run identical; harness 12/12 (`evidence/b38_mutate.txt:14`). `:N` = acceptance line.
+| claim | ev | conf/mutant |
+|---|---|---|
+| grid = 4 categories x 4 choices x 11 columns, entry = signed `+`/`-` prefix length; dump geometry 0x350/0xd4=4, 0xb0/0x2c=4, 0x2c/4=11, row = 0x24 header + 0xb0 | `:17-18` `:39` | V MU2 MU10 |
+| parity: Police State `[0,-2,2,0,0,2,0,0,0,0,0]`, Free Market `[2,0,0,0,0,-5,0,-3,0,0,0]` == M376's emulated-parser vectors (`evidence/m376_socio_grid.txt:42-43`); 4 empty cells at choice 0, 12 first-positive, PS -> 2 | `:42-44` | V MU3 MU4 MU10 |
+| application: 4 settings -> one 11-vector, exclusive per category, linear over all 256 settings vs a dict reference; PS/Planned/Power/Thought Control = `[0,-4,1,0,4,4,2,0,2,-1,0]` | `:50` | V MU5 MU7 |
+| consumer: bit-24 triple (category, choice, signature) — 12 add / 4 reject, empty cells -> -1; both readers load `+0x927b24`, `test eax`, `jl` | `:57-61` | V MU4 |
+| NEGATIVE: `0x92babc` is NOT an input to `0x94e48c` — 0 matrix operands in the 36-insn M383 chain (store 0x5579ea) | `:65` | V MU6 MU11 |
+| rivals FAIL: sign-only (-1 vs -5), mirrored columns, all-cells accumulate, row 3 dropped, last-positive | `:69-73` | V MU8 MU3 |
+| OPEN: which live event selects a category (UI path); row 3 reachability (M376) | — | OPEN |
 
 ## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..128) of `evidence/m371_war_contact.txt:8`.
 | claim | evidence | conf |
