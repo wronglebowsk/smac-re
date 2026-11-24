@@ -1266,6 +1266,8 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | 11 | OPEN: what the 19 record bits MEAN (4 published, 15 stay); who fills the scratch `+0x00..+0x18` in other frames | OPEN |
 | 12 | REVIEW meta: this rotation family (`m329_named_rotate*.py`) already moved two settled blocks out of NAMED.md | meta |
 | 13 | REVIEW box time: ZERO - everything is `scratch/m574/text.txt` + `ghidra_out/index.csv` | meta |
+
+Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25) and its `evidence/m329_*.txt:line` cites stay in `docs/named-archive-m329-rows.md` (same row order), so no V row here is unattested.
 ## B27 (s309 BUILD, zero box) — the ENERGY round EXECUTABLE and CARRIED: eight faction blocks in, the ledger written through the writer (block A's FIRST MODELED spans), out and back through the container. `sim/energy.py` = the law, `sim/composedenergy.py` = the run; spine §B27. Every row's numbers are transcribed from the lines it cites.
 
 | claim | evidence | conf / mutant |
