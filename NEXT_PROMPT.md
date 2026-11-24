@@ -24,7 +24,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B34 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B30`-`## B34` govern).
 **B35**: author its rung in `BUILD_SPINE.md` BEFORE probing - who calls the grant family
-(`FUN_004e47d0`/`FUN_0059ce10`, 11 literal items, 1 caller `FUN_005a0fa0`)? **DOC CAP: NAMED 246,640/250,000.**
+(`FUN_004e47d0`/`FUN_0059ce10`, 11 literal items, 1 caller `FUN_005a0fa0`)? **DOC CAP: NAMED 246,697/250,000.**
 
 ## THE LEDGER
 
