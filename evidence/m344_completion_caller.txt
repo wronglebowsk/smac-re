@@ -5,8 +5,8 @@ TABLE 1 - the 27 API sites: item argument, its dataflow class, and local shape
   site    function      item        class      set   bitpre pop  chain-terminal
   40dcba  FUN_0040d7a0  edx         param      0x0   Y      0    mov    edx,DWORD PTR [ebp+0x8]
   40dd3c  FUN_0040d7a0  edx         param      0x0   Y      0    mov    edx,DWORD PTR [ebp+0x8]
-  41c6d1  FUN_0041c4d0  esi         callret    var   Y      0    call -> return in eax
-  41c6f8  FUN_0041c4d0  esi         callret    0x1   Y      0    call -> return in eax
+  41c6d1  FUN_0041c4d0  esi         callret    var   Y      0    call 0x5f1394 -> return in eax
+  41c6f8  FUN_0041c4d0  esi         callret    0x1   Y      0    call 0x5f1394 -> return in eax
   41d8fc  FUN_0041d480  esi         loopctr    0x1   -      0    mov    esi,0x1
   5085ca  FUN_00507ef0  0x1         imm        0x1   Y      0    literal 0x1
   5085d7  FUN_00507ef0  0x1         imm        0x0   Y      0    literal 0x1
@@ -17,7 +17,7 @@ TABLE 1 - the 27 API sites: item argument, its dataflow class, and local shape
   508c85  FUN_00507ef0  eax         clamped    0x1   Y      0    mov    eax,0x1
   508cee  FUN_00507ef0  eax         clamped    0x1   Y      0    mov    eax,0x1
   582542  FUN_005823c0  0x1a        imm        0x1   Y      0    literal 0x1a
-  589157  FUN_00585720  esi         callret    0x0   Y      0    call -> return in edx
+  589157  FUN_00585720  esi         callret    0x0   Y      0    call 0x64c6f0 -> return in edx
   593dc2  FUN_0058fa40  ecx         imm        0x0   -      0    mov    DWORD PTR [ebp-0x34],0x1b
   59d015  FUN_0059ce10  0x6         imm        0x1   -      0    literal 0x6
   59d022  FUN_0059ce10  0x3         imm        0x1   -      0    literal 0x3
@@ -133,16 +133,16 @@ TABLE 4 - rivals, scored on the same printed numbers
   RIV2 'the pop stamps the bit': pop bitmap refs 0, pop->API calls 0 -> FAILS
   RIV3 'the unnamed region 0x4f3ebc is the completion': or-stores there 2, item-table rows 0, pop calls 0, spend pair 0 -> FAILS
 
-table digest sha256[:16] = 7586ab28a3974104
+table digest sha256[:16] = 034bf0e1a1606d2c
 
 GATES
 ok   G1 27 sites / 8 functions; RE-DERIVED split set=1 16, set=0 8, variable 3; the only row where M342's 6-insn window differs is 0x40dd3c (its set push sits 7 back: set=0x0, not '?')
-ok   G2 every item argument resolves to a known source class (0 unresolved/27); classes [('callret', 3), ('clamped', 2), ('imm', 18), ('loopctr', 2), ('param', 2)]
+ok   G2 every item argument resolves and the census is EXACT (0 unresolved/27): [('callret', 3), ('clamped', 2), ('imm', 18), ('loopctr', 2), ('param', 2)]
 ok   G3 0/27 sites take their item from the base record's queue window (+0x4c..+0x77): []
 ok   G4 exactly 4 set=1 sites pass a REGISTER item ['0x41c6f8', '0x41d8fc', '0x508c85', '0x508cee']; 41c6f8 = call-return + bitmap pre-read (toggle), 41d8fc = loop counter under the 0x5a6e70 predicate, 508c85/508cee = the 1..0x26 clamp
-ok   G5 stamp block: 10/10 pinned instructions reproduced (mapper item=edi -> 304*ds:0x68cbb0 fold -> or BYTE [95da9c])
-ok   G6 the block spends base+0x40 by edi (0x4f0ca4/6), edi is unwritten from the stamp to the item-table row (free), and the row is [edi*48+0x984d38] (0x4f0f65-6f)
+ok   G5 stamp block: 10/10 pinned instructions reproduced in FUN_004ef6d0 (mapper item=edi -> 304*ds:0x68cbb0 fold -> or BYTE [95da9c])
+ok   G6 the block spends [edx+0x40] by edi (0x4f0ca4/6; edx == the base record is INFERRED), edi is unwritten from the stamp to the item-table row (free), and the row is [edi*48+0x984d38] (0x4f0f65-6f)
 ok   G7 stamp->pop distance 0x86 (0x4f0ec0 -> 0x4f0f46); pop calls inside the 8 API-caller functions 0
-ok   G8 digest 7586ab28a3974104 == pinned 7586ab28a3974104
+ok   G8 digest 034bf0e1a1606d2c == pinned 034bf0e1a1606d2c
 
-PASS M344: 8/8 gates; digest 7586ab28a3974104
+PASS M344: 8/8 gates; digest 034bf0e1a1606d2c

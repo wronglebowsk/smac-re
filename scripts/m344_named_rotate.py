@@ -64,7 +64,8 @@ def main(argv=None):
             return 1
         h = arch.find("## M340 VERBATIM", k)
         start = arch.find("\n\n", h) + 2
-        moved = arch[start:].rstrip("\n") + "\n"
+        nxt = arch.find("\n## ", start)                 # bound by the next heading, not EOF
+        moved = (arch[start:] if nxt < 0 else arch[start:nxt]).rstrip("\n") + "\n"
         got = hashlib.sha1(moved.encode()).hexdigest()
         ok = got == EXPECT_SHA1
         print("%s M340 region sha1 %s (pinned %s); full block still in NAMED.md: %s"

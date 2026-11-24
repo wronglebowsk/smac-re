@@ -1,5 +1,5 @@
 M344 mutant harness: 10 mutants against m344_completion_caller.py
-baseline 8/8 green (digest 7586ab28a3974104)
+baseline 8/8 green (digest 034bf0e1a1606d2c)
 ok   MU1 expected ['G1'] got ['G1']  (M342's shipped split (16/7/4) trusted instead of re-derived -> the 0x4)
 ok   MU2 expected ['G1'] got ['G1']  (the M342-window divergence check disabled: the retraction would go unn)
 ok   MU3 expected ['G2'] got ['G2']  (a legitimate item source (function parameter) declared unknown -> the )

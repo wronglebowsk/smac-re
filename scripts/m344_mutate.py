@@ -28,12 +28,12 @@ GATE_RE = re.compile(r"^(ok|BAD)\s+(G\d+)\b")
 MUTANTS = [
     ("MU1", "len(set0) == 8", "len(set0) == 7", ["G1"],
      "M342's shipped split (16/7/4) trusted instead of re-derived -> the 0x40dd3c row is lost"),
-    ("MU2", 'and [d[0] for d in diverged] == [0x40dd3c]', 'and [d[0] for d in diverged] == []', ["G1"],
+    ("MU2", 'diverged[0][2] == "0x0"', 'diverged[0][2] == "0x1"', ["G1"],
      "the M342-window divergence check disabled: the retraction would go unnoticed"),
     ("MU3", 'known = {"imm", "callret", "param", "clamped", "loopctr", "QUEUE", "mem", "computed", "global"}',
      'known = {"imm", "callret", "clamped", "loopctr", "QUEUE", "mem", "computed", "global"}', ["G2"],
      "a legitimate item source (function parameter) declared unknown -> the exhaustiveness gate bites"),
-    ("MU4", 'qch = [r for r in rows if "QUEUE" in r["term"]]',
+    ("MU4", 'qch = [r for r in rows if r["cls"] == "QUEUE"]',
      'qch = [r for r in rows if feats[r["fn"]]["q"] > 0]', ["G3"],
      "queue-provenance confused with 'the function touches the queue' -> the negative dies"),
     ("MU5", "want = {0x41c6f8, 0x41d8fc, 0x508c85, 0x508cee}",
@@ -46,12 +46,12 @@ MUTANTS = [
      "the item-table row offset shifted by one dword: the consume site is not gated"),
     ("MU8", "gate(\"G7\", dist == 0x86", "gate(\"G7\", dist == 0x84", ["G7"],
      "the stamp->pop distance loosened: any nearby or-pop pair would pass"),
-    ("MU9", 'DIGEST_EXPECT = "7586ab28a3974104"', 'DIGEST_EXPECT = "0000000000000000"', ["G8"],
+    ("MU9", 'DIGEST_EXPECT = "034bf0e1a1606d2c"', 'DIGEST_EXPECT = "0000000000000000"', ["G8"],
      "the ACCEPT digest anchor unpinned (table drift would go unnoticed)"),
     ("NOOP", "REC = 0", "REC = 0", [],
      "identity tree - must redden nothing"),
 ]
-MUTANTS[-1] = ("NOOP", 'DIGEST_EXPECT = "7586ab28a3974104"', 'DIGEST_EXPECT = "7586ab28a3974104"', [],
+MUTANTS[-1] = ("NOOP", 'DIGEST_EXPECT = "034bf0e1a1606d2c"', 'DIGEST_EXPECT = "034bf0e1a1606d2c"', [],
                "identity tree - must redden nothing")
 
 

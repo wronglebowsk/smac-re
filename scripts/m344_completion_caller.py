@@ -48,7 +48,7 @@ STAMP = 0x4f0ec0          # the completion block's inline or-store
 POP_AT = 0x4f0f46         # its pop call
 BLOCK_LO, BLOCK_HI = 0x4f0e90, 0x4f0f50
 
-DIGEST_EXPECT = "7586ab28a3974104"
+DIGEST_EXPECT = "034bf0e1a1606d2c"
 
 FAIL = []
 
@@ -159,7 +159,8 @@ def resolve_item(ins, addrs, fn, site, reg):
                 defo = (ins[i][0], w)
                 break
             if w.startswith("call") and cur_reg not in CALLEE_SAVED:
-                defo = (ins[i][0], "call -> return in " + cur_reg)
+                tgt = w.split()[-1] if len(w.split()) > 1 else "?"
+                defo = (ins[i][0], "call %s -> return in %s" % (tgt, cur_reg))
                 break
             i -= 1
         if defo is None:
@@ -334,7 +335,7 @@ def main(argv=None):
 
     # ---------- TABLE 4: rivals
     cand = [r for r in rows if r["set"] == "0x1" and not r["item"].startswith("0x")]
-    cand_ok = [r for r in cand if r["pop"] > 0 or "QUEUE" in r["term"]]
+    cand_ok = [r for r in cand if r["pop"] > 0 or r["cls"] == "QUEUE"]
     print("\nTABLE 4 - rivals, scored on the same printed numbers")
     print("  RIV1 'an API site is the completion call': set=1 sites whose ITEM is a register %d;"
           " of those, queue-provenance or pop-adjacent %d -> %s"
@@ -342,7 +343,7 @@ def main(argv=None):
     for r in cand:
         print("       %06x %s item=%s class=%s queue=%s pop-in-fn=%d"
               % (r["site"], container(fns, r["site"])[2], r["item"], r["cls"],
-                 "Y" if "QUEUE" in r["term"] else "N", r["pop"]))
+                 "Y" if r["cls"] == "QUEUE" else "N", r["pop"]))
     pop_bit = sum(1 for x, t in body(ins, container(fns, POP)) if "0x95da9c" in t)
     pop_api = sum(1 for x, t in body(ins, container(fns, POP)) if re.match(r"call +0x%x$" % API, t))
     print("  RIV2 'the pop stamps the bit': pop bitmap refs %d, pop->API calls %d -> %s"
@@ -362,29 +363,35 @@ def main(argv=None):
                                             r["bitpre"], r["term"])).encode())
     for x, t in blk:
         h.update(("%x|%s" % (x, t)).encode())
+    for x in (0x4f0f40, POP_AT):
+        h.update(("%x|%s" % (x, find(ins, x))).encode())
     digest = h.hexdigest()[:16]
     print("\ntable digest sha256[:16] = %s" % digest)
 
     # ---------- gates
     print("\nGATES")
+    mech = len(diverged) == 1 and diverged[0][0] == 0x40dd3c and diverged[0][1] == "?" \
+        and diverged[0][2] == "0x0" and diverged[0][3] == 2 and diverged[0][4] == 3
     gate("G1", len(sites) == 27 and len(by_fn) == 8 and len(set1) == 16 and len(set0) == 8
-         and len(var) == 3 and [d[0] for d in diverged] == [0x40dd3c],
+         and len(var) == 3 and mech,
          "27 sites / 8 functions; RE-DERIVED split set=1 %d, set=0 %d, variable %d; the only row"
          " where M342's 6-insn window differs is 0x40dd3c (its set push sits 7 back: set=0x0,"
          " not '?')" % (len(set1), len(set0), len(var)))
     known = {"imm", "callret", "param", "clamped", "loopctr", "QUEUE", "mem", "computed", "global"}
     unresolved = [r for r in rows if r["cls"] not in known]
-    gate("G2", not unresolved and sum(cls_hist.values()) == 27,
-         "every item argument resolves to a known source class (%d unresolved/%d); classes %s"
+    want_hist = {"imm": 18, "callret": 3, "clamped": 2, "loopctr": 2, "param": 2}
+    gate("G2", not unresolved and cls_hist == want_hist,
+         "every item argument resolves and the census is EXACT (%d unresolved/%d): %s"
          % (len(unresolved), len(rows), sorted(cls_hist.items())))
-    qch = [r for r in rows if "QUEUE" in r["term"]]
+    qch = [r for r in rows if r["cls"] == "QUEUE"]
     gate("G3", len(qch) == 0,
          "0/%d sites take their item from the base record's queue window (+0x4c..+0x77): %s"
          % (len(rows), [hex(r["site"]) for r in qch]))
     want = {0x41c6f8, 0x41d8fc, 0x508c85, 0x508cee}
     have = {r["site"] for r in cand}
     toggle_ok = bool([r for r in cand if r["site"] == 0x41c6f8 and r["bitpre"]
-                      and r["cls"] == "callret"])
+                      and r["cls"] == "callret"
+                      and any("0x5f1394" in c[1] for c in r["chain"])])
     loop_ok = bool([r for r in cand if r["site"] == 0x41d8fc and r["cls"] == "loopctr"
                     and feats[r["fn"]]["pred"] > 0])
     clamp_ok = all(any(re.match(r"(cmp\s+\w+,0x26|mov\s+\w+,0x26)$", t)
@@ -409,9 +416,11 @@ def main(argv=None):
            if "%x" % x in [w.split()[0] for w in want_blk]]
     norm = lambda s: re.sub(r"\s+", " ", s)
     match = sum(1 for w in want_blk if any(norm(w) == norm(g) for g in got))
-    gate("G5", match == len(want_blk),
-         "stamp block: %d/%d pinned instructions reproduced (mapper item=edi -> 304*ds:0x68cbb0"
-         " fold -> or BYTE [%x])" % (match, len(want_blk), BITMAP))
+    fn_ok = container(fns, STAMP)[2] == "FUN_004ef6d0"
+    gate("G5", match == len(want_blk) and fn_ok,
+         "stamp block: %d/%d pinned instructions reproduced in %s (mapper item=edi ->"
+         " 304*ds:0x68cbb0 fold -> or BYTE [%x])"
+         % (match, len(want_blk), container(fns, STAMP)[2], BITMAP))
     edi_free = not [t for x, t in ins if STAMP < x < 0x4f0f65 and writes_reg(t, "edi")]
     g6 = (find(ins, 0x4f0ca4).startswith("sub    esi,edi")
           and find(ins, 0x4f0ca6) == "mov    DWORD PTR [edx+0x40],esi"
@@ -420,12 +429,16 @@ def main(argv=None):
           and find(ins, 0x4f0f6f) == "mov    edx,DWORD PTR [ecx+0x984d38]"
           and edi_free)
     gate("G6", g6,
-         "the block spends base+0x40 by edi (0x4f0ca4/6), edi is unwritten from the stamp to the"
-         " item-table row (%s), and the row is [edi*48+0x%x] (0x4f0f65-6f)"
+         "the block spends [edx+0x40] by edi (0x4f0ca4/6; edx == the base record is INFERRED), edi"
+         " is unwritten from the stamp to the item-table row (%s), and the row is [edi*48+0x%x]"
+         " (0x4f0f65-6f)"
          % ("free" if edi_free else "WRITTEN", ITEMTAB))
     dist = POP_AT - STAMP
     pop_in_callers = sum(feats[f0]["pop"] for f0 in feats)
-    gate("G7", dist == 0x86 and pop_in_callers == 0,
+    ep_ok = (find(ins, POP_AT) == "call   0x4ef5d0"
+             and find(ins, 0x4f0f40) == "mov    eax,ds:0x68cbb0"
+             and container(fns, POP_AT)[0] == container(fns, STAMP)[0])
+    gate("G7", dist == 0x86 and pop_in_callers == 0 and ep_ok,
          "stamp->pop distance 0x%x (0x%x -> 0x%x); pop calls inside the 8 API-caller functions %d"
          % (dist, STAMP, POP_AT, pop_in_callers))
     gate("G8", digest == DIGEST_EXPECT, "digest %s == pinned %s" % (digest, DIGEST_EXPECT))

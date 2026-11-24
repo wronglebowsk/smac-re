@@ -1374,7 +1374,7 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | rivals dead: index is not 0x985aec; 0x983a10 is not the faction array (0x8c vs 0x20bc); 0x57c606's index is not stored | `:8` | V MU7 |
 | ACCEPT `PASS M338: 8/8` `1ae1563d47d0039e` x2, harness 16/16 `56455db0eadbedd7` | `:9` | V |
 | OPEN: the +0x20 index is UNCLAMPED; a pref >=6 is ADMITTED (M340); 0x44a1c8's window is the HoF screen (INFERRED). **CLOSED by `## M341`:** the window's page arithmetic | - | lead |
-## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, review #358 hardened) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder. FULL TABLE VERBATIM at `docs/named-archive-m340-rows.md` (`dceab1fc162b3b519d1abce76800c81bb5bb4bd4`); this stub governs, one line per claim  ACCEPT `scripts/m340_pref_admission.py` -> `PASS M340: 7/7`, rows `1cc44d0146a8b419`; harness `12/12`, NO-OP `[]`, `a2a1726721114b4d`.
+## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, review #358 hardened) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder. FULL TABLE VERBATIM at `docs/named-archive-m340-rows.md` (`dceab1fc162b3b519d1abce76800c81bb5bb4bd4`); every `:<line>` below is `evidence/m340_pref_admission.txt:<line>`; this stub governs, one line per claim  ACCEPT `scripts/m340_pref_admission.py` -> `PASS M340: 7/7`, rows `1cc44d0146a8b419`; harness `12/12`, NO-OP `[]`, `a2a1726721114b4d`.
 
 | claim (one line) | evidence | conf |
 |---|---|---|
@@ -1427,13 +1427,13 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | OPEN: +0x59f4's writer — no named store exists in .text (INFERRED: a control at obj+0x5970); the page's upper bound is therefore not established statically; reading "page 1..7" as faction-block numbering is INFERRED from the shared 5-block law | - | lead |
 
 
-## M344 (s323-chain1, ANALYSE, static; ACCEPT `scripts/m344_completion_caller.py` -> **`PASS M344: 8/8 gates`**, digest `7586ab28a3974104`, 2 runs identical (`evidence/m344_completion_caller.txt:148`); harness `scripts/m344_mutate.py` -> **10/10**, NO-OP `[]` (`evidence/m344_mutate.txt:14`)) — NO API caller completes production: the stamp is the base screen's inline `or` @`0x4f0ec0`.
+## M344 (s323-chain1, ANALYSE, static; ACCEPT `scripts/m344_completion_caller.py` -> **`PASS M344: 8/8 gates`**, digest `034bf0e1a1606d2c`, 2 runs identical (`evidence/m344_completion_caller.txt:148`); harness `scripts/m344_mutate.py` -> **10/10**, NO-OP `[]` (`evidence/m344_mutate.txt:14`)) — NO API caller completes production: the stamp is the base screen's inline `or` @`0x4f0ec0`.
 
 | claim | evidence | conf |
 |---|---|---|
 | all 27 item args resolve (imm 18 / callret 3 / clamped 2 / loopctr 2 / param 2); split **16 set=1 / 8 set=0 / 3 variable** — M342's 16/7/4 read `0x40dd3c` as '?' (its `push 0x0` sits 7 insns back); only divergent row of 27 | `:4-38` | V MU1,MU2,MU3 |
-| **0/27** items come from the queue window `+0x4c..+0x77`; **0/8** caller functions calls the pop | `:74-80`,`:127-133` | V MU4 |
+| **0/27** items' resolved class is QUEUE (the base record window `+0x4c..+0x77`); **0/8** caller functions calls the pop | `:34`,`:40-49`,`:141`,`:145` | V MU4 |
 | the 4 register-item set=1 sites: `0x41c6f8` (modal-runner return + bitmap pre-read = toggle), `0x41d8fc` (loop counter under `0x5a6e70`), `0x508c85`/`0x508cee` (1..0x26 clamp) | `:127-131` | V MU5 |
-| stamp = `or BYTE PTR [eax],cl` @`0x4f0ec0`: mapper(item=`edi`) -> 304*`ds:0x68cbb0`, 10 pinned insns, **0x86** before `call 0x4ef5d0` (pop) @`0x4f0f46` | `:51-71`,`:139-145` | V MU6,MU8 |
-| the same block spends `+0x40` by `edi` (`0x4f0ca4/6`) then reads `[edi*48+0x984d38]` (`0x4f0f65-6f`), `edi` unwritten in between | `:112-121`,`:143` | V MU7 |
-| the 8 caller ROLES, and "+0x40 = accumulated minerals / `edi` = the completed item" | `:40-50` | INFERRED |
+| stamp = `or BYTE PTR [eax],cl` @`0x4f0ec0` in FUN_004ef6d0: mapper(item=`edi`) -> 304*`ds:0x68cbb0`, 10 pinned insns, **0x86** before the byte-read `call 0x4ef5d0` (pop) @`0x4f0f46` | `:51-70`,`:143`,`:145` | V MU6,MU8 |
+| the same block spends `[edx+0x40]` by `edi` (`0x4f0ca4/6`) then reads `[edi*48+0x984d38]` (`0x4f0f65-6f`), `edi` unwritten in between | `:112-124`,`:144` | V MU7 |
+| the 8 caller ROLES; `edx` at `0x4f0ca1` = the base record; `+0x40` = accumulated minerals; `edi` = the completed item | `:40-50` | INFERRED |
