@@ -19,6 +19,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.path.join(ROOT, "scratch", "m574", "text.txt")
 SCRIPT = os.path.join(ROOT, "scripts", "m354_design_row.py")
 OUT = os.path.join(ROOT, "evidence", "m354_mutate.txt")
+BASELINE = "MU0"                     # the unmutated run every claim's rows ride on
 
 # (id, addr, old, new, gate, why)
 MUTANTS = [
@@ -57,7 +58,7 @@ def main():
     rows, cov = [], set()
     rc0, red0, _ = run({})
     print("M354 mutation harness - %d declared mutants" % (len(MUTANTS) + 2))
-    print("MU0   baseline: exit %d reds %s" % (rc0, red0 or "[]"))
+    print("%-5s baseline: exit %d reds %s" % (BASELINE, rc0, red0 or "[]"))
     ok_base = rc0 == 0 and not red0
     for mid, addr, old, new, gate, why in MUTANTS + [NOOP]:
         rc, red, out = run({"SMAC_M354_PATCH": "0x%x|%s|%s" % (addr, old, new)})
