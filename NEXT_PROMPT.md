@@ -127,3 +127,4 @@ M342 (x9) MERGED: +0x8c `or` x11, `and` x3; pop NON-writer. 7/7 2b88df5da5aeafe1
 - M343 (s323-chain2) MERGED: `[obj+0xa40]` writer = 3 dialog methods (FUN_005f5759 +0xa8 x4, FUN_005f58fa +0x64 x3, FUN_005f5a11 ds:0x9977f0 x2). 9/9 bcdace84a0352b4a, harness 12/12. NAMED ## M343.
 
 - M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11
+- M347 (s324-chain2): HoF page writer = the +0x5970 child selector, ids 1..7 (page bound 7); 12/12 `9eb19bc9d3538225`, 16/16

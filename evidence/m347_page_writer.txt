@@ -1,0 +1,55 @@
+== M347: the writer of [screen+0x59f4] (M341's OPEN) ==
+T1 identity: sub-object at screen+0x5970 ; field 0x59f4 = sub+0x84
+   ctor 0x44ba40: lea-sub ['0x44ba97'] ; call-ctor ['0x44baa1'] ; vptr DWORD PTR [esi],0x674c5c ; +0x444 DWORD PTR [esi+0x444],0x674c54
+   vtable 0x674c5c slot +0x30 = 0x4495e0 ; this=ecx at ['0x449600'] ; load at 0x44970f: mov ebx,DWORD PTR [esi+0x59f4]
+T2 sub-object ctor 0x6290b0: stores to +0x84 = 0 ; zero-stores = ['0x6290bc', '0x6290c9', '0x6290d6']
+T3 class selector stores to [this+0x84] (0x629169..0x6294b0):
+   0x629187  mov DWORD PTR [edx+0x84],0xfffffffe
+   0x6292ca  mov DWORD PTR [edx+0x84],0xffffffff
+   0x629363  mov DWORD PTR [ecx+0x84],edx
+   0x62936e  mov DWORD PTR [eax+0x84],0xffffffff
+   lea reg,[..+0x84] (indirect-store evasion): 0
+T4 HoF screen calls into the sub-object (receiver pinned):
+   0x4492b2 call 0x629169 (init)  receiver lea:[esi+0x5970]
+   0x449462 call 0x6291a3 (register)  receiver lea:[esi+0x5970]
+   0x44ae72 call 0x6291e3 (select)  receiver lea:[edi+0x5970]
+   0x44b72b call 0x6291e3 (select)  receiver mov:0x74df70
+   absolute receiver 0x74df70 == 0x748600+0x5970 : True
+T5 child ids (the id namespace the selector matches):
+   ebx 0x4492d5 mov ebx,0x927b2c ; step ebx,0x59c ; cmp 0x92a270 -> trip 7
+   id path: inc edx ; mov DWORD PTR [ebp-0x14],edx ; mov eax,DWORD PTR [ebp-0x14] ; push eax ; call 0x5f9e85
+   Init 0x5f9e85: mov eax,DWORD PTR [ebp+0xc] -> mov DWORD PTR [edx+0xa78],eax
+   selector: mov eax,DWORD PTR [edx+0xa78] ; cmp edx,DWORD PTR [ecx+0x84] ; mov edx,DWORD PTR [ebp-0x1c]
+   checks: pre_inc=True trip7=True init_a78=True sel_a78=True sel_84=True ids=[1, 2, 3, 4, 5, 6, 7]
+T6 writer id domains:
+   block handler 0x44adc0: mov DWORD PTR [ebp+0x8],0x0 ; add edi,0x2bc ; cmp edi,0x984d34 -> 7 blocks 0..6
+   id = mov eax,DWORD PTR [ebp+0x8] ; inc eax ; push eax
+   player path: mov eax,ds:0x91b5b4 ; mov eax,ds:0x91b5b4 ; mov DWORD PTR [esi+0xa4c],eax
+T7 sentinel reachability at the reader (0x44970f -> 0x449793):
+   guards on ebx between load and use: 0
+   n=-1: ['0x983498', '0x983524', '0x9835b0', '0x98363c', '0x9836c8']
+   n=-2: ['0x9831dc', '0x983268', '0x9832f4', '0x983380', '0x98340c']
+RIVALS:
+   R1 ctor zero-inits +0x84 -> ctor stores measured 0 => DEAD
+   R2 exact-token 0x59f4 census: 13 refs = 1 plain + 12 indexed [r+r*4+0x59f4]
+      plain ref = ['0x44970f'] ; indexed outside 0x49xxxx = 1 -> R2 DEAD
+   R3 ids 0..6 (ignore the reload-after-inc) -> measured set [1, 2, 3, 4, 5, 6, 7] => DEAD
+   R4 parent capacity 32 -> registration loop builds 7 children => DEAD
+   R5 receiver-blind: 0x6291e3 has 35 call sites; HoF receiver-pinned = 2
+      => R5 DEAD
+
+PASS G1 0x59f4 = sub(0x5970)+0x84; ctor 0x44ba40 builds it; vtable 0x674c5c +0x30 = 0x4495e0, whose body reads the field
+PASS G2 ctor 0x6290b0 leaves +0x84 UNTOUCHED (0 stores); -2 comes from init 0x629169
+PASS G3 exactly 4 stores: -2 init / -1 x2 / the requested id
+PASS G4 4 calls, receiver = lea [reg+0x5970] x3 + abs 0x74df70 (= 0x748600+0x5970)
+PASS G5 ids = {1..7}: trip 7, counter reloaded AFTER inc, Init stores arg2 at +0xa78, selector matches +0xa78
+PASS G6 block ids = {1..7} (7-block scan, +1) ; player id = ds:0x91b5b4 = the SITE B cell [screen+0xa4c] (its 1..7 block domain cited M312)
+PASS G7 no guard on the page; a -1/-2 sentinel indexes BEFORE 0x983a10
+PASS R1 ctor-zero rival DEAD (0 ctor stores)
+PASS R2 textual-census rival DEAD (1 plain + 12 indexed other-array refs)
+PASS R3 0-based-id rival DEAD (reload after inc measured)
+PASS R4 capacity-32 rival DEAD (7 built, capacity 32)
+PASS R5 receiver-blind rival DEAD (2 of 35 call sites)
+table_sha256=9eb19bc9d3538225
+digest=9eb19bc9d3538225 gates=12 pass=12
+PASS M347: 12/12 gates

@@ -491,3 +491,29 @@ Docs: NAMED 245,757 B (B24 4,772 B rotated VERBATIM to `docs/named-archive-b31-r
 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `--verify` ok). NEXT_PROMPT patched by section.
 STILL OPEN: the unit-id decoding (M68/M69 NEG_TYPE); which loss is a raze vs a record identity change;
 whether a facility completion stamps at all.
+
+## Session 325-chain2 (2026-11-24) — M347: the HoF page WRITER (M341's OPEN), answered (milestone/m346)
+
+- **ANSWER:** `[screen+0x59f4]` is `+0x84` of the child container the HoF ctor
+  0x44ba40 builds at screen+0x5970 (static singleton 0x748600 -> 0x74df70).
+  Selector 0x62921c matches a child id (+0xa78) and stores it at this+0x84,
+  else -1; init 0x629169 writes -2; the ctor never touches +0x84.
+- **UPPER BOUND = 7** (M341's missing bound): the 7 children at screen+0xa5c
+  get ids 1..7 — the loop counter is stored back AFTER `inc` (0x4493e1) and
+  only then reloaded as the Init arg (0x4493f8); 0x5f9e85 writes arg2 to
+  +0xa78. Both writers pass 1..7: block handler 0x44adc0 scans 7 blocks
+  (0x983a10..0x984d34 / 0x2bc) and sends block+1; the open path 0x44b690 sends
+  ds:0x91b5b4 = the SITE B cell [screen+0xa4c] (M312: block == player, 1..7).
+- **SENTINEL:** -1/-2 are unconditional stores, unreachable from these two
+  callers; the reader 0x44970f..0x449793 has 0 guards, so a sentinel would
+  index BEFORE 0x983a10 (n=-1 -> 0x983498.., n=-2 -> 0x9831dc..).
+- ACCEPT `python3 -u scripts/m347_page_writer.py` -> **`PASS M347: 12/12`**
+  `9eb19bc9d3538225`, 2 runs diff-identical; `m347_mutate.py` **16/16**,
+  NO-OP `[]` (`evidence/m347_mutate.txt:22`).
+- RIVALS: ctor-zero DEAD (0 stores); textual census 13 refs = 1 plain + 12
+  `[r+r*4+0x59f4]` in 0x49xxxx (another array) DEAD; 0-based ids DEAD (pre-inc);
+  capacity-32 DEAD (7 registered); receiver-blind DEAD (2 of 35 call sites).
+- NAMED: `## B26` rotated VERBATIM to `docs/named-archive-b26-governing.md`
+  (sha1 `2b800e500b8c`, `m347_named_rotate.py --verify`); NAMED 235,832 B.
+- UNKNOWN: which ids the other 33 callers of 0x6291e3 pass (other screens);
+  whether a player value 0 can reach 0x44b71e.
