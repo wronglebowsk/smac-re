@@ -47,10 +47,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 
 ## (ARCHIVE) M89-M221: moved VERBATIM to `docs/named-archive-m89-m221.md` (s251 hygiene split - 619 lines, 55 headings; grep there for per-id semantics of M89-M221 incl. UNMERGED M101/M103/M109; git history is the trail)
 ## (ARCHIVE) M227-M245 + B1-B2: moved VERBATIM to `docs/named-archive-m227-m245.md` (s254 hygiene split - 133 lines, 10 headings; grep there for per-id semantics; git history is the trail)
-## M246 (s197) — the save's last 4 B are a `timeGetTime()` save-CREATION stamp — FULL rows VERBATIM at `docs/named-archive-b28-rows.md:10` (§rotation-1 marker at `:8`, s316-chain1 headroom rotation, sha1 `fcd4989fdf15` — the region is bounded by its own terminator line, its line number AND full digest re-asserted by `scripts/b28_named_rotate.py --verify`); this stub governs.
-- `FUN_00597ce0` writes the trailing dword from `timeGetTime()` (`local_8` line 15 → `FUN_0064c9a0(&local_8,4,1,iVar2)` line 44), the codec never reads it; Δ(dword) vs Δ(mtime) ≤ 2.5 s on 5/5 same-session pairs | shard_015.c | V
-- creation-stamped, not file-write-stamped: `0x15c79939` on 3 files 486,979 s apart, `0x2db1b939` on 2 files 71,224 s apart | census G3, 17 saves | V
-
+## M246 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `5fc00420de391631`, 757 B)
 ## M247 (s197) — the region map's row stride is `Rw>>1`, not `(Rw+1)/2` — rows in the same archived region; this stub governs.
 - 6 referencing functions; the only element accessors `FUN_00582340`/`FUN_00582360` index `(param_1>>1)+DAT_0092ae18+(DAT_0092ad9c>>1)*param_2`; `(Rw+1)/2` occurs once image-wide (the length) | G4 | V
 - builder `FUN_0058ce00` (y<Rh, x=(y&1) step 2<Rw) writes exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 for odd Rw, else 0 | G5 | V
@@ -79,7 +76,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 | OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
 | instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
 
-## M250-M254 (s200-s201; PASS 7/7 + 7/7 + 7/7 + 8/8 + 8/8) — the region generator, the per-faction per-region verdict byte, the coarse map's single consumer, the four verdict codes, and the contact bits — FULL rows VERBATIM at `docs/named-archive-b28-rows.md:41` (§rotation-2 marker at `:40`, s316-chain1 review-round headroom rotation #2, sha1 `c839a606651b` — the region is bounded by its own terminator line, its line number AND the full digest re-asserted by `scripts/b28_named_rotate2.py --verify`); this stub governs. M254's bit-naming row stays INFERRED (named); every other row is V.
+## M250-M254 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `a9fc5ea5dbca1673`, 591 B)
 ## M255-M258 (s201-s202, PASS 8/8) - ROTATED VERBATIM to `docs/named-archive-m255-m258.md`
 Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`, asserted byte-exact by `scripts/m329_named_rotate.py`; the archive holds the full rows, git history is the trail. One line per claim, gates and cites unchanged:
 
@@ -201,7 +198,7 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | deterministic: two runs -> byte-identical 67,790-B dump, sha256 3b62847494b252ad... | `evidence/b7_moveslice.txt:5` (`python3 -m sim.selftest --b7 ...` -> `PASS B7: 6/6 gates`) | V |
 | declared ASSUMED in the dump `smac-sim-move/1`: positions come from the save (load-restore not modeled - M106 kernel write); the gesture is applied to EVERY unit (the trace's 117-120 live in a different save); uniform 3 MP cost | dump `assumed` | ASSUMED (declared) |
 
-## M277 (s218, PASS 6/6) - the scaled read is the permanent block-0 view; M274 G2's spill landing is arithmetically dead — FULL rows VERBATIM at `docs/named-archive-m337-rows.md:8` (§rotation-1 marker at `:7`, s318-chain1 headroom rotation, sha1 `653c93cda817` — the region is bounded by its own terminator line, its line number AND the full digest re-asserted by `scripts/m337_named_rotate.py --verify`); this stub governs. Every row is V; the M278 refinement (the player-index-0 real row) is archived with them.
+## M277 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `6aa8eebae1f0d955`, 513 B)
 ## M278 (s219, PASS 7/7) - block 0 is the player-index-0 real row AND the unowned fallback; no neutral/player slot
 
 | fact | evidence | status |
@@ -1075,8 +1072,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | ACCEPT 13/13 digest 470d844054b1b101 x2 (`:67-68`,`_rerun.txt:67-68`); 31/31+1 digest cf85092dea6baa93 (`evidence/m330_mutate.txt:36-38`); ST 5/5 (`evidence/m330_mutate_selftest.txt:6`) | cite | V |
 | OPEN: slot; ~~985aec~~ ANSWERED M332 (runtime mirror of the INI pref "Difficulty", master 0x92bde8); ~~+2fc/+308~~ ANSWERED M331 (income siblings); profile+300 | - | lead |
 
-## M326 (s301-chain2, STATIC 10/10, review #332 hardened) — FULL rows VERBATIM at `docs/named-archive-m338-rows.md:7` (§rotation-1 marker at `:6`, s319-chain2 headroom rotation, sha1 `a882ee40851d` — the region is bounded by its own terminator line and its digest is re-asserted by `scripts/m338_named_rotate.py --verify`); this stub governs. block+224 = the per-faction DEFERRED HURRY-PRODUCTION PAYMENT (energy debt), settled at upkeep; hurry defer-vs-pay flag chain 920434&91c62c, readers = AVAILABLE (220-224), reset 59f0bf/c1, save carry [0]*8.
-
+## M326 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `b35a213c4a689285`, 550 B)
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
 | claim | evidence | conf |
@@ -1558,6 +1554,18 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
+
+## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page: its flag widget is an INLINE +0x15a0 group of 13 checkboxes whose ids ARE the bits; 0x80000000 selects the record's SECOND dword. ev `evidence/m362_sibling.txt`
+| claim | ev | conf |
+|---|---|---|
+| FUN_004db1b0 syncs 13 ids {8,10,4,2,1,1000,2000,20,2000000,400,40000} from 0x94d448 + {80000008,80002000} from 0x94d468; id==mask 11/11, id==mask\|0x80000000 2/2, high set == the 0x94d468 rows | `:9-20` | V MU1,2,3,18 |
+| all 13 blocks compute (fac*0x82f+tgt) by ONE identical 6-insn idiom; 0x82f dwords = 0x20bc B; 0x94d468 = base+0x20 = slot +8 of the SAME per-faction record | `:22-39` | V MU4,5 |
+| widget = inline sub-object dialog+0x15a0: 1 `lea`, 13 `mov ecx,edi`, tail = +0xf0 vtable call; fields 0xa1c/0xa20 only | `:41-46` | V MU7,8,6 |
+| builder FUN_004db480 adds the same 13 ids in the SAME order; 13 distinct label slots in 0x997b20 (label TEXT = OPEN: heap) | `:48-64` | V MU9,10,17 |
+| 4 toggle handlers: id class picks the dword 4/4, 8 writer sites; the two 4-arg writers are one-way and single-handler | `:66-74` | V MU11,12,19 |
+| 6 writers 0x5518f0/9c0/a20/c40/cf0/d70: 4 write (p1,p2)+(p2,p1), 2 one-way; primary base 3 A / 3 B | `:76-85` | V MU13,14 |
+| RIVALS refuted: not the 0x92befc pref block, not ordinals 1..13, not a separate array, not one-way for 4/6 | `:87-95` | V MU15,16 |
+| OPEN: the 13 label strings (0x997b20 heap, runtime); bit nouns (chain-2 lane); 0x551a20's third slot 0x94d5dc | - | lead |
 
 ## M360 (s331-c3) — NOT a seventh page: 0x37/0x38/0x39 are A/V RADIO rows (+0x7aec: 8 built, 11 queried), 0x50 the seventh widget's 4th id; a miss resolves to bit<count>. ev `evidence/m360_orphans.txt:137`
 | claim | ev | conf |

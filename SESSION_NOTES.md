@@ -689,3 +689,29 @@ whether a facility completion stamps at all.
 - OPEN: +0x2b/+0x2d/+0x2e nouns; the 24-record 0x1c table's identity
   (it ends at 0x98ad90..0x98ad9c); bit8 noun. NEXT: (x6) pref-block writers;
   B34 = facility +0x8c.
+## Session 333-chain3 (2026-11-24) — M362: the 0x4db1xx sibling = the FACTION RELATIONS page; its +0x15a0 group = 13 ids that ARE the bits
+
+- **PICK** (M360's alternate): "a second dialog with its own radio/flag block" -> the
+  relations page (builder FUN_004db480: title = the faction's name at 0x927874+f*0x59c,
+  left list = every OTHER faction; fields +0xa1c = faction, +0xa20 = target). Its flag
+  widget is the INLINE sub-object at dialog+0x15a0.
+- **ACCEPT** `python3 -u scripts/m362_sibling.py` -> **`PASS M362: 20/20 gates`**
+  `3b30baa33ea67fcb` (`evidence/m362_sibling.txt:97`), re-run identical;
+  `m362_mutate.py` -> **19/19 killed, 0 NO-OP, 0 MISS** (`evidence/m362_mutate.txt`).
+- **13 rows, ids = bits**: 8,10,4,2,1,1000,2000,20,2000000,400,40000 read
+  `0x94d448[fac*0x82f+tgt]`; 80000008,80002000 read `0x94d468` — the prefix selects the
+  record's SECOND dword (+0x20 = slot +8) and the high-id set is EXACTLY the 0x94d468 row
+  set (2/2). id==mask 11/11; id==mask|0x80000000 2/2.
+- **INDEX**: all 13 blocks run one identical 6-insn idiom (shl 6/add/lea/shl 4/sub/add)
+  = fac*0x82f + tgt; 0x82f dwords = 0x20bc B = the per-faction block size.
+- **BUILDER** adds the same 13 ids in the same ORDER, one label each from
+  FUN_0061482f(0x997b28, [0x997b20+off], 0), 13 DISTINCT slots a0c..a18/d90..dac/df8.
+- **HANDLERS/WRITERS**: 0x4dabb0 (plain,A) -> 0x5518f0 clear / 0x551a20 set; 0x4dac30
+  (high,B) -> 0x5519c0 / 0x551c40; 0x4dacc0 -> 0x551cf0 one-way; 0x4dad40 -> 0x551d70
+  one-way. 4 of 6 writers store BOTH (p1,p2)/(p2,p1); 0x5518f0 also clears B's 0xC00.
+- **TRAPS paid**: stores are RMWs via a copied register (`mov [esi],edi`) — census by
+  FORM, not store shape. Backward def-use must not cross a branch (0x551d70 arm 2).
+- **ROTATION**: `scripts/m362_named_rotate.py` moved M250-M254/M277/M326/M246 VERBATIM to
+  `docs/named-archive-m362-rows.md` (sha1 4/4); NAMED 245,604 B after the block.
+- **OPEN**: the 13 labels (0x997b20 = heap, not Script.txt); bit NOUNS (chain-2 lane);
+  0x551a20's third slot 0x94d5dc.
