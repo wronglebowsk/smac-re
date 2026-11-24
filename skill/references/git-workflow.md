@@ -206,7 +206,10 @@ comm -23 /tmp/named_before /tmp/named_after   # must be empty, or exactly the bl
 Restore every dropped section VERBATIM from the base commit at its original anchor (keep the current
 head's new blocks and stubs; do not reflow or "tidy" the restored text), then run the gate and land it
 as a docs-only PR — the registry is what the next fire greps, and a missing block is invisible to every
-check. A fire's claim about the registry's size is not evidence: measure `grep -c '^## ' NAMED.md` and
+check. The registry also carries TWO `## (ARCHIVE) …` marker lines; they are headings like any other,
+and a section-by-ID rebuild keeps only the FIRST duplicate id and drops the second. Anchor each missing
+block before the next base-order heading that still exists, then assert after writing that every restored
+id is present AND `grep -c '^## (ARCHIVE)'` still equals the base's count. A fire's claim about the registry's size is not evidence: measure `grep -c '^## ' NAMED.md` and
 `wc -c NAMED.md` at HEAD.
 
 ## A dirty PR gets NO CI run
