@@ -19,6 +19,10 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+# The lint's id table: sim/facoracle's gates are covered by exactly these mutants (the
+# descriptive keys in mutate() map 1:1, in order). The harness asserts the counts agree.
+MU_IDS = ("MU1", "MU2", "MU3", "MU4", "MU5", "MU6", "MU7", "MU8", "MU9", "MU10")
+
 GATE = re.compile(r"^(ok  |FAIL) (G\d+[a-z]?) (.*)$")
 
 
@@ -102,6 +106,7 @@ def main():
         return 1
     names = ["MU1_bitmap_off", "MU2_head_off", "MU3_price10", "MU4_noadd", "MU5_stamp_always",
              "MU6_pop_first", "MU7_monotonic", "MU8_write_shift", "MU9_nondet", "MU10_noop"]
+    assert len(MU_IDS) == len(names), "the lint id table drifted from the mutant list"
     rows, bad = [], []
     for nm in names:
         m, declared = mutate(nm)
