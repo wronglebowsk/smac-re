@@ -474,6 +474,8 @@ build track. Protocol, validated end to end:
   non-primary lane on `git checkout --detach origin/main` (or its own milestone branch); `git
   worktree list` should show `main` in the branch column exactly once. The lane that owns the primary
   also owns `main` and the `sim/` build track; every other lane works detached/worktree-local.
+- **Round prep is an ORDERED checklist, and its steps must not ride one `&&` chain.** Primary: `git checkout main && git pull --ff-only`; move each lane's UNTRACKED review sidecars to `~/reverse/artifacts/pr<N>_review/` and restore any that show as DELETIONS (tracked); `git checkout --detach origin/main` in every non-primary lane; `wc -c NAMED.md NEXT_PROMPT.md` plus `track_mode.py`; allocate IDs; only then fire. A `&&` chain aborts at the checkout while a lane still holds `main`, so the pull, the sidecar move and the cap check never ran while the command still exits 0 via a later `cd` — run the checkout alone first, then the rest, and read `git status --short` + `git worktree list` before trusting it.
+- **Attribute the gauge per ROUND, not per fire.** Overlapping lanes share cache reads and the meter cannot separate them; a reading taken as each fire reports `ok` still misses that fire's tail (the gauge lags minutes). Pause EVERY lane, refresh the Portal cache, take ONE reading, and put that base → post-round delta on the round's ledger row. Depth: hermes-agent `references/subscription-usage.md` §Multi-lane rounds.
 - **Landing**: rebase onto origin/main before merge; force-push is blocked in cron → absorption
   merge (hermes-agent background-systems.md §Cron-mode git constraints). Keep BOTH chains' doc
   sections through every conflict.
