@@ -1473,13 +1473,15 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 
 
 
-## M346 (s325, ANALYSE, static; ACCEPT `scripts/m346_alert_raiser.py` -> **`PASS M346: 17/17`** `ab4f0ca8123245bb` x2 (`evidence/m346_alert_raiser.txt:107`); harness 17/17 `[]` (`evidence/m346_mutate.txt:19`)) — the build-finished ALERT = 2 posts into a 10-slot `$`-token table; `0x985b10` is NOT its channel.
+
+## M346 (s325, ANALYSE, static; ACCEPT `scripts/m346_alert_raiser.py` -> **`PASS M346: 18/18`** `ab4f0ca8123245bb` x2 (`evidence/m346_alert_raiser.txt:110`); harness 22/22 `[]` (`evidence/m346_mutate.txt:25`)) — the build-finished ALERT = 2 posts into a 10-slot `$`-token table; `0x985b10` is NOT its channel.
 
 | claim | evidence | conf |
 |---|---|---|
-| after the pop 0x4ef5d0 @0x4f0f46 the block posts exactly 2: 0x6265a2 kind 1 @0x4f0f78, 0x626634 kind 2 @0x4f0f96 (14 in FUN_004ef6d0); payloads `[edi*48+0x984d38]` / `0x927894+1436*idx` | `:4-37` | V MU1-3 |
-| table: payload 0x999ff4+4k, owner 0x999fcc+4k, text 0x99a01c+0x100k, bound k<=9 = TEN slots | `:40-46` | V MU4-6 |
-| expander FUN_00625b20: 4 reads 0x999fa4 + 4 adds 0x99a01c+(k<<8); tokens 0x69911c `$`/`$NUMBER`/`$NUM`/`$HEX`/`$LINK<` | `:48-55` | V MU7-9 |
-| drainer FUN_00636b1e clears slots 0/1/2 @0x63730e,15,1c, calls runner 0x5f1394 @0x63732d, re-loops on strlen(slot1)>0x10; 0 direct callers | `:57-70` | V MU10-12,16 |
-| RETRACTION: 0x985b10 = player mask (M96,M308), not the channel: 0 refs in the 5 alert fns and the post window, 0 stores in FUN_004ef6d0; not a queue (no head/count) | `:72-84` | V MU13-15 |
-| INFERRED: slot text = message text, payloads = name sources (0x64b9e0); the template consuming slots 1/2 is OPEN | - | INFERRED |
+| 0x4f0f46 = `call 0x4ef5d0` (the queue pop) and between it and 0x4f0f9b the block posts exactly 2: 0x6265a2 kind 1 @0x4f0f78, 0x626634 kind 2 @0x4f0f96 (14 in FUN_004ef6d0); payloads `[edi*48+0x984d38]` / `0x927894+1436*idx` | `:5-17`,`:27-37` | V MU1,2,3,4,5 |
+| table: payload 0x999ff4+4k, owner 0x999fcc+4k, text 0x99a01c+0x100k, `cmp k,0x9` + `jle` body = TEN slots | `:41-46` | V MU6,7,8,9 |
+| expander FUN_00625b20: 4 reads 0x999fa4 + 4 `shl REG,8; add REG,0x99a01c` (same register); tokens 0x69911c `$`/`$NUMBER`/`$NUM`/`$HEX`/`$LINK<` | `:59-62` | V MU10,11,12,13,14 |
+| drainer FUN_00636b1e clears slots 0/1/2 @0x63730e,15,1c, calls runner 0x5f1394 @0x63732d, measures slot1 (0x64c460) vs 0x10 and jumps BACK to 0x63724e; reads slot1 x5, slot2 x2; 0 direct callers | `:65-78` | V MU15,16,17,21 |
+| RETRACTION: 0x985b10 = player mask (M96,M308), not the channel: 0 refs in the 5 alert fns and the post window, 0 stores in FUN_004ef6d0 | `:81-83` | V MU18,19 |
+| no pop/consume: the only first-byte writers of the 10 text slots are the 2 publishers + the drainer | `:86-88` | V MU20 |
+| OPEN: queue-control globals in the band (the `inc/add` counter 0x999f90 family) are NOT measured; slot text = message text and payloads = name sources (0x64b9e0) are INFERRED; the template consuming slots 1/2 is OPEN | - | INFERRED |

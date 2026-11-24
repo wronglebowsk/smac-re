@@ -31,7 +31,7 @@ the game's own run; 16/16 `ce7688c0cb3b5f9d`, harness 12/12 `087e1d0228debbe9`).
 author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
 decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (`wc -c` s325, post-M346): `NAMED.md` 247,459/250,000 = 2,541 B (M313 rotated VERBATIM to `docs/named-archive-m313-rows.md`, sha1 `b674876b9a743893`, `scripts/m346_named_rotate.py --verify`; B24/M340/M329 stand) - ROTATE if <5 KB. NEXT_PROMPT <=12,000.**
+  **DOC CAP (`wc -c` s325, post-M346): `NAMED.md` 247,825/250,000 = 2,175 B (M313 rotated VERBATIM to `docs/named-archive-m313-rows.md`, sha1 `b674876b9a743893`, `scripts/m346_named_rotate.py --verify`; B24/M340/M329 stand) - ROTATE if <5 KB. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 

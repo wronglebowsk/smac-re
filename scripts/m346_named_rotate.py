@@ -119,8 +119,10 @@ def rotate():
         print("no `%s` block found" % HEAD)
         return 1
     block = "\n".join(lines[s:e]).rstrip("\n")
-    if "stub governs" in lines[s]:
-        print("already rotated - nothing to do")
+    blk = "\n".join(lines[s:e])
+    if "stub governs" in blk or "ROTATED VERBATIM" in lines[s] or os.path.exists(ARCHIVE):
+        print("already rotated (archive %s exists / block is a stub) - nothing to do"
+              % os.path.relpath(ARCHIVE, ROOT))
         return 0
     h = sha1(block)
     rec = "%s\n\nrotated by `scripts/m346_named_rotate.py`; sha1 `%s` of the block below.\n%s\n" % (

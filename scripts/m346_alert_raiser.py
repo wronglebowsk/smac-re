@@ -195,10 +195,11 @@ FN = 0x4EF6D0
 posts = [(r[0], int(r[2].strip(), 16), push_args(r[0]))
          for r in win(FN, FN + 12298)
          if r[1] == "call" and re.match(r"^0x(6265a2|626634)$", r[2].strip(), re.I)]
+POP, BLOCK_END = 0x4F0F46, 0x4F0F9B     # measured below, then asserted
 print("TABLE 1 - alert-API posts inside FUN_004ef6d0 (the base screen, %d insns)" % 12298)
-print("  * = inside the completion block (after the pop call 0x4ef5d0 @0x4f0f46)")
+print("  * = inside the completion block [pop 0x4f0f46, end 0x4f0f9b]")
 for a, callee, args in posts:
-    mark = "*" if 0x4F0F40 <= a <= 0x4F0FA0 else " "
+    mark = "*" if POP < a < BLOCK_END else " "
     print("  %s%06x  %-10s args=%s" % (mark, a, API_POST[callee], args))
 kinds_all = [p[2][0] if p[2] else "?" for p in posts]
 print("  %d posts total, kinds=%s" % (len(posts), kinds_all))
@@ -237,10 +238,16 @@ txt_all = [r for r in win(EXPANDER, EXPANDER + 2590)
 txt = [r for r in txt_all if r[2].lower().endswith(",0x99a01c")]
 print("  numeric slot refs 0x999fa4: %d %s" % (len(num), ["%06x" % r[0] for r in num]))
 print("  text slot adds 0x99a0xx   : %d %s" % (len(txt_all), ["%06x:%s" % (r[0], r[2]) for r in txt_all]))
+def _reg(operand):
+    return operand.split(",")[0].strip().lower()
+
+
 stride_ok = (len(txt_all) == 4
-             and all(INS[POS[r[0]] - 1][1] == "shl" and "0x8" in INS[POS[r[0]] - 1][2]
-                     and r[2].lower().endswith(",0x99a01c") for r in txt_all))
-print("  every text-slot read is preceded by `shl reg,0x8` (256-byte stride): %s" % stride_ok)
+             and all(r[2].lower().endswith(",0x99a01c") for r in txt_all)
+             and all(INS[POS[r[0]] - 1][1] == "shl"
+                     and INS[POS[r[0]] - 1][2].lower().split(",")[-1].strip() == "0x8"
+                     and _reg(INS[POS[r[0]] - 1][2]) == _reg(r[2]) for r in txt_all))
+print("  every text-slot read is `mov reg,[ebp-n]; shl REG,0x8; add REG,0x99a01c`: %s" % stride_ok)
 print()
 
 # ---------------------------------------------------------------- TABLE 4 ----
@@ -268,7 +275,7 @@ print("  refs inside the alert chain fns               : %s" % api_refs)
 print()
 
 # ---------------------------------------------------------------- TABLE 6 ----
-print("TABLE 6 - RIVAL R2: the slots are NOT a queue (no head/tail/count)")
+print("TABLE 6 - the text-slot first-byte writer census (R2: no pop, no consume-and-clear)")
 w = []
 for r in INS:
     m = re.match(r"^byte ptr ds:0x99(a[0-9a-f]{3})", r[2], re.I)
@@ -298,10 +305,13 @@ def gate(name, cond, detail):
         fails.append(NG[0])
 
 
-gate("exactly 2 alert-API posts inside the completion block (0x4f0f40-0x4f0fa0), at 0x4f0f78/0x4f0f96",
-     [p[0] for p in posts if 0x4F0F40 <= p[0] <= 0x4F0FA0] == [0x4F0F78, 0x4F0F96],
-     "%s of %d in FUN_004ef6d0" % (["%06x" % p[0] for p in posts if 0x4F0F40 <= p[0] <= 0x4F0FA0], len(posts)))
-kinds = [p[2][0] if p[2] else None for p in posts if 0x4F0F40 <= p[0] <= 0x4F0FA0]
+gate("0x4f0f46 IS the queue pop (call 0x4ef5d0) and 0x4f0f9b the block end (re-read of 0x91b5b4)",
+     L(0x4F0F46) == "0x4ef5d0" and L(0x4F0F9B) == "eax,ds:0x91b5b4",
+     "%s | %s" % (L(0x4F0F46), L(0x4F0F9B)))
+gate("exactly 2 alert-API posts between the pop and the block end (0x4f0f78/0x4f0f96)",
+     [p[0] for p in posts if POP < p[0] < BLOCK_END] == [0x4F0F78, 0x4F0F96],
+     "%s of %d in FUN_004ef6d0" % (["%06x" % p[0] for p in posts if POP < p[0] < BLOCK_END], len(posts)))
+kinds = [p[2][0] if p[2] else None for p in posts if POP < p[0] < BLOCK_END]
 gate("the two completion kinds are 1 (item row) then 2 (base record)", kinds == ["0x1", "0x2"], "%s" % kinds)
 gate("kind-1 payload = DWORD [edi*48 + 0x984d38] (72-record item table, M337)",
      "[edi+edi*2]" in L(0x4F0F65) and L(0x4F0F6A) == "ecx,0x4"
@@ -327,10 +337,14 @@ gate("both posters write payload/owner/clear with the same 3 arrays",
      all(len(v["payload"]) == 1 and len(v["owner"]) == 1 and len(v["clear"]) == 1
          for v in shape.values()),
      "%s" % {hex(k): {kk: len(vv) for kk, vv in v.items()} for k, v in shape.items()})
-gate("bound `cmp arg,0x9 / jle` -> TEN slots (k = 0..9)",
+BR_AFTER = {0x6265A2: (0x6265AC, 0x6265B5), 0x626634: (0x626644, 0x62664D)}
+gate("bound `cmp arg,0x9` followed by `jle` into the body -> TEN slots (k = 0..9)",
      all(len(v["bound"]) == 1 and v["bound"][0][2].lower() == "dword ptr [ebp+0x8],0x9"
-         for v in shape.values()),
-     "%s" % [(v["bound"][0][2] if v["bound"] else "<none>") for v in shape.values()])
+         for v in shape.values())
+     and all(ins(site)[1] == "jle" and L(site).lower() == hex(tgt)
+             for site, tgt in BR_AFTER.values()),
+     "%s | branches %s" % ([(v["bound"][0][2] if v["bound"] else "<none>") for v in shape.values()],
+                           [(hex(s), L(s), hex(t)) for s, t in BR_AFTER.values()]))
 gate("text buffer stride is 0x100 (`shl k,0x8` twice per poster: payload idx + buffer idx)",
      all(len(v["stride"]) == 2 for v in shape.values()),
      "%s" % [len(v["stride"]) for v in shape.values()])
@@ -349,23 +363,36 @@ gate("drainer clears the first byte of slots 0,1,2 at 0x63730e/15/1c (consecutiv
      and L(0x637315) == "byte ptr ds:0x99a11c,0x0"
      and L(0x63731C) == "byte ptr ds:0x99a21c,0x0",
      "%s" % [L(a) for a in (0x63730E, 0x637315, 0x63731C)])
-gate("drainer calls the modal screen 0x5f1394 at 0x63732d, right after the clears, and re-loops on strlen(slot1) > 0x10",
+loop_back = [r for r in win(0x63735B, 0x637362) if r[1] == "jmp"
+             and int(r[2].strip(), 16) < r[0]]
+gate("drainer clears, runs 0x5f1394 @0x63732d, measures slot1 with 0x64c460, then jumps BACK to 0x63724e when >0x10",
      len(calls(DRAINER, DRAINER + 3571, RUNNER)) == 5
-     and L(0x63732D) == "0x5f1394"
-     and L(0x63734B) == "0x99a11c" and L(0x637358) == "eax,0x10",
-     "%d runner calls | call@%s | %s | %s" % (len(calls(DRAINER, DRAINER + 3571, RUNNER)),
-                                             L(0x63732D), L(0x63734B), L(0x637358)))
-slot_reads = [a for a in slots_read if not L(a).startswith("byte ptr ds:")]
-gate("drainer READS both posted slots (1 at 5 sites, 2 at 2 sites), so the base post is load-bearing",
-     sorted(slot_reads) == [0x637340, 0x63734B, 0x63737D, 0x637388, 0x63738D, 0x6373B4, 0x6374B6],
-     "%s" % ["%06x" % a for a in sorted(slot_reads)])
+     and L(0x63732D) == "0x5f1394" and L(0x63734B) == "0x99a11c"
+     and L(0x637350) == "0x64c460" and L(0x637358) == "eax,0x10"
+     and ins(0x63735B)[1] == "jle" and bool(loop_back)
+     and int(loop_back[0][2].strip(), 16) == 0x63724E,
+     "%s | %s | %s | back->%s" % (L(0x63732D), L(0x637350), L(0x63735B),
+                                  loop_back[0][2] if loop_back else "<none>"))
+def reads_of(needle):
+    return [r[0] for r in refs(DRAINER, DRAINER + 3571, needle)
+            if not (r[1] == "mov" and r[2].lower().startswith("byte ptr ds:"))]
+
+
+r1, r2 = reads_of(0x99A11C), reads_of(0x99A21C)
+print("  drainer reads slot1 0x99a11c at %s" % ["%06x" % a for a in r1])
+print("  drainer reads slot2 0x99a21c at %s" % ["%06x" % a for a in r2])
+gate("drainer READS both posted slots: slot1 at %d sites, slot2 at %d (the base post is load-bearing)"
+     % (len(r1), len(r2)),
+     len(r1) == 5 and len(r2) == 2
+     and all(ins(a)[1] in ("movsx", "push", "mov", "lea", "cmp", "test") for a in r1 + r2),
+     "slot1=%s slot2=%s" % (["%06x" % a for a in r1], ["%06x" % a for a in r2]))
 
 gate("R1 0x985b10 is absent from the whole alert chain (0 refs in 5 fns)",
      sum(api_refs.values()) == 0, "%s" % api_refs)
 gate("R1 0x985b10 is absent from the post window and is never stored in the block",
      len(post_win) == 0 and len(stores) == 0, "%d/%d" % (len(post_win), len(stores)))
-gate("R2 the only first-byte writers are the publishers + the drainer (no pop/count)",
-     PATCH_ALGO != "drop_drain" and len(first_byte_writers) == 5
+gate("R2 the only first-byte writers of the text slots are the 2 publishers + the drainer (no pop/consume)",
+     len(first_byte_writers) == 5
      and len(drain_clears) == 3 and len(post_clears) == 2,
      "%d total / %d drain / %d post" % (len(first_byte_writers), len(drain_clears), len(post_clears)))
 gate("drainer reached indirectly: 0 direct `call 0x636b1e` in .text",
