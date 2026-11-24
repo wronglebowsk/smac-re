@@ -35,7 +35,7 @@ def mu2(m):  # call the one indexed store absolute (M325's absolute-only view)
 
 
 def mu3(m):  # move the payload band by one dword -> geometry no longer tiles
-    m["geometry"]["pay_txt"] = 0x2C
+    m["geometry"]["pay"] = m["geometry"]["pay"] + 4
 
 
 def mu4(m):  # setter bound 8 instead of 9 -> the last slot becomes unaddressable
