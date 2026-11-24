@@ -1,0 +1,4 @@
+ST1 parse_text PASS
+ST2 scaled operand PASS
+ST3 alpha_rows PASS
+PASS SELFTEST 3/3

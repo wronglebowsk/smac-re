@@ -1337,3 +1337,17 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | INFERRED/OPEN: `base_rec+0x50` = queue head (archived live H `named-archive-m32-m84e.md:312`; 51 sites read [R+0x50] with R:=ds:0x8f0d60 incl. 0x4f4994); `row+12` runtime value (39×48 table is .bss, no .text store names it) ⇒ numeric ENERGY outcome; FUN_004e40a0 = ECONOMIC FACTOR (archived H) | `:39` | lead |
 
 ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates` digest `5b5ece39af02baba` x2 (`:56-57`, `_rerun.txt:56-57`); harness `python3 -u scripts/m334_mutate.py` → `PASS HARNESS 45/45` digest `a5a5091e533f7883`, coverage 10/10 (`evidence/m334_mutate.txt:47-49`, `_rerun.txt` identical), `--selftest` 6/6 (`_selftest.txt:8`)
+
+## M335 (s317-chain2, pick (x6), STATIC 7/7) — the difficulty LADDER: `ds:0x985aec` indexes alpha.txt's six `#DIFF` names at `0x94d2ac` in file order; 4 = Thinker, 5 = Transcend
+
+| claim | evidence | conf |
+|---|---|---|
+| alpha.txt has ONE `#DIFF` section, 6 rows in file order Citizen/Specialist/Talent/Librarian/Thinker/Transcend | `evidence/m335_difficulty_ladder.txt:2` | V MU4,5 |
+| loader `push "DIFF"`@0x57ac56 -> `call 0x5ea431` -> fill `0x94d2ac`, `add esi,4`, `cmp 0x94d2c4`/`jl` = 6 iterations == 6 file rows (the count is the immediate, never read from the file) | `:3` | V MU1,2,3 |
+| census over all addressing forms incl. scaled: exactly 11 sites on `0x94d2ac..0x94d2c4`, 0 stores outside the loader | `:4` | V MU1,6,13 |
+| ORDER: chooser 0x4ddaf8 walks FORWARD appending `label[k]` with `push edi`=k, then seeds the dialog with `ds:0x985aec` before `call 0x5f1394` | `:5` | V MU10,11 |
+| INDEX: `0x599405` `mov ecx,ds:0x985aec; mov edx,[ecx*4+0x94d2ac]`; two readers bound their walk at immediate 6 (`0x484cb3`,`0x485410`) | `:6` | V MU7,12 |
+| DOMAIN: only clamp = FUN_00423af0(lo=0,hi=6) INCLUSIVE with hi == the array END address (one past the last row); refund cmps {3/jle, 4/jne} => k=1 at 4, k=2 at >=5 = TRANSCEND (M330 refined, not retracted) | `:7` | V MU8,9 |
+| RIVAL killed: "0x94d2ac is not the difficulty names" — section string + row count + iteration count agree | `:8` | V MU3,4,5,13 |
+| ACCEPT `7/7` digest `fb58bdc3307d6258` x2 (`:9-10`,`_rerun.txt`); harness `13/13` `45509023afada03b`; `--selftest` 3/3 (`evidence/m335_mutate_selftest.txt:4`) | `evidence/m335_mutate.txt:16` | V |
+| OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x48678f / 0x57c606 | - | lead |

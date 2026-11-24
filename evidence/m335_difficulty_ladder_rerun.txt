@@ -1,0 +1,10 @@
+M335 difficulty-ladder census (static; text=text.txt)
+G1  PASS alpha.txt #DIFF sections=1 rows=6 ['Citizen', 'Specialist', 'Talent', 'Librarian', 'Thinker', 'Transcend']
+G2  PASS loader push@0x57ac56 -> call 0x5ea431, name='DIFF', fill init=True base=0x94d2ac step=4 bound=0x94d2c4 backedge=True => 6 iterations == 6 file rows
+G3  PASS sites=11 expected=11 extra=[] missing=[] stores=0
+G4  PASS append loop walks 0x94d2ac..0x94d2c4 forward with push edi as the item index=True; current value ds:0x985aec seeded into the dialog before call 0x5f1394
+G5  PASS 0x599405 indexes with ds:0x985aec (prev=push 0xffffffff); independent 6-bounds at ['0x484cb3', '0x485410']
+G6  PASS clamp FUN_00423af0(lo=0,hi=6) INCLUSIVE with hi == the array END address (0x94d2c4, 6 rows => last index 5): off-by-one by construction=True; refund: cmp 3/jle (none <=3), cmp 4/jne => k=1 at 4, k=2 at >=5 (=Transcend) =True
+G7  PASS rival 'not the difficulty labels' killed: push-site string 'DIFF' + alpha rows 6 + loader iterations 6 all agree
+digest=fb58bdc3307d6258 gates=7 pass=7
+PASS M335: 7/7 gates

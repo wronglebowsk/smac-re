@@ -287,3 +287,32 @@ printers of measured values need the same None-guard as the gate.
   left untracked when #350 merged — the repo convention is both `.md` and `.json` per review
   (24 json / 25 md before this). Added here; no claim changes, no re-measure needed (the instrument
   and its digests `5b5ece39af02baba` / `a5a5091e533f7883` are untouched).
+
+## Session 317-chain2 (2026-11-23) — M335: the difficulty ladder's INDEX->LABEL order
+
+- **Doc-cap rotation first** (NAMED.md was 249,465 B vs the 250,000 FAIL line = 535 B headroom):
+  `python3 scripts/m335_named_rotate.py` moved `## M246..## M254` (90 lines, 12,804 B) VERBATIM to
+  `docs/named-archive-m246-m254.md`, sha1 `8c4762cc7523`; `--verify` re-hashes it byte-exact and
+  prints `NAMED.md 243833 B (headroom 6167)`. Compressed stubs keep every claim's numerals+gates.
+- **ANSWER (pick (x6), first clause):** the six difficulty names are alpha.txt's `#DIFF` rows,
+  loaded at `0x57ac56` (`push "DIFF"` -> `call 0x5ea431`) into `0x94d2ac`, one dword per row,
+  `add esi,4` up to the hard-coded `cmp esi,0x94d2c4` => 6 rows, file order
+  Citizen/Specialist/Talent/Librarian/Thinker/Transcend. `ds:0x985aec` is that index: at
+  `0x599405` it loads the label (`mov ecx,ds:0x985aec; mov edx,[ecx*4+0x94d2ac]`), and the
+  chooser `0x4ddaf8` walks the table forward passing `push edi` (=k) as the item index, after
+  seeding the dialog with `ds:0x985aec` before `call 0x5f1394`.
+- **M330 refined, not retracted:** the refund's cmps are `cmp eax,3/jle` (none at <=3) and
+  `cmp eax,4/jne` => k=1 at exactly 4 (Thinker), k=2 at >=5 -- with six rows that arm is
+  TRANSCEND (index 5), i.e. live, not a hypothetical. "cmps top out at 4" is a 6-row ladder's
+  five boundaries minus the top one.
+- **New measured oddity:** the only clamp on the index is `FUN_00423af0(lo=0,hi=6)` at
+  `0x486f30-0x486f40`, and its hi is INCLUSIVE while equal to the array's END ADDRESS -- a
+  difficulty of 6 would read `0x94d2c4`, outside the 6-entry table. Reachability is OPEN.
+- ACCEPT `python3 -u scripts/m335_difficulty_ladder.py` -> `PASS M335: 7/7 gates`, digest
+  `fb58bdc3307d6258`; re-run diff-identical (`evidence/m335_difficulty_ladder.txt:9-10`).
+  Harness `python3 -u scripts/m335_mutate.py` -> `PASS HARNESS 13/13`, digest `45509023afada03b`;
+  `--selftest` 3/3. Two declared sets were CORRECTED to measured truth before submit
+  (MU1 {G2,G7}->{G2,G3}; MU13 gained G2 once G2 began asserting the fill loop's init immediate).
+- PITFALL: this census's `gates()` originally wrapped all seven checks in ONE try/except, so a
+  vanished site reddened every gate (MU6 measured {G1..G7} instead of {G3,G5}). Per-gate
+  try/except is what makes a declared mutant SET measurable at all.

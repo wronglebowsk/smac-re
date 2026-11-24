@@ -1,0 +1,16 @@
+M335 mutant sweep: 13 scenarios (MU1,MU2,MU3,MU4,MU5,MU6,MU7,MU8,MU9,MU10,MU11,MU12,MU13); baseline gates G1G2G3G4G5G6G7
+MU1 loader bound 0x94d2c4->0x94d2c8        declared={G2,G3}                measured={G2,G3}                PASS
+MU2 loader step add esi,4->8               declared={G2}                   measured={G2}                   PASS
+MU3 PE section name DIFF->DIFX             declared={G2,G7}                measured={G2,G7}                PASS
+MU4 alpha.txt drop the Transcend row       declared={G1,G2,G7}             measured={G1,G2,G7}             PASS
+MU5 alpha.txt swap rows 0 and 1            declared={G1,G7}                measured={G1,G7}                PASS
+MU6 delete the 0x599405 index reader       declared={G3,G5}                measured={G3,G5}                PASS
+MU7 index load ds:0x985aec->ds:0x985af0    declared={G5}                   measured={G5}                   PASS
+MU8 clamp hi push 0x6->0x5                 declared={G6}                   measured={G6}                   PASS
+MU9 refund cmp eax,4->cmp eax,5            declared={G6}                   measured={G6}                   PASS
+MU10 chooser push edi->push ebx            declared={G4}                   measured={G4}                   PASS
+MU11 delete the dialog seed load           declared={G4}                   measured={G4}                   PASS
+MU12 reader loop bound ,0x6->,0x7          declared={G5}                   measured={G5}                   PASS
+MU13 RIVAL base 0x94d2ac->0x94d2e0         declared={G2,G3,G4,G5,G6}       measured={G2,G3,G4,G5,G6}       PASS
+digest=45509023afada03b scored=13 mismatch=0
+PASS HARNESS 13/13
