@@ -713,3 +713,33 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **PITFALL**: a displacement can appear TWICE in one fn (4da2c0's two loops) — one-edit mutants
   leave the family intact; MU8/MU19 need two.
 - NAMED 247,217 -> 243,805 B: M299/M300 rotated VERBATIM (sha1 5bde05a3/c74e41cb).
+## Session 335-chain1 (2026-11-24) — B35: WHO calls the grant family — the founder + the new-game setup only, and the recorded births carry the FOUNDER's bit-1 signature
+
+- **ACCEPT** `python3 -u -m sim.grantcall` -> **`PASS B35: 11/11 gates` `fa541d0a2445cacf`**
+  (`evidence/b35_grantcall.txt:108`), re-run byte-identical; `scripts/b35_mutate.py` ->
+  **14/14 killed, NO-OP `[]`** (`evidence/b35_mutate.txt:16`). Zero box.
+- **CALLERS (dump, 781,429 insns)**: `call 0x4e47d0` = 3 sites — `0x4ccbdd` FUN_004cca50,
+  `0x59d894` FUN_0059ce10, `0x5a01f8` FUN_0059ec90; `call 0x59ce10` = 1 site `0x5a1579`
+  FUN_005a0fa0. Hosts agree with the index's `n_callers` 3/1, 0 unattributed (`:5-14`).
+- **ITEM SITES**: FUN_0059ce10 = **11** `call 0x4e44f0` grants, items in address order
+  `[6,3,7,27,8,4,6,3,6,3,27]`, 10/11 (set 0x1, base register) + ONE arg-order anomaly at
+  `0x59d0a2` (base pushed first, flag last; the item is still the last push) (`:16-30`).
+  FUN_004e47d0 = **10** `call 0x507410` mapper sites, 8 literal `[1,3,6,7,3,6,7,26]` + 2
+  computed (`0x4e4d13`, `0x4e4d73`) (`:32-45`).
+- **MAPPER LAW**: FUN_00507410 (17 insns) = byte `item>>3` (`sar eax,0x3`), mask
+  `1<<(item&7)` (`and ecx,0x7`, `shl eax,cl`) — so item i IS bit i; the API's stride is
+  COMPUTED (`lea [eax+eax*8]`, `lea [eax+ecx*2]`, `shl 4` = base*0x130), stores `or` at
+  `0x4e4528` / `and` at `0x4e4546` (`:47-70`).
+- **BIRTH SIGNATURE**: founder does `lea eax,[esi+0x95da9c]` -> `xor ecx,ecx` ->
+  `mov DWORD PTR [eax],ecx` + `mov BYTE PTR [eax+0x4],cl` (FIVE bytes) then 7 ORs —
+  register-indirect, so B34's `95da9c`-operand store census could not see the zero (`:72-80`).
+- **PARITY**: 3 mid-run births — idx 19 `[1]` (r2), 20 `[]` (r2), 21 `[1,3]` (r9); founder
+  signature `{1,3,6,7,26}` covers 3/3 (2 discriminating), the new-game set `{3,4,6,7,8,27}`
+  1/3 (bit 1 unexplained on both non-vacuous rows) -> the FOUNDER fired, the 11-item path did
+  not (`:82-96`). Mid-round: 6 changes = 4 OR (+2/+8/+3/+6) + 2 REPLACE ([1]->[4], [27]->[4]);
+  0 birth-shaped, so the zero — not the bit value — is the separator (`:98-110`).
+- **OPEN**: which of the founder's 3 sites fired per birth; why base 20 was born EMPTY
+  (falsifies "item 1 is unconditional"); which of the 27 `0x4e44f0` callers added bits 3/6.
+- **PITFALL (hit twice here)**: a comprehension that reuses an OUTER loop variable (`a`) for
+  the address silently digests stale addresses — the second-pass digest read `e07b94e9`
+  against `f1c53db1` and only G10 caught it; use `ins[i][0]` inside every comprehension.
