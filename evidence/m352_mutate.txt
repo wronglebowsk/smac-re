@@ -1,0 +1,32 @@
+M352 mutation harness — 13 mutants, 2 no-ops
+  MU1   KILL G1 | one of the 8 `call edi` becomes `call eax` (targets no longer 1)
+        [FAIL] G1 8 `call edi`, 1 edi load (0x58f106), 0 mem-indirect -> 1 distinct target
+  MU2   KILL G2 | the persist's edi load re-pointed at GetPrivateProfileStringA
+        [FAIL] G2 target = KERNEL32.dll!GetPrivateProfileStringA; slot in .rdata (not writable), its own dword names GetPrivateProfileStringA
+  MU3   KILL G3 | the stamp key swapped to Preferences (a duplicate key)
+        [FAIL] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 cell-backed writes, 1 CONST 0xb stamp; 11/11 scalar cells loaded
+  MU4   KILL G3 | ALGO 1: 4-arg key slot off by one -> app-name arg read as the key
+        [FAIL] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 cell-backed writes, 1 CONST 0xb stamp; 11/11 scalar cells loaded
+  MU5   KILL G3 | a helper key push duplicated (Semaphore -> Announce)
+        [FAIL] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 cell-backed writes, 1 CONST 0xb stamp; 11/11 scalar cells loaded
+  MU6   KILL G3 | the version stamp itoa'd from 0xc instead of 0xb
+        [FAIL] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 cell-backed writes, 1 CONST 0xb stamp; 11/11 scalar cells loaded
+  MU7   KILL G3 | the Custom World re-read bound stops one dword short
+        [FAIL] G3 13 keys = 11 scalar names + Prefs Format + Custom World; 12 cell-backed writes, 1 CONST 0xb stamp; 11/11 scalar cells loaded
+  MU8   KILL G4 | ALGO 2: helper call sites unattributed -> the read census shrinks
+        [FAIL] G4 5 refs in 5 fns; 14 read keys / 23 sites; 13/13 written keys read; 0 write-only; loader reads 15 keys (Laptop x2, Language x1 have no writer)
+  MU9   KILL G4 | the loader's first Laptop read re-pointed at Semaphore
+        [FAIL] G4 5 refs in 5 fns; 35 read keys / 52 sites; 13/13 written keys read; 0 write-only; loader reads 15 keys (Laptop x2, Language x1 have no writer)
+  MU10  KILL G6 | an epilogue pop becomes a STORE to ds:0x6926ec (the retraction dies)
+        [FAIL] G6 0 stores, 7 lpKeyName pushes, VA bytes = 'Prefs Format' -> no writer exists
+  MU11  KILL G6 | ALGO 3: the PE byte scan is blinded -> the 7 push sites go unseen
+        [FAIL] G6 0 stores, 7 lpKeyName pushes, VA bytes = 'Prefs Format' -> no writer exists
+  MU12  KILL G4 | ALGO 4: 3-arg helper key slot off by one -> defaults read as keys
+        [FAIL] G4 5 refs in 5 fns; 15 read keys / 52 sites; 13/13 written keys read; 0 write-only; loader reads 15 keys (Laptop x2, Language x1 have no writer)
+  MU13  KILL G1 | ALGO 5: every `call REG` counted as indirect -> the call census is blind
+        [FAIL] G1 8 `call edi`, 1 edi load (0x58f106), 0 mem-indirect -> 1 distinct target
+  NOOP0 OK   baseline green | {}
+  NOOP1 OK   baseline green | {'M352_ALGO': ''}
+
+MUTANTS: 13/13 killed, no-op green
+RESULT: PASS M352: harness 13/13

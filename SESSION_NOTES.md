@@ -647,3 +647,31 @@ whether a facility completion stamps at all.
   MU15 = pred mutant, MU14 = read-probe mutant.
 - **Docs:** NAMED 243,972 B (M314 4,399 B VERBATIM -> `docs/named-archive-m350-rows.md`, sha1
   `decdd34b`, `--verify` PASS). OPEN: who sets ds:0x6926ec.
+
+## Session 328-chain3 (2026-11-24) — M352: the writeback — its target, the key matrix, and `ds:0x6926ec` RETRACTED
+
+- **ACCEPT** `python3 -u scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7 gates`**,
+  tables digest `0e8c83ec949a639e`; x2 byte-identical (sha1 `b2998791`,
+  `evidence/m352_persist_writeback.txt:140`); `m352_mutate.py` -> **13/13** killed, NO-OP green
+  (`evidence/m352_mutate.txt`).
+- **THE 8 `call edi`** (0x58f11b..0x58f3a8) are ONE target: edi loaded once @0x58f106 from
+  `ds:0x6710fc` = KERNEL32!WritePrivateProfileStringA (import dir; slot in .rdata, not writable;
+  the slot's own dword is a .rdata RVA naming the same function). 0 mem-indirect calls; 20 direct.
+- **WRITE keys = 13**: Prefs Format, Difficulty, Map Type, Top Menu, Faction, Preferences,
+  More Preferences, Custom World (8 direct) + Semaphore/Announce/Rules/Customize/Time Controls
+  (5 via FUN_0058f030). 12 are backed by a cell loaded in the same block (11/11 scalars + the
+  7-dword array); `Prefs Format` is `__itoa(0xb)` — a hardcoded stamp, NOT a cell. **The persist
+  writes no cell it never read.**
+- **READ asymmetry (image-wide, total):** 5 `GetPrivateProfileStringA` refs in 5 fns (0x58e5a0,
+  0x58e640, 0x58e6c0, 0x58e760, 0x58e7f0); 52 attributed sites -> 35 keys. 13/13 written keys are
+  read (0 write-only). Read but written NOWHERE (33 write sites / 28 keys): **`Laptop`**
+  (0x6926fc/0x692704; twins + 2 loader sites) and **`Language`** (0x69270c).
+- **RETRACTION (M350 OPEN "who sets ds:0x6926ec")**: nobody — it is not a variable. 0 stores in
+  .text (moffs + byte scan + register-copied RMW); 7 uses all `push 0x6926ec` in the lpKeyName
+  slot; the VA holds the literal `Prefs Format` (0x6926e8 = the `"0"` default of the same call).
+  M350's "first read takes its key pointer from ds:0x6926ec" restated: the read's KEY IS it.
+- **PROTOCOL**: `Prefs Format`=11 written once, read at 7 sites; `cmp eax,0xb` gates the 6 inline
+  loader reads and all of FUN_0058e5a0 (mismatch -> caller's default); FUN_0058e760 (23 callers)
+  reads ints with NO gate.
+- **OPEN**: what `Laptop` selects (its atoi feeds masks @0x58ea12/0x58eb2b); the twins'
+  0x3a7168/0x327168 return; whether any completion path re-persists.

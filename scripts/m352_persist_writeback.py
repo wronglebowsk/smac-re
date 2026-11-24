@@ -325,7 +325,7 @@ def is_indirect(ins):
         return None
     a = ins["arg"].strip()
     if a in REG32:
-        return "reg"
+        return None if ALGO == "5" else "reg"
     if a.startswith("DWORD PTR"):
         return "mem"
     return None
@@ -365,7 +365,7 @@ ind_reg = [i for i in calls if is_indirect(i) == "reg"]
 ind_mem = [i for i in calls if is_indirect(i) == "mem"]
 direct = [i for i in calls if is_indirect(i) is None]
 edi_loads = [i for i in INF if i["op"] in ("mov", "lea") and i["arg"].split(",")[0] == "edi"
-             and "ds:0x6710fc" in i["arg"]]
+             and re.search(r"ds:0x[0-9a-f]+", i["arg"])]
 edi_other = [i for i in INF if i["op"] in ("mov", "lea", "xor", "add", "sub", "or", "and")
              and i["arg"].split(",")[0] == "edi"]
 for i in ind_reg:
@@ -378,7 +378,9 @@ if len(edi_loads) == 1:
     m = re.search(r"ds:0x([0-9a-f]+)", edi_loads[0]["arg"])
     target_slot = int(m.group(1), 16) if m else None
 row("target slot", hex(target_slot) if target_slot else None)
-chk("G1", [i["a"] for i in ind_reg] == CALL_EDI and len(edi_loads) == 1
+chk("G1", [i["a"] for i in ind_reg] == CALL_EDI
+    and all(i["arg"].strip() == "edi" for i in ind_reg)
+    and len(edi_loads) == 1
     and len(edi_other) == 1 and len(ind_mem) == 0
     and target_slot == IAT_W
     and edi_loads[0]["a"] < CALL_EDI[0],
@@ -386,35 +388,35 @@ chk("G1", [i["a"] for i in ind_reg] == CALL_EDI and len(edi_loads) == 1
     % (hex(edi_loads[0]["a"]) if edi_loads else "-", 1))
 
 # ---------------- G2: resolve the slot from the import directory ----------------
-print("\n-- G2 IAT slot 0x6710fc (PE import directory) --")
-dll, name = IMPORTS.get(IAT_W, ("?", "?"))
+print("\n-- G2 IAT slot %s (PE import directory) --" % hex(target_slot))
+dll, name = IMPORTS.get(target_slot, ("?", "?"))
 rdll, rname = IMPORTS.get(IAT_R, ("?", "?"))
-sec, cha = sec_of(IAT_W)
-dword = struct.unpack_from("<I", PE, va2off(IAT_W))[0]
+sec, cha = sec_of(target_slot)
+dword = struct.unpack_from("<I", PE, va2off(target_slot))[0]
 tsec, _ = sec_of(BASE + dword)
 tname = PE.index(b"\0", va2off(BASE + dword) + 2)
 tname = PE[va2off(BASE + dword) + 2:tname].decode("latin1")
-row("slot", hex(IAT_W), dll, name)
+row("slot", hex(target_slot), dll, name)
 row("neighbour", hex(IAT_R), rdll, rname)
 row("section", sec, "write-bit", "SET" if cha & 0x80000000 else "clear")
 row("slot dword -> thunk", hex(dword), hex(BASE + dword), "section", tsec,
     "name at thunk", tname)
 chk("G2", name == "WritePrivateProfileStringA" and dll.upper().startswith("KERNEL32")
     and sec == ".rdata" and not (cha & 0x80000000) and tsec == ".rdata"
-    and tname == name and BASE + dword != IAT_W,
+    and tname == name and BASE + dword != target_slot,
     "target = %s!%s; slot in %s (not writable), its own dword names %s"
     % (dll, name, sec, tname))
 
 # ---------------- G3: write-key census + value provenance ----------------
 print("\n-- G3 write keys (site | key VA | key text | value source | cells loaded) --")
 write_rows = []
-blocks = []
-prev = INF[0]["a"] - 1
+BOUNDS = sorted(CALL_EDI + HELPER_W_SITES)
 for site in CALL_EDI:
     n = POS[site]
     p = pushes_before(n, 6)
     kv = push_val(p, key_slot(4))
     kt = key_text(kv)
+    prev = max([0x58F0D0] + [b for b in BOUNDS if b < site])
     cells = sorted({int(m, 16) for i in INF
                     if prev < i["a"] <= site
                     for m in re.findall(r"ds:0x([0-9a-f]+)", i["arg"])
@@ -428,21 +430,25 @@ for site in CALL_EDI:
         blk = [i for i in INF if prev < i["a"] <= site]
         arr = (any(i["op"] == "cmp" and i["arg"].strip() == "esi,0x92bf34" for i in blk)
                and any(i["op"] == "add" and i["arg"].strip() == "esi,0x4" for i in blk))
-    src = "CONST %s" % hex(imms[0]) if (not cells and imms) else (
-        "ARRAY" if arr else ("CELL" if cells else "?"))
-    if not cells and any(i["op"] == "call" and i["arg"].strip() == "0x64f980"
-                         for i in INF if prev < i["a"] <= site):
+    src = "?"
+    if arr:
+        cells = [ARRAY_LO]
+        src = "ARRAY"
+    elif cells:
+        src = "CELL"
+    elif imms:
+        src = "CONST %s" % hex(imms[0])
+    if src.startswith("CONST") and any(
+            i["op"] == "call" and i["arg"].strip() == "0x64f980"
+            for i in INF if prev < i["a"] <= site):
         ito = [i for i in INF if prev < i["a"] <= site and i["op"] == "call"
                and i["arg"].strip() == "0x64f980"][0]
         val = push_val(pushes_before(POS[ito["a"]], 3), 0)
         if val[0] == "imm":
             src = "CONST %s" % hex(val[1])
-    if arr:
-        cells = [ARRAY_LO]
     write_rows.append((site, kv[1] if kv[0] == "imm" else None, kt, src, cells))
     row(hex(site), hex(kv[1]) if kv[0] == "imm" else kv, kt, src,
         ",".join(hex(c) for c in cells) or "-")
-    prev = site
 for site in HELPER_W_SITES:
     n = POS[site]
     p = pushes_before(n, 4)

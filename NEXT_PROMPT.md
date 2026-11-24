@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 11/11 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B31 + M54A-M349 (`## B31`, `## M348`, `## M349`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
+# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 11/11 `76a481b5d8a7d8b0`. STATE: B1-B31 + M54A-M349 (`## B31`, `## M348`, `## M349`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -29,7 +29,7 @@ box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B
 author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
 decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (s327): `NAMED.md` 243,972/250,000 = 6,028 B (M314 -> `docs/named-archive-m350-rows.md`, `--verify`). NEXT_PROMPT <=12,000.**
+  **DOC CAP (s328): NAMED 244,044/250,000; M350 rotated; NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
@@ -124,4 +124,5 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11
 - M347 (s324-chain2): HoF page writer = the +0x5970 child selector, ids 1..7 (page bound 7); 12/12 `3fadfd6e6d26e64c`, 20/20
 - M349 (s326-chain2) MERGED: M68/M69 `NEG_TYPE` ANSWERED — a negative queue head is the NEGATED UNIT TYPE (`neg` @0x4ef89f; `>=0` = facility id, `-38` = sentinel, id<0x40 stamps, `>=0x40` gated by 0x98adb8 bit2, one 0x95da9c+304*p bitmap); 13/13 `4d3c2e4ded19d620`, harness 18/18
-- M350 (s327-chain3): pref block END = 0x92bf34; loader = sole profile-backed init. (0/11 local); co-writes = commits. 6/6 `23794d22` x2, 15/15.
+- M350 (s327-c3): pref END 0x92bf34; loader = sole init; co-writes = commits. 6/6 `23794d22`, 15/15.
+- M352 (s328-c3): `ds:0x6710fc`=WritePrivateProfileStringA; 13 keys, 12 cell-backed+stamp; Laptop/Language read-only; `0x6926ec` literal; M350 OPEN closed. 7/7 `0e8c83ec` 13/13.
