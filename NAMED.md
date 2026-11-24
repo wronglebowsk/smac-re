@@ -138,16 +138,15 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 - M271 32 of the 247 distinct rdata immediates stored through a register are vbtable descriptors (`dword[0]` and `dword[+4]` both |v| < 0x40000, neither a code pointer); their `[+4]` values are 21 virtual-base offsets and every K the delta census found is one of them; `[0x675964]=0,[+4]=0x21a6c` is installed only by FUN_00469650 and `[0x678458+4]=0x23d94` only by FUN_0050aa60, both carrying a delta store at their own K (G3/G9/G10).
 - M270 the `0x678e40` class has ONE 152,856-B stack instance: `0x678e40` and its secondary `0x678e38` (+0x2444) are each stored EXACTLY once image-wide (`0x59bf1c`, `0x59bf26`, both inside FUN_0059bec0) — never heap-allocated; slot 0 of each is its deleting-dtor wrapper (`0x59c380`/`0x59c3b0`); layout `+0` the `0x5e3b80/0x5e3ced` class, `+0x2320` the `0x675964` class, `+0x247a0` M215's `0xb4c` row, virtual base at `+0x23d8c = 0x2320+0x21a6c`, size `0x25318` = the only such immediate in the image (the `_alloca_probe` at `0x59bed1`). **RETRACTS part of M267 (kept here on purpose):** FUN_0059bec0 is NOT a destructor (4 ctors run before it installs `0x678e40`; the same objects die at its tail) and its `0x67194c/0x671944` are the ROW subobject at `+0x247a0`/`+0x247a0+0x444`, never `[this+0]` — the installer of `0x67194c` at `[this+0]` is FUN_005faec0 (M215).
 
-## M272 (s211, PASS 5/5) - `FUN_0057ecf0` does NOT run on a LOAD; the .SAV restore chain is live-proven
-
-| fact | evidence | status |
+## M272 (STUB - block VERBATIM: `docs/named-archive-m357-rows.md`, sha1 `aa685936e83c6e4f`)
+| claim | ev | conf |
 |---|---|---|
-| LOAD window (ROUND sentinel -39 -> 50 read back, counts == m104 image): 0 events at `FUN_005b2970`, its 4 call sites (0x4e1151/0x4e122b/0x57d2a0/0x57f1ec) and all 4 caller entries | `evidence/m272w9.gdblog`, `scripts/m272_acceptance.py` G4 | V |
-| the .SAV opener `FUN_00597ee0` fires INSIDE the load (event prints round=-39, the live sentinel; ret 0x5992f2), then the fread wrapper `FUN_0064cc00` fires at round=50 with dest 0x927590 (8x1436 faction array), ret 0x596edb = inside `FUN_00596850` | same log, lines 52-53; conditional bp design in `scripts/m272_gen_load_watch.py` | V (M106 chain, now LIVE-proven) |
-| entry bps at 0x597ee0 / 0x596850 never fire although the chain runs - entry is reached MID-BODY (or via a twin); a chain is proved by call-site RETs, not entry hits | same log (0 ENT events at both, 2 CTRL rets into their bodies) | V (instrument law) |
-| boot window control: `FUN_005791c0` x7 (ret 0x579eaf) - bps live at process start; GEN 0 at boot is NOT a control (attach ~3.5 s post-launch) | same log, STARTUP window | V |
-| new-game generation and save-load are DISJOINT paths: a LOAD never regenerates the world | G4 + M255 (57ecf0 = new-game caller) | V |
-
+| fact / evidence / status | archive:6 | archived |
+| LOAD window (ROUND sentinel -39 -> 50 read back, counts == m104 image) | archive:7 | archived |
+| the .SAV opener `FUN_00597ee0` fires INSIDE the load (event prints round=-39, the live sentinel | archive:8 | archived |
+| entry bps at 0x597ee0 / 0x596850 never fire although the chain runs | archive:9 | archived |
+| boot window control | archive:10 | archived |
+| new-game generation and save-load are DISJOINT paths | archive:11 | archived |
 ## B6 (s212, PASS 6/6) - `sim/headless.py`: the headless run; R1 DONE
 
 | fact | evidence | status |
@@ -158,17 +157,16 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | economy runs for the 7 base-owning factions every round with the B4 floor (energy >= 0); initial faction energy = 0 is ASSUMED (no pinned .SAV read) and listed in the dump's `assumed` array | dump `schema smac-sim-state/1` | ASSUMED (declared) |
 | units re-charge 6 MP per round (0x51f730 REFRESH, M37) and never move - R1 has no AI; declared in `assumed` | same | ASSUMED (declared) |
 
-## M273 (s213, PASS 7/7) - the row stride 188 is a FIXED 94-slot capacity; no spill on the live map
-
-| fact | evidence | status |
+## M273 (STUB - block VERBATIM: `docs/named-archive-m357-rows.md`, sha1 `22154fba5a8d33fe`)
+| claim | ev | conf |
 |---|---|---|
-| live region count DAT_0092ada4 = 91, stable pre AND post the window, == save-derived ((64+4)/5+1)/2×13 = 91; ad9c=ada0=13 | `evidence/m273w3_proc.json` (written by the live run), `evidence/m273w3.gdblog` window, gate G1 | V (live) |
-| 188 = 2×94 slots is a FIXED capacity: 8380/188 = 44.47 NOT integral (8380 mod 188 = 108) - the per-faction row is NOT derived from the faction block stride; the live count fits its row with 6 B slack, so the M256 "regions 94..127 spill" is UNREACHABLE on the 64×64 map | gate G2 + G6 (below) | V |
-| scaled-indexing identity: 7/7 SCALED events at 0x5584b2 have 2×edi == the loop slot [ebp-0x10] (=1) - the scaled form's index register IS the region counter | `evidence/m273w3.gdblog`, gate G5 | V (live) |
-| the UNSCALED row register is a per-faction TABLE CURSOR (LIVE): row mod 8380 = 2 for all 7 events, every successive delta a whole faction stride 8380, walking with cp=4,5,6,7,...; **M275 (s215) PROVED this contradicts the static fold** (row = 2·region + 130·arg, and 8380 mod 130 = 60 ≠ 0) -> the value at the read site is NOT produced by the fold as written; the writer is an unmodeled ALIAS/other-leg (OPEN, hw-watchpoint pick) | gate G6 + `scripts/m275_rowslot_defuse.py` G4/G7 | V (live), CONTRADICTED (static chain) |
-| the full region loop was NOT exercised in the window: observed s10 stays 1 while cp walks phases (7+7 events, balanced); depth per phase OPEN (new pick) | gate G4 + info line | OPEN (recorded) |
-| acceptance is OFFLINE over the recorded window: `python3 scripts/m273_rowstride_watch.py --replay evidence/m273w3.gdblog` -> `ACCEPTANCE M273 PASS 7/7` (`evidence/m273_acceptance.txt`); the /proc facts ship in `evidence/m273w3_proc.json` | same | V |
-
+| fact / evidence / status | archive:7 | archived |
+| live region count DAT_0092ada4 = 91, stable pre AND post the window, == save-derived ((64+4)/5+1)/2×13 = 91 | archive:8 | archived |
+| 188 = 2×94 slots is a FIXED capacity | archive:9 | archived |
+| scaled-indexing identity | archive:10 | archived |
+| the UNSCALED row register is a per-faction TABLE CURSOR (LIVE) | archive:11 | archived |
+| the full region loop was NOT exercised in the window | archive:12 | archived |
+| acceptance is OFFLINE over the recorded window | archive:13 | archived |
 ## M274 (s214, PASS 6/6) - the region loop is NEVER clamped to the 94-slot row; the spill lands in the sibling verdict array
 
 | fact | evidence | status |
@@ -1561,3 +1559,15 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
+
+## M357 (s330-c3, 23/23 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
+| claim | ev | conf |
+|---|---|---|
+| six page builders read their `Script.txt` section by name (0x5ea431) and add each row as next-line (0x5ea448) -> strcpy into the page slot -> add_item(text,id) (0x604fd2); rows 8/12/14/8/17/7 = 66 | `:12-84` | V MU1,MU2,MU3,MU4 |
+| each page's slots are the table's consecutive dwords 0x68b678..0x68b7cc; A/V builds 8 rows from 11 offered lines | `:94-108` | V MU3,MU14,MU16 |
+| rebuild 0x492940: 70 ids -> exactly one (field,bit) from the encodings; all 66 UI ids present, 0x37/0x38/0x39/0x50 have no row | `:183-186` | V MU5,MU7,MU8,MU9,MU13 |
+| APPLY dataflow: 0x92befc <- {a20,a30,a38,a40,a4c,a54}; 0x92bf00 <- {a24,a34,a3c,a44,a50,a58}; 0x92bf04 <- a28\|a48 (WARNINGS, own key) | `:192-195` | V MU10,MU11,MU12 |
+| row->bit INJECTIVE per cell: 66 rows -> 66 distinct (cell,bit) pairs, 0 shared | `:266` | V MU7,MU13 |
+| Laptop!=0 clears A{7,27,28}/B{19} = "Secret Project movies."/"Interludes."/"Sound effects."/"Monuments." - the delta is entirely A/V rows | `:347-353` | V MU5,MU15 |
+| 0x92befc bit 5 = "Tutorial messages." = M355's Difficulty<2 gate bit | `:355` | V MU5,MU15 |
+| OPEN: ids 0x37/0x38/0x39/0x50; bits no row writes (A 4,6,10,11,13,26; B 1,14,25-31) | - | lead |
