@@ -1343,12 +1343,13 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | ACCEPT `7/7` digest `fb58bdc3307d6258` x2 (`:9-10`,`_rerun.txt`); harness `20/20` `6e0e05a8ffb388d8` incl. an ALGORITHM mutant (`--selftest` 3/3, `evidence/m335_mutate_selftest.txt:4`) | `evidence/m335_mutate.txt:22-23` | V |
 | OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x48678f / 0x57c606 | - | lead |
 
-## M337 (s318-chain1, pick (x8), STATIC 8/8) — the item table's row order = alpha `#FACILITIES` FILE order, record i = alpha row i-1
+## M337 (s318-chain1, x8, STATIC 8/8) — item table row order = alpha `#FACILITIES` FILE order (rec i = alpha row i-1)
 
 | fact | evidence | status |
 |---|---|---|
-| `0x984d48` = `0x984d38`+`0x10`: the fold `esi*3<<4` + `[eax+0x984d48]` reads record idx's upkeep — not a 39-row table | G6 `:86` MU5 | V |
-| loader `0x57a7ef..0x57a899` opens `FACILITIES` and writes recs 1..71 (`esi=0x984d74`=rec1+0xc, `+0x30`, end `0x985ac4`=rec72+0xc); rec 0 untouched | G1/G2 `:81-82` MU1,3 | V |
-| rec i == alpha row i-1: the 6-vs-11 branch at rec 39 == alpha's first 11-token row (idx 38, alpha.txt:629) | G4 `:84` MU2 | V |
-| one comma per token (`0x5ea985` stops on `0x2c`, advances `[this+0x150]`), so trailing cols land `+0x1c,+0x2c,+0x24,+0x28,+0x20` — supersedes M53i's `+0x20`/`+0x28` (swapped) | G5 `:85` MU7,8 | V |
-| the "39" is the consumers' loop bound (M333), not the array size; recs 39..71 = secret projects, same order | G3 `:83` MU3 | V |
+| `0x984d48` = `0x984d38`+`0x10`: fold `esi*3<<4` + `[eax+0x984d48]` reads rec idx's upkeep | G6 `:86` MU5,6 | V |
+| loader 0x57a7ef..0x57a899 opens FACILITIES (0x691ccc, 0x5ea431) | G1 `:81` MU4 | V |
+| the same loop writes recs 1..71 (`esi=0x984d74`=rec1+0xc, +0x30, end `0x985ac4`=rec72+0xc), rec 0 untouched; 1 line-read + 1 record step per iter => k-th line -> rec k | G2/G4 `:82,:84` MU1,3 | V |
+| rec i == alpha row i-1: 6-vs-11 branch at rec 39 == alpha's first 11-token row (idx 38, alpha.txt:629) | G4 `:84` MU2 | V |
+| one token per comma (`0x5ea985`); stores `+00,+0c,+10,+14,+18,+04,+18,+1c,+2c,+24,+28,+20` — supersedes M53i's +0x20/+0x28 (swapped) | G5 `:85` MU7,8 | V |
+| "39" = consumers' bound (`cmp esi,0x27` @0x4f4a35), array ends rec 72; projects are this loop's (`jl` 0x57a866 skips 5 trailing stores) | G2/G7 `:82,:87` MU11,12 | V |

@@ -32,6 +32,9 @@ STUB = ("## " + SPINE + " — FULL rows VERBATIM at `docs/named-archive-m337-row
         "region is bounded by its own terminator line, its line number AND the full digest "
         "re-asserted by `scripts/m337_named_rotate.py --verify`); this stub governs. Every row is "
         "V; the M278 refinement (the player-index-0 real row) is archived with them.")
+EXPECT_SHA = "653c93cda817"   # pinned pre-move digest of the M277 region (review fix: a constant,
+                             # so an edit to the archive cannot re-bless itself)
+
 HEADER = ("# NAMED archive — M337 rotation\n\n"
           "Verbatim rows moved out of `NAMED.md` to keep it under the 250,000 B fail line.\n"
           "Each region keeps its original `## <id>` heading and table bytes.\n\n")
@@ -65,6 +68,8 @@ def verify():
     named, arc = read(NAMED), read(ARC)
     region = region_arc(arc)
     s = sha12(region)
+    if s != EXPECT_SHA:
+        raise SystemExit("VERIFY FAIL: archived region sha1 %s != pinned %s" % (s, EXPECT_SHA))
     lines = arc.splitlines()
     mark = next((n for (n, l) in enumerate(lines, 1) if l.startswith(MARK)), None)
     if mark is None:
@@ -84,7 +89,7 @@ def verify():
         raise SystemExit("VERIFY FAIL: stub sha1 != archived region sha1 %s" % s)
     if TERMINATOR not in arc:
         raise SystemExit("VERIFY FAIL: terminator absent")
-    print("VERIFY PASS: region sha1 %s, marker :%d, region :%d, %d lines"
+    print("VERIFY PASS: region sha1 %s (pinned), marker :%d, region :%d, %d lines"
           % (s, mark, arc_line, len(region.splitlines())))
 
 

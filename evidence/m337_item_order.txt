@@ -79,12 +79,12 @@ rec  alpha_ln  name                             cost upk tech      nf
  71    661 The Ascent to Transcendence       200   0 Thresh   11
 
 PASS G1 loader opens the FACILITIES section and steps 0x30 section=FACILITIES @0x691ccc stride=0x30 back-edge-jl
-PASS G2 window: records 1..71 written, branch at 39, end at 72 start=rec1 branch=rec39 end=rec72 iterations=71
+PASS G2 window: records 1..71, branch 39, end 72; consumer bound 39 != 72 start=rec1 branch=rec39 end=rec72 iterations=71; consumer-bound=39 != end=72
 PASS G3 alpha row count == loop iterations == 71 rows=71 census={"6": 42, "7": 2, "11": 27}
-PASS G4 the 6-vs-11 token branch pins record i == alpha row i-1 alpha first >7-token row=38 (The Human Genome Project, alpha.txt:629) -> record 39; short rows before=38/38, 11-token rows at/after=27/33 (6 later rows carry a ';' comment, so their tails are text-only)
-PASS G5 one advancing token cursor => store order == column order converters->0x5ea985; stores +0x00,+0x0c,+0x10,+0x14,+0x18,+0x04; trailing read order +0x1c,+0x2c,+0x24,+0x28,+0x20
-PASS G6 the 0x984d48 view is the array's +0x10 dword +0x10 field; fold = 48*idx + 0x984d48; int2 stored to rec+0x10
-PASS G7 rival row-order models fail on the printed numbers 5 rivals refuted: R1-array-is-39: loader end = record 72, not 39 | R2-projects-elsewhere: the same loop writes the 5 project-only fields for records >=39 (5/5 stores) | R3-cost-sorted: cost inversions in file order: 13 (first costs [5, 5, 4, 5, 12, 4, 8, 8, 6, 6]) | R4-starts-at-record-0: cursor starts at record 1 (+0x3c from base) | R5-trailing-monotone: trailing store order 0x10,0x20,0x18,0x1c,0x14 is not monotone
+PASS G4 record i == alpha row i-1: one line read + one record step per iteration alpha first >7-token row=38 (The Human Genome Project, alpha.txt:629) -> record 39; rows before=38/38 short, 11-token at/after=27/33; 7-field rows [27, 28] (7th token stays on the line); line-reads/iter=1 record-steps/iter=1 => k-th line -> record k
+PASS G5 decoded store order == column order (one advancing token per call) 12 decoded stores: +0x00,+0x0c,+0x10,+0x14,+0x18,+0x04,+0x18,+0x1c,+0x2c,+0x24,+0x28,+0x20 | trailing +0x1c,+0x2c,+0x24,+0x28,+0x20
+PASS G6 the 0x984d48 view is the array's +0x10 dword +0x10 field; fold = 48*idx + 0x984d48; loader's store #3 lands at rec+0x10
+PASS G7 rival row-order models fail on the printed numbers 5 rivals refuted: R1-array-is-39: loader end = record 72, not 39 | R2-projects-elsewhere: jl at 0x57a866 -> 0x57a890 skips all 5 trailing stores (True); branch at rec 39 == alpha row 38 + 1 | R3-cost-sorted: cost inversions in file order: 13 (first costs [5, 5, 4, 5, 12, 4, 8, 8, 6, 6]) | R4-starts-at-record-0: cursor starts at record 1 (+0x3c from base) | R5-trailing-monotone: trailing store order 0x1c,0x2c,0x24,0x28,0x20 is not monotone
 PASS G8 two passes give the pinned table digest table digest 39d82f0771690e15e5d9e3828f7b5cc000fd1c68 (x2)
 
 table digest 39d82f0771690e15e5d9e3828f7b5cc000fd1c68

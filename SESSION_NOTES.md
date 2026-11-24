@@ -272,24 +272,25 @@ printers of measured values need the same None-guard as the gate.
 
 ## Session 318-chain1 (2026-11-24) — M337: item table row order = alpha `#FACILITIES` file order, record i = alpha row i-1 (pick x8)
 
-- **ANSWER (x8):** the "39-row item table" at `0x984d48` is not a table — it is the `+0x10` dword of
-  the 72-record array at `0x984d38` (M53i). Loader `0x57a7ef..0x57a899` pushes `FACILITIES`
-  (`0x691ccc`), opens the section (`0x5ea431`) and walks `esi = record+0xc`: start `0x984d74`
-  (record 1), branch `cmp esi,0x985494` (record 39), `add esi,0x30`, end `cmp esi,0x985ac4`
-  (record 72) => records 1..71 written, record 0 (placeholder) untouched. Records 1..38 are read as
-  6 comma tokens, 39..71 as 11 — and alpha's FIRST 11-token row is index 38 (`The Human Genome
-  Project`, alpha.txt:629) => record i == alpha row i-1 throughout.
-- **The '39' is the consumers' loop bound** (M333 `cmp esi,0x27`), so B28's +300 parity covers ids
-  1..38 by construction; ids 39..71 keep the same order (secret projects).
-- **Column order (VERIFIED):** `0x5ea985` copies one comma token (stops on `0x2c`, advances
-  `[this+0x150]`); converters `0x5eaa3f/0x5eaa5d/0x5eaa79` all call it. The five trailing reads land
-  `+0x1c,+0x2c,+0x24,+0x28,+0x20` => **M53i's `+0x20`/`+0x28` labels are swapped** (`+0x28`=col10,
-  `+0x20`=col11); corrected in place, loader bytes govern (no live dump archived).
-- ACCEPT `python3 -u scripts/m337_item_order.py` -> `PASS M337: 8/8 gates`, digest
-  `39d82f0771690e15`, diff-identical (`evidence/m337_item_order.txt:90-91`); G4 boundary
-  (`:84`), G7 five rivals (`:87`). `scripts/m337_mutate.py` -> `HARNESS PASS 11/11` + NO-OP MU10
-  (`evidence/m337_mutate.txt:12`), `--selftest` 3/3.
+- **ANSWER (x8):** the "39-row item table" at `0x984d48` is the `+0x10` dword of the 72-record array
+  at `0x984d38` (M53i). Loader `0x57a7ef..0x57a899` pushes `FACILITIES` (`0x691ccc`) and
+  walks `esi = record+0xc`: start `0x984d74` (rec 1), branch `cmp esi,0x985494` (rec 39), `+0x30`,
+  end `cmp esi,0x985ac4` (rec 72) => recs 1..71 written, rec 0 untouched; 1 line-read + 1 record step
+  per iter => k-th line -> rec k. Recs 1..38 take 6 tokens, 39..71 take 11,
+  and alpha's FIRST 11-token row is idx 38 (`The Human Genome Project`, alpha.txt:629).
+- **'39' is the consumers' bound** (`cmp esi,0x27` @`0x4f4a35`), not the array size; recs 39..71
+  (projects) keep the same order, so B28's +300 parity covers ids 1..38 by construction.
+- **Column order (V):** `0x5ea985` takes one comma token per call; all three converters call it, so
+  the decoded store seq `+00,+0c,+10,+14,+18,+04,+18,+1c,+2c,+24,+28,+20` is column order =>
+  **M53i's `+0x20`/`+0x28` labels are swapped**.
+- ACCEPT `python3 -u scripts/m337_item_order.py` -> `PASS M337: 8/8`, digest `39d82f0771690e15`,
+  diff-identical (`m337_item_order.txt:90-91`); `scripts/m337_mutate.py` `HARNESS PASS 13/13` incl. NO-OP MU10
+  (`evidence/m337_mutate.txt:14`), `--selftest` 3/3.
+- **REVIEW (#354, Strata): 10 findings (3 P1/7 P2), all answered IN THE GATES, none dismissed.** G5
+  DECODES the 12 stores from the bytes (no hand list); G2 reads the consumer bound (39 != 72); G4
+  proves the k-th-line->k-th-record mapping; G7's R2 is a decoded control-flow read and R4 prints a
+  computed offset; the table build is input-safe.
 - **PITFALL:** `;` starts a comment, so 6 later rows carry tails as text; the loader still reads 11
-  tokens (empty=>0) and re-syncs per row (`0x5ea448` -> fgets). Naive comma census = 12 fields, G3 red.
-- Chain 2 owns `milestone/m336` (wt-chain2), so this fire took M337; NAMED rotation = M277 ->
-  `docs/named-archive-m337-rows.md:8` (sha1 `653c93cda817`, `m337_named_rotate.py --verify`).
+  tokens and re-syncs per row (`0x5ea448` -> fgets).
+- Chain 2 owns `milestone/m336` (wt-chain2); NAMED rotation = M277 ->
+  `docs/named-archive-m337-rows.md:8` (sha1 `653c93cda817`, pinned in `m337_named_rotate.py`).

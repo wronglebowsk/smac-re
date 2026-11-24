@@ -27,7 +27,7 @@ that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a reco
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
 (B25 = #319; B26 = #328; B26's ACCEPT + THE LAW + retractions VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a), per-rung cmds `NAMED` §CHAIN-BUILDS; `NAMED ## B25`/`## B26` govern). **B27 = #344 main 1db42cf; B28 = #351 (s316) MERGED — its squash hash is main's tip (`git log --oneline -1 origin/main`); B28's review round re-pinned the print digest and grew the harness to 18/18 (`NAMED ## B28` governs)**. **Next build B29**: the spine ends at B28 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B28 did.
 
- **DOC CAP (`wc -c` s318): `NAMED.md` 246,438/250,000 = 3,562 B headroom after M337's block (M277 rotated VERBATIM to `docs/named-archive-m337-rows.md:8`, sha1 `653c93cda817`, `scripts/m337_named_rotate.py --verify`) — UNDER the 5 KB trigger: B29 ROTATES first. NEXT_PROMPT trimmed to <=12,000.**
+ **DOC CAP (`wc -c` s318): `NAMED.md` 246,497/250,000 = 3,503 B headroom after M337's block (M277 rotated VERBATIM to `docs/named-archive-m337-rows.md:8`, sha1 `653c93cda817`, `scripts/m337_named_rotate.py --verify`) — UNDER the 5 KB trigger: B29 ROTATES first. NEXT_PROMPT trimmed to <=12,000.**
 
 ## THE LEDGER
 
@@ -124,5 +124,5 @@ Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar not
 `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`, `--verify`); the per-id
 `NAMED ## <id>` blocks GOVERN.
 M334 (s316-chain2, MERGED fc2569d #350): 0x4f47f0 upkeep-FAILURE = difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded; block+0x8 = effective difficulty) — 7/7 5b5ece39af02baba, harness 45/45 a5a5091e533f7883. NAMED ## M334.
-M337 (s318-chain1, pick x8): item table row order = alpha `#FACILITIES` file order (record i = alpha row i-1) — 8/8 `39d82f0771690e15`, harness 11/11; M53i's +0x20/+0x28 labels superseded. NAMED ## M337.
+M337 (s318-chain1, pick x8): item table row order = alpha `#FACILITIES` file order (record i = alpha row i-1) — 8/8 `39d82f0771690e15`, harness 13/13; M53i's +0x20/+0x28 labels superseded. NAMED ## M337.
 M335 (s317-chain2): difficulty ladder = alpha.txt #DIFF, 6 rows @0x94d2ac (loader 0x57ac56), ds:0x985aec indexes it (0x599405); 4=Thinker 5=Transcend so M330 k=2 is LIVE; only clamp FUN_00423af0(0,6) is INCLUSIVE at the array end. 7/7 fb58bdc3307d6258; 20/20 6e0e05a8ffb388d8. NAMED ## M335 (rotation: chain 1 landed M246-M254 as docs/named-archive-b28-rows.md; my duplicate dropped).

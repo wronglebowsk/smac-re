@@ -30,14 +30,16 @@ IMG = 0x400000
 #   kind "alpha-line": anchor is (lineno, old_substr), replacement is the new substring
 MUTANTS = [
     ("MU1", "exe-bytes", 0x57A811, "44 4d 98 00", {"G2", "G3", "G7"}),
-    ("MU2", "exe-bytes", 0x57A85F, "24 55 98 00", {"G2", "G4", "G7"}),
+    ("MU2", "exe-bytes", 0x57A85F, "24 55 98 00", {"G2", "G4"}),
     ("MU3", "exe-bytes", 0x57A895, "94 54 98 00", {"G2", "G3", "G7"}),
     ("MU4", "exe-bytes", 0x691CD4, "5a", {"G1"}),                    # FACILITIES -> FACILITIEZ
     ("MU5", "exe-bytes", 0x4F48D0, "4c 4d 98 00", {"G6"}),           # view disp +4
     ("MU6", "exe-bytes", 0x57A833, "89 46 08", {"G5", "G6"}),        # int2 lands at +0x14
     ("MU7", "exe-bytes", 0x5EAA40, "00 00 00 00", {"G5"}),           # converter call target
-    ("MU8", "exe-bytes", 0x57A875, "89 46 28", {"G5", "G7"}),              # trailing read order
-    ("MU9", "alpha-line", (596, "Recreation Commons,"), "Recreation Commons, 1,2,3,4,5,", {"G3", "G4", "G7", "G8"}),
+    ("MU8", "exe-bytes", 0x57A875, "89 46 28", {"G5"}),              # trailing read order
+    ("MU9", "alpha-line", (596, "Recreation Commons,"), "Recreation Commons, 1,2,3,4,5,", {"G3", "G4", "G8"}),
+    ("MU11", "exe-bytes", 0x4F4A35, "83 fe 48", {"G2"}),              # consumer bound -> 72
+    ("MU12", "exe-bytes", 0x57A867, "2a", {"G7"}),                    # jl no longer skips the tail
     ("MU10", "exe-bytes", 0x9AC010, "90", set()),                    # NO-OP (.rsrc byte)
 ]
 
