@@ -1,0 +1,78 @@
+B38 the #SOCIO SE-effect matrix as an executable: 4x4x11 grid -> a faction's effects -> the agenda signature
+tag  what                                                       value
+G0   alpha.json sha1                                            955d147a67031da6
+G0   text dump sha1                                             02d578095222031e
+G0   #SOCIO keywords                                            ECONOMY, EFFIC, SUPPORT, TALENT, MORALE, POLICE, GROWTH, PLANET, PROBE, INDUSTRY, RESEARCH
+G0   #SOCIO categories                                          Politics, Economics, Values, Future Society
+G0   grid digest (decode 1 / decode 2)                          e0bb2deb53ecb96c / e0bb2deb53ecb96c
+G0   evidence keyword list == model                             True
+G0   evidence categories == model                               True
+  ok    G0   the rules file's 11 keywords and 4 categories agree with M376's evidence line, and the grid digest reproduces on a second decode
+G1   0x52b822  mov    ecx,0xb                             11
+G1   0x52b82c  add    eax,0x2c                            44
+G1   0x52b832  cmp    eax,0xb0                            176
+G1   0x52b847  add    esi,0xd4                            212
+G1   0x52b84d  cmp    eax,0x350                           848
+G1   0x5a11f3  lea    ecx,[edx+ecx*4+0x92babc]            0x92babc
+G1   rows = 0x350/0xd4, cells = 0xb0/0x2c, width = 0x2c/4       4 x 4 x 11
+G1   row stride minus the 4 cells = the 0x24 row header         0xd4 - 0xb0 = 0x24
+G1   model shape                                               4x4x11
+G1   parse-bound widths agree (0x52b822 vs 0x5a1203)           11 / 11
+  ok    G1   the dump's own coefficients give 4 rows x 4 cells x 11 dwords at 0x92babc, row stride 0x24 header + 0xb0, and the model's shape is that shape
+G3   16 cells; vector = signed count per keyword column, in column order
+G3   0 0  Frontier         None       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  sig=-1
+G3   0 1  Police State     DocLoy     [0, -2, 2, 0, 0, 2, 0, 0, 0, 0, 0]  sig=2
+G3   0 2  Democratic       EthCalc    [0, 2, -2, 0, 0, 0, 2, 0, 0, 0, 0]  sig=1
+G3   0 3  Fundamentalist   Brain      [0, 0, 0, 0, 1, 0, 0, 0, 2, 0, -2]  sig=4
+G3   1 0  Simple           None       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  sig=-1
+G3   1 1  Free Market      IndEcon    [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0]  sig=0
+G3   1 2  Planned          PlaNets    [0, -2, 0, 0, 0, 0, 2, 0, 0, 1, 0]  sig=6
+G3   1 3  Green            CentEmp    [0, 2, 0, 0, 0, 0, -2, 2, 0, 0, 0]  sig=1
+G3   2 0  Survival         None       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  sig=-1
+G3   2 1  Power            MilAlg     [0, 0, 2, 0, 2, 0, 0, 0, 0, -2, 0]  sig=2
+G3   2 2  Knowledge        Cyber      [0, 1, 0, 0, 0, 0, 0, 0, -2, 0, 2]  sig=1
+G3   2 3  Wealth           IndAuto    [1, 0, 0, 0, -2, 0, 0, 0, 0, 1, 0]  sig=0
+G3   3 0  None             None       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  sig=-1
+G3   3 1  Cybernetic       DigSent    [0, 2, 0, 0, 0, -3, 0, 2, 0, 0, 2]  sig=1
+G3   3 2  Eudaimonic       Eudaim     [2, 0, 0, 0, -2, 0, 2, 0, 0, 2, 0]  sig=0
+G3   3 3  Thought Control  WillPow    [0, 0, -3, 0, 2, 2, 0, 0, 2, 0, 0]  sig=4
+G3   cells / tokens / max |value|                              16 / 39 / 5
+  ok    G3   every effect token resolves to exactly one of the 11 columns, no cell repeats a keyword, and no |value| exceeds --5's 5
+G2   parity vectors, model vs evidence/m376_socio_grid.txt:42-43
+G2   Police State   model [0, -2, 2, 0, 0, 2, 0, 0, 0, 0, 0]     evidence [0, -2, 2, 0, 0, 2, 0, 0, 0, 0, 0]
+G2   Free Market    model [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0]    evidence [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0]
+G2   empty cells                                               [(0, 0, 'Frontier'), (1, 0, 'Simple'), (2, 0, 'Survival'), (3, 0, 'None')]
+G2   non-empty / first-positive                                12 / 12
+G2   evidence says (cells parsed, empty, first-positive)       16 / 12 / 12
+G2   first-positive of 'Police State' (model / evidence)       2 / 2
+  ok    G2   both vectors M376 measured off the emulated parser are reproduced field for field, and so are its 4 empty cells, its 12 first-positive cells and Police State's 2
+G4   settings                                                  Police State / Planned / Power / Thought Control
+G4   totals                                                    [ECONOMY+0, EFFIC-4, SUPPORT+1, TALENT+0, MORALE+4, POLICE+4, GROWTH+2, PLANET+0, PROBE+2, INDUSTRY-1, RESEARCH+0]
+G4   same totals from the dict reference                       True
+G4   sweep 4^4 settings, model != reference                     0
+G4   single-category delta (Politics only)                      [0, -2, 2, 0, 0, 2, 0, 0, 0, 0, 0]
+G4   that delta equals the Police State vector, base zero       True / True
+  ok    G4   a faction's four settings give one 11-vector: the printed totals are the component sum, every one of 256 settings agrees with the dict-based reference, and one category's delta is exactly that choice's vector
+G5   bit-24 agenda consumer: stored triple (category, choice, signature)
+G5   records                                                   [(0, 0, -1), (0, 1, 2), (0, 2, 1), (0, 3, 4), (1, 0, -1), (1, 1, 0), (1, 2, 6), (1, 3, 1), (2, 0, -1), (2, 1, 2), (2, 2, 1), (2, 3, 0), (3, 0, -1), (3, 1, 1), (3, 2, 0), (3, 3, 4)]
+G5   M379 reader polarity: >0 adds / <0 rejects                 12 add, 4 reject
+G5   reader 0x5a1eac  mov    eax,DWORD PTR [eax+0x927b24] | test   eax,eax | jl     0x5a1ee0
+G5   reader 0x54696c  mov    eax,DWORD PTR [edx+0x927b24] | test   eax,eax | jl     0x5469ba
+G5   both readers: load +0x927b24, test eax, jl (negative = the reject arm)  True
+  ok    G5   every cell stores a signature; the 4 empty cells store -1 (the reader's reject arm) and the 12 others store a column 0..10 (the add arm), Police State -> 2
+G6   M383 chain window 0x557980..0x5579ea                       36 insns
+G6   0x94e48c loads / stores / adds inside the window          0x5579da / 0x5579ea / none
+G6   operands naming 0x92babc/0x92ba98 in the window            0
+G6   SE totals reaching the military sum                       wired: NO (0 operands)
+  ok    G6   the per-unit military sum M383 named (0x94e48c @0x5579ea) sits in a 25+ insn window with ZERO matrix operands: the SE grid is not an input to it and the model does not pretend otherwise
+G7   rivals, each on the printed numbers
+G7   R1 sign-only: Free Market POLICE                          model -5  rival -1
+G7   R2 alphabetical columns: Police State vector               model [0, -2, 2, 0, 0, 2, 0, 0, 0, 0, 0]  rival [0, -2, 0, 0, 0, 0, 2, 2, 0, 0, 0]
+G7   R3 accumulate all 16 cells: totals                        model [0, -4, 1, 0, 4, 4, 2, 0, 2, -1, 0]  rival [5, 3, -1, 0, 1, -4, 4, 1, 2, 2, 2]
+G7   R4 Future Society dropped: totals                         model [0, -4, 1, 0, 4, 4, 2, 0, 2, -1, 0]  rival [0, -4, 4, 0, 2, 2, 2, 0, 0, -1, 0]
+G7   R5 last-positive signature: Police State                  model 2  rival 5
+  ok    G7   five rival readings each differ from the model on the printed numbers: sign-only counting, alphabetical columns, all-cells accumulation, a dropped Future Society row, and last-positive signatures
+G8   grid digest                                               e0bb2deb53ecb96c
+G8   second decode                                             e0bb2deb53ecb96c
+  ok    G8   the grid digest is pinned and reproduced on a second decode
+PASS B38: 9/9 gates  digest e0bb2deb53ecb96c
