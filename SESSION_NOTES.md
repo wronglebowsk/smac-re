@@ -671,3 +671,24 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **OPEN**: each row's noun (label text is runtime; 0x997b20's table is not in the file);
   0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 = audio on/off (INFERRED).
 - NAMED: `## M360` rotated VERBATIM (docs/named-archive-m360-rows.md, sha1 e504b483); 247,881 B.
+
+## Session 334-chain2 (2026-11-24) — M364: the NOUNS of the 13 faction-relations bits — 0x1 = PACT, 0x8 = AT WAR (V); the other 11 are standing flags (INF)
+- Lever: `FUN_00426d60(fac,tgt,mask)` = `(rel[fac][tgt] & mask) != 0` — 17 insns, `imul 0x20bc`, 0 stores.
+  `python3 -u scripts/m364_bitnouns.py` -> **PASS M364: 24/24 gates** digest `f6d006d0281ac189`
+  (`evidence/m364_bitnouns.txt:207`), rerun byte-identical; `scripts/m364_mutate.py` 20/20 (`evidence/m364_mutate.txt:21`).
+- 232 call sites, 214 with a constant mask: 19 distinct single bits + 16 composites, each composite an OR of bits
+  also asked alone (0x800 is the only bit never asked alone). Bit 0x1 is asked at 53 sites over 14 functions.
+- NOUNS (V): 0x1 = PACT — the end-pact case block of the diplomacy menu asks mask 1 and branches to
+  "DONTHAVEPACT"/"REALLYENDPACT" -> `FUN_00530af0(...,1)`; 0x8 = AT WAR — the declare-vendetta block asks mask 8,
+  a CLEAR bit marks a faction you may declare on, and no candidate yields "DIPLONOVENDETTA". The two blocks
+  share 0 literals. The natural rival "0x1 is vendetta" is refuted on that disjointness.
+- Geometry: the 13 ids are 11 single bits of dword A (record +0x18) + 2 of dword B (+0x38); the only repeated
+  positions (0x8, 0x2000) are A/B DIRECTIONAL copies — 4 of the 6 writers write (fac,tgt) and (tgt,fac).
+- Co-set rules (`0x5518f0`): `test 0x7 -> or 0x1100000` (the 3-bit group), `test 0x10 -> or 0x8040`; the page's
+  apply handler pushes 4 bulk masks: 0x1f = {1,2,4,8,10}, 0x1f89 = {1,8,0x400,0x1000}, 0x2043c20, 0xdd9bc3c0.
+- PITFALL (new): a FUNCTION-level literal set cannot discriminate two bits asked by the same function — both
+  rows came out carrying all four keys. The witness must be the enclosing `case` block; ALG2 mutates exactly
+  that splitter and reddens G4a/G4b/G4c.
+- INF/OPEN: nouns of 0x2, 0x4, 0x10, 0x20, 0x400, 0x1000, 0x2000, 0x40000, 0x2000000 and of dword B's 0x8/0x2000.
+- NAMED headroom: rotated M247/M248/M259/M283 VERBATIM to `docs/named-archive-m364-rows.md`
+  (`scripts/m364_named_rotate.py --verify` PASS); NAMED 247,217 -> 243,072 B before the M364 block.

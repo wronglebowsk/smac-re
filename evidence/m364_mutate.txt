@@ -1,0 +1,22 @@
+NO-OP  rc=0 red=none  -> PASS
+MU1   G1a  rc=1 red=['G1a'] -> RED as named
+MU2   G1b  rc=1 red=['G1b'] -> RED as named
+MU3   G1d  rc=1 red=['G1d'] -> RED as named
+MU4   G1e  rc=1 red=['G1e'] -> RED as named
+MU5   G2a  rc=1 red=['G2a'] -> RED as named
+MU6   G2b  rc=1 red=['G2b'] -> RED as named
+MU7   G3a  rc=1 red=['G3a'] -> RED as named
+MU8   G3b  rc=1 red=['G3b'] -> RED as named
+MU9   G3c  rc=1 red=['G3c'] -> RED as named
+MU10  G4a  rc=1 red=['G4a'] -> RED as named
+MU11  G4c  rc=1 red=['G4c'] -> RED as named
+MU12  G4d  rc=1 red=['G4d'] -> RED as named
+MU13  G5a  rc=1 red=['G5a'] -> RED as named
+MU14  G5c  rc=1 red=['G5c'] -> RED as named
+MU15  G6a  rc=1 red=['G6a'] -> RED as named
+MU16  G7a  rc=1 red=['G7a'] -> RED as named
+MU17  G7c  rc=1 red=['G7c'] -> RED as named
+ALG2  G4a  rc=1 red=['G4a', 'G4b', 'G4c'] -> RED as named
+ALG   G3a  rc=1 red=['G3a', 'G3b', 'G3c', 'G4d', 'G7a', 'G7c'] -> RED as named
+
+PASS M364-harness: 20/20 (19 gate mutants + 1 NO-OP, 0 bad)
