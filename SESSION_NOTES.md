@@ -726,3 +726,40 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (2) only `and` clears bit 15 and `or` never does — an `ah` blind spot invents 3 droppers.
   (3) a linear backward walk crosses blocks; stop at a `jmp`.
 - Rotated `## M283` VERBATIM -> `docs/named-archive-m380-m283-rows.md` (sha1 `884865b3`).
+
+## Session 341-chain3 — M381: bit 13 (0x2000) is a PEACE stamp with TWO setters; the strength one is strict > vs the peer's own scalar
+
+`python3 -u scripts/m381_bit13_noun.py` -> **`PASS M381: 9/9 gates digest 73c5356395ecec3e`**
+(`evidence/m381_bit13_noun.txt:70`), second run byte-identical; harness `scripts/m381_mutate.py` ->
+**`RUN PASS 14 mutants, 0 unexpected`** (`evidence/m381_mutate.txt:16`). Static, zero box.
+
+- **The comparison M380 left open is confirmed and asymmetric in the right way**: at 0x50392f the
+  chain folds to 2095*ecx with **no `add esi`** (`:22`), the load is faction ecx's OWN
+  `0x94e48c`, and `cmp eax,DWORD PTR [edi]` @0x503936/`jle 0x50396a` @0x503938 is a **strict `>`**
+  against faction esi's own value (`:25-30`). The threshold is therefore **the peer's live
+  MIGHTY/MEEK scalar** - no constant, no scale, no fraction; equality does NOT stamp.
+- **The `+esi` contrast proves the reading**: +esi appears only in the two relations chains
+  (0x5038f4 row edx, 0x50390f row ecx); the strength chain has none (`:24`). A pair-index reading
+  (R4) dies on that measurement.
+- **`[edi]` walks the field, one faction per iteration**: edi0 = 0x950548 = field(1), +0x20bc, stop
+  0x95ea6c = field(8) -> **factions 1..7** (`:36-38`).
+- **Guard**: two factions are skipped (`cmp esi,[ebp-8]/[ebp-4]`), a per-faction table byte at +7
+  must equal esi, row([ebp-8],esi) must carry **PACT (0x1)**, row([ebp-4],esi) must be
+  **peace+commlink (0x10 clear, 0x8 set)**, then the strict strength test -> `push 0x2000` ->
+  `FUN_00551a20(esi,[ebp-4],0x2000)` (`:7-11`).
+- **RETRACTION of the fuel for a "MEEK" noun**: FUN_00502cd0 stamps 0x2000 at a **second** site,
+  0x506cf1, whose only guard is `test BYTE [row(edi,esi)],0x10 / jne` - **not at war** - with no
+  0x94e48c operand in its 8-instruction window (`:12-13`). A strength-gap-only noun (R6) is refuted
+  by that site. The flag is a standing **PEACE** marker; 0x50393d is the strength-conditioned leg.
+- Both legs write **both rows**: all 6 dword AND masks in FUN_00551a20 preserve bit 13 and the
+  unconditional tail ORs the mask at 0x551be6/0x551c09 (`:44-47`). "Weaker row only" (R5) dies.
+- Follow-on: if esi's stat at +0x94f504+4*[ebp-4] has 0x800000, `FUN_00531b0([ebp-4],esi,+3)` - the
+  **attitude delta** (adds to [a,b]+0x94d488, clamps to 0x14) (`:50-54`).
+- Readers: **5 byte-form** `test ah,0x20` sites (0x54820d 0x5555a0 0x55563b 0x55572d 0x555747) and
+  **1 dword-form** 0x4db30b (`and eax,0x2000` -> `FUN_006050d4`); 0x555747 guards the bit-31 clear
+  `and eax,0x7fffffff` @0x555750, which **pins M373's protector to an instruction pair** (`:57-60`).
+- Pitfall re-confirmed: a `94d448` dword grep cannot see bit 13 - it is read in the **byte +1**
+  (`0x94d449`? no: `ah` = bits 8-15 of the loaded dword) form. `push 0x2000` also collides with
+  0x200000 in flat greps; the census must read the immediate exactly.
+- Host correction: the stamp lives in **FUN_00502cd0** (nearest `push ebp/mov ebp,esp`), not
+  FUN_005024a0 - the 0x502a51/0x502a82 blocks have no frame and mislead a "last call site" read.

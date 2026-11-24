@@ -10,6 +10,7 @@ MU9   ok    red=['G4']                       want=['G4']         the strictness 
 MU10  ok    red=['G7']                       want=['G7']         the one dword-form reader re-pointed: the dword census empties
 MU11  ok    red=['G1']                       want=['G1']         the acting-row load re-pointed at the next dword: the pinned window breaks
 MU12  ok    red=['G1', 'G3']                 want=['G3']         the walk step off by one dword: 7 iterations become a non-integral count
+MU13  ok    red=['G0', 'G8']                 want=['G0']         a 0x94e48c operand smuggled into setter 2's guard window: the negative reddens
 NOOP  ok    red=[]                           want=[]             identity: nothing may redden
 
-RUN PASS 13 mutants, 0 unexpected
+RUN PASS 14 mutants, 0 unexpected

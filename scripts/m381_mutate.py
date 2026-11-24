@@ -39,6 +39,8 @@ MUTANTS = [
      "the acting-row load re-pointed at the next dword: the pinned window breaks"),
     ("MU12", {"M381_PATCH": "50396a|add    edi,0x20b8"}, {"G3"},
      "the walk step off by one dword: 7 iterations become a non-integral count"),
+    ("MU13", {"M381_PATCH": "506cdc|mov    eax,DWORD PTR [eax*4+0x94e48c]"}, {"G0"},
+     "a 0x94e48c operand smuggled into setter 2's guard window: the negative reddens"),
     ("NOOP", {}, set(), "identity: nothing may redden"),
 ]
 

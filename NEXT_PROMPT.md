@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B37 s339 `5dd4119bd1882d1d`; M376 s339 `f22d2b46cc7e9507`. STATE: B1-B37 + M54A-M376; (ix) box-GATED; (x) OPEN-LEADS; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (B37 s339 `5dd4119bd1882d1d`; M376 s339 `f22d2b46cc7e9507`. STATE: B1-B37 + M54A-M381; (ix) box-GATED; (x) OPEN-LEADS; #180 pre-existing FAIL.)
 Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS (grep only), skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
@@ -23,7 +23,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B37 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B34`-`## B37` govern).
 **B38**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
-**DOC CAP: NAMED 248,724/250,000 (1,276 B — rotate a settled block first; `b37_named_rotate.py` is the pattern).**
+**DOC CAP: NAMED 244,207/250,000 (5.8k free; `b37_named_rotate.py` = rotate pattern).**
 
 ## THE LEDGER
 
@@ -35,19 +35,19 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 1. **accept_ready.py** = readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
    base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm**.
 2. Writer/flag chain (BOX ONLY) - VERBATIM `docs/pick-archive.md` §trim-s295 (b): m94/m97/m100/m102/m103
-   + m92/m95/m98/m117, `--predict` = model table.
+   + m92/m95/m98/m117.
 3. Static-first kit (zero box time): `field_census.py`, `name_global.py`, `m118_flag_never_set.py`
    (gate satisfiability), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]`, `evidence.py audit|budget|prune`.
 
 ## THE PICK — index (detail: `docs/pick-archive.md`, `NAMED.md` §CHAIN-PICKS)
 
-- **Where things live:** map/terrain = `MAP_FORMAT.md`; faction fields =
-  `docs/field-atlas-faction.md` (read §M297 first - the 0x94d104 phrasing is WRONG).
-- **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
+- **Where things live:** map/terrain = `MAP_FORMAT.md`; faction fields = `docs/field-atlas-faction.md`
+  (read §M297 first - the 0x94d104 phrasing is WRONG).
+- **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A`.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
-  M378 CLOSED B37's lead: 0x800 = TREATY IN FORCE, 0x20000 = an OUTSTANDING request, FUN_00552970 is no 0x800
-  setter. Next (ANALYSE, static, zero box): (a) who asks the 0xc00 cluster - the 5 field-inline tests
-  (0x4ec9c3 0x523a7c 0x563165 0x56a8a2 0x5859ae) and the 2 register readers (0x5468c7/0x5552ff); (c) bit 13 (M373). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
+  M381 CLOSED bit 13: 0x2000 = PEACE, two setters, strict might(ecx) > might(esi) @0x503936. Next (ANALYSE,
+  static, zero box): **(a) the two peace writers outside FUN_005537d0 - 0x53fcb3 / 0x523f4c (M368, chain-1)**.
+  NOT chain 1: 0xc00 readers (chain 2), 0x94e48c composition (chain 3). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
   CLOSED enumeration + pick rows + open-lead census (v..x4, B27) VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   NEVER bp mid-instruction (s213).
@@ -60,12 +60,9 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 
 ## LIVE FACTS / KIT
 
-- **BOX**: UP, last touch s258 (TracerPid 0, yama=0; pid via `pgrep -x terran.exe`). RE-CHECK
-  `accept_ready.py`: it BLOCKS on credit 0 (d0-gated, STRUCTURAL); walk/scan kinds run anyway,
-  production kinds need the FIX recipe (relaunch+m54g_prep+drive1+enqueue, ~6 s/turn warm).
-   `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): yama back to the
-   PRE value after every run, never hardcoded; the harness stays uid 1000 (sudo breaks the prefix) -
-   exact commands in skill `wine-operations.md`.**
+- **BOX**: UP, last touch s258 (TracerPid 0, yama=0; `pgrep -x terran.exe`). RE-CHECK `accept_ready.py`:
+  credit 0 is d0-gated STRUCTURAL (walk/scan kinds run anyway); `sudo -n python3 scripts/smac_preflight.py`
+  before arming. **ptrace law (s211): restore yama PRE; harness stays uid 1000 — skill `wine-operations.md`.**
 
 ## TRAPS — rules (FULL s241 text verbatim: `docs/pick-archive.md` §s242-traps; detail §trim-s205/§s198; laws: skill
 `instrument-laws.md` + `wine-pitfalls.md`)
@@ -114,6 +111,7 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - B37 (s339-c1) MERGED: the lifecycle RUN - `0x40` arms `0x94d4c8=0x32`; 10-insn countdown 0x5552b6..0x5552d4 (`and al,0xbf`@0x5552d1), ONE exit; PEACE clears 0x40 so its expiry is a NULL write, WAR keeps it (0x78) so its expiry is real. 8/8 `5dd4119bd1882d1d`.
 - M376 (s339-chain2): `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix (11 effect keywords = the columns); bit-24 stores (category, choice) at rec +0x584/+0x58c; Future Society row never sampled. 29/29 `f22d2b46cc7e9507`, harness 33/33. NEXT: +0x594's reader / the 8th write 0x92a7fc.
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
-- OPEN LEADS: bit 13's noun (M373); the 0xc00 cluster's 5 readers + 0x5468c7/0x5552ff (M378).
+- OPEN LEADS: the two peace writers 0x53fcb3/0x523f4c (M368); the 0xc00 cluster's 5 readers (M378, chain 2); ds:0x985ba0's writer (M334).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
 - M380 (s340-c3): 0x94e48c = MIGHTY/MEEK scalar; 2/27 rel rewrites drop a stamp; hub 3 = TREATY validator. 7/7 `5dfd436fe4093015`, 19/19 mutants.
+- M381 (s341-c3): 0x2000 = PEACE stamp; setter A 0x50393d needs PACT third party + peace/commlink + strict might(ecx) > might(esi) (peer's own 0x94e48c, no constant/scale); setter B 0x506cf1 = not-at-war only; both rows; 5 byte + 1 dword readers. 9/9 `73c5356395ecec3e`, 14/14 mutants.
