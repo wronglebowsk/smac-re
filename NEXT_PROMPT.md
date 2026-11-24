@@ -23,7 +23,7 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B38 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B34`-`## B38` govern).
 **B39**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
-**DOC CAP: NAMED 247,600/250,000 (2.4k free - ROTATE FIRST next fire; `b38_named_rotate.py` = pattern).**
+**DOC CAP: NAMED 246,041/250,000 (3.9k free - ROTATE FIRST next fire; `b38_named_rotate.py` = pattern).**
 
 ## THE LEDGER
 
@@ -45,12 +45,16 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   (read §M297 first - the 0x94d104 phrasing is WRONG).
 - **ISOLATION (s254)**: if a fire is live (`ps` + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A`.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
-  **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); the analysis-only option is the OPEN-LEADS list, each with a NAMED
-  question. STILL OPEN: (x6) other writers of the 0x92bde8..0x92bf14 pref block (chain-3); `ds:0x985ba0`'s WRITER (M334).
-  ANSWERED (do not re-derive): M227-M340,M344,M346 + B1-B38 (M241 FAIL 2/5 #180); x1 M333, x7 M334, x8 M337,
-  x9 M342+M344+M346+M348, `0x999fa4` M353. Closed enumeration + pick rows + open-lead census VERBATIM:
-  `docs/pick-archive.md` §trim-s270 / §trim-s313-chain1 (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
-  Lists live in NAMED ## M310-M391. READER LAWS still BIND: every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
+  Next (ANALYSE, static, zero box): **(a) the LAST peace writer `0x53fcb3` - B39 executed `0x523f4c`; `0x53fcb3` is `push 1; push 2; call 0x551d70`, i.e. `551d70(a,b,0x2,mode=1)` = SET 0x2 on word B**.
+  ANSWERED: M227-M340,M344,M346 + B1-B39 (M241 FAIL 2/5 #180).
+  CLOSED enumeration + pick rows + open-lead census VERBATIM at `docs/pick-archive.md`
+  §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
+  **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); the analysis-only option is the OPEN-LEADS
+  list, each with a NAMED question. STILL OPEN: (x6) other writers of the 0x92bde8..0x92bf14 pref
+  block (chain-3); `ds:0x985ba0`'s WRITER (M334). ANSWERED (do not re-derive): x1 M333, x7 M334, x8 M337, x9
+  M342+M344+M346+M348, `0x999fa4` M353. Lists live in NAMED ## M310-M391. READER LAWS still BIND:
+  every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS. Trimmed result lines:
+  `docs/pick-archive.md` §trim-s343-chain4 (sha1 `dfe9d7b2173a`).
 
 ## LIVE FACTS / KIT
 
@@ -96,15 +100,9 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
 - OPEN LEADS: who SETS 0x400 (M382); ds:0x985ba0's writer (M334); the two peace writers (pick above).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
-- M380 (s340-c3): 0x94e48c = MIGHTY/MEEK scalar; 2/27 rel rewrites drop a stamp; hub 3 = TREATY validator. 7/7 `5dfd436fe4093015`, 19/23 mutants.
-- M382 (s341-c2): 0xc00 cluster = 15 readers (0x5468c7 is NOT one - bits 2|16). 35/35 `90cb89f84ce7feeb`. Next: who SETS 0x400.
 - M381 (s341-c3): 0x2000 = PEACE; setter A 0x50393d (PACT third party + peace/commlink + strict might(ecx) > might(esi), peer's own scalar); setter B 0x506cf1 = not-at-war only; both rows. 9/9 `2fa1a4100ec6f4f6`, 20/20.
-- M383 (s341-c3): 0x94e48c = per-unit (OFF+ARM) sum; 12/14 rewrites resolve. 9/9 `1d419b65323aec6c`, 29/29.
 - B38 (s342) MERGED: `#SOCIO` 4x4x11 grid in `sim/socio.py` - M376's two vectors reproduced field-for-field, settings -> 11 totals, signature 12 add/4 reject; `0x92babc` does NOT feed `0x94e48c`. 9/9 `e0bb2deb53ecb96c`, 12 mutants. NEXT: pick (a).
-- M388 (s342-c6): slot 0's agenda pair has NO writer — M376's randomizer starts at record 1 (7 records), the SE commit 0x4b2570 writes only the 0x94d658 grid; slot0 (0,0) = 'no agenda' (37/37 `bb2f4329dd2467f2`, 15/15). NEXT: slot 0's owner (which faction id the 0x59c block indexes).
-- M386 (s342-c4): +0x94d820 = X of a per-faction (x,y) marker PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's 0x20000 guard reads the PARTNER row. 55/55 `3e6d87261b7fe88e`, 15/15 mutants.
-- M385 (s342-c3): nine dyn-mask 0xc00 sites resolved (7 PROVEN, 2 DEAD-INF) - no 0x800, no 0xc00 pair, but 0x400 ALONE at 0x4dacf7/0x4dad22 (M382 sole-0x400 RETRACTED). 44/44 `0103209f070e60f7`, 33/33 mutants.
+- B39 (s343-c1) MERGED: `sim/relapi.py` - four relation APIs, TWO words (A `0x94d448` / B `0x94d468`, 8 dwords apart, same 2095 row scale); `0x551c40` writes B both ways, the peace block `0x523f3c/4c/58` = `551a20(0x50)`+`551a20(0x1)`+`551c40(0x2000)`, `0x2000000` skips only when A-row bit0 is set. 12/12 `1c0a06e178521ef3`, 12 mutants. NEXT: `0x53fcb3`.
 
-- M384 (s342-c2): 0x400 has 7 setters - `0x5534ae`/`0x555a6b` inline, plus 5 callers of the pair-mask API FUN_00551a20/FUN_00551cf0 passing 0x400 (95/106 masks resolved); `PASS M384: 39/39` `evidence/m384_bit400_writer.txt:280`, 23 mutants. Next: the 7 runtime mask args (0x4dadxx family) or what `0x551a20`'s `and 0xfaeef378` blanket clear means for the 0xc00 cluster.
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
 - M391 (s343-c4): `and 0xfaeef378` is 3 masks x 2 rows gated on mask-arg bits 0x7/0x10/0x17, not a blanket; 0xc00 clearers = 5 instr / 2 fns, and both explicit 0xc00 clears are the `not`+`and` half (0x4db11b 0xc20, 0x519bb5 0xc00); 0 of 65 masks carry 0xc00 -> 24 WAR-arm callers always drop it. 51/51 `76148839fd85b66e`, 12/12. NEXT: the 3 opaque set=0 masks (0x4dad30/0x4db02d/0x4db08d).
