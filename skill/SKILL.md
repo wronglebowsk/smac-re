@@ -116,6 +116,12 @@ finding's own `NAMED.md` block in place — a retraction only in `SESSION_NOTES.
 asserting the older, stronger claim. **A delegated fire will "flag it in the PR" instead of editing the older
 block**, so the parent does the in-place patch BEFORE merging (and re-reads the child's claimed retraction of a
 prior finding against the shard/exe itself — the registry, not the PR comment, is what the next fire greps).
+**Audit the registry by heading IDENTITY after EVERY merge.** A squash takes the branch's copy of `NAMED.md`,
+so a branch cut before other merges can silently delete dozens of blocks while the gate (size-only) stays GREEN:
+`comm -23` of the base's and HEAD's `^## ` headings must be empty or exactly the block archived that merge, and
+dropped sections are restored VERBATIM from the base commit. **A PR with `mergeable_state=dirty` gets NO CI
+run** — `no checks reported` there means conflict, not an outage; merge `origin/main` in and the run appears on
+the push. Both: `references/git-workflow.md`.
 Each milestone ends with a `## Session N` section in `SESSION_NOTES.md` and a rewritten `NEXT_PROMPT.md`
 (<= 12,000 BYTES at close — the budget warn; what `evidence.py budget` prints is `wc -c`). `scratch/` is
 gitignored: probes are not repo products; the tracked products are `scripts/`, `evidence/`, docs.
