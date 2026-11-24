@@ -53,7 +53,6 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 - builder `FUN_0058ce00` (y<Rh, x=(y&1) step 2<Rw) writes exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 for odd Rw, else 0 | G5 | V
 - the slack is never written: bytes 79..90 = `0xcd` in 17/17 saves, none in 0..78; both .MP (even Rw) slack 0 | 17 saves + 2 .MP | V
 - the byte VALUES: terrain record `+3` of the first of 9 sampled tiles with `+1 & 0xe0 > 0x5f`, else 0; `+3` unnamed | rule V, meaning OPEN
-
 ## M248/M249 (s198, PASS 5/5) — the region map's bytes are a per-region copy of terrain record +3, the map's REGION LABEL — rows in the same archived region; this stub governs.
 - region byte = record +3 of the FIRST land tile of a centre-first 9-diamond sample at (x*5+dx, y*5+dy), 0 if no land; x wraps mod DAT_0092a378, y bounded by DAT_0092a37c; the 9 (dx,dy) read from 0x67850c/0x678990 | `FUN_0058ce00` shard_015.c:4690-4752, G1 9/9 | V
 - stored == recomputed byte for byte: 19 files, 1809 cells, 0 mismatches, 38 wrapped samples | G2, `evidence/m248_region_values.txt` | V
@@ -62,7 +61,6 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 - +3 plane identical across 17 saves, turns 50,51,52,53,60 | G4 | V
 - +3 < 0x40 on every land tile, >= 0x41 on every water tile, 0x40 unused (19 files); index into DAT_0094eda8 (stride 0x20bc), split at 0x40 | G5 | V (census), OPEN (what names the partition; 25 ids / 47 components, 130/16626 adjacencies differ)
 - instrument `scripts/m248_region_values_census.py` -> `evidence/m248_region_values.txt` | rc=0 | H
-
 ## B3 (s199, BUILD track, PASS 6/6) — `sim/turn.py`: M30's turn engine, executable, replays the recorded trace 67/67
 
 | claim | evidence | conf |
@@ -114,7 +112,6 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 - M259 the band: terrain record bytes +16..+43 (dwords 4..10) = the FACTIONS 1..7 per-faction copies of the record's `+8` master mask, `[terrain_base + 0xc + (row*0xb + fac)*4]` (faction 0 uses `+8`; both whole-array refreshes guard `test ebx,ebx / je`); writers CLOSED at 10 indexed + 1 walk store, every site named (G1-G6); 44 indexed reads in 25 functions (G7). **RETRACTS M240's "a record is two 22-byte map columns" for bytes 16..43** — the `.MP` "7 equal dwords == +8" (planetx 8192/8192) IS this band.
 - M260 the views: the live 0x224b8 spacing occurs 0 times in the 3,067,904-B image — `immediates naming 0x224b8: 0; 4-byte LE pattern ... offset -1` (G8, `evidence/m259_m261_census.txt:16-17`); view 0 is static .bss at 0x8f79e0 (sole immediate store 0x5803e1, printed by G10 at `evidence/m259_m261_census.txt:21`; ctor FUN_00518820's only call site 0x580406, G9); the ctor's stores reach `this+0x23bec` = 146,412 B > the 140,472 stride, so the stride is not an object size (G10 `evidence/m259_m261_census.txt:20-21`); the save codec walks the 8 entries as POINTERS, clearing `*(p+0x1dd74)` for entries 1..7 only (G11). **CORRECTED IN PLACE by M262 — RETRACTED: "the ~140 KB views are not allocated"**: entries 1..7 ARE allocated at startup, 0x22480 B each, by the pointer-arithmetic `mov [esi],eax` at 0x5803bb (0 only on the alloc-failure path) — M262's own rows: `docs/named-archive-m332-rows.md` (G2), `evidence/m262_m264_census.txt:24` (11/11); 0x224b8 = 0x22480 + 0x38, a 56-B heap header (INFERRED).
 - M261 the class: vtable 0x679f98 = 88 slots, 2 installs, 15 slots differ from ALL of 0x6717cc/0x671d94/0x67164c (G12); all 15 named with size + callee count (G13); ctor chains FUN_0062d630 <- FUN_0045a8b0(1)/FUN_005b3000(2)/FUN_00641f3c(3) and FUN_0062d764 <- 6 callers, incl. FUN_00636b1e = "Start a new session or..." (session chooser) and FUN_00493a10 = "Gamma Correction" (G14).
-
 ## M262-M266 (s205-s206, PASS 11/11 + 12/12) — EVERY address and gate body VERBATIM at `docs/named-archive-m332-rows.md` (s311-chain1 headroom rotation, sha1 `4dc92495311e`, byte-exact asserted by `scripts/m332_named_rotate.py`); this stub governs. Pre-mutation-law registry (no MU ids — the harness era starts at `## M308`); the G-ids are the archive rows' own gate ids. `evidence/m262_m264_census.txt:24` (11/11), `evidence/m265_m266_census.txt:13` (12/12).
 
 - M262 the view-table band `0x7cdecc..0x7cdee8`: 426 mentions, exactly 1 store names it (`0x5803e1`, entry 0 = the static object), all 39 indexed `[reg*4+0x7cdecc]` mentions in 12 functions are reads/cmps, 0 indexed stores (G1); entries 1..7 come from FUN_00580260's 7-iteration loop at `0x580392` — alloc `0x22480` -> 515-B SEH ctor `0x469650` (not the view ctor `0x518820`) -> `mov [esi],eax` at `0x5803bb`, with `xor eax,eax` only on the alloc-failure path, which is why M260 read the loop as a zero-fill (G2); `0x22480` named once image-wide, `0x224b8` zero, delta `0x38` (G3); 35 address-of-band sites, 4 escapes all handing out `&DAT_007cdecc`, the 4 lea'd cursors re-read only (G4); entry 1: 32 reads in >=12 functions, and the load-side FUN_00597ee0 walks entries 2..7 from `0x597f6d` clearing `*(entry+0x1dd74)` + calling FUN_00479e90(entry) (G5).
@@ -863,16 +860,8 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 ## M308 (s268, STATIC, zero box; s269 review) — FULL rows VERBATIM at `docs/named-archive-m339-rows.md:8` (§rotation-1 marker at `:7`, s320-chain2 headroom rotation, sha1 `07cec1770614`; re-asserted by `scripts/m339_named_rotate.py --verify`); this stub governs. `0x4ddcf1`'s UNATTRIBUTED edge is CLOSED by `## M339`: nonzero `jge` = callee 0x5f1394's result cell `[obj+0xa40]`.
 
 ## M309 (s271, STATIC, zero box; mutation-tested) - FUN_0056d350 is the GOAL-list insert-or-max of the same 8380-B block record; its -1 6th argument is the entry's +0C OWNER dword, and -1 = unbound
+  — VERBATIM at `docs/named-archive-m364-rows.md` (sha1 `52950c428be9`, 2812 B); this stub governs.
 
-| claim | evidence | conf |
-|---|---|---|
-| FUN_0056d350(rec,kind,prio,A,B,owner) indexes **0x94ee28 + 8380*rec** (chain -> (8380,0); a 2nd `imul r,r,0x20bc` lives outside it at 0x470d50) over **75 x 0x10** entries (2 back-edges, both `cmp r,0x4b`, both `add r,0x10`); fields **+0 short KIND / +2 short PRIO / +4 d / +8 d / +0C d**, derived from the store displacements + the param slot each source register def-walks to | `evidence/m309_goal_sink.txt:9-56` (S2 chain/S3 stores/S4 probe/S5 bounds) | V |
-| It is the **GOAL** list because the binary says so: the `(A^B)&1` parity guard + `ds:0x985ae8` bit 0x1000 push **0x6914fc = "Bad GOAL"** (PE .data), while FUN_0056d480 pushes **0x691508 = "Bad SITE"**; the guard CANNOT skip the insert (both je -> 0x56d386, no ret between) | `evidence/m309_goal_sink.txt:95-121` (S8 guard/S9 strings) | V (game meaning of a GOAL: OPEN) |
-| Same law as the SITE list: hit -> **+2 = max(old,prio)** and stores NOTHING else; miss -> evict by score (**1000** empty / **prio+100** / **20-prio**), strict `jle` (first index wins), no-candidate -> `jl 0x56d476` over a **store-free** epilogue past exactly the 5 insert stores | `evidence/m309_goal_sink.txt:57-94` (S6 found path/S7 eviction) | V |
-| **owner (+0C)**: 1 writer (0x56d470) + 1 reader (0x559b3e) among all **65** operands naming the 100-entry block; reader signed, `jl 0x559b74` guards negatives, scaled **x304** (9x->19x-><<4) -> `test BYTE [edx+0x95da40],0x20`, gated on that entry's **+0 == 9** -> **-1 selects nothing (unbound owner)** | `evidence/m309_goal_sink.txt:196-244` (S12 census/S13 reader) | V (what the 304-B table at 0x95da40 is: OPEN) |
-| arg6 census: **40** sites push 0xffffffff, **5** def-walk to **ds:0x68cbb0** (.data, 340 refs, exactly 6 stores, all in 0x4e3000-0x4f6000), **5 DECLARED unattributed**; the mirror (0x56d590) and the rebuild broadcast (0x56d6f8) both pass -1 | `evidence/m309_goal_sink.txt:128-195,245-262` (S11 callers/S14 global) | V (identity of ds:0x68cbb0: OPEN) |
-| GOAL **+0 short has exactly 2 writers**: 0x56d45f (insert) and **0x470d5c = `mov WORD PTR [...+0x94ee28],0xffff` in FUN_00470b90** - the -1 free-slot sentinel writer M308 U2 asked for (SITE window still has none) | `evidence/m309_goal_sink.txt:209-211` (2 writers + 15 separate `imul r,r,0x20bc` in FUN_00470b90) | V |
-| Gates are load-bearing: `scripts/m309_mutate.py` = **9/9** mutations (arg-reversal, census range, read/write polarity, param-seed loss, forward-jcc-as-loop, chain seed, blind-to-`ds:` stores, wrong window, empty dump) each reddening its named check | `evidence/m309_mutate.txt:23` | V |
 
 ## M310 (s272, STATIC, zero box; mutation-tested 14/14) — `FUN_00470b90` = the view object's DEBUG-GATED GOAL duplicate-invalidator + one-char-token logger; it owns the GOAL kind<->token map. FULL-LENGTH TABLE VERBATIM at `docs/named-archive-b30-rows.md:5` (sha1 `ca3caf3785c9d6e9`); this stub governs, one line per claim
 
@@ -1097,16 +1086,8 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | OPEN: ~~block+220 noun~~ ANSWERED M325 (ENERGY); ~~g999fa4 noun~~ cheat number M325 (64c360 thunk body open); feed arrival (.rdata 0x673b60 entry, M325); byte-swap/heap | - | lead |
 
 ## M323 (s295-chain2, STATIC, 13/13, 31/31+1) - ds:0x985afc=ROUND counter; year=round+2100
+  — VERBATIM at `docs/named-archive-m364-rows.md` (sha1 `6f3921b1931b`, 1256 B); this stub governs.
 
-| claim | evidence | conf |
-|---|---|---|
-| 336 refs W5/T59/R272/A0; dw333/w1 (mov ax @59c18a)/b2; gaps 4f3a91/51da30 | G1/G6/G9 `evidence/m323_round_census.txt:523,528,531` | V MU1/MU18/MU19/MU23/MU31 |
-| writers: 5a0fa0=0; 51f320=+1; 4e0350=max(1,g999fa4-g92bf68)+flow; 59ce10=rand{30,60,80} gated 985ac4.7 | G2/G3/G10 `:524-525,532,340-348` | V MU2/MU3/MU13/MU18/MU20/MU27/MU28/MU30 |
-| year sole writer 51f54f=5b2c00(round+1)=arg+g92bf68(2100); chain pinned | G10/R1 `:532-533` | V MU10/MU13/MU17/MU30 |
-| M320 ==0@59f1a0; M305 &3==bl(1)@51f711 def-set pinned; M317 >75@55840d; M177 age<16 | G5/G8 `:527,530,438,502` | V MU5/MU14/MU15/MU16/MU21/MU22/MU25/MU29 |
-| live round=50/year=2150; rivals dead | G7/R1-R3 `:529,533-535` | V MU7/MU24; R1 MU10/MU17, R2 MU13/MU18/MU23, R3 MU12/MU13/MU23 |
-| ACCEPT 13/13 digest 136841406b5bee5b x2 (`evidence/m323_round_census.txt:536`); harness 31/31+1 a25f4b5f2af8bb8a (`evidence/m323_mutate.txt:32`) | as cited | V |
-| OPEN: rand-start noun; ~~g999fa4~~ cheat-parsed number (M325; writers M324); ~~save-carry~~ ANSWERED M324 (raw header blob); 4e0350 = EDITORYEAR cheat path (M325); resolver linear-static | - | lead |
 
 ## M320 (s294-chain2, STATIC, 12/12, 26/26+1) - siblings: 128-region ladder, 512 arrays, reset/rebuild
 
@@ -1548,6 +1529,18 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
+
+## M364 (s334-chain2, STATIC 24/24) — the faction-relations bits have NOUNS: 0x1 = PACT, 0x8 = AT WAR (V, string-keyed); the other 11 are standing flags (INF). ev `evidence/m364_bitnouns.txt:131`
+| claim | ev | conf |
+|---|---|---|
+| 13 ids = 11 single bits of rel[fac][tgt]+0x18 + 2 of +0x38; only 0x8/0x2000 repeat (directional A/B copies); the sync block's index chain EMULATES to fac*0x82f+tgt, x4 == the predicate's imul 0x20bc | `:3-22` | V MU1,2,3,4,18 |
+| `FUN_00426d60(fac,tgt,mask)` = `(rel & mask)!=0`: 17 insns (window count), `imul 0x20bc`, 0 stores; 232 call sites, 214 constant, 18 unresolved | `:24-44,:46-88` | V MU5,6,7,ALG |
+| 19 single-bit asks + 16 composites, each composite an OR of bits also asked alone (0x800 alone: never); 0x1 = 53 sites / 14 fns = the maximum | `:52-88,:175` | V MU8,9,12 |
+| **0x1 = PACT**: the end-pact case block asks mask 1 -> "DONTHAVEPACT"/"REALLYENDPACT" -> `FUN_00530af0(...,1)`; **0x8 = AT WAR**: the declare-vendetta block asks mask 8 -> "DIPLOVENDETTA"/"DIPLONOVENDETTA"; the blocks share 0 literals | `:131-134,:172-174` | V MU10,11,ALG2 |
+| writers: `test 0x7 -> or 0x1100000`, `test 0x10 -> or 0x8040` (`0x5518f0`); apply pushes 4 bulk masks — 0x1f SETS {1,2,4,8,10}, 0x1f89 SETS {1,8,0x400,0x1000}, 0x2043c20 SETS the other 6, 0xdd9bc3c0 CLEARS all 11 | `:177-194` | V MU13,19,14 |
+| rivals refuted ON THE NUMBERS: 3-bit enum (16/19 asks outside 0x7), ordinals, "0x1 is vendetta" (0x1's block carries 0 vendetta keys), "one 16-bit field" (the parsed rows read 2 dwords 8 dwords apart) | `:202-206` | V MU16,15,17,20 |
+| ACCEPT `python3 -u scripts/m364_bitnouns.py` -> 24/24 `f6d006d0281ac189` x2; harness 23/23 (22 gate mutants + MU0 NO-OP control; every gate mutated) | `evidence/m364_bitnouns.txt:208`, `evidence/m364_mutate.txt:25` | V MU0 |
+| INF: nouns of 0x2,0x4,0x10,0x20,0x400,0x1000,0x2000,0x40000,0x2000000 and dword B's 0x8/0x2000 | - | INF |
 
 ## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |

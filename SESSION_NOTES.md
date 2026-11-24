@@ -626,6 +626,32 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
   0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 = audio on/off (INFERRED).
 - NAMED: `## M360` rotated VERBATIM (docs/named-archive-m360-rows.md, sha1 e504b483); 247,881 B.
 
+## Session 334-chain2 (2026-11-24) — M364: the NOUNS of the 13 faction-relations bits — 0x1 = PACT, 0x8 = AT WAR (V); the other 11 are standing flags (INF)
+- Lever: `FUN_00426d60(fac,tgt,mask)` = `(rel[fac][tgt] & mask) != 0` — 17 insns, `imul 0x20bc`, 0 stores.
+  `python3 -u scripts/m364_bitnouns.py` -> **PASS M364: 24/24 gates** digest `f6d006d0281ac189`
+  (`evidence/m364_bitnouns.txt:208`), rerun byte-identical; `scripts/m364_mutate.py` 23/23 (`evidence/m364_mutate.txt:25`).
+- 232 call sites, 214 with a constant mask: 19 distinct single bits + 16 composites, each composite an OR of bits
+  also asked alone (0x800 is the only bit never asked alone). Bit 0x1 is asked at 53 sites over 14 functions.
+- NOUNS (V): 0x1 = PACT — the end-pact case block of the diplomacy menu asks mask 1 and branches to
+  "DONTHAVEPACT"/"REALLYENDPACT" -> `FUN_00530af0(...,1)`; 0x8 = AT WAR — the declare-vendetta block asks mask 8,
+  a CLEAR bit marks a faction you may declare on, and no candidate yields "DIPLONOVENDETTA". The two blocks
+  share 0 literals. The natural rival "0x1 is vendetta" is refuted on that disjointness.
+- Geometry: the 13 ids are 11 single bits of dword A (record +0x18) + 2 of dword B (+0x38); the only repeated
+  positions (0x8, 0x2000) are A/B DIRECTIONAL copies — 4 of the 6 writers write (fac,tgt) and (tgt,fac).
+- Co-set rules (`0x5518f0`): `test 0x7 -> or 0x1100000` (the 3-bit group), `test 0x10 -> or 0x8040`; the page's
+  apply handler pushes 4 bulk masks: 0x1f = {1,2,4,8,10}, 0x1f89 = {1,8,0x400,0x1000}, 0x2043c20, 0xdd9bc3c0.
+- PITFALL (new): a FUNCTION-level literal set cannot discriminate two bits asked by the same function — both
+  rows came out carrying all four keys. The witness must be the enclosing `case` block; ALG2 mutates exactly
+  that splitter and reddens G4a/G4b/G4c.
+- INF/OPEN: nouns of 0x2, 0x4, 0x10, 0x20, 0x400, 0x1000, 0x2000, 0x40000, 0x2000000 and of dword B's 0x8/0x2000.
+- NAMED headroom: rotated two settled blocks VERBATIM to `docs/named-archive-m364-rows.md`
+  (`scripts/m364_named_rotate.py --verify` PASS, 2/2 stubs); NAMED 247,217 -> 245,296 B.
+- REVIEW #393 (Strata, 10 findings / 3 P1) — all 10 FIXED, none dismissed: G1e now EMULATES the sync
+  block's index chain instead of comparing constants; G7d reads the parsed dwords; the 0x1f bulk mask is
+  printed (the old `v > 0xFF` cap hid it) and gated with SETS/CLEARS; the 17-insn count, the 53-site
+  maximum, G5b, G1c and G6a's residual mnemonic all got named mutants (MU18/19/20 added); G7c now tests
+  the rival ON THE KEYS; named_rotate's --verify matches stub headers by text, and the selector refuses
+  blocks that are themselves stubs (two such picks were undone and replaced).
 ## Session 334-chain1 (2026-11-24) — M363: the four A/V audio callees touch the MIXER ONLY (0 pref-cell sites in the closure, 6 in the handler)
 
 - **ACCEPT** `python3 -u scripts/m363_audio_callees.py` -> **`PASS  M363: 18/18 gates`

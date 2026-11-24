@@ -1,0 +1,209 @@
+M364 - the nouns of the faction-relations bits
+
+G1  the 13 sync rows of FUN_004db1b0, re-decoded (id, mask, dword)
+    #  call@       id         mask       and@        dword  rec_off
+    1 0x004db1e6 0x00000008 0x00000008 0x004db1e0 0x94d448 0x0018
+    2 0x004db217 0x00000010 0x00000010 0x004db211 0x94d448 0x0018
+    3 0x004db248 0x00000004 0x00000004 0x004db242 0x94d448 0x0018
+    4 0x004db279 0x00000002 0x00000002 0x004db273 0x94d448 0x0018
+    5 0x004db2aa 0x00000001 0x00000001 0x004db2a4 0x94d448 0x0018
+    6 0x004db2e0 0x00001000 0x00001000 0x004db2d5 0x94d448 0x0018
+    7 0x004db316 0x00002000 0x00002000 0x004db30b 0x94d448 0x0018
+    8 0x004db347 0x00000020 0x00000020 0x004db341 0x94d448 0x0018
+    9 0x004db37d 0x02000000 0x02000000 0x004db372 0x94d448 0x0018
+   10 0x004db3b3 0x00000400 0x00000400 0x004db3a8 0x94d448 0x0018
+   11 0x004db3e9 0x00040000 0x00040000 0x004db3de 0x94d448 0x0018
+   12 0x004db41d 0x80000008 0x00000008 0x004db414 0x94d468 0x0038
+   13 0x004db453 0x80002000 0x00002000 0x004db448 0x94d468 0x0038
+  G1a   PASS  13 rows, 11 on 0x94d448 + 2 on 0x94d468, mask==id&0x7fffffff 13/13
+  G1b   PASS  record offsets +0x18 (dword A) / +0x38 (dword B), delta 0x20 = 8 dwords
+  G1c   PASS  13 distinct ids over 11 mask values; single-bit masks 13/13
+  G1d   PASS  mask values carried by BOTH dwords ['0x8', '0x2000'] -> directional pairs (A/B copies of one bit)
+  G1e   PASS  the sync block's index chain EMULATES to fac*0x82f + tgt*0x1 + 0, x4 == the predicate's imul 0x20bc (both read from the bytes)
+
+G2  the relation predicate FUN_00426d60(fac, tgt, mask), decoded
+      0x00426d60  push   ebp
+      0x00426d61  mov    ebp,esp
+      0x00426d63  sub    esp,0x40
+      0x00426d66  push   ebx
+      0x00426d67  push   esi
+      0x00426d68  push   edi
+      0x00426d69  mov    eax,DWORD PTR [ebp+0x8]
+      0x00426d6c  imul   eax,eax,0x20bc
+      0x00426d72  mov    ecx,DWORD PTR [ebp+0xc]
+      0x00426d75  mov    eax,DWORD PTR [eax+ecx*4+0x94d448]
+      0x00426d7c  and    eax,DWORD PTR [ebp+0x10]
+      0x00426d7f  pop    edi
+      0x00426d80  pop    esi
+      0x00426d81  pop    ebx
+      0x00426d82  mov    esp,ebp
+      0x00426d84  pop    ebp
+      0x00426d85  ret
+  G2a   PASS  17 insns in the window (8 after the frame setup), 1 imul eax,eax,0x20bc = the 0x20bc record stride
+  G2b   PASS  0 stores: a pure READ, i.e. a test and not a setter
+  G2c   PASS  tail `and    eax,DWORD PTR [ebp+0x10]` -> arg2 (3rd pushed) is the MASK
+
+G3  every call site of the predicate: the 3rd pushed argument is the mask
+    232 call sites in 30 functions; mask constant at 214, unresolved at 18
+    mask   n  single
+    0x00000001  53  yes
+    0x00000002  14  yes
+    0x00000003   2  NO
+    0x00000004  10  yes
+    0x00000006   2  NO
+    0x00000007   3  NO
+    0x00000008  20  yes
+    0x00000010  37  yes
+    0x00000011   4  NO
+    0x00000014   1  NO
+    0x00000017   1  NO
+    0x00000020  18  yes
+    0x00000021   1  NO
+    0x00000030   5  NO
+    0x00000031   1  NO
+    0x00000040   5  yes
+    0x00000050   1  NO
+    0x00000060   1  NO
+    0x00000080   1  yes
+    0x00000400   2  yes
+    0x00001000   2  yes
+    0x00002000   5  yes
+    0x00008000   1  yes
+    0x00010000   1  yes
+    0x00010003   1  NO
+    0x00010013   1  NO
+    0x00040000   3  yes
+    0x00040020   3  NO
+    0x00040c31   1  NO
+    0x00200000   3  yes
+    0x00400000   1  yes
+    0x02000000   6  yes
+    0x08000000   1  yes
+    0x10000000   1  yes
+    0x10000001   2  NO
+  G3a   PASS  232 sites, 214 constant masks, 3 unresolved (18 sites)
+  G3b   PASS  19 single-bit masks / 16 composite; the ONLY bit asked inside a composite and never alone: ['0x800']
+  G3c   PASS  bits asked in the single form: ['0x1', '0x2', '0x4', '0x8', '0x10', '0x20', '0x40', '0x80', '0x400', '0x1000', '0x2000', '0x8000', '0x10000', '0x40000', '0x200000', '0x400000', '0x2000000', '0x8000000', '0x10000000']
+    composite masks: ['0x3', '0x6', '0x7', '0x11', '0x14', '0x17', '0x21', '0x30', '0x31', '0x50', '0x60', '0x10003', '0x10013', '0x40020', '0x40c31', '0x10000001']
+    unresolved argument registers: 2pushes=15, 0pushes=2, 1pushes=1
+
+G4  noun witnesses: the literals of the functions that ASK each bit
+    4 functions in the image carry a diplomacy literal
+    bit        n_sites askers
+    0x00000001    53 ['FUN_00440710', 'FUN_00442320', 'FUN_00444140', 'FUN_0045a920', 'FUN_0046a610', 'FUN_00471be0', 'FUN_00480ce0', 'FUN_004811d0', 'FUN_004a5eb0', 'FUN_004a7d40', 'FUN_004afaa0', 'FUN_004f6030', 'FUN_00546800', 'FUN_0058fa40']
+    0x00000002    14 ['FUN_00440710', 'FUN_00444140', 'FUN_0045a920', 'FUN_00471be0', 'FUN_004811d0', 'FUN_004a5eb0', 'FUN_00546800']
+    0x00000003     2 ['FUN_00546800']
+    0x00000004    10 ['FUN_00440710', 'FUN_00444140', 'FUN_0045a920', 'FUN_00471be0', 'FUN_004811d0', 'FUN_004a5eb0', 'FUN_00546800']
+    0x00000006     2 ['FUN_00546800']
+    0x00000007     3 ['FUN_00480ce0', 'FUN_00546800', 'FUN_0058fa40']
+    0x00000008    20 ['FUN_00442320', 'FUN_0045dd10', 'FUN_00467a00', 'FUN_00471be0', 'FUN_00481e90', 'FUN_004a5eb0', 'FUN_004f6030', 'FUN_00546800', 'FUN_0058fa40']
+    0x00000010    37 ['FUN_00440710', 'FUN_004430e0', 'FUN_00444140', 'FUN_00445900', 'FUN_0045a920', 'FUN_00467a00', 'FUN_00471be0', 'FUN_004811d0', 'FUN_0049fee0', 'FUN_004a5eb0', 'FUN_004f6030', 'FUN_00502cd0', 'FUN_00546800', 'FUN_0058fa40']
+    0x00000011     4 ['FUN_00546800']
+    0x00000014     1 ['FUN_00546800']
+    0x00000017     1 ['FUN_004a5eb0']
+    0x00000020    18 ['FUN_004f6030', 'FUN_00546800', 'FUN_0058fa40']
+    0x00000021     1 ['FUN_00546800']
+    0x00000030     5 ['FUN_004266c0', 'FUN_004f6030', 'FUN_00546800']
+    0x00000031     1 ['FUN_00546800']
+    0x00000040     5 ['FUN_00546800']
+    0x00000050     1 ['FUN_00546800']
+    0x00000060     1 ['FUN_00546800']
+    0x00000080     1 ['FUN_00546800']
+    0x00000400     2 ['FUN_00546800']
+    0x00001000     2 ['FUN_00440710', 'FUN_004a7d40']
+    0x00002000     5 ['FUN_00546800']
+    0x00008000     1 ['FUN_00546800']
+    0x00010000     1 ['FUN_004a5eb0']
+    0x00010003     1 ['FUN_00546800']
+    0x00010013     1 ['FUN_00546800']
+    0x00040000     3 ['FUN_00546800']
+    0x00040020     3 ['FUN_004f6030', 'FUN_00546800']
+    0x00040c31     1 ['FUN_004282d0']
+    0x00200000     3 ['FUN_00546800']
+    0x00400000     1 ['FUN_00546800']
+    0x02000000     6 ['FUN_00546800', 'FUN_0058fa40']
+    0x08000000     1 ['FUN_00546800']
+    0x10000000     1 ['FUN_00546800']
+    0x10000001     2 ['FUN_00546800']
+    literal sets of the askers that carry one:
+      FUN_00442320     ['DIPLOENERGY', 'DIPLONOVENDETTA', 'DIPLOTECH', 'DIPLOVENDETTA', 'DONTHAVEPACT', 'REALLYENDPACT']
+      FUN_00444140     ['DIPLOMACY']
+    CASE-BLOCK witnesses inside the diplomacy menu (FUN_00442320):
+      mask 0x00000001  block literals ['DONTHAVEPACT', 'REALLYENDPACT']
+      mask 0x00000008  block literals ['DIPLONOVENDETTA', 'DIPLOVENDETTA']
+
+    NOUN TABLE
+    bit        n_sites  noun                 conf  case-block witness
+    0x00000001       14  pact in force        V     ['DONTHAVEPACT', 'REALLYENDPACT']
+    0x00000002        7  -                    INF   
+    0x00000003        1  -                    INF   
+    0x00000004        7  -                    INF   
+    0x00000006        1  -                    INF   
+    0x00000007        3  -                    INF   
+    0x00000008        9  at war (vendetta)    V     ['DIPLONOVENDETTA', 'DIPLOVENDETTA']
+    0x00000010       14  -                    INF   
+    0x00000011        1  -                    INF   
+    0x00000014        1  -                    INF   
+    0x00000017        1  -                    INF   
+    0x00000020        3  -                    INF   
+    0x00000021        1  -                    INF   
+    0x00000030        3  -                    INF   
+    0x00000031        1  -                    INF   
+    0x00000040        1  -                    INF   
+    0x00000050        1  -                    INF   
+    0x00000060        1  -                    INF   
+    0x00000080        1  -                    INF   
+    0x00000400        1  -                    INF   
+    0x00001000        2  -                    INF   
+    0x00002000        1  -                    INF   
+    0x00008000        1  -                    INF   
+    0x00010000        1  -                    INF   
+    0x00010003        1  -                    INF   
+    0x00010013        1  -                    INF   
+    0x00040000        1  -                    INF   
+    0x00040020        2  -                    INF   
+    0x00040c31        1  -                    INF   
+    0x00200000        1  -                    INF   
+    0x00400000        1  -                    INF   
+    0x02000000        2  -                    INF   
+    0x08000000        1  -                    INF   
+    0x10000000        1  -                    INF   
+    0x10000001        1  -                    INF   
+  G4a   PASS  bit 0x1 = pact in force: its case block carries ['REALLYENDPACT', 'DONTHAVEPACT'] and NONE of the rival keys ['DIPLONOVENDETTA', 'DIPLOVENDETTA']
+  G4b   PASS  bit 0x8 = at war (vendetta): its case block carries ['DIPLOVENDETTA', 'DIPLONOVENDETTA'] and NONE of the rival keys ['DONTHAVEPACT', 'REALLYENDPACT']
+  G4c   PASS  the 0x1 and 0x8 case blocks share NO literal -> the two nouns are discriminated at the call-site level
+  G4d   PASS  asker counts: 0x1=14 functions / 53 sites (= the maximum over all masks, top=53); 0x8=9/20; 0x10=14/37
+
+G5  the co-setting rules inside the writers, and the page's bulk apply masks
+    rule = `test m` then, on the taken path, `or s` / `and ~c`
+      0x5518f0  test 0x00000007 -> or 0x01100000  (set 0x1100000)
+      0x5518f0  test 0x00000010 -> or 0x00008040  (set 0x8040)
+      0x5518f0  test 0x00000020 -> and 0xfffff3ff  (clear 0xc00)
+      0x551a20  test 0x00000010 -> and 0x000000fe  (clear 0xffffff01)
+      0x551a20  test 0x00000001 -> or 0x00000002  (set 0x2)
+      0x551a20  test 0x00000007 -> or 0x80000108  (set 0x80000108)
+      0x551a20  test 0x00000017 -> and 0xff7fffff  (clear 0x800000)
+      0x551c40  test 0x00000020 -> and 0xffffffbf  (clear 0x40)
+  G5a   PASS  the 3-bit group 0x7 also sets 0x1000000|0x100000 in FUN_005518f0
+  G5b   PASS  bit 0x10 also sets 0x8000|0x40 (one rule, both directions)
+    4 writer calls in the apply handler; every mask-like push:
+      0x0000001f SETS  5 ['0x1', '0x2', '0x4', '0x8', '0x10']  CLEARS  6 ['0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']
+      0x00001f89 SETS  4 ['0x1', '0x8', '0x400', '0x1000']  CLEARS  7 ['0x2', '0x4', '0x10', '0x20', '0x2000', '0x40000', '0x2000000']
+      0x02043c20 SETS  6 ['0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']  CLEARS  5 ['0x1', '0x2', '0x4', '0x8', '0x10']
+      0xdd9bc3c0 SETS  0 []  CLEARS 11 ['0x1', '0x2', '0x4', '0x8', '0x10', '0x20', '0x400', '0x1000', '0x2000', '0x40000', '0x2000000']
+  G5c   PASS  4 writer calls, 4 bulk pushes; 0x1f SETS exactly {1,2,4,8,10} and 0x1f89 SETS exactly {1,8,0x400,0x1000}
+
+G6  corroboration: instructions that name a pair dword directly
+    mnemonics: test=388, mov=300, lea=39, movsx=1
+    single-bit immediates: 0x1=150, 0x2=17, 0x8=14, 0x10=62, 0x20=37, 0x40=3, 0x80=5, 0x2000=1, 0x10000=1, 0x40000=2, 0x80000=3, 0x800000=1, 0x1000000=2, 0x2000000=5, 0x8000000=5, 0x20000000=1
+  G6a   PASS  direct-displacement census: test=388 mov=300 lea=39 and exactly 1 other mnemonic (['movsx'])
+  G6b   PASS  bit 0x1 dominates the direct single-bit immediates (150 vs 0x10=62)
+
+G7  RIVALS (each must FAIL on the numbers printed above)
+  G7a   PASS  R1 'the bits are a 3-bit enum 0..7': 16 of 19 single-bit asks lie OUTSIDE 0x7 -> refuted
+  G7b   PASS  R2 'ids are row ordinals 1..13': 19 distinct bits, gaps at 0x200/0x800 - refuted
+  G7c   PASS  R3 '0x1 is vendetta (the natural guess)': 0x1's case block carries [] vendetta keys and 0x8's carries [] pact keys -> refuted ON THE KEYS
+  G7d   PASS  R4 'the two dwords are one 16-bit field': the PARSED rows read 2 dwords ['0x94d448', '0x94d468'], 0x20 = 8 dwords apart, and only 2 of 11 mask values repeat -> refuted
+
+PASS  M364: 24/24 gates
+digest f6d006d0281ac189
