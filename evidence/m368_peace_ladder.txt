@@ -1,0 +1,94 @@
+M368 — nouns of the faction-relations bits 0x2 and 0x4 (781429 insns parsed)
+      PE sections: .text va=0x1000 raw=0x1000 .rdata va=0x271000 raw=0x271000 .data va=0x289000 raw=0x289000  va=0x5a0000 raw=0x2a9000 UVA_DATA va=0x5a2000 raw=0x2ab000 _SELFMOD va=0x5a7000 raw=0x2b0000 .rsrc va=0x5ac000 raw=0x2b5000 .reloc va=0x5b2000 raw=0x2bb000
+
+G0 anchor instructions
+      0x551ab7 test   bl,0x1    | 0x551abc or     ebx,0x2 | bytes 83cb02
+      0x551a88 and    edx,0xffee7faf      bytes 81e2af7feeff
+      0x553c3d push   0x4   | push   edi | push   esi
+      0x553f0c push   0x2   | push   edi | push   esi
+      0x554161 push   0x1   | push   edi | push   esi
+  G0a     PASS  0x551abc is 83 cb 02 = `or ebx,0x2`, entered on `test bl,0x1`
+  G0b     PASS  0x551a88 is `and    edx,0xffee7faf`
+  G0c     PASS  each of the three peace sites pushes (mask, reg, reg) in cdecl order
+
+G1 writer call-site census
+      call sites 169 across 6 writer fns; call sites with a literal mask 93
+      SET_A   mask 0x10   x13
+      SET_A   mask 0x2000 x6
+      CLR_B2  mask 0x20   x5
+      CLR_B2  mask 0x40   x5
+      SET_A   mask 0x1    x4
+      SET_A   mask 0x8    x3
+      CLR_B2  mask 0x400  x3
+      SET_B   mask 0x800  x3
+      bare peace-mask sites 8: 0x4dafa3(0x1) 0x4dafc7(0x1) 0x4db101(0x1) 0x523f4c(0x1) 0x53fcb3(0x2) 0x553c41(0x4) 0x553f10(0x2) 0x554165(0x1)
+      their hosts: 0x4dadd0 0x523b20 0x53f9f0 0x5537d0
+  G1a     PASS  169 call sites reach the six relation writers
+  G1b     PASS  the bare peace masks that reach a writer are exactly {1,2,4}
+  G1c     PASS  FUN_005537d0 hosts a 0x4 site and a 0x2 site
+  G1d     PASS  exactly 8 bare-peace sites over exactly those 4 hosts
+
+G2 mask vs the message key posted in the same block
+      0x4dafa3 mask 0x1 key None -> None         host 0x4dadd0  prev-call none
+      0x4dafc7 mask 0x1 key None -> None         host 0x4dadd0  prev-call none
+      0x4db101 mask 0x1 key None -> None         host 0x4dadd0  prev-call none
+      0x523f4c mask 0x1 key None -> None         host 0x523b20  prev-call 0x551a20
+      0x53fcb3 mask 0x2 key None -> None         host 0x53f9f0  prev-call none
+      0x553c41 mask 0x4 key 0x691144 -> ENEMYTRUCE   host 0x5537d0  prev-call 0x483470
+  G2-553c41 PASS  trio site mask 0x4 carries `ENEMYTRUCE` (expected `ENEMYTRUCE`)
+  G2b-553c41 PASS  the key is an argument of the POSTER call 0x483470 that precedes the writer
+      0x553f10 mask 0x2 key 0x691150 -> ENEMYTREATY  host 0x5537d0  prev-call 0x483470
+  G2-553f10 PASS  trio site mask 0x2 carries `ENEMYTREATY` (expected `ENEMYTREATY`)
+  G2b-553f10 PASS  the key is an argument of the POSTER call 0x483470 that precedes the writer
+      0x554165 mask 0x1 key None -> None         host 0x5537d0  prev-call none
+  G2-554165 PASS  trio site mask 0x1 carries `None` (expected `None`)
+      trio keys: 0x4 -> ['ENEMYTRUCE'] ; 0x2 -> ['ENEMYTREATY']
+  G2x     PASS  the 0x4 and 0x2 sites post DIFFERENT .data keys (a swap would redden G2-*)
+
+G3 implication 0x1 -> 0x2, and the reverse census
+      `test r,0x1 -> or r,0x2`: 1 site(s); `test r,0x2 -> or r,0x1`: 0 site(s)
+  G3a     PASS  the pact->treaty upgrade exists once; the reverse never
+  G3b     PASS  that upgrade sits in the writer FUN_00551a20 (host 0x551a20)
+
+G4 exclusion arithmetic, decoded from the two `and` instructions
+      0x551a88 bytes 81e2af7feeff -> mask 0xffee7faf (peace); 0x551b17 bytes 81e278f3eefa -> mask 0xfaeef378 (war)
+      the war mask's branch head: 0x551abf = test   bl,0x10
+      `and 0xffee7faf` (any peace mask) clears 0x10 0x40 0x8000 0x10000 0x100000
+      `and 0xfaeef378` (mask 0x10, war) clears 0x1 0x2 0x4 0x80 0x400 0x800 0x10000 0x100000 0x1000000 0x4000000
+  G4a     PASS  a peace write ENDS war (clears 0x10) and spares every peace bit
+  G4b     PASS  the war write ends all three peace bits, and it sits under `test bl,0x10`
+  G4c     PASS  the decoded peace-clear set is exactly those 5 bits
+
+G5 labels.txt, re-read
+      count line 9 = 1089; lines 652-655 = No Time Control / Clock / Truce / Treaty
+  G5a     PASS  header count = 1089
+      bit 0x1 <-> element 645 <-> line 655 = `Pact`
+  G5-1    PASS  bit 0x1's label element reads `Pact`
+      bit 0x2 <-> element 644 <-> line 654 = `Treaty`
+  G5-2    PASS  bit 0x2's label element reads `Treaty`
+      bit 0x4 <-> element 643 <-> line 653 = `Truce`
+  G5-4    PASS  bit 0x4's label element reads `Truce`
+  G5b     PASS  control: element 866 = `Diplomacy for` (the page title)
+      bit->element map (M367, V: evidence/m367_label_index.txt:30-32) = [643, 644, 645]; neighbours `Clock/Truce/Treaty/Pact/Vendetta`
+  G5c     PASS  the three elements are consecutive and sit after the `Clock` line
+
+G6 FUN_005076d0 same-state classifier
+      0x507975 test cl,0x1 -> je     0x507982 0x507982 -> test   BYTE PTR [ebp-0xc],0x1 -> jne    0x5079a1
+      0x507982 test cl,0x2 -> je     0x50798f 0x50798f -> test   BYTE PTR [ebp-0xc],0x2 -> jne    0x5079a1
+      0x50798f test cl,0x4 -> je     0x5079a1 0x5079a1 -> test   BYTE PTR [ebp-0xc],0x4 -> jne    0x5079a1
+      tested [1, 2, 4]; je targets ['0x507982', '0x50798f', '0x5079a1']; jne targets ['0x5079a1', '0x5079a1', '0x5079a1']; jmp-to-mismatch ['0x50799a', '0x50799a', '-']
+      numeric opcodes inside the window: 0 []
+  G6a     PASS  the classifier's precedence is 0x1, 0x2, 0x4
+  G6b     PASS  3 tests, each paired with the SAME mask on the other record
+  G6c     PASS  no numeric opcode in the window: EQUALITY, not a rank
+  G6d     PASS  the chain runs test->je(next test)->pair->jne(match)->jmp(mismatch 0x50799a)
+  G6e     PASS  0x50799a is the mismatch store `mov    DWORD PTR [ebp-0x8],0x1`
+
+G7 RIVALS
+  G7a     PASS  R1 the bits are SWAPPED (0x2=Truce, 0x4=Treaty)      killed by G2-*
+  G7b     PASS  R2 they are INDEPENDENT flags, not a ladder    killed by G3a+G6a
+  G7c     PASS  R3 the nouns are label text only, no behaviour     killed by G2-*
+  G7d     PASS  R4 the classifier is a numeric >= rank            killed by G6c
+  G7e     PASS  R5 the three bits are not a family (war is unrelated) killed by G4a+G4b
+
+PASS M368: 34/34 gates  digest 6f4b692777cc3549

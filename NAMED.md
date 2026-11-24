@@ -1467,31 +1467,8 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | RETRACTED: M68's "195 -> -3" is a STALE cell read (m68 verdict line parses "re-sorted"); cell = row counter @0x495b00 | `:107` | V MU14 |
 | ACCEPT 15/15 `504c7342fb16273b` x2; harness 20/20 | `:112-113` | V MU0 |
 
-## M352 (s328-c3, static; ACCEPT `scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7`** `d553194a`, x2 `c8bbfda4` (`evidence/m352_x2.txt:4`); harness 13/13; `:N` = a line of `evidence/m352_persist_writeback.txt:1-140`)
-| claim | ev | conf |
-|---|---|---|
-| 8 `call edi` = 1 target: edi@0x58f106 from `ds:0x6710fc` = KERNEL32!WritePrivateProfileStringA (.rdata import slot; its own dword names it); 0 mem-indirect | `:18-25` | V MU1,MU2,MU13 |
-| 13 write keys = 8 direct + 5 via FUN_0058f030; 12 blocks LOAD a block cell (11/11 scalars + Custom World array; window presence), `Prefs Format` = itoa(0xb) stamp | `:27-45` | V MU3-MU7 |
-| read = 5 fns / 5 refs / 35 keys; 13/13 written keys read; `Laptop`+`Language` read, written NOWHERE (33 write sites) | `:47-122` | V MU8,MU9,MU12 |
-| RETRACT M350: `ds:0x6926ec` = the .data literal "Prefs Format"; lpKeyName at 7 push sites; no store names the VA, 0 materialisations | `:124-131` | V MU10,MU11 |
-| rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
-| ~~OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b)~~ ANSWERED by `## M355`: the DEFAULT bit-vectors of `Preferences`/`More Preferences`; twins return 0x3a7168/0x327168 | `:97` | V (M355) |
-
-## M353 (s329-chain1, ANALYSE, STATIC 11/11 + harness 13/13, zero box) — the `0x999fa4` numeric band: ONE indexed filler + four `$`-token consumers
-
-ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`** digest `367fdae1d78979e5`, two renders identical (`evidence/m353_numeric_band.txt:87`); harness `python3 -u scripts/m353_mutate.py` -> **`HARNESS PASS 14/14`** digest `fd143532b283b01b` (`evidence/m353_mutate.txt:17`). `:N` = a line of the ACCEPT evidence (`evidence/m353_numeric_band.txt:75-87`).
-
-| claim | evidence | conf / mutant |
-|---|---|---|
-| band = 10 dwords `[0x999fa4,0x999fcc)`: own/pay/txt bases + stride DERIVED from the writer body (0x28 apart, `shl 8` -> 0x100, 10*0x100 -> 0x99aa1c) | `:77` | V MU3/MU14 |
-| 16 refs = 11 absolute + 5 `[reg*4+0x999fa4]`; stores = 3, all `mov` (no xchg/movnti form) — SCALED `0x626597`, absolute `0x442642`, absolute `0x626fd7` | `:75,76` | V MU1/MU2 |
-| FILLER = `FUN_00626581` (33 B): `k>9` returns 3, else `numeric[k]=v` and returns 0; 260 call sites, 242 literal k, histogram `0:131,1:75,2:23,3:7,4:3,5:2,6:1`, ZERO above 9 | `:38,39,78,79` | V MU4/MU5 |
-| M325/M324's `W={442642,626fd7}` was an ABSOLUTE-address census: SUPERSEDED here (the scaled store `0x626597` was invisible to it) | `:76,84` | V MU2/MU10 |
-| CONSUMERS pinned per ADDRESS: `$NUMBER`@625c2c, `$NUM`@625cec, `$HEX`@625e4b, each `itoa(v,buf,10)`; the 0xa is ARG3 (3 pushes before the call, forwarded by `0x64f980`) -> `$HEX` prints DECIMAL | `:80,81` | V MU6/MU7/MU12/MU13 |
-| the 4th read is the `$#k` PREDICATE (`cmp numeric[k],1` -> `setne`), k = char-0x30 with NO bound — the `$k` path does bound (`cmp k,0xa`) | `:82` | V MU8 |
-| `$#` at k>=10 leaves the band: k=10 = owner[0], 20 = payload[0], 30 = text[0] | `:83,70` | V MU9 |
-| OPEN: what the `$#` flag gates; numeric[0] is DUAL-USE (the 0x442642 cheat clamp and the ENERGY read @0x4e032c) | - | lead |
-
+## M352 — VERBATIM at `docs/named-archive-m368-rows.md` (sha1 `f6cc962a472e93bd`, 1262 B)
+## M353 — VERBATIM at `docs/named-archive-m368-rows.md` (sha1 `80b9d14fbf760ad5`, 1914 B)
 ## M354 (s329-chain2, STATIC 11/11) — SECTION A's identity: the positive chooser rows ARE the 0x98ad88 unit-type/design rows (M351's OPEN closed; the leg NOUNS of M349/M351 retracted). `:N` = a line of `evidence/m354_design_row.txt:1-91`
 | claim | evidence | conf / mutant |
 |---|---|---|
@@ -1505,15 +1482,7 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | ACCEPT `python3 -u scripts/m354_design_row.py` -> **`PASS M354: 11/11`** `dd5e689e8d9af320`, x2 identical (`evidence/m354_x2.txt:91`); `scripts/m354_mutate.py` **23/24 scored, NO-OP ['MU25']**, measured coverage ALL 11 gates {G1,G2,G3,G4,G5,G6,G6b,G7,G8,G9,G10} | `:91`, `evidence/m354_mutate.txt:30` | V MU0 |
 | OPEN: the game noun of +0x25..+0x28; whether the +0x30 bit2 stamp is the prototype build (INFERRED); NAMED M312 rotated VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d9bae`, `scripts/m354_named_rotate.py --verify` PASS) | - | lead |
 
-## M355 (s329-c3, 7/7) — `Laptop` = the DEFAULT bit-vectors of `Preferences`/`More Preferences`
-| `Laptop` = 4 read sites, 2 VAs (0x58e9f3/0x58eb0c loader, 0x58e688/0x58e708 getters); `neg`/`sbb` -> 0/-1; absent==0 | `evidence/m355_laptop_masks.txt:17,31` | V MU5,MU14,MU19 |
-| masks from the `and`/`add` immediates: Preferences 0xbbe1dd96/0xa3e1dd16, More Preferences 0x3a7168/0x327168; reg = the read's atoi return | `:43,50` | V MU1,MU8,MU10,MU20 |
-| `Laptop`!=0 CLEARS Preferences {7,27,28}, More Preferences {19}; nothing added | `:48-51` | V MU15 |
-| default = '1'/'0' over bits 31..0 (leading zeros >8 dropped), re-parsed by 0x628720 `v=v*2+(c-'0')` | `:66-77` | V MU12,MU13,MU22,MU24 |
-| `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
-| APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
-| OPEN: bit->option NAMES; other re-derivers | - | lead |
-
+## M355 — VERBATIM at `docs/named-archive-m368-rows.md` (sha1 `55fb00f1153bf459`, 1004 B)
 ## M364 (s334-chain2, STATIC 24/24) — the faction-relations bits have NOUNS: 0x1 = PACT, 0x8 = AT WAR (V, string-keyed); the other 11 are standing flags (INF). ev `evidence/m364_bitnouns.txt:131`
 | claim | ev | conf |
 |---|---|---|
@@ -1546,6 +1515,7 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | TEXT (13/13 pinned triples): 0x1 Pact, 0x2 Treaty, 0x4 Truce, 0x8 Commlink, 0x10 Vendetta, 0x20 I-want-revenge, 0x400 I-shall-betray, 0x1000 I-have-infiltrator, 0x2000 I-want-to-talk, 0x40000 I-am-atrocity-victim, 0x2000000 I-have-surrendered; high dw 0x80000008 Fight-to-the-death, 0x80002000 Fix-current-status-as-permanent; title `Diplomacy for` | `:73-87` | V MU11,17,19,23,27,28,29 |
 | RIVALS refuted: inline strings, no-shift map, ordinals, high=low alias, one page | `:90-101` | V MU20,21,22,23,24 |
 | QUALIFIED M364: bit 0x8's label = `Commlink`; AT WAR came off the vendetta case keys (contact-gate reading INF) | `:75` | OPEN |
+| ANCHORED by M368: 0x2 = Treaty and 0x4 = Truce also have BEHAVIOURAL keys (0x4 posts `ENEMYTRUCE`, 0x2 posts `ENEMYTREATY`) — see `## M368` | - | V |
 ## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |
 |---|---|---|
@@ -1680,3 +1650,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | RIVALS refuted: 0x10 as a peace bit (its set-rule clears 1/2/4); 0x10 == 0x20 (different clear side-effects); 0x10 == 0x8 (20 vs 37 bare, 0x8 settable alone, implication one-way); 0x20 == 0x40000 (18 vs 3 bare) | `:588-596` | V MU25-29 |
 | ACCEPT `python3 -u scripts/m366_bitnouns.py` -> 29/29 `c36db3d154a5ea1b` x2; harness 32/32 | `evidence/m366_bitnouns.txt:597`, `evidence/m366_mutate.txt:33` | V MU0 |
 | INF: the noun WORD for 0x20 (inferred from the human branch + B-ladder + ending text); 0x80000000's role | - | INF |
+
+## M368 (s336-chain1, STATIC 34/34, review #399 hardened) — relations bits 0x2 = TREATY, 0x4 = TRUCE (V); the peace ladder is truce < treaty < pact and FUN_005076d0's classifier is an ordered EQUALITY test, not a rank. ACCEPT `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 34/34`** `6f4b692777cc3549` x2 (`evidence/m368_peace_ladder.txt:94`); harness 32/32 NO-OP `[]`, 34/34 gates covered (`evidence/m368_mutate.txt:36`). `:N` = line of that evidence.
+| claim | ev | conf |
+|---|---|---|
+| BEHAVIOUR is the discriminating axis: FUN_005537d0 pushes a bare mask to FUN_00551a20 and the immediately preceding POSTER call (0x483470) carries the key — 0x553c41/0x4 -> 0x691144 `ENEMYTRUCE`, 0x553f10/0x2 -> 0x691150 `ENEMYTREATY`, 0x554165/0x1 -> no poster | `:37-45` | V MU7,8,9,30 |
+| LABELS: labels.txt element 643/644/645 -> lines 653/654/655 = Truce/Treaty/Pact (consecutive, after `Clock`; control 866 = `Diplomacy for`); bit value runs AGAINST friendship | `:65-72` | V MU15-18,28 |
+| pact IMPLIES treaty: `test bl,0x1 -> or ebx,0x2` (0x551abc, FUN_00551a20) is the only such upgrade in 781,429 insns; the reverse occurs 0x | `:47-50` | V MU10,11 |
+| war<->peace exclusion both ways, from the DECODED instructions: peace `and 0xffee7faf` (bytes 81e2af7feeff @0x551a88) clears exactly {0x10,0x40,0x8000,0x10000,0x100000} and spares all three peace bits; war `and 0xfaeef378` (@0x551b17, under `test bl,0x10` @0x551abf) clears {1,2,4,...} | `:52-60` | V MU12,13,14 |
+| CLASSIFIER: 0x507975..0x50798f tests 0x1,0x2,0x4, je chains test->test->exit, jne 0x5079a1 = match, jmp 0x50799a = the `mov [ebp-0x8],1` mismatch store; 0 numeric opcodes -> EQUALITY (M366's `rank` WORD retracted, its precedence stands) | `:74-84` | V MU20,21,22,31,32 |
+| census: 169 writer call sites; the bare peace masks reaching one are exactly {1,2,4} — 8 sites over exactly 4 hosts (0x4dadd0/0x523b20/0x53f9f0/0x5537d0) | `:24-29` | V MU1-6,29 |
+| RIVALS refuted: swapped nouns, independent flags, label-text-only, numeric rank, war-unrelated | `:86-92` | V MU23-27 |
+| PE section table parsed (not `vma-0x400000`): .data va 0x289000 raw 0x289000; every key string resolves through it | `:2` | V MU7 |
+| OPEN: what FUN_0053f9f0 @0x53fcb3 (mask 0x2, no poster) and FUN_00523b20 @0x523f4c (mask 0x1) transact | - | lead |
