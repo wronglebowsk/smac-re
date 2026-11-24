@@ -412,6 +412,37 @@ printers of measured values need the same None-guard as the gate.
   compared every other record to the target's and read 0/17 — a false red); and a digest must
   never hash a placeholder line appended for context, or it can never be re-pinned.
 
+## Session 322-chain2 (2026-11-24) — M341 merge land (PR #361)
+
+- **UNBLOCKED, MERGED:** the "zero CI runs" blocker was the PR, not the workflow —
+  GitHub schedules no `pull_request` run while `mergeable_state=dirty`. `git merge origin/main`
+  (a0aa8fc, #362's 34 restored NAMED blocks) kept BOTH 321 sections and auto-merged
+  NAMED/NEXT_PROMPT; one conflict (SESSION_NOTES, both appended at EOF) resolved keep-both.
+- **VERIFIED at the branch head `179fef5`:** `gate.py --base origin/main` -> `GATE GREEN` (11 passes,
+  1 branch-name warning — the documented `milestone/M341` vs `milestone/<id>` warn line, noise);
+  `review_lint --id M341` -> PASS (8 V rows); `m341_hof_window.py` -> `PASS M341: 11/11 gates`,
+  `digest=1cfdea39295dadce`, `table_sha256=b5820ac99801f8c4`, stdout byte-identical to
+  `evidence/m341_hof_window.txt:45-58` (gates `:1-44`, harness `evidence/m341_mutate.txt:21`);
+  `git diff 446958b 179fef5 -- scripts/m341_* evidence/m341_*` empty (same instrument bytes
+  as the measured head). NOTE both printed names are **truncated sha256** — `m341_hof_window.py:520,524`
+  take `.hexdigest()[:16]`, so "sha256" here means the first 16 hex of it, not a 64-char digest.
+- **CI:** `gate` PASS 18 s, run 45324343569 (job 138210194052) on 179fef5 — the first run for a
+  head newer than 03:38Z. The squash commit's tree IS the gated tree:
+  `git rev-parse 179fef5^{tree} 185c394^{tree}` -> both `702938a3f8bef770f822c2c0e2db157deeb12276`.
+  Merged `--squash` as **185c394**.
+- **MAIN CHECK** (`git show origin/main:NAMED.md | grep -c '^## '` / `grep -c '^## M341'` / `wc -c`):
+  NAMED 111 blocks (110 pre-merge + `## M341`), 248,127 B, `## M338` stub intact, no block lost
+  (`comm -23` of main's block titles vs the merged file -> empty).
+- PITFALL: `milestone.py merge` ends with `gh pr merge --delete-branch`, which dies on
+  `'main' is already used by worktree at /home/paul/reverse/smac` — the merge itself SUCCEEDS
+  server-side; verify with `gh pr view <n> --json mergeCommit,mergedAt` and leave the branch
+  (older milestone/* branches linger anyway).
+- **ABSENCE CLAIM is a LEAD, not a gate result:** `0x59f4 has NO named writer` is NAMED M341's
+  OPEN row (kind `lead`, no mutant); the V half — "the only direct ref in 781,379 insns is the load
+  0x44970f, 12 indexed hits are a different array" — names MU8. Byte-identity above is asserted
+  against the committed file (`diff <(...) evidence/m341_hof_window.txt` -> empty), so it is
+  reproducible from the repo, not from a transcript.
+
 ## Session 322-chain1 (2026-11-24) — M342: pick (x9) the COMPLETION SETTER, answered statically (milestone/m342)
 - **Answer:** the `base+0x8c` bit is SET by `or` through mapper `FUN_00507410`'s mask at exactly **11 addresses** (`4e4528` = the API `FUN_004e44f0`, `4f0ec0` = base screen `FUN_004ef6d0`, `4f3ebc`/`4f3f4c` = regions the Ghidra index does not name, + `FUN_004e47d0`'s 7); CLEAR = 3 `and` (`4e4546`, `4f38bb`, `4f49e1` — the last inside the charge routine `FUN_004f47f0`).
 - **Accept:** `python3 -u scripts/m342_completion_setter.py` -> `PASS M342: 7/7 gates`, digest `2b88df5da5aeafe1` (`evidence/m342_completion_setter.txt:200`), PASS `:218`, 2 runs byte-identical. Harness `scripts/m342_mutate.py` -> `PASS HARNESS M342: 9/9`, NO-OP `[]`, baseline green (`evidence/m342_mutate.txt:2,:12`).
