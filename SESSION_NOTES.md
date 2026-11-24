@@ -1,25 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-307-309.md` (3 sessions: Session 307-chain2, Session 309-chain2, Session 309). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 310-chain2.
-
-## Session 310-chain2 (2026-11-19, M331 CLOSED, STATIC: +2fc/+308 = upkeep INCOME siblings)
-
-- milestone/m331 (main e0b7d0a). **+2fc = per-faction per-turn GROSS ENERGY INCOME accumulator** (noun INFERRED): zeroed 520567; feeder 4eacd9 (FUN_004eaa10) gate ds:8f0d64==1 (phase 1, sole set 4f5b2c): += clamp(base_rec+0xd4, 0, 99999); +0xd4 = +0xc4−+0xf4−4e9880(+0xc4−+0xf4); +0xc4 += 8f0c74, +0xf4 := 8f0c3c (sole stores 4e8d86/97 in 4e8d60). Tail 52080c: +1 per OWNED base in the no-interest fallback. **+308 = secondary income acc**: zeroed 520573; feeder 4f5cb0 (FUN_004f5a70(base_idx), called per owned base @5206d3): += Σ 8f0d40[k−1], k=1..7≠owner, block+0xc0==0 both; ENERGY += base_rec+0xfc @4f5c85-8c.
-- Interest lead CLOSED: facprofile+0x4ec = rate%, ENERGY += trunc(E*rate/100) (magic 51eb851f sar5+signfix), gated +0x508 bit14; rate==0 → +1 E AND +1 +2fc per owned base (95da14/985af4 walk).
-- Ledger +310:=+2fc, +30c:=+308−300+2fc verified NUMERICALLY 8/8 m54b_clean blocks (v2fc=[0,7,14,4,32,9,9,2], v308=[0,0,0,0,3,0,0,0], v30c=[0,6,13,4,34,9,8,1]); minus-variant dead.
-- Caps: 546800 MIN(trunc(E/2), 100×(+2fc−300))≥50 else exit 54b91b (fold DERIVED=100); 535c60 Σ MIN(net, block+1058)×arg3 + trunc(E/5) (66666667). Readers: 522b70 ENERGY+net score; 531df0 920754 meter; 45a920 '{+308}' template; 40e720 via 997b20=HEAP alloc (NONFIELD).
-- `python3 -u scripts/m331_ledger_census.py` → **14/14** **442270fd57be2b62** x2 (`evidence/m331_ledger_census.txt:90-91`, `_rerun.txt:90-91`); `python3 -u scripts/m331_mutate.py` → **43/43+1 NO-OP, 0 MISMATCH/CRASH** **29061c567f9132fb** (`evidence/m331_mutate.txt:48-50`); ST 5/5 (`_selftest.txt:6`). Supersedes a9983cddad88fade/75a8749314a13287 (pre-review) + 6b20830198d71116/f69da0b368c0268c (mid-round).
-- Review #345 (Strata, `evidence/ai_review/pr345_20261120_022025.md`): **5 P1 + 5 P2, 9 accepted + 1 dismissed** (ACCEPT-row mutant exemption = review_lint L1 meta-rule). ALL fixes STRENGTHEN: owner spill-chain + 8f0d60-context pins (G5); ledger load→store liveness + esi entry→ledger + no-mid-branch (G8); caller loop-index law incl retry-dec (G6); scanners upgraded to ALL store mnemonics + implicit writes (mul/imul/cdq/stos/xchg...) — MU41-43 are the scanner mutants; facprofile id byte-tied to M324 save carry 596ec3/ec8/ed6 (G7); NAMED cites full paths; trim sha1 label fixed (true sha1 429295c00401). MU18/19 first-round + MU36 cascade ({G1,G5}) fixed by pins/declared-set.
-- PITFALLS: 8f0d60 = base_rec pointer (M311), NOT a faction profile; 997b20 is heap (5be090) — +308 offset coincidence; 8f0c74's store lacks DWORD PTR prefix; mov-only slot/store scanners miss add/shift writes (review #345).
-- OPEN: income nouns; 4e9880 formula; 8f0d40 law; block+0xc0/+304; what the ≥50 cap gates; 920754.
-
-## Session 311 (2026-11-21, M332 CLOSED, STATIC zero box) — `ds:0x985aec` = the runtime MIRROR of the win-INI pref `"Difficulty"`
-
-- m332 off main (B27 `1db42cf`, M331 `aeb02bf`); pick (x2); addresses in `## M332`.
-- ANSWER: FUN_0058e7f0 is the private-profile READER (a 6-arg `GetPrivateProfileStringA` per preference) and the `"Difficulty"` window stores exactly ONE key-exclusive field (`ds:0x92bde8`); FUN_0058f0d0 is the WRITER (8 argc-4 pushes == the 8 `WritePrivateProfileStringA`) and pairs that key with the cell's load. All 4 stores of 0x985aec are `a3` moffs: 2 copy the master, 1 `movsx`es the byte cell 0x8f0c11. By-product: the pref table = 11 injective name->field pairs in `0x92bde8..0x92bf14`; `## M328`'s "mode global" `0x92bdf8` = `Top Menu`.
-- IN PLACE: `## M308`'s "0x4ddcf1 UNATTRIBUTED" closed: no fall-in (prev = `ret`) but branch-entered by a `jge` whose eax is callee 0x5f1394's return; 0 image-wide LE-dword entries at any site. RIVAL KILLED (G8): the cell is ALSO exactly the end of the 4x0xd4 array at 0x92ba98, so "array sentinel, mirror by coincidence" fails — the cell has 2 stores/6 loads, the sentinel 0.
-- ACCEPT `python3 -u scripts/m332_difficulty_census.py` -> `PASS M332: 8/8 gates` digest `c722bc1eca0b6405` (`evidence/m332_difficulty_census.txt:86-87`, 3 runs identical); HARNESS `python3 -u scripts/m332_mutate.py` -> `PASS HARNESS 18/18` (16 scored + 1 NO-OP, 0 MISMATCH/CRASH) digest `f101d888d93c5272` (`evidence/m332_mutate.txt:19-21`); `--selftest` 5/5.
-- PITFALLS: (a) objdump prints a jcc target as the WHOLE operand string — `dst,src=split_ops(ops)` puts it in `dst`, so reading `src` finds ZERO branch targets and all 4 live stores looked unreachable. (b) a byte-level `find()` of a LE displacement also hits a `call rel32` whose offset is that value (enc 11 vs text 10 for 0x92bde8) — scanners must be able to DISAGREE. (c) the anchor IS the law: reader's store FOLLOWS its call, writer's load PRECEDES its push (MU15 -> G6+G7). (d) `0x92bde8..0x92bf14` is ONE struct, not 11 globals.
+Older sessions: `docs/sessions/sessions-310-311.md` (2 sessions: Session 310-chain2, Session 311). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 312.
 
 ## Session 312 (s312-chain1, REVIEW ROUND on PR #346 / M332, STATIC, zero box)
 The local Strata review posted 10 findings (3 P1, 7 P2), `evidence/ai_review/pr346_20261121_195950.md` (14,738/16,384 completion tokens, NOT truncated). Every one was triaged by **tightening the instrument, not the prose**: new gate **G9** (six sub-measurements), 4 new mutants MU18-MU21, new selftest row ST6. `python3 -u scripts/m332_difficulty_census.py` -> `PASS M332: 9/9 gates`, digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); `python3 -u scripts/m332_mutate.py` -> `PASS HARNESS 22/22` (20 scored + 1 NO-OP inert, 0 MISMATCH, 0 CRASH) digest(rows) `a9a944201849d026` (`evidence/m332_mutate.txt:23-25`); `--selftest` 6/6.
@@ -470,3 +451,31 @@ printers of measured values need the same None-guard as the gate.
 - **REVIEW #365 (10 findings, all P1/P2 accepted into the instrument or the docs):** gates raised so each row is MEASURED, not labelled — G1 now counts the indexed functions (12) and `,0xa40` immediate forms (0); G4/G5 count ALL 97 refs (not the field subset); G3 asserts the pair set is exactly 4 names; G6 asserts the `[this+0x2228]` -> `[+8]` -> `+0xec` chain and the `call` adjacency for every store; G7 walks a 10-link identity chain including 0x5f3d6a. New MU10/MU11 redden the two new chain clauses; the doc wording "+0x64 of all six vtables" is CORRECTED (0x671644 is +0x6c).
 - **PITFALL:** `"DWORD PTR"` CONTAINS `"WORD PTR"` — a width test that checks WORD first read all 72 refs as 2-byte (first run: dword 0, G1 red). PITFALL 2: the CPane subobject vtable 0x671644 carries the same two functions at +0xb0/+0x6c, not at the class offsets +0xa8/+0x64.
 - **UNKNOWN:** who dispatches the +0x64 slot (19 `call [reg+0x64]` sites image-wide, none direct); the container's item record past +0xec; any consumer of `[this+0x3100]` (5759 stages the arg there).
+
+## Session 324 — B31 BUILD (round 5/10): the recorded run as the completion ORACLE
+
+Command: `python3 -u -m sim.facoracle` -> `PASS B31: 16/16 gates` (`evidence/b31_facoracle.txt:63`),
+rows `ce7688c0cb3b5f9d` / oracle `7afda4dd49566fb4` / score `9a4f2c466f3d18b7` / img `fb0bc0caa186b766`,
+re-run byte-identical. `python3 -u -m sim.selftest --b31` relays the same text. Harness
+`python3 -u scripts/b31_mutate.py` -> `PASS HARNESS B31: 12/12`, digest `087e1d0228debbe9`
+(`evidence/b31_mutate.txt:14`); NO-OP `[]`, every gate G1-G7 covered, MU5 forced a NEW gate (G4e) when
+it reddened nothing; review #367 then forced G2's accounting (decoded delta vs RAW XOR popcount,
+MU11) and the r0 anchor pin (G4f, MU12) - both had been printed, not gated.
+
+What B31 measured (from `evidence/trace_m56_build_20261026_145157.jsonl`, the full 304-B record hex at
+20 samples): 6 facility-bit gains and 2 losses — the recorded bitmap is NOT monotonic, so a completion
+cannot explain every change. The rule "the queue head id is the bit that appeared" scores 0/6: 5 heads
+are unit-encoded (-2, -3, -6, -8, 321) and the single in-window head (Virgin Soil, 2) did not stamp.
+Korolev r0 replayed with the stamp attached: spend `8+1-9=0` matches B23's recorded after, head id 2 is
+inside the facility window, and the recorded bitmap stays `[8]` — so the recorded negative is not
+vacuous. The pop-first rival (read the head after the pop) stamps the next item (6 vs 2 on the declared
+2-deep fixture), so M344's spend→stamp→pop order is load-bearing.
+
+QUALIFIES `## B30` in place: B30's reader-inverse setter was ASSUMED and this round finds no positive
+completion case in the game's own run, plus one negative at a facility-range head. B30's table row was
+patched to say so; nothing in B30's own gates is retracted (they ran on a declared fixture).
+
+Docs: NAMED 245,757 B (B24 4,772 B rotated VERBATIM to `docs/named-archive-b31-rows.md`, sha1
+`6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `--verify` ok). NEXT_PROMPT patched by section.
+STILL OPEN: the unit-id decoding (M68/M69 NEG_TYPE); which loss is a raze vs a record identity change;
+whether a facility completion stamps at all.
