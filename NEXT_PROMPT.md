@@ -45,7 +45,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   (read §M297 first - the 0x94d104 phrasing is WRONG).
 - **ISOLATION (s254)**: if a fire is live (`ps` + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A`.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
-  ANSWERED: M227-M348, M368-M389 + B1-B38 (M241 FAIL 2/5 #180); no static pick left below.
+  Next (ANALYSE, static, zero box): **(a) the LAST peace writer `0x53fcb3` - B39 executed `0x523f4c`; `0x53fcb3` is `push 1; push 2; call 0x551d70`, i.e. `551d70(a,b,0x2,mode=1)` = SET 0x2 on word B**.
+  ANSWERED: M227-M348, M368-M389 + B1-B39 (M241 FAIL 2/5 #180); no static pick left below.
   CLOSED enumeration + pick rows + open-lead census VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); the analysis-only option is the OPEN-LEADS
@@ -101,19 +102,12 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M373 (s338-c1) MERGED: FUN_005551e0 clears 0x80000000 only when bit 13 (0x2000) is clear - a one-shot protector; bit 27 does NOT gate that pass. 19/19 `4fd02c603e36c69c`. NEXT: bit 13's noun.
 - M375 (s338-c3) MERGED: 0x800000 = 'TREATY ON' (only a mask with no 0x17 bit sets it; any status write clears it), 0x40 = 'SET TREATY' + a 50-tick cell (4/4 set-stores arm 0x94d4c8=0x32, expiry clears it), 0x100000 = eviction-sweep tail, 0x8000/0x10000 = war/truce companions (OPEN); `0x80000018` is bit31+war, NOT bit23. 8/8 `34bcef7ab64b9272`, harness 13/13.
 - B37 (s339-c1) MERGED: `0x40` arms `0x94d4c8=0x32`; countdown 0x5552b6..d4 (`and al,0xbf`@d1), ONE exit; PEACE clears 0x40 so its expiry is a NULL write, WAR keeps it (0x78). 8/8 `5dd4119bd1882d1d`.
-- M376 (s339-chain2): `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix (11 effect keywords = the columns); bit-24 stores (category, choice) at rec +0x584/+0x58c; Future Society row never sampled. 29/29 `f22d2b46cc7e9507`, harness 33/33. NEXT: +0x594's reader / the 8th write 0x92a7fc.
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
 - OPEN LEADS: who SETS 0x400 (M382); ds:0x985ba0's writer (M334); the two peace writers (pick above).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
-- M380 (s340-c3): 0x94e48c = MIGHTY/MEEK scalar; 2/27 rel rewrites drop a stamp; hub 3 = TREATY validator. 7/7 `5dfd436fe4093015`, 19/23 mutants.
-- M382 (s341-c2): 0xc00 cluster = 15 readers (0x5468c7 is NOT one - bits 2|16). 35/35 `90cb89f84ce7feeb`. Next: who SETS 0x400.
 - M381 (s341-c3): 0x2000 = PEACE; setter A 0x50393d (PACT third party + peace/commlink + strict might(ecx) > might(esi), peer's own scalar); setter B 0x506cf1 = not-at-war only; both rows. 9/9 `2fa1a4100ec6f4f6`, 20/20.
-- M383 (s341-c3): 0x94e48c = per-unit (OFF+ARM) sum; 12/14 rewrites resolve. 9/9 `1d419b65323aec6c`, 29/29.
 - B38 (s342) MERGED: `#SOCIO` 4x4x11 grid in `sim/socio.py` - M376's two vectors reproduced field-for-field, settings -> 11 totals, signature 12 add/4 reject; `0x92babc` does NOT feed `0x94e48c`. 9/9 `e0bb2deb53ecb96c`, 12 mutants. NEXT: pick (a).
-- M388 (s342-c6): slot 0's agenda pair has NO writer — M376's randomizer starts at record 1 (7 records), the SE commit 0x4b2570 writes only the 0x94d658 grid; slot0 (0,0) = 'no agenda' (37/37 `bb2f4329dd2467f2`, 15/15). NEXT: slot 0's owner (which faction id the 0x59c block indexes).
-- M386 (s342-c4): +0x94d820 = X of a per-faction (x,y) marker PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's 0x20000 guard reads the PARTNER row. 55/55 `3e6d87261b7fe88e`, 15/15 mutants.
-- M385 (s342-c3): nine dyn-mask 0xc00 sites resolved (7 PROVEN, 2 DEAD-INF) - no 0x800, no 0xc00 pair, but 0x400 ALONE at 0x4dacf7/0x4dad22 (M382 sole-0x400 RETRACTED). 44/44 `0103209f070e60f7`, 33/33 mutants.
+- B39 (s343-c1) MERGED: `sim/relapi.py` - four relation APIs, TWO words (A `0x94d448` / B `0x94d468`, 8 dwords apart, same 2095 row scale); `0x551c40` writes B both ways, the peace block `0x523f3c/4c/58` = `551a20(0x50)`+`551a20(0x1)`+`551c40(0x2000)`, `0x2000000` skips only when A-row bit0 is set. 12/12 `1c0a06e178521ef3`, 12 mutants. NEXT: `0x53fcb3`.
 
-- M384 (s342-c2): 0x400 has 7 setters - `0x5534ae`/`0x555a6b` inline, plus 5 callers of the pair-mask API FUN_00551a20/FUN_00551cf0 passing 0x400 (95/106 masks resolved); `PASS M384: 39/39` `evidence/m384_bit400_writer.txt:280`, 23 mutants. Next: the 7 runtime mask args (0x4dadxx family) or what `0x551a20`'s `and 0xfaeef378` blanket clear means for the 0xc00 cluster.
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
 - M389 (s343-c2): 0x4dadxx CLOSED - the 5 OPEN mask args are verbs: FUN_004dadd0's 7 arms {1,2,4,8,0x10,0x1000,0x2000} (4 `mov ebx/edi,imm` at 0x4daea3/0x4daf07/0x4dafcf/0x4db035), each a FUN_0x6051fa-keyed SET/CLEAR (0x551a20/0x5518f0; 0x551cf0 flag for 0x1000/0x2000); FUN_004dacc0(owner,other,{0x20,0x2000000,0x400,0x40000}) = the only 0x400 host; no arm can ask 0x400/0x800. 60/60 `05a36a50540466f3`, 27/27. NEXT: the .rdata slot VA 0x677ff8's table owner.
