@@ -730,13 +730,13 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | [ebp-0xc] has NO caller writer (M294 question REFUTED) | archive:2 | archived |
 | M294 phrasing FIXED | archive:3 | archived |
 
-## B18 (s252, BUILD 10/10) - ROTATED VERBATIM to `docs/named-archive-b18-rows.md` (sha1 `da5bb857bde045636cf3b79e191b9ce487246f36`): the site-gate value source is a 4-bit lazy nibble cache and both stores are MAX. One line per claim.
-- LAZY NIBBLE CACHE: `edi = BYTE[rec+2]>>4`; the pinned `jne 0x51dfac` skips the 525-insn call AND the write-back; the target byte is the pod-scan getter's byte (4096/4096) - V (`:4` 64 pins, `evidence/b18_sitegate.txt:1`)
-- OVERWRITE, not accumulator: no cmp/test/branch in the 19-insn callee; the live nibble moves both ways (182 below / 31 above); 2288 cache hits, 1 lazy write-back, 32 adopted mutations - V (`:3,6`)
-- NIBBLE SPLIT visible in the recording: 103 of 177 moved records kept the low nibble; a whole-byte store is refuted by `and dl,0xf` + `or dl,cl` - V (`:5`)
-- STORE INDEX `[ebp-0xc] = BYTE[rec+3]` ({1:2253, 9:68}, 1026/1026 single-site); block index = owner byte `+7`, the -1 sentinel clamps and block 0 skips the cell store; M294's 4x stride retracted (28 = (8-1)<<2) - V (`:7`)
-- BOTH STORES ARE MAX BY POLARITY (`cmp edi,eax`/`jle`; a MIN store needs `jge`), graded with the old loads; last-write / min / owner-blind rivals diverge - V (`:8`)
-- ACCEPTANCE `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> PASS B18: 10/10 - V (`:11`)
+## B18 (s252, BUILD 10/10) - ROTATED VERBATIM to `docs/named-archive-b18-rows.md` (sha1 `da5bb857bde045636cf3b79e191b9ce487246f36`): the site-gate value source is a 4-bit lazy nibble cache and both stores are MAX. One line per claim, each with its full `path:line`.
+- LAZY NIBBLE CACHE: `edi = BYTE[rec+2]>>4`; the pinned `jne 0x51dfac` skips the 525-insn call AND the write-back; the target byte is the pod-scan getter's byte (4096/4096; 64 pins) - V (`evidence/s251_statics_fn51dcb0.txt:4`, `evidence/b18_sitegate.txt:1`)
+- OVERWRITE, not accumulator: no cmp/test/branch in the 19-insn callee; the live nibble moves both ways (182 below / 31 above); 2288 cache hits, 1 lazy write-back, 32 adopted mutations - V (`evidence/b18_sitegate.txt:3,6`)
+- NIBBLE SPLIT visible in the recording: 103 of 177 moved records kept the low nibble; a whole-byte store is refuted by `and dl,0xf` + `or dl,cl` - V (`evidence/b18_sitegate.txt:5`)
+- STORE INDEX `[ebp-0xc] = BYTE[rec+3]` ({1:2253, 9:68}, 1026/1026 single-site); block index = owner byte `+7`, the -1 sentinel clamps and block 0 skips the cell store; M294's 4x stride retracted (28 = (8-1)<<2) - V (`evidence/b18_sitegate.txt:7`)
+- BOTH STORES ARE MAX BY POLARITY (`cmp edi,eax`/`jle`; a MIN store needs `jge`), graded with the old loads; last-write / min / owner-blind rivals diverge - V (`evidence/b18_sitegate.txt:8`)
+- ACCEPTANCE `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> PASS B18: 10/10 - V (`evidence/b18_sitegate.txt:11`)
 - LEAD: contents of 0x989ce8 / 0x94eca8 never dumped; the slot's `[+4]` visitor counter; ebx provenance - lead
 ## M299 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
 ## M300 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
@@ -1654,12 +1654,13 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | `FUN_005076d0` pushes 0x10 on both exits (0x507abc/0x507c6d), 0 push 0x8: the war record carries 8 only via the setter's implication | `:117-121` | V MU13,14 |
 | RIVALS refuted: AT WAR (pod/council set it with war bits clear), high-dword label (0x80000008/0x80002000 = other texts), bookkeeping flag (row 1 is a page noun), case-8 membership (same guard on a non-war option) | `:123-140` | V MU13,16,18,20,37 |
 | INF: is 0x8 also the AI's "can address them" predicate inside the 0x18/0x88000008 war writes? | - | INF |
-## B36 (s337-chain1, BUILD 10/10, zero box; 11 mutants) — the relations STATE MACHINE: FUN_00551a20 extracted and RUN. ACCEPT `python3 -u -m sim.relations` -> `PASS B36: 10/10` `b20f5818dee2d861` x2 (`evidence/b36_relations.txt:75`); harness 11/11 NO-OP `[]` (`evidence/b36_mutate.txt:13`).
+## B36 (s337-chain1, BUILD 10/10, zero box; 14 mutants, review #402 hardened) — the relations STATE MACHINE: FUN_00551a20 extracted and RUN. ACCEPT `python3 -u -m sim.relations` -> `PASS B36: 10/10` `b20f5818dee2d861` x2 (`evidence/b36_relations.txt:81`); harness 14/14 NO-OP `[]` (`evidence/b36_mutate.txt:16`).
 | claim | ev | conf |
 |---|---|---|
-| WRITER: five `test bl` blocks (0x7/1/0x10/0x17/0x1f) on the CURRENT ebx + an UNCONDITIONAL tail OR at the join 0x551bc7; 8 stores both directions, 161 insns | `:12-24` | V MU1,2,10 |
-| TRANSITIONS: pact=0x3; truce-after-war=0x8000010c (0x8/0x100 survive); war on a ladder word=0x80000118; combined 0x11=0x8000011b (the tail OR re-adds the mask) | `:27-34` | V MU4 |
-| PARITY: setter == dump program on 40,960 (state,mask) pairs, 0 dis; 40,976 transitions satisfy pact=>treaty, war-only clears the ladder, symmetry, idempotence | `:25-26,53` | V MU2,3,5,6 |
-| TRANSCRIPT 16/16 (`ac8c2caad0d71d55`); classifier chain == sim.classify on 65,536 pairs; pact+treaty does NOT satisfy a want of treaty | `:52,55-62` | V MU3,7 |
-| ACTION LAYER (4,0x691144)/(2,0x691150)/(1,none); 5 rivals differ on printed sweeps, min 2,424 | `:63-71` | V MU8,9 |
+| WRITER: SIX blocks — predicates 0x7/1/0x10/0x17/0x1f on the CURRENT ebx then an UNCONDITIONAL tail @0x551bc7; the flat op list equals the pinned 10-entry address table; 8 stores == the 8 stored ops (one per direction), 161 insns | `evidence/b36_relations.txt:13,27` | V MU1,2,10,11,12 |
+| TRANSITIONS: pact=0x3; truce-after-war=0x8000010c (0x8/0x100 survive); war on a pre-state carrying 0x7|commlink=0x80000118; combined 0x11=0x8000011b (the tail OR re-adds the mask) — each equals BOTH the dump program and its literal | `evidence/b36_relations.txt:39` | V MU4,11 |
+| PARITY: setter == dump program on 40,960 (state,mask) pairs, 0 dis; a FLAT address-ordered executor (no block grouping) agrees on 8,192 more | `evidence/b36_relations.txt:28-30` | V MU2,3,5,6,12 |
+| 40,976 transitions: pact=>treaty keyed on the WRITE, all 2,563 war-only writes (0x10, no ladder bit) leave the ladder empty, symmetry + idempotence | `evidence/b36_relations.txt:58-59` | V MU3,5,6 |
+| TRANSCRIPT 16/16 (`ac8c2caad0d71d55`); classifier chain @0x507975..0x5079a7 (16 insns) == sim.classify on 65,536 pairs; pact+treaty does NOT satisfy a want of treaty | `evidence/b36_relations.txt:57,60-67` | V MU3,7,13 |
+| ACTION LAYER (4,0x691144)=(ENEMYTRUCE), (2,0x691150)=(ENEMYTREATY), (1,none) — the BYTES read through the PE table at image base 0x400000; 5 rivals differ, min 2,424 | `evidence/b36_relations.txt:68-77` | V MU8,9 |
 | UNMODELED: the nouns of 0x800000 / 0x40 / 0x8000 / 0x10000 / 0x100000; which site fires each transition in a live game | - | lead |

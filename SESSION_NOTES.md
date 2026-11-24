@@ -630,13 +630,12 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **PITFALL**: ghidra_out/index.csv ends FUN_00510730 at 0x51080b; four handler stores at
   0x510901..0x5109f8 need pad-delimited attribution, not the index (`:30-42`).
 
-## Session 337-chain1 (2026-11-24) — B36: the faction-relations STATE MACHINE (10/10, 11 mutants, zero box)
+## Session 337-chain1 (2026-11-24) — B36: the faction-relations STATE MACHINE (10/10, 14 mutants, zero box)
 
-- **ACCEPT** `python3 -u -m sim.relations` -> **`PASS B36: 10/10 gates  digest b20f5818dee2d861`** (`evidence/b36_relations.txt:75`), rerun byte-identical (`diff` = IDENTICAL); `sim.selftest --b36` relays the same text. **Harness** `python3 -u scripts/b36_mutate.py` -> `RUN PASS 11 mutants, NO-OP []` (`evidence/b36_mutate.txt:13`).
-- **FUN_00551a20 EXTRACTED AND RUN**: 161 insns, 8 dword stores into 0x94d448 both ways. The program is five `test bl` blocks (0x7/0x1/0x10/0x17/0x1f) whose predicates read the CURRENT ebx, plus an **unconditional tail OR** at 0x551bc7. Extracting that tail as gated was the first defect: contact (mask 8) became a no-op and 2,369/40,960 parity pairs split.
-- **TRANSITIONS** (`:27-34`): pact -> 0x3; truce after war -> 0x8000010c (commlink 0x8, 0x100 survive); war on a ladder word -> 0x80000118; **combined 0x11 -> 0x8000011b** — the tail OR re-adds the upgraded mask AFTER the war clear. No action site sends a combined mask (M368 census), so it is REPRESENTABLE, not observed: declared, not gated.
-- **The ladder ACCUMULATES** (truce then treaty = 0x6), so "the current relation" is the CLASSIFIER's precedence (1 then 2 then 4, ordered EQUALITY) — M368's reading is now executable, 65,536/65,536 byte pairs agree with the dump chain.
-- **PARITY** 16 pre-states x 2,560 masks = 40,960 pairs, 0 disagreements; 40,976 transitions, 0 invariant violations.
-- **PITFALL**: a pre-state already carrying 0x1 without 0x2 is NOT repaired by a write that lacks pact — the first G5 draft asserted the wrong invariant and collected 320 false violations. Scope "pact implies treaty" to the WRITE.
-- **PITFALL**: `test bl,imm` sees bits 0..7 only; high-bit masks hit the same predicates as their low byte.
-- No new retraction; M364's AT WAR (M369) and M368's ranked ladder stay retracted. NAMED rotated `## B18` -> `docs/named-archive-b18-rows.md` (sha1 `da5bb857bde0`, `--verify` PASS).
+- **ACCEPT** `python3 -u -m sim.relations` -> **`PASS B36: 10/10 gates  digest b20f5818dee2d861`** (`evidence/b36_relations.txt:81`), rerun byte-identical; `--b36` relays it. **Harness** `python3 -u scripts/b36_mutate.py` -> `RUN PASS 14 mutants, NO-OP []` (`evidence/b36_mutate.txt:16`).
+- **FUN_00551a20 EXTRACTED AND RUN**: 161 insns, 8 stores. SIX blocks - five `test bl` predicates (0x7/0x1/0x10/0x17/0x1f) on the CURRENT ebx plus an **unconditional tail OR** at 0x551bc7. Extracting that tail as gated was the first defect: contact (mask 8) became a no-op and 2,369/40,960 parity pairs split.
+- **TRANSITIONS** (`:39`): pact -> 0x3; truce after war -> 0x8000010c (commlink 0x8, 0x100 survive); war on 0x7|commlink -> 0x80000118; **combined 0x11 -> 0x8000011b** - the tail OR re-adds the upgraded mask AFTER the war clear. No action site sends a combined mask (M368 census), so it is REPRESENTABLE, not observed: declared, not gated.
+- **The ladder ACCUMULATES** (truce then treaty = 0x6), so "the current relation" is the CLASSIFIER's precedence (1 then 2 then 4, ordered EQUALITY) - executable now, 65,536/65,536 byte pairs agree with the dump chain.
+- **REVIEW #402** (4 P1 / 6 P2, all fixed in the instrument): G0 pairs stores with stored ops, G1 pins the SIX-block shape against a 10-entry op table, G2 adds a FLAT executor, G3 derives its expectations from the program, G5 counts the war-only class (2,563), G6 pins the 16-insn window + ZF semantics, G7 reads the poster strings from terran.exe via the PE table; 14 mutants. B18 stub carries full `path:line` (`--verify` rejects bare cites).
+- **PITFALL**: a pre-state carrying 0x1 without 0x2 is NOT repaired by a write that lacks pact - the first G5 draft asserted the wrong invariant and collected 320 false violations. Scope "pact implies treaty" to the WRITE.
+- No new retraction; M364's AT WAR (M369) and M368's ranked ladder stay retracted. NAMED rotated `## B18` (sha1 `da5bb857bde0`, `--verify` PASS).

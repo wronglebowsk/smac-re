@@ -9,7 +9,8 @@ dumping FUN_00551a20 @0x551a20..0x551c32: 161 insns, 8 dword stores into 0x94d44
     00551b74 test   bl,0x17  ok
     00551b98 and    edx,0xff7fffff  ok
     00551be6 or     edx,ebx  ok
-ok   G0 161 insns, 8 stores, 9/9 anchors byte-exact, window digest b20f5818dee2d861 twice (True)
+  stores: 8 measured, 8 stored ops (and/or_eff) - one store per op, the two mask upgrades store nothing
+ok   G0 161 insns, 8 stores == the 8 stored ops (one per direction), 9/9 anchors byte-exact, window digest b20f5818dee2d861 twice (True)
 extracted rule program: 6 `test bl` blocks
   @00551a35 pred=0x7      ops: and0xffee7faf, and0xffee7faf
   @00551ab7 pred=0x1      ops: mask_or0x2
@@ -21,17 +22,21 @@ extracted rule program: 6 `test bl` blocks
     0xffee7faf clears 0x10, 0x40, 0x8000, 0x10000, 0x100000
     0xfaeef378 clears 0x1, 0x2, 0x4, 0x80, 0x400, 0x800, 0x10000, 0x100000, 0x1000000, 0x4000000
     0xff7fffff clears 0x800000
-ok   G1 blocks on 0x7/0x1/0x10/0x17 in address order; peace clears exactly the 5 war bits {0x10,0x40,0x8000,0x10000,0x100000}; war clears the ladder; the 0x17 block clears 0x800000
+  structure: 6 blocks, preds ['0x7', '0x1', '0x10', '0x17', '0x1f', 'ANY'], tail @00551bc7 pred=None with 2 or_eff ops
+  ops vs the pinned address table: 10/10 match
+ok   G1 SIX blocks: predicates 0x7/0x1/0x10/0x17/0x1f then an UNCONDITIONAL tail @0x551bc7; the flat op list equals the pinned 10-entry address table; peace clears exactly the 5 war bits; war clears the ladder; the 0x17 block clears 0x800000
 parity sweep: 16 states x 2560 masks = 40960 pairs, 0 disagreements
-ok   G2 the hand-written setter equals the dump-extracted program on all 40960 (state,mask) pairs
-  mask 0x1 on a blank pair     -> 0x00000003 (expected 0x00000003) ok
-  mask 0x2 on a blank pair     -> 0x00000002 (expected 0x00000002) ok
-  mask 0x4 on a blank pair     -> 0x00000004 (expected 0x00000004) ok
-  mask 0x8 on a blank pair     -> 0x00000008 (expected 0x00000008) ok
-  war on 0x7|commlink          -> 0x80000118 (expected 0x80000118) ok
-  truce on the war word        -> 0x8000010c (expected 0x8000010c) ok
-  pact+war in ONE call (0x11)  -> 0x8000011b (expected 0x8000011b) ok
-ok   G3 ladder bits accumulate (pact alone = 0x3, truce after war = 0x8000010c, commlink and 0x100 survive both) and war in the same call as pact keeps the OR'd ladder bits
+flat executor (no block grouping): 8192 pairs, 0 disagreements with the block executor
+ok   G2 the hand-written setter equals the dump-extracted program on all 40960 (state,mask) pairs, and the FLAT address-ordered executor reproduces the block executor on 8192 more
+  pre 0x0 mask 0x1         -> 0x00000003 (program 0x00000003, literal 0x00000003) ok
+  pre 0x0 mask 0x2         -> 0x00000002 (program 0x00000002, literal 0x00000002) ok
+  pre 0x0 mask 0x4         -> 0x00000004 (program 0x00000004, literal 0x00000004) ok
+  pre 0x0 mask 0x8         -> 0x00000008 (program 0x00000008, literal 0x00000008) ok
+  pre 0xf mask 0x10        -> 0x80000118 (program 0x80000118, literal 0x80000118) ok
+  pre 0x80000118 mask 0x4  -> 0x8000010c (program 0x8000010c, literal 0x8000010c) ok
+  pre 0x0 mask 0x11        -> 0x8000011b (program 0x8000011b, literal 0x8000011b) ok
+  pre-states carrying a ladder bit: 1; war-only masks: 1
+ok   G3 every named transition equals BOTH the dump program and its pinned literal; the war-on-a-ladder-word law is measured on a pre-state that carries 0x7|commlink with a war-only mask, so the clear is what produces the result
 transcript: 16 events
    0 (1,2) contact  0x00000000 --0x08--> 0x00000008  ladder=-      ok
    1 (1,2) truce    0x00000008 --0x04--> 0x0000000c  ladder=TRUCE  ok
@@ -50,9 +55,9 @@ transcript: 16 events
   14 (2,3) pact     0x0000000c --0x01--> 0x0000000f  ladder=PACT   ok
   15 (1,2) pact     0x8000010e --0x01--> 0x8000010f  ladder=PACT   ok
 ok   G4 16/16 steps agree with the extracted program and are symmetric; transcript digest ac8c2caad0d71d55
-invariants: 40976 transitions checked, 0 violations
-ok   G5 pact=>treaty, war excludes the ladder, symmetry and idempotence hold on all 40976 transitions
-classifier window: 16 insns, ladder tests ['0x1', '0x2', '0x4'], want tests ['0x1', '0x2', '0x4']
+invariants: 40976 transitions checked (2563 of them war-only: 0x10 set, no ladder bit in the mask), 0 violations
+ok   G5 pact=>treaty keyed on the write, the 2563 war-only writes (mask carries 0x10 and no ladder bit) all leave the ladder empty, and every one of the 40976 transitions is symmetric and idempotent
+classifier window @0x507975..0x5079a7: 16 insns incl. the mismatch store and the scored inc, ladder tests ['0x1', '0x2', '0x4'], want tests ['0x1', '0x2', '0x4']
   cur 0x03 want 0x02 -> False (ladder rung PACT)
   cur 0x03 want 0x01 -> True  (ladder rung PACT)
   cur 0x06 want 0x02 -> True  (ladder rung TREATY)
@@ -60,9 +65,10 @@ classifier window: 16 insns, ladder tests ['0x1', '0x2', '0x4'], want tests ['0x
   cur 0x00 want 0x01 -> True  (ladder rung -)
   cur 0x08 want 0x00 -> True  (ladder rung -)
 ok   G6 3 ladder tests on 1/2/4; sim.classify == the dump chain on 65536 (cur,want) pairs; pact+treaty does NOT satisfy a want of treaty (ordered EQUALITY, M368's law)
-peace-host sites: 00553c41 mask=0x4 poster=0x691144, 00553f10 mask=0x2 poster=0x691150, 00554165 mask=0x1 poster=none
+PE: image base 0x400000, 8 sections (first .text @0x1000)
+peace-host sites: 00553c41 mask=0x4 key=0x691144 text='ENEMYTRUCE', 00553f10 mask=0x2 key=0x691150 text='ENEMYTREATY', 00554165 mask=0x1 key=none text=None
 action layer words: 0x3, 0x3, 0x7, 0x80000118, 0x80000118
-ok   G7 mask->poster at 0x553c41/0x553f10/0x554165 = (4,0x691144)/(2,0x691150)/(1,none); pact acts as 0x3, vendetta clears the ladder to 0x80000118
+ok   G7 mask->poster at 0x553c41/0x553f10/0x554165 = (4,0x691144)/(2,0x691150)/(1,none), and the BYTES at those VAs (resolved through the PE table, not vma-0x400000) read ENEMYTRUCE / ENEMYTREATY / nothing; pact acts as 0x3, vendetta clears to 0x80000118
   rival independent flags (no pact=>treaty)    differs on  2696 / 4096 cases
   rival a set REPLACES the word                differs on  3304 / 4096 cases
   rival war is just another OR bit             differs on  2424 / 4096 cases

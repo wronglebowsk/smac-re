@@ -63,6 +63,16 @@ ACTIONS = {"contact": COMMLINK, "truce": TRUCE, "treaty": TREATY, "pact": PACT,
            "vendetta": AT_WAR}
 POSTER = {TRUCE: "ENEMYTRUCE", TREATY: "ENEMYTREATY", PACT: None}
 POSTER_SITES = [0x553C41, 0x553F10, 0x554165]   # the three peace writers in FUN_005537d0
+LADDER_MASK = PACT | TREATY | TRUCE
+
+# Every op of the writer with its address - the independent expectation of the parse: six `and`
+# clears, two `or ebx` mask upgrades (0x2 and 0x80000108, neither stores) and two `or edx,ebx`
+# writes.  The six ands and two writes are the 8 dword stores (one per op, one op per direction).
+OPS_PINNED = [(0x551A88, "and", 0xEE7FAF | 0xFF000000), (0x551AAF, "and", 0xEE7FAF | 0xFF000000),
+              (0x551ABC, "mask_or", 0x2), (0x551B11, "mask_or", 0x80000108),
+              (0x551B17, "and", 0xFAEEF378), (0x551B42, "and", 0xFAEEF378),
+              (0x551B98, "and", 0xFF7FFFFF), (0x551BBF, "and", 0xFF7FFFFF),
+              (0x551BE6, "or_eff", None), (0x551C09, "or_eff", None)]
 
 # Pinned on the first real run (G10 asserts a fresh decode still reproduces them).
 ANCHOR = "b20f5818dee2d861"
@@ -104,6 +114,48 @@ def load(path=TEXT):
 
 def window(ins, lo, hi):
     return [r for r in ins if lo <= r[0] < hi]
+
+
+def pe_sections(path=EXE):
+    """[(name, va, vsize, raw_ptr, raw_size)] and the image base, from the PE header itself -
+    never the `vma-0x400000` assumption."""
+    import struct
+    with open(path, "rb") as fh:
+        data = fh.read(0x400)
+    e = struct.unpack_from("<I", data, 0x3C)[0]
+    if data[e:e + 4] != b"PE\0\0":
+        raise RuntimeError("not a PE: %s" % path)
+    nsec = struct.unpack_from("<H", data, e + 6)[0]
+    optsz = struct.unpack_from("<H", data, e + 20)[0]
+    base = struct.unpack_from("<I", data, e + 24 + 0x1C)[0]
+    secs = []
+    with open(path, "rb") as fh:
+        fh.seek(e + 24 + optsz)
+        for _i in range(nsec):
+            h = fh.read(40)
+            vsize, va, rawsize, rawptr = struct.unpack_from("<IIII", h, 8)
+            secs.append((h[:8].rstrip(b"\0").decode("latin-1"), va, vsize, rawptr, rawsize))
+    return secs, base
+
+
+def cstr_at(vma, secs, base, path=EXE):
+    """The NUL-terminated C string at absolute address `vma`, via its section's raw pointer."""
+    rva = vma - base
+    for name, va, vsize, rawptr, rawsize in secs:
+        if va <= rva < va + max(vsize, rawsize) and rva - va < rawsize:
+            with open(path, "rb") as fh:
+                fh.seek(rawptr + (rva - va))
+                return fh.read(64).split(b"\0")[0].decode("latin-1")
+    return None
+
+
+def flatten(prog):
+    """Every op in ADDRESS order with its block predicate, no block grouping."""
+    flat = []
+    for blk in prog:
+        for kind, imm, a in blk["ops"]:
+            flat.append((a, blk["pred"], kind, imm))
+    return sorted(flat)
 
 
 # --------------------------------------------------------------------------- writer program
@@ -167,6 +219,24 @@ def run_program(prog, wab, wba, mask):
                 wab |= ebx
                 wba |= ebx
     return wab, wba, ebx
+
+
+def flat_exec(flat, wab, wba, mask):
+    """The same ops executed from the FLAT address-ordered list - no block segmentation, so a
+    mis-grouped extractor cannot hide behind its own grouping."""
+    ebx = mask
+    for _a, pred, kind, imm in flat:
+        if pred is not None and not ((ebx & 0xFF) & pred):
+            continue
+        if kind == "mask_or":
+            ebx |= imm
+        elif kind == "and":
+            wab &= imm
+            wba &= imm
+        elif kind == "or_eff":
+            wab |= ebx
+            wba |= ebx
+    return wab, wba
 
 
 # --------------------------------------------------------------------------- the state machine
@@ -271,12 +341,13 @@ def program_classify(cwin, cur, want):
     for _step in range(64):
         mn, ops = by[pc]
         if mn == "test":
+            imm = int(ops.split(",")[1], 16) if re.search(r",0x[0-9a-f]+$", ops) else 0
             if ops.startswith("cl,"):
-                zero = ~(cur & 0xFF) & int(ops.split(",")[1], 16)
+                zero = ((cur & 0xFF) & imm) == 0
             elif "ebp-0xc" in ops:
-                zero = ~(want & 0xFF) & int(ops.split(",")[1], 16)
+                zero = ((want & 0xFF) & imm) == 0
             else:
-                zero = ~0
+                zero = True
             pc = nxt[pc]
         elif mn in ("je", "jne"):
             take = zero if mn == "je" else (not zero)
@@ -333,10 +404,13 @@ def accept(quiet=False):
                                         "ok" if by.get(a) == (mn, ops) else "MISMATCH"))
     win_d = sha16(win)
     win2_d = sha16(window(load(), FN_START, FN_END))
-    gate("G0", len(win) == 161 and stores == 8 and all(by.get(a) == (mn, ops) for a, mn, ops in anchors)
-         and win_d == win2_d,
-         "161 insns, 8 stores, 9/9 anchors byte-exact, window digest %s twice (%s)"
-         % (win_d, win_d == win2_d))
+    stored_ops = sum(1 for b in prog for k, _i, _a in b["ops"] if k in ("and", "or_eff"))
+    print("  stores: %d measured, %d stored ops (and/or_eff) - one store per op, the two mask "
+          "upgrades store nothing" % (stores, stored_ops))
+    gate("G0", len(win) == 161 and stores == 8 and stores == stored_ops
+         and all(by.get(a) == (mn, ops) for a, mn, ops in anchors) and win_d == win2_d,
+         "161 insns, %d stores == the 8 stored ops (one per direction), 9/9 anchors byte-exact, "
+         "window digest %s twice (%s)" % (stores, win_d, win_d == win2_d))
 
     # ---- G1 the program, with its clear sets COMPUTED from the immediates ----------------
     print("extracted rule program: %d `test bl` blocks" % len(prog))
@@ -353,12 +427,24 @@ def accept(quiet=False):
     for imm in clears:
         print("    0x%08x clears %s" % (imm, ", ".join("0x%x" % b for b in bits(~imm & 0xFFFFFFFF))))
     preds = [b["pred"] for b in prog]
-    gate("G1", preds[:4] == [0x7, 0x1, 0x10, 0x17] and clears == [PEACE_CLEAR, WAR_CLEAR, UNLOCK_CLEAR]
+    flat = flatten(prog)
+    tail = prog[-1]
+    print("  structure: %d blocks, preds %s, tail @%08x pred=%s with %d or_eff ops"
+          % (len(prog), ["ANY" if p is None else "0x%x" % p for p in preds], tail["at"],
+             tail["pred"], len([o for o in tail["ops"] if o[0] == "or_eff"])))
+    got_ops = [(a, k, i) for a, _p, k, i in flat]
+    ops_ok = got_ops == OPS_PINNED
+    print("  ops vs the pinned address table: %d/%d match"
+          % (sum(1 for g, w in zip(got_ops, OPS_PINNED) if g == w), len(OPS_PINNED)))
+    gate("G1", preds == [0x7, 0x1, 0x10, 0x17, 0x1F, None] and tail["at"] == 0x551BC7
+         and len([o for o in tail["ops"] if o[0] == "or_eff"]) == 2 and ops_ok
+         and clears == [PEACE_CLEAR, WAR_CLEAR, UNLOCK_CLEAR]
          and set(bits(~PEACE_CLEAR & 0xFFFFFFFF)) == {0x10, 0x40, 0x8000, 0x10000, 0x100000}
          and set(bits(~WAR_CLEAR & 0xFFFFFFFF)) >= {PACT, TREATY, TRUCE}
          and bits(~UNLOCK_CLEAR & 0xFFFFFFFF) == [0x800000],
-         "blocks on 0x7/0x1/0x10/0x17 in address order; peace clears exactly the 5 war bits "
-         "{0x10,0x40,0x8000,0x10000,0x100000}; war clears the ladder; the 0x17 block clears 0x800000")
+         "SIX blocks: predicates 0x7/0x1/0x10/0x17/0x1f then an UNCONDITIONAL tail @0x551bc7; "
+         "the flat op list equals the pinned 10-entry address table; peace clears exactly the 5 "
+         "war bits; war clears the ladder; the 0x17 block clears 0x800000")
 
     # ---- G2 parity: sim vs the extracted program over the mask lattice -------------------
     states = [0x0, 0x1, 0x2, 0x4, 0x3, 0x6, 0x7, 0x8, 0x18, 0x20, 0x108,
@@ -384,9 +470,20 @@ def accept(quiet=False):
             pairs += 1
             if (sab, s.get(1, 0)) != (pab, pba):
                 bad += 1
+    bad_flat = 0
+    for w0 in states:
+        for m in masks[:512]:
+            fab, fba = flat_exec(flat, w0, w0, m)
+            pab, pba, _eff = run_program(prog, w0, w0, m)
+            if (fab, fba) != (pab, pba):
+                bad_flat += 1
     print("parity sweep: %d states x %d masks = %d pairs, %d disagreements" % (len(states), len(masks), pairs, bad))
-    gate("G2", pairs == len(states) * len(masks) and bad == 0,
-         "the hand-written setter equals the dump-extracted program on all %d (state,mask) pairs" % pairs)
+    print("flat executor (no block grouping): %d pairs, %d disagreements with the block executor"
+          % (len(states) * 512, bad_flat))
+    gate("G2", pairs == len(states) * len(masks) and bad == 0 and bad_flat == 0,
+         "the hand-written setter equals the dump-extracted program on all %d (state,mask) pairs, "
+         "and the FLAT address-ordered executor reproduces the block executor on %d more"
+         % (pairs, len(states) * 512))
 
     # ---- G3 the named transition laws ---------------------------------------------------
     def fresh(w0=0):
@@ -394,20 +491,25 @@ def accept(quiet=False):
         s.w[(0, 1)] = s.w[(1, 0)] = w0
         return s
     laws = []
-    for m, want in [(PACT, 0x3), (TREATY, 0x2), (TRUCE, 0x4), (COMMLINK, 0x8)]:
-        got = fresh().set(0, 1, m)
-        laws.append(("mask 0x%x on a blank pair" % m, got, want))
-    got = fresh(PACT | TREATY | TRUCE | COMMLINK).set(0, 1, AT_WAR)
-    laws.append(("war on 0x7|commlink", got, 0x80000118))
-    got = fresh(0x80000118).set(0, 1, TRUCE)
-    laws.append(("truce on the war word", got, 0x8000010C))
-    got = fresh().set(0, 1, PACT | AT_WAR)
-    laws.append(("pact+war in ONE call (0x11)", got, 0x8000011B))
-    for name, got, want in laws:
-        print("  %-28s -> 0x%08x (expected 0x%08x) %s" % (name, got, want, "ok" if got == want else "DIFF"))
-    gate("G3", [w for _n, g, w in laws] == [g for _n, g, _w in laws],
-         "ladder bits accumulate (pact alone = 0x3, truce after war = 0x8000010c, commlink and "
-         "0x100 survive both) and war in the same call as pact keeps the OR'd ladder bits")
+    for pre, m, want in [(0, PACT, 0x3), (0, TREATY, 0x2), (0, TRUCE, 0x4), (0, COMMLINK, 0x8),
+                         (PACT | TREATY | TRUCE | COMMLINK, AT_WAR, 0x80000118),
+                         (0x80000118, TRUCE, 0x8000010C), (0, PACT | AT_WAR, 0x8000011B)]:
+        # the EXPECTED value comes from the DUMP program; the sim is compared to it separately by G2
+        pab, _pba, _e = run_program(prog, pre, pre, m)
+        got = fresh(pre).set(0, 1, m)
+        laws.append(("pre 0x%x mask 0x%x" % (pre, m), got, pab, want,
+                     (pre & LADDER_MASK) != 0, (m & LADDER_MASK) == 0 and bool(m & AT_WAR)))
+    for name, got, prog_want, lit, pre_ladder, war_only in laws:
+        print("  %-24s -> 0x%08x (program 0x%08x, literal 0x%08x) %s"
+              % (name, got, prog_want, lit, "ok" if got == prog_want == lit else "DIFF"))
+    in_ladder = [r for r in laws if r[4]]
+    print("  pre-states carrying a ladder bit: %d; war-only masks: %d"
+          % (len(in_ladder), len([r for r in laws if r[5]])))
+    gate("G3", len(in_ladder) >= 1 and len([r for r in laws if r[5]]) >= 1
+         and all(g == p == w for _n, g, p, w, _pl, _wo in laws),
+         "every named transition equals BOTH the dump program and its pinned literal; the "
+         "war-on-a-ladder-word law is measured on a pre-state that carries 0x7|commlink with a "
+         "war-only mask, so the clear is what produces the result")
 
     # ---- G4 transcript replay: sim vs program at EVERY step -----------------------------
     T = transcript()
@@ -433,34 +535,41 @@ def accept(quiet=False):
 
     # ---- G5 invariants over every step of the sweep and the transcript ------------------
     viol = []
-    seen = 0
+    seen = war_class = 0
     allw = [(w0, m) for w0 in states for m in masks] + [(r[0], r[1]) for r in rows]
     for w0, m in allw:
         s2 = Relations()
         s2.w[(0, 1)] = s2.w[(1, 0)] = w0
         post = s2.set(0, 1, m)
         seen += 1
+        war_only = bool(m & AT_WAR) and not (m & LADDER_MASK)
+        war_class += war_only
         if (m & PACT) and (post & PACT) and not post & TREATY:
             viol.append(("pact write without the treaty upgrade", w0, m, post))
-        if (post & AT_WAR) and (post & (PACT | TREATY | TRUCE)) and (m & 0x17) == AT_WAR:
+        if war_only and (post & LADDER_MASK):
             viol.append(("war-only write left a ladder bit", w0, m, post))
         if s2.get(1, 0) != post:
             viol.append(("asymmetric", w0, m, post))
         again = s2.set(0, 1, m)
         if again != post:
             viol.append(("not idempotent", w0, m, again))
-    print("invariants: %d transitions checked, %d violations" % (seen, len(viol)))
+    print("invariants: %d transitions checked (%d of them war-only: 0x10 set, no ladder bit in "
+          "the mask), %d violations" % (seen, war_class, len(viol)))
     for v in viol[:6]:
         print("   %s: pre 0x%08x mask 0x%x -> 0x%08x" % v)
-    gate("G5", seen > 30000 and not viol,
-         "pact=>treaty, war excludes the ladder, symmetry and idempotence hold on all %d transitions" % seen)
+    gate("G5", seen > 30000 and war_class > 2000 and not viol,
+         "pact=>treaty keyed on the write, the %d war-only writes (mask carries 0x10 and no "
+         "ladder bit) all leave the ladder empty, and every one of the %d transitions is "
+         "symmetric and idempotent" % (war_class, seen))
 
     # ---- G6 classifier parity: dump chain vs sim.classify -------------------------------
     cwin = window(ins, CLS_START, CLS_END)
     tests = [(a, ops) for a, mn, ops in cwin if mn == "test" and ops.startswith("cl,")]
     wants = [(a, ops) for a, mn, ops in cwin if mn == "test" and ops.startswith("BYTE PTR [ebp-0xc],")]
-    print("classifier window: %d insns, ladder tests %s, want tests %s"
-          % (len(cwin), [o.split(",")[1] for _a, o in tests], [o.split(",")[1] for _a, o in wants]))
+    print("classifier window @0x%x..0x%x: %d insns incl. the mismatch store and the scored inc, "
+          "ladder tests %s, want tests %s"
+          % (CLS_START, CLS_END, len(cwin), [o.split(",")[1] for _a, o in tests],
+             [o.split(",")[1] for _a, o in wants]))
     cb = cs = 0
     inter = []
     for cur in range(256):
@@ -474,7 +583,7 @@ def accept(quiet=False):
         inter.append((cur, want, Relations.classify(cur, want), Relations.ladder(cur)))
     for cur, want, r, ld in inter:
         print("  cur 0x%02x want 0x%02x -> %-5s (ladder rung %s)" % (cur, want, r, NAMES.get(ld, "-")))
-    gate("G6", len(tests) == 3 and len(wants) == 3 and cs == 0 and cb == 65536
+    gate("G6", len(cwin) == 16 and len(tests) == 3 and len(wants) == 3 and cs == 0 and cb == 65536
          and Relations.classify(0x3, TREATY) is False and Relations.classify(0x3, PACT) is True
          and Relations.classify(0x6, TRUCE) is False,
          "3 ladder tests on 1/2/4; sim.classify == the dump chain on %d (cur,want) pairs; "
@@ -499,19 +608,31 @@ def accept(quiet=False):
                         if q[1] == "push" and re.match(r"^0x[0-9a-f]+$", q[2])
                         and int(q[2], 16) > 0x10000), None)
         keys[site] = (mask, key)
+    # the poster KEY operand is a VA: resolve it through the PE section table and read the bytes
+    secs, base = pe_sections()
+    print("PE: image base 0x%x, %d sections (first %s @0x%x)"
+          % (base, len(secs), secs[0][0], secs[0][1]))
+    texts = {}
+    for site in POSTER_SITES:
+        mask, key = keys[site]
+        texts[site] = cstr_at(key, secs, base) if key else None
     print("peace-host sites: %s" % ", ".join(
-        "%08x mask=0x%x poster=%s" % (s, keys[s][0], "0x%x" % keys[s][1] if keys[s][1] else "none")
+        "%08x mask=0x%x key=%s text=%s" % (s, keys[s][0],
+                                          "0x%x" % keys[s][1] if keys[s][1] else "none",
+                                          repr(texts[s]))
         for s in POSTER_SITES))
     want_pairs = {TRUCE: 0x691144, TREATY: 0x691150, PACT: None}
     okq = all(keys[s] == (m, want_pairs[m]) for s, m in zip(POSTER_SITES, [TRUCE, TREATY, PACT]))
-    labels_ok = (POSTER[TRUCE] == "ENEMYTRUCE" and POSTER[TREATY] == "ENEMYTREATY"
-                 and POSTER[PACT] is None)
+    labels_ok = (POSTER[TRUCE] == texts[POSTER_SITES[0]] == "ENEMYTRUCE"
+                 and POSTER[TREATY] == texts[POSTER_SITES[1]] == "ENEMYTREATY"
+                 and POSTER[PACT] is None and texts[POSTER_SITES[2]] is None)
     s3 = Relations()
     words = [s3.act(0, 1, n) for n in ("pact", "treaty", "truce", "vendetta", "contact")]
     print("action layer words: %s" % ", ".join("0x%x" % w for w in words))
     gate("G7", okq and labels_ok and words[0] == 0x3 and words[3] == 0x80000118,
-         "mask->poster at 0x553c41/0x553f10/0x554165 = (4,0x691144)/(2,0x691150)/(1,none); "
-         "pact acts as 0x3, vendetta clears the ladder to 0x80000118")
+         "mask->poster at 0x553c41/0x553f10/0x554165 = (4,0x691144)/(2,0x691150)/(1,none), and the "
+         "BYTES at those VAs (resolved through the PE table, not vma-0x400000) read ENEMYTRUCE / "
+         "ENEMYTREATY / nothing; pact acts as 0x3, vendetta clears to 0x80000118")
 
     # ---- G8 rivals FAIL on the printed numbers ----------------------------------------
     def rival_words(kind, w0, m):
