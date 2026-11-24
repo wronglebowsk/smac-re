@@ -1667,3 +1667,13 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | READ AS PREDICATE: `(rel&0x40018)==8`@0x555491, `(rel&0x18)==8`@0x555502; FUN_00554d10 `test al,0x10`@0x554e6b before 0x18 | `:74-80` G4b,G4c | V MU16-18 |
 | NOUNS id 8 = labels.txt:886 "Commlink", 0x10 = :657 "Vendetta"; RIVAL '8=war companion' DEAD on 3 predictions; pending masks measured (3x0x88000008, 1x0x80000008, no 0x10) | `:88-123` G5a,R1-R2 | V MU19-20,26-27 |
 | ACCEPT `PASS M371: 18/18 digest 4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`), twice byte-identical (`evidence/m371_twice.txt:4`); harness 27/27 (`evidence/m371_mutate.txt:35`); OPEN: 0x88000008 bits 27/31 (INF), 24 carried sites, 0x100 | as cited | V |
+
+## M374 (s338-c2, STATIC 23/23). ACCEPT `scripts/m374_semaphore_bits.py` -> **`PASS M374: 23/23`** `705bd8cd7ed3f705` (`evidence/m374_semaphore_bits.txt:76`); harness **20/20, cov G1-G5** (`evidence/m374_mutate.txt:23`).
+| claim | ev | conf |
+|---|---|---|
+| 0x92bf0c bits 23/24 <- 0x985ae8 <- `test eax,0x10000/0x20000`@0x4dc88b/9e -> `or ecx,0x800000/0x1000000`@0x4dc892/a5; mask 0x1800000; eax=ds:0x99aa38 | `:9-13,44` | V MU1 MU2 MU3 MU11 MU12 |
+| RULES word = 18 bits: 0x985ac4 bits 0..15 (one ecx load @0x4dc5f6) + stage 16/17; clear 0xfe7fffff@0x4dc604; INI Semaphore=00000000 | `:15-21,47` | V MU4 MU5 MU13 MU14 |
+| #RULES 18 items = 18 bits (#AIEDITOR 11/11, contiguous 0..10); tail items = "Randomize faction leader personalities"/"...social agendas" | `:22-27` | V MU6 MU15 ALGO1 |
+| bit23: 0x59ef11 five rand fields + 0x5a1446 pairing arm; bit24: 0x5a1150 12-slot assignment (stride 0x59c, 8 factions) | `:29-41` | V MU7-MU10 MU16 MU17 |
+| script keys are PE strings RULES/AIEDITOR/AIEDITOR2/SCENRULES; FUN_004dc5f0 pushes RULES @0x4dc6fb | `:43-49` | V MU18 |
+| OPEN: the 12 slots' identity (SE-choice/agenda grid, INF); bit position 23/24 cause | - | INF |

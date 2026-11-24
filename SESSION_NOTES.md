@@ -697,3 +697,27 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   reds; cache regenerated).
 - **PITFALLS**: objdump prints `DWORD PTR ds:0x..`, so `startswith("ds:")` misses a bitset
   load; a break-test ordered before the hit-test loses the reader.
+
+## Session 338-chain2 (2026-11-24) — M374: Semaphore bits 23/24 = the two #RULES "Randomize" toggles
+
+- **ACCEPT** `python3 -u scripts/m374_semaphore_bits.py` -> **`PASS M374: 23/23`** digest
+  `705bd8cd7ed3f705` (`evidence/m374_semaphore_bits.txt:76`), re-run byte-identical;
+  `scripts/m374_mutate.py` **20/20 killed, cov G1-G5, 1 declared NO-OP** (`evidence/m374_mutate.txt:23`).
+- **CHAIN** (`:9-13,44`): `0x92bf0c` bits 23/24 <- `0x985ae8` <- `FUN_004dc5f0`:
+  `test eax,0x10000/0x20000`@0x4dc88b/0x4dc89e -> `or ecx,0x800000/0x1000000`@0x4dc892/0x4dc8a5,
+  eax = `ds:0x99aa38` (@0x4dc786); the cell store masks `0x1800000`@0x4dc8b7 -> `0x92bf0c`@0x4dc8c3.
+- **RECORD** (`:15-21,47`): an 18-bit RULES word = `0x985ac4` bits 0..15 (16 legs, the `shr eax,0xb` leg
+  is bit 11) + stage bits 16/17; the other path clears 23/24 with `0xfe7fffff`@0x4dc604; shipped
+  INI `Semaphore=00000000` (loader alone sets neither bit).
+- **NOUNS** (`:22-27`): `programs/Script.txt` `#RULES` (line 324) itemlist = 18 items; `#AIEDITOR`
+  11 items = its 11 record bits (the item<->bit contract); items 17/18 = "Randomize faction leader
+  personalities." / "Randomize faction leader social agendas." = bits 16/17.
+- **READERS** (`:29-41`): bit23 0x59ef11 seeds FIVE fields 0x94d80c/10/14/18/1c (5 rand calls,
+  5 stores) + the pairing arm 0x5a1446 (4 calls 0x551c40); bit24 0x5a1150 runs the 12-slot random
+  assignment (zeroes 0xc dwords, stride 0x59c, 8 iterations).
+- **KEYS** (`:43-49`): PE strings RULES/AIEDITOR/AIEDITOR2/SCENRULES at 0x68c824/c80c/c818/c82c;
+  FUN_004dc5f0 pushes "RULES"@0x4dc6fb.
+- **FOOTING REFINED**: the bits do NOT flow from the 0x41a9xx pack over `[0x8f0d60+0x38]`; both only
+  SHARE the 0x99aa38 staging scratch (M179) - the writer's source is the RULES record.
+- **OPEN**: what the 12 slots enumerate (INF: a 12-entry SE-choice/agenda grid); why the bits sit at
+  23/24 rather than 0/1 of the cell (INF: turn-semaphore bits likely occupy 0..22).
