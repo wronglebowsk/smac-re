@@ -1559,16 +1559,16 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## M360 (s331-c3) — NOT a seventh page: 0x37/0x38/0x39 are A/V RADIO rows (+0x7aec: 8 built, 11 queried), 0x50 the seventh widget's 4th id; a miss resolves to bit<count>. ev `evidence/m360_orphans.txt:137`
+## M361 (s333-c2) — the A/V radio flags: widget+0xa18 of 4 rows (0x12cbc+k*0xb4c). Readers = relabel 0x493ec0, commit 0x492940, aggregate 0x492030, seed 0x4930e0; relabel ends in generic set-label 0x5fa1e8. ev `evidence/m361_radio_flags.txt:160`
 | claim | ev | conf |
 |---|---|---|
-| 7 widgets +0x5974/649c/6fc4/7aec/8614/913c/9c64; rows 8/12/14/8/13/4/7 (=66); queries 8/12/14/11/14/4/7 (=70) | `:12,:43-44,:50` | V MU1,MU3,MU4,MU19 |
-| +0x7aec queries 0x37/38/39 unbuilt; +0x8614 queries 0x30; +0x913c built 0x30 (queried vs 0x8614, never painted), queries 0x50 | `:45,:120` | V MU5-7,18 |
-| miss = bit<count> (scan 0, `jge` at count, shift `<node+0x14>`): 8/13/4 | `:55-70` | V MU8-10,MU21 |
-| 0x37/38/39 = RADIO handlers (cls 1/2/3) relabelling ctrl 0x4e/0x4c/0x4d from a4c:11/10, a50:14 | `:89-93` | V MU11-13,MU22 |
-| absent-id writes exactly [(0x913c,0x50)]; A/V+0x8614 bits unwritten; 7th block tests STALE a48&0x1000 | `:102-103,:114-116` | V MU14-17,MU23 |
-| INF: 3 unbuilt A/V ids = Script.txt's unconsumed A/V tail (3=3 count) | `:130-132` | INF |
-
+| 0x136d4/14220/14d6c/158b8 = widget+0xa18; ctor 0x48fed0 zeroes 4; 3 children are vtable objects, master is not | `:75-85` | V MU7-9,23 |
+| 0x493ec0 table 0x493fe0: cmd 0x4b..4e -> those flags x {12cbc,13808,14354,14ea0} | `:58-74` | V MU3-6,26 |
+| flag -> 1 of 2 ids [997b20+10e0..10fc] -> 0x61482f -> 0x5fa1e8 at widget+0xa7c; 0x5fa1e8 has no flag (10 sites/4 fns) | `:66-74,:120-126` | V MU5,19-21 |
+| commit: 14d6c->a50\|4000, 14220->a4c\|400, 158b8->a4c\|800 (def-use); master never committed | `:93-101` | V MU11-13 |
+| 0x492030: master := 0 then 1 per child!=0; 0x493ff0 master-off clears all + (ch,f3)/(ah,bf); child ON -> master | `:102-119` | V MU14-18 |
+| 0x4930e0 seeds flags from +0xa50 bits w/ relabel cmd; 55 sites = 17 reads/4 fns + 38 writes; 3 loners BYTE | `:4-57,:86-92,:140-147` | V MU1,2,10,22,24,25,27 |
+| INF: the rows are the A/V radio group's pending state (label text is runtime; image .data absent) | - | INF |
 ## M357 (s330-c3, 18/18 static) - the bit -> option LABEL table of the two `Laptop` bitmaps
 | claim | ev | conf |
 |---|---|---|

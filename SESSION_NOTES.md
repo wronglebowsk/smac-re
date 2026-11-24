@@ -689,3 +689,28 @@ whether a facility completion stamps at all.
 - OPEN: +0x2b/+0x2d/+0x2e nouns; the 24-record 0x1c table's identity
   (it ends at 0x98ad90..0x98ad9c); bit8 noun. NEXT: (x6) pref-block writers;
   B34 = facility +0x8c.
+
+## Session 333-chain2 (2026-11-24) — M361: the A/V radio flags — 4 rows' pending state, 4 reader functions, relabel terminal = GENERIC set-label 0x5fa1e8
+
+- **ACCEPT** `python3 -u scripts/m361_radio_flags.py` -> **`PASS  M361: 36/36 gates`
+  `3f372964c2179782`** (`evidence/m361_radio_flags.txt:160`), rerun byte-identical;
+  `scripts/m361_mutate.py` -> **27/27 RED, NO-OP none** (`evidence/m361_mutate.txt:67`).
+- **GEOMETRY**: flags = `widget+0xa18`, widgets `0x12cbc + k*0xb4c` (table 0x493fe0:
+  0x4b->0x493f9d 0x136d4/0x12cbc, 0x4c->0x493f1c 0x14220/0x13808, 0x4d->0x493edc
+  0x14d6c/0x14354, 0x4e->0x493f5d 0x158b8/0x14ea0). Ctor 0x48fed0 zeroes all four (`:75-85`);
+  the 3 children are vtable objects (`call [eax+0xf0]`), master row 0x12cbc is not.
+- **RELABEL TERMINAL**: 0x493ec0 -> `FUN_0061482f(0x997b28,id)` -> 0x5fa1e8(widget,text),
+  which frees `[ecx+0xa7c]`, allocs strlen+1, strcpy; **10 call sites/4 fns, 0 flag
+  displacements** -> generic set-label, not flag-aware.
+- **READERS** 17 sites/4 fns: 0x493ec0 (4), 0x493ff0 (4), 0x492940 (3), 0x492030 (1 load +
+  2 cmp); WRITERS 38/8 fns; 3 loner 0x14220 sites are BYTE stores in other classes (`:86-92`).
+- **COMMIT** 0x492940: 0x14d6c -> `[+0xa50] |= 0x4000`; 0x14220 -> `[+0xa4c] |= 0x400` (ebx
+  by def-use); 0x158b8 -> `[+0xa4c] |= 0x800`. Master 0x136d4 is never committed — 0x492030
+  recomputes it as OR of the children (store 0, then 1 per cmp!=0).
+- **TOGGLE** 0x493ff0: master-off clears all four + `and ch,0xf3`/`and ah,0xbf` on
+  0x985ab8/0x985abc (0x400|0x800 / 0x4000 = the commit bits); child ON -> master. **SEED**
+  0x4930e0 reads `[+0xa50]` bits, writes each child flag + its relabel cmd.
+- **RETRACTED**: none — M360's 0x4e/0x4c/0x4d reading holds; cmd 0x4b is the master row.
+- **OPEN**: each row's noun (label text is runtime; 0x997b20's table is not in the file);
+  0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 = audio on/off (INFERRED).
+- NAMED: `## M360` rotated VERBATIM (docs/named-archive-m360-rows.md, sha1 e504b483); 247,881 B.
