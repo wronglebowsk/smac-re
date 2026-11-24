@@ -1355,17 +1355,17 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | base/end READ 0x57ac74/0x57ac88 = 6 rows; only clamp 0x486f30 `FUN_00423af0(diff,0,6)` INCLUSIVE => 6 -> `0x94d2c4` | `:58-90` | V MU6,MU7,MU10,MU12 |
 | OPEN: FUN_0058e7f0 >=6?; record indices assumed 0..7 | - | lead |
 
-## M338 (s319-chain2, STATIC 8/8) — the LAST two `#DIFF` readers: `0x57c606` is the literal loop counter 0..5; `0x44a1c8` indexes with a hall-of-fame record byte (+0x20) that is the faction's EFFECTIVE DIFFICULTY — `evidence/m338_diff_readers.txt:1`
+## M338 (s319-chain2, STATIC 8/8, review #357 hardened) — the LAST two `#DIFF` readers: `0x57c606` is the literal loop counter 0..5; `0x44a1c8` indexes with a hall-of-fame record byte (+0x20) that is the faction's EFFECTIVE DIFFICULTY — `evidence/m338_diff_readers.txt:1`
 
 | claim | line | kind |
 |---|---|---|
 | table census: `.text` refs to 0x94d2ac = 2 base loads + 7 scaled readers {0x44a1c8,0x484cc9,0x485426,0x48678f,0x486f40,0x57c606,0x599405}, 0 stores; declared==measured both ways | `:1-10` | V MU2,MU11,MU12,ALG1 |
-| `0x57c606`: `xor esi,esi` (0x57c604) immediately precedes; the body writes esi only at `inc` 0x57c6ca; `cmp esi,6`/`jl 0x57c606` => index 0..5 = the loader's 6 rows (UI list builder) | `:11-15` | V MU1 |
-| `0x44a1c8`: `eax=[ebp-0x1c]`; `xor edx,edx`; `dl=BYTE[eax+0x20]`; `[edx*4+0x94d2ac]`; 0 insns between the byte load and the index, 0 calls | `:16-23` | V MU3 |
-| `[ebp-0x1c]` = record of the 35x0x8c buffer 0x983a10 (3 stores only, no bracket-crossing jump; `(8-1)*(1+4)*4 = 0x8c`) | `:24-31` | V MU4,MU5 |
-| buffer = `hallfame.jhh`: PE strings `rb`@0x689f3c + name@0x689f40, read 0x1324 = 35x0x8c to 0x984d34, zero-init 5x0x8c per 0x2bc | `:32-35` | V MU6,MU7 |
-| field +0x20 has exactly 2 writers: 0x44b15b from `BYTE[0x94d438+8380*faction]` (fold decoded = 0x20bc, cell = faction base 0x94d430+8), 0x44b612 a struct copy | `:36-40` | V MU8,MU9 |
-| 0x94d438 = the faction's EFFECTIVE DIFFICULTY: create 0x59eed6 (`ds:0x985aec` unless `ds:0x985b10` bit -> imm 3), save-load 0x57ef57 (same 8380 fold) | `:41-43` | V MU10 |
-| rivals dead: index is NOT `ds:0x985aec` (0 refs in the chain); 0x983a10 is NOT the faction array (decoded 0x8c vs 0x20bc); 0x57c606's index is NOT stored | `:44-58` | V MU7 |
-| ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8`, digest `1ae1563d47d0039e`, 2 runs diff-identical (sha256 32cca5f0); harness 13/13 `409b8389f1ee1401` (`evidence/m338_mutate.txt:15`), ST 3/3 | `:59-60` | V |
+| `0x57c606`: `xor esi,esi` (0x57c604) immediately precedes; the body's only esi write (broad write-classifier) is `inc` 0x57c6ca; `cmp esi,6`/`jl 0x57c606` => 0..5, and the LOADER is read (0x57ac74 mov esi / 0x57ac85 add 4 / 0x57ac88 cmp 0x94d2c4) = the same 6 | `:11-16` | V MU1 |
+| `0x44a1c8`: exact 6-instruction window `eax=[ebp-0x1c]`, `xor edx,edx`, scratch clear, `ecx=0x997b28`, `dl=BYTE[eax+0x20]`, `[edx*4+0x94d2ac]`; 0 insns between the byte load and the index; 0 eax clobbers (write-classifier) | `:17-24` | V MU3,MU15 |
+| `[ebp-0x1c]` = record of the 35x0x8c buffer 0x983a10: 3 stores only, the 0x4497b7 store's SOURCE is eax, no eax clobber in (0x4497ad,0x4497b7), no bracket-crossing jump; `(8-1)*(1+4)*4 = 0x8c` | `:25-33` | V MU4,MU5,MU13 |
+| buffer = `hallfame.jhh`: the fopen WINDOW is `push 0x689f3c; push 0x689f40; call 0x64c980` with PE strings `rb`/`hallfame.jhh`, the read window pushes size 0x1324/buffer/call 0x64cc00, zero-init is the exact 8-insn sequence 35x0x8c to 0x984d34, sibling 0x44adc0 nests 5 per 0x2bc | `:34-41` | V MU6,MU7 |
+| field +0x20: the module is MEASURED as the 7 functions that address 0x983a10 (ghidra extents); their union has exactly 2 stores — 0x44b15b from `BYTE[0x94d438+8380*faction]` (fold decoded = 0x20bc, cell = 0x94d430+8) and 0x44b612 a struct copy (scope: a computed-pointer store outside them is not excluded) | `:42-47` | V MU8,MU9 |
+| 0x94d438 = the faction's EFFECTIVE DIFFICULTY: the exact 6-insn branch `mov al,ds:0x985b10; test dl,al; mov eax,ds:0x985aec; jne 0x59eed6; mov eax,3; mov [esi+0x94d438],eax`, plus save-load 0x57ef57 (same 8380 fold) | `:48-50` | V MU10,MU14 |
+| rivals dead: index is NOT `ds:0x985aec` (0 refs in the chain); 0x983a10 is NOT the faction array (decoded 0x8c vs 0x20bc); 0x57c606's index is NOT stored | `:51-58` | V MU7 |
+| ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8`, digest `1ae1563d47d0039e`, 2 runs diff-identical (sha256 288a0edc); harness 16/16 `56455db0eadbedd7` (`evidence/m338_mutate.txt:18`), ST 3/3; review #357: 10 findings fixed IN the gates (G4 store source/clobber, G6 module-wide, G7 exact branch, G2 loader read, G5 windows, G3 exact window, broad write-classifier, measured harness digest) | `:59-67` | V |
 | OPEN: the +0x20 index is UNCLAMPED — a HoF record byte >=6 reads past `0x94d2c4`; whether FUN_0058e7f0 admits a pref >=6 is still open (M336); whether 0x44a1c8's window is the HoF screen or another list | - | lead |

@@ -337,10 +337,18 @@ printers of measured values need the same None-guard as the gate.
   selects imm 3; save-load 0x57ef57 stores the save's byte through the same 8380 fold. So the
   reader prints the difficulty NAME of a hall-of-fame entry.
 - ACCEPT `python3 -u scripts/m338_diff_readers.py` -> `PASS M338: 8/8 gates`, digest
-  `1ae1563d47d0039e`, 2 runs `diff`-identical (sha256 `32cca5f0`; `evidence/m338_diff_readers.txt`
-  + `_rerun.txt`, 60 lines). Harness `python3 -u scripts/m338_mutate.py` -> **13/13 scored, 0
-  MISMATCH, 0 CRASH**, digest `409b8389f1ee1401`, incl. a REMOVAL, an INSERTION and an
-  ALGORITHM mutant; `--selftest` 3/3 (`evidence/m338_mutate_selftest.txt:4`).
+  `1ae1563d47d0039e`, 2 runs `diff`-identical (sha256 `288a0edc`; `evidence/m338_diff_readers.txt`
+  + `_rerun.txt`, 67 lines). Harness `python3 -u scripts/m338_mutate.py` -> **16/16 scored, 0
+  MISMATCH, 0 CRASH**, digest `56455db0eadbedd7` (now hashes the MEASURED rows, not the label
+  map), incl. REMOVAL/INSERTION/ALGORITHM and the review's MU13-MU15; `--selftest` 3/3
+  (`evidence/m338_mutate_selftest.txt:4`).
+- **REVIEW (#357, Strata): 10 findings (3 P1/7 P2), all accepted, none dismissed — fixed IN the
+  gates**: G4 now asserts the store's SOURCE is eax and no eax clobber before it (MU13); G6's
+  module is MEASURED as the 7 functions addressing 0x983a10 (not a typed window); G7 asserts the
+  exact 6-instruction branch incl. `jne 0x59eed6` (MU14); G2 reads the loader's base/step/bound
+  instead of constants; G5 asserts the fopen/read windows and the exact zero-init sequence; G3
+  asserts the full window and no eax clobber (MU15); the esi write classifier is broad
+  (lea/pop/xchg/cmov); the harness digest hashes measured outcomes.
 - **OPEN:** the +0x20 index is UNCLAMPED (unlike 0x486f40's `FUN_00423af0(0,6)`) — a HoF record
   byte >=6 would read past `0x94d2c4`; whether the INI reader admits a pref >=6 is still open
   (M336). Also OPEN: is 0x44a1c8's big function the HoF screen itself or another list view.

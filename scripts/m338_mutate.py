@@ -33,6 +33,9 @@ DECL = {
     "MU11": {"G1"},         # INSERTION: a second 0x94d2ac load appears
     "MU12": {"G1"},         # REMOVAL: a declared load leaves the set
     "ALG1": {"G1"},         # ALGORITHM: count base materialisations as readers
+    "MU13": {"G4"},         # the [ebp-0x1c] store takes ecx instead of eax
+    "MU14": {"G7"},         # jne -> jmp on the difficulty-select branch
+    "MU15": {"G3"},         # an eax clobber between [ebp-0x1c] and BYTE[eax+0x20]
 }
 ROW = re.compile(r"^(G\d)\s+(PASS|FAIL)\b")
 
@@ -63,6 +66,7 @@ def main():
     print("baseline: %s gates=%d digest=%s" % (base_v, len(base_rows), base_dig))
     ok = base_v == "PASS" and base_rc == 0
     scored = crashes = mismatch = 0
+    measured = ["base:%s:%s" % (base_v, base_dig)]
     for mut in DECL:
         v, rows, dig, rc = run(mut)
         red = {g for g, s in rows.items() if s == "FAIL"}
@@ -71,6 +75,7 @@ def main():
             print("%-5s CRASH rc=%s" % (mut, rc))
             ok = False
             continue
+        measured.append("%s:%s:%s:%s" % (mut, v, ",".join(sorted(red)), dig))
         good = (v == "FAIL" and red == DECL[mut])
         scored += good
         if not good:
@@ -83,9 +88,7 @@ def main():
     print("HARNESS %s: %d/%d scored, %d MISMATCH, %d CRASH, digest(rows)=%s" %
           ("PASS" if (ok and mismatch == 0 and crashes == 0 and scored == len(DECL)) else "FAIL",
            scored, len(DECL), mismatch, crashes,
-           __import__("hashlib").sha256(
-               "|".join("%s:%s" % (m, ",".join(sorted(DECL[m])))
-                        for m in sorted(DECL)).encode()).hexdigest()[:16]))
+           __import__("hashlib").sha256("|".join(measured).encode()).hexdigest()[:16]))
     return 0 if ok else 1
 
 

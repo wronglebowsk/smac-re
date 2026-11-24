@@ -63,6 +63,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.path.join(ROOT, "scratch/m574/text.txt")
 EXE = os.path.join(ROOT, "programs/terran.exe")
+IDX = os.path.join(ROOT, "ghidra_out/index.csv")
 
 TABLE = 0x94D2AC
 TABLE_END = 0x94D2C4
@@ -97,13 +98,15 @@ def load():
     return ins
 
 
-def patch(ins, addr, old_bs, new_bs, old_txt, new_txt):
+def patch(ins, addr, old_bs, new_bs, old_txt, new_txt, new_mn=None):
     for i in ins:
         if i["a"] == addr:
             assert i["bs"] == bytes.fromhex(old_bs), (hex(addr), i["bs"].hex())
             assert i["ops"] == old_txt, (hex(addr), i["ops"])
             i["bs"] = bytes.fromhex(new_bs)
             i["ops"] = new_txt
+            if new_mn:
+                i["mn"] = new_mn
             return
     raise KeyError(hex(addr))
 
@@ -139,6 +142,13 @@ def apply_mut(ins):
     elif MUT == "MU11":   # INSERTION: a second table load appears
         P(ins, 0x40A519, "8b 0c 95 90 d6 94 00", "8b 0c 95 ac d2 94 00",
           "ecx,DWORD PTR [edx*4+0x94d690]", "ecx,DWORD PTR [edx*4+0x94d2ac]")
+    elif MUT == "MU13":   # the record pointer store takes ecx, not eax
+        P(ins, 0x4497B7, "89 45 e4", "89 4d e4", "DWORD PTR [ebp-0x1c],eax",
+          "DWORD PTR [ebp-0x1c],ecx")
+    elif MUT == "MU14":   # the difficulty-select branch becomes unconditional
+        P(ins, 0x59EECF, "75 05", "eb 05", "0x59eed6", "0x59eed6", "jmp")
+    elif MUT == "MU15":   # an eax clobber between the record load and the byte load
+        P(ins, 0x44A1C0, "b9 28 7b 99 00", "b8 28 7b 99 00", "ecx,0x997b28", "eax,0x997b28")
     elif MUT == "MU12":   # REMOVAL: a declared table load leaves the set
         P(ins, 0x484CC9, "8b 04 95 ac d2 94 00", "8b 04 95 90 d6 94 00",
           "eax,DWORD PTR [edx*4+0x94d2ac]", "eax,DWORD PTR [edx*4+0x94d690]")
@@ -167,6 +177,20 @@ def mem_disp(i):
         return None
     mm = re.search(r"([+-])0x([0-9a-f]+)$", m.group(1))
     return int(mm.group(2), 16) if mm else None
+
+
+def writes(i, reg):
+    """Does this instruction write `reg` (register-aware, broad mnemonic set)?"""
+    mn, ops = i["mn"], i["ops"]
+    if mn in ("cmp", "test", "push", "call", "jmp", "ret", "retn", "nop") or mn.startswith("j"):
+        return False
+    if mn.startswith("cmov") or mn.startswith("set"):
+        return ops.split(",")[0].strip() == reg
+    if mn in ("inc", "dec", "neg", "not", "pop", "bswap"):
+        return ops.strip() == reg
+    if mn in ("xchg", "xadd", "cmpxchg"):
+        return reg in [x.strip() for x in ops.split(",")]
+    return ops.split(",")[0].strip() == reg
 
 
 def imm(i):
@@ -199,6 +223,16 @@ def pe_strings(path, vas):
                 break
         else:
             out[va] = None
+    return out
+
+
+def fn_extents(path):
+    """(start, size) of every function from ghidra_out/index.csv."""
+    import csv
+    out = []
+    with open(path) as f:
+        for r in csv.DictReader(f):
+            out.append((int(r["addr"], 16), int(r["size_bytes"])))
     return out
 
 
@@ -243,7 +277,7 @@ def main():
         print("   0x%x %s" % (a, site(ins, a)["ops"]))
     print("   base materialisations: %s   stores: %s" % ([hex(a) for a in bases],
                                                          [hex(a) for a in stores]))
-    print("   loader: mov esi,0x94d2ac @0x57ac74 ; bound cmp esi,0x94d2c4 -> 6 rows")
+    print("   loader: mov esi,0x94d2ac @0x57ac74 ; bound cmp esi,0x94d2c4")
     gate("G1", loads == declared and bases == [0x4DDAFA, 0x57AC74] and not stores,
          "loads==declared=%s bases=%s stores=%s" %
          (loads == declared, [hex(a) for a in bases], stores))
@@ -259,26 +293,32 @@ def main():
     incs = [i for i in body if i["mn"] == "inc" and i["ops"].strip() == "esi"]
     bound = site(ins, 0x57C6CB)
     jl = site(ins, 0x57C6CE)
-    # every instruction in the body that writes esi
-    defs_esi = [i["a"] for i in body
-                if (i["mn"] in ("mov", "xor", "add", "sub", "shl", "or", "and",
-                                "movsx", "movzx") and dest(i) == "esi")
-                or (i["mn"] in ("inc", "dec") and i["ops"].strip() == "esi")]
+    # every instruction in the body that writes esi (broad, register-aware)
+    defs_esi = [i["a"] for i in body if writes(i, "esi")]
+    # the loader side is READ from the loader, not from the script's constants
+    ldr_base = site(ins, 0x57AC74)
+    ldr_end = site(ins, 0x57AC88)
+    ldr_step = site(ins, 0x57AC85)
+    ldr_lo = imm(ldr_base)
+    ldr_hi = imm(ldr_end)
+    ldr_rows = (ldr_hi - ldr_lo) // imm(ldr_step) if None not in (ldr_lo, ldr_hi, imm(ldr_step)) else None
     ok2 = (pre["mn"] == "xor" and pre["ops"].replace(" ", "") == "esi,esi"
            and ld["mn"] == "mov" and SCALED.search(ld["ops"]) and disp_of(ld) == TABLE
            and len(incs) == 1 and defs_esi == [0x57C6CA]
            and bound["mn"] == "cmp" and imm(bound) == 6
            and jl["mn"] == "jl" and "0x57c606" in jl["ops"]
-           and 6 == ((TABLE_END - TABLE) // 4))
+           and ldr_lo == TABLE and ldr_hi == TABLE_END
+           and ldr_rows is not None and ldr_rows == imm(bound))
     print("== G2 0x57c606: literal loop index ==")
+    print("   loader read from 0x57ac74/0x57ac85/0x57ac88: mov esi,0x%x ; add esi,0x%x ; "
+          "cmp esi,0x%x -> %s rows" % (ldr_lo, imm(ldr_step), ldr_hi, ldr_rows))
     print("   0x%x %s %s" % (pre["a"], pre["mn"], pre["ops"]))
     print("   0x%x %s %s" % (ld["a"], ld["mn"], ld["ops"]))
     print("   esi definitions in body: %s   bound=%s   back-edge=%s %s" %
           ([hex(a) for a in defs_esi], imm(bound), jl["mn"], jl["ops"]))
-    print("   rows: loader (end-base)/4 = %d == loop bound %d" %
-          ((TABLE_END - TABLE) // 4, imm(bound)))
-    gate("G2", bool(ok2), "pre=xor esi,esi body-defs=%s bound=%d rows=%d" %
-         ([hex(a) for a in defs_esi], imm(bound), (TABLE_END - TABLE) // 4))
+    print("   rows: loader (end-base)/step = %s == loop bound %s" % (ldr_rows, imm(bound)))
+    gate("G2", bool(ok2), "pre=xor esi,esi body-defs=%s bound=%s rows=%s" %
+         ([hex(a) for a in defs_esi], imm(bound), ldr_rows))
 
     # ---- G3 0x44a1c8 index -----------------------------------------------
     w = window(ins, 0x44A1B4, 0x44A1CF)
@@ -288,16 +328,19 @@ def main():
     dl = site(ins, 0x44A1C5)
     idx = site(ins, 0x44A1C8)
     between = window(ins, 0x44A1C5, 0x44A1C8)
-    ok3 = (eax_load["ops"] == "eax,DWORD PTR [ebp-0x1c]"
-           and xz["mn"] == "xor" and xz["ops"].replace(" ", "") == "edx,edx"
-           and dl["mn"] == "mov" and dl["ops"] == "dl,BYTE PTR [eax+0x20]"
-           and idx["mn"] == "mov" and SCALED.search(idx["ops"]) and disp_of(idx) == TABLE
+    exact3 = [("mov", "eax,DWORD PTR [ebp-0x1c]"), ("xor", "edx,edx"),
+              ("mov", "BYTE PTR ds:0x997120,0x0"), ("mov", "ecx,0x997b28"),
+              ("mov", "dl,BYTE PTR [eax+0x20]"), ("mov", "eax,DWORD PTR [edx*4+0x94d2ac]")]
+    clob = [i["a"] for i in window(ins, 0x44A1B5, 0x44A1C5) if writes(i, "eax")]
+    ok3 = ([(i["mn"], i["ops"]) for i in w] == exact3 and clob == []
+           and dl["mn"] == "mov" and SCALED.search(idx["ops"]) and disp_of(idx) == TABLE
            and len(between) == 1 and idx["bs"].hex() == "8b0495acd29400"
            and not [i for i in w if i["mn"] == "call"])
     print("== G3 0x44a1c8: the index is BYTE[rec+0x20] ==")
     for a, mn, o in seq:
         print("   0x%x %s %s" % (a, mn, o))
-    print("   instructions between the byte load and the table load: %d" % (len(between) - 1))
+    print("   instructions between the byte load and the table load: %d   eax clobbers "
+          "before it: %s" % (len(between) - 1, clob))
     gate("G3", bool(ok3), "window exact=%s disp=%s gap=%d" %
          (bool(ok3), hex(disp_of(idx)) if disp_of(idx) else None, len(between) - 1))
 
@@ -328,7 +371,10 @@ def main():
         coeff = None
     base_lea = site(ins, 0x4497AD)
     flag = site(ins, 0x4497A6)
+    store4 = site(ins, 0x4497B7)
+    clob4 = [i["a"] for i in window(ins, 0x4497AE, 0x4497B7) if writes(i, "eax")]
     ok4 = (slots == [0x4497B7, 0x44AA33, 0x44ACD1] and not cross
+           and store4["ops"] == "DWORD PTR [ebp-0x1c],eax" and clob4 == []
            and coeff == HOF_STRIDE and base_lea["ops"] == "eax,[edx*4+0x983a10]"
            and mem_disp(flag) == HOF)
     print("== G4 [ebp-0x1c] holds a 0x983a10 record ==")
@@ -336,6 +382,8 @@ def main():
         print("   0x%x %s %s" % (i["a"], i["mn"], i["ops"]))
     print("   stores to [ebp-0x1c]: %s   bracket crossings: %s" %
           ([hex(a) for a in slots], cross))
+    print("   0x4497b7 %s ; eax clobbers in (0x4497ad,0x4497b7): %s" %
+          (store4["ops"], clob4))
     print("   index math: edx = 35*ecx -> lea [edx*4+0x983a10] => stride 0x%x == 0x%x" %
           (coeff, HOF_STRIDE))
     gate("G4", bool(ok4), "slots=%s cross=%s stride=%s base=%s" %
@@ -349,23 +397,51 @@ def main():
     z = window(ins, 0x44B6AC, 0x44B6C8)
     zs = [(i["mn"], i["ops"]) for i in z]
     n = (HOF_END - HOF) // HOF_STRIDE
+    fopen = [(i["mn"], i["ops"]) for i in window(ins, 0x44B694, 0x44B69F)]
+    rd = [(i["mn"], i["ops"]) for i in window(ins, 0x44B6CA, 0x44B6E6)]
+    # the sibling zero-init copy in FUN_0044adc0 nests 5 records per 0x2bc group
+    sib = [(i["mn"], i["ops"]) for i in window(ins, 0x44AE15, 0x44AE4E)]
+    zero = [("mov", "eax,0x983a10"), ("mov", "ecx,0x5"),
+            ("mov", "BYTE PTR [eax],0x0"), ("add", "eax,0x8c"),
+            ("dec", "ecx"), ("jne", "0x44b6b6"), ("cmp", "eax,0x984d34"),
+            ("jl", "0x44b6b1")]
     ok5 = (strs[0x689F3C] == "rb" and strs[0x689F40] == "hallfame.jhh"
-           and imm(size_push) == 0x1324 and imm(buf_push) == HOF
-           and call["mn"] == "call" and "0x64cc00" in call["ops"]
-           and ("mov", "eax,0x983a10") in zs and ("mov", "ecx,0x5") in zs
-           and ("add", "eax,0x8c") in zs and ("cmp", "eax,0x984d34") in zs
+           and fopen == [("push", "0x689f3c"), ("push", "0x689f40"),
+                         ("call", "0x64c980")]
+           and rd == [("push", "esi"), ("push", "0x1"), ("push", "0x1324"),
+                      ("push", "0x983a10"), ("mov", "DWORD PTR ds:0x753c9c,0x0"),
+                      ("call", "0x64cc00")]
+           and zs == zero
+           and ("add", "edi,0x2bc") in sib and ("cmp", "esi,0x5") in sib
+           and 5 * HOF_STRIDE == 0x2BC
            and n == 35 and n * HOF_STRIDE == imm(size_push))
     print("== G5 0x983a10 = the hallfame.jhh buffer ==")
-    print("   fopen args: %r %r   read size 0x%x at 0x%x" %
-          (strs[0x689F3C], strs[0x689F40], imm(size_push), imm(buf_push)))
-    print("   zero-init: %s" % zs)
+    print("   fopen window 0x44b694..: %s" % (fopen,))
+    print("   sub-checks: strs=%s fopen=%s rd=%s zero=%s sib=%s" % (
+        strs[0x689F3C] == "rb" and strs[0x689F40] == "hallfame.jhh",
+        fopen == [("push", "0x689f3c"), ("push", "0x689f40"), ("call", "0x64c980")],
+        rd == [("push", "esi"), ("push", "0x1"), ("push", "0x1324"), ("push", "0x983a10"),
+               ("mov", "DWORD PTR ds:0x753c9c,0x0"), ("call", "0x64cc00")],
+        zs == [("mov", "eax,0x983a10"), ("mov", "ecx,0x5"), ("mov", "BYTE PTR [eax],0x0"),
+               ("add", "eax,0x8c"), ("dec", "ecx"), ("jne", "0x44b6b6"),
+               ("cmp", "eax,0x984d34"), ("jl", "0x44b6b1")],
+        ("add", "edi,0x2bc") in sib and ("cmp", "esi,0x5") in sib))
+    print("   read window 0x44b6ca..: %s" % (rd,))
+    print("   PE strings: %r %r" % (strs[0x689F3C], strs[0x689F40]))
+    print("   zero-init 0x44b6ac: %s" % (zs,))
+    print("   sibling FUN_0044adc0 nests 5 per 0x2bc: %s" %
+          (("add", "edi,0x2bc") in sib and ("cmp", "esi,0x5") in sib))
     print("   (0x984d34-0x983a10)/0x8c = %d records; %d*0x8c = 0x%x" %
           (n, n, n * HOF_STRIDE))
     gate("G5", bool(ok5), "file=%r size=0x%x count=%d" %
          (strs[0x689F40], imm(size_push), n))
 
     # ---- G6 the +0x20 writers --------------------------------------------
-    module = window(ins, 0x448C60, 0x44C000)
+    exts = fn_extents(IDX)
+    refs983 = [i["a"] for i in ins if "0x983a10" in i["ops"]]
+    mod = sorted({(b, sz) for b, sz in exts
+                  for a in refs983 if b <= a < b + sz})
+    module = [i for i in ins for b, sz in mod if b <= i["a"] < b + sz]
     w20 = [i["a"] for i in module
            if re.match(r"mov\s+(BYTE|WORD|DWORD) PTR \[[^\]]*\+0x20\],", i["mn"] + " " + i["ops"])]
     src = site(ins, 0x44B154)
@@ -379,7 +455,10 @@ def main():
            and cp1["ops"] == "cl,BYTE PTR [edi+0x20]" and cp2["ops"] == "BYTE PTR [esi+0x20],cl"
            and esi_base["ops"] == "esi,0x983a10")
     print("== G6 the +0x20 field's writers ==")
-    print("   stores to [reg+0x20] in 0x448c60..0x44c000: %s" % [hex(a) for a in w20])
+    print("   module = the %d functions that address 0x983a10: %s" %
+          (len(mod), [hex(b) for b, _ in mod]))
+    print("   stores to [reg+0x20] in their union: %s  (scope: a store through a computed "
+          "pointer outside them is not excluded)" % [hex(a) for a in w20])
     print("   fold: %s -> coeff %s == 0x%x" % (" ; ".join(log6), coeff6, FACTION_STRIDE))
     print("   source cell 0x%x == faction base 0x%x + 8" % (DIFF_CELL, FACTION))
     print("   copy: 0x%x %s / 0x%x %s" % (cp1["a"], cp1["ops"], cp2["a"], cp2["ops"]))
@@ -409,9 +488,10 @@ def main():
             v -= 1
     coeff7 = v * 4 if v is not None else None
     store7 = site(ins, 0x57EF57)
-    ok7 = (call_site["mn"] == "mov" and call_site["ops"] == "DWORD PTR [esi+0x94d438],eax"
-           and ("mov", "al,ds:0x985b10") in cs and ("mov", "eax,ds:0x985aec") in cs
-           and ("mov", "eax,0x3") in cs and ("test", "dl,al") in cs
+    exact7 = [("mov", "al,ds:0x985b10"), ("test", "dl,al"),
+              ("mov", "eax,ds:0x985aec"), ("jne", "0x59eed6"),
+              ("mov", "eax,0x3"), ("mov", "DWORD PTR [esi+0x94d438],eax")]
+    ok7 = (cs == exact7
            and coeff7 == FACTION_STRIDE
            and store7["ops"] == "DWORD PTR [ecx*4+0x94d438],edx")
     print("== G7 0x94d438 = the faction's effective difficulty ==")
