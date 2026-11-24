@@ -712,27 +712,29 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (3) `or r,reg` preserves an IN bit but turns a provable 0 into unknown. (4) seed every
   register UNKNOWN at entry, or a join inherits another path's value.
 
-## Session 342-chain3 — M385: nine dynamic-mask sites decided; no 0xc00, two carry 0x400 (M382's sole-0x400 reader RETRACTED)
+## Session 342-chain3 — M385: nine dynamic-mask sites resolved; no 0xc00, 0x400 at two (M382's sole-0x400 reader RETRACTED)
 
-- **ACCEPT** `python3 -u scripts/m385_mask_walk.py` -> **`PASS M385: 33/33`** `0103209f070e60f7`
-  (`evidence/m385_mask_walk.txt:122`), re-run identical (`evidence/m385_twice.txt`, cmp);
-  `scripts/m385_mutate.py` **25/25 killed** (`evidence/m385_mutate.txt:28`). Static only.
-- **DEF-USE** (`:17-26`): 4 LITERAL sites - 0x4db003/0x4db01f `mov edi,0x1000` @0x4dafcf,
-  0x4db063/0x4db07f `mov edi,0x2000` @0x4db035, all in **FUN_004dadd0** (`:22-25`), the
-  pair-relation sweep that also calls the wrapper with 0x20/0x2000000/0x400/0x40000.
-- **STACK-COPY** (`:18-21`,`:36-44`): 4 sites take edi = `[ebp+8]` (thiscall, `ret 0x4`).
-  FUN_004dacc0 has **4 callers, literal pushes {0x20,0x2000000,0x400,0x40000}**; FUN_004dabb0
-  has **ZERO call insns and ZERO dword occurrences of 0x4dabb0 in the 3,067,904-B exe**
-  (INFERRED dead; a computed dispatch is not excluded).
-- **REGISTER SITE** (`:53-76`): 0x574a66 masks `(0x0|0x10) | 0x20` = **{0x20,0x30}**
-  (xor eax,eax / mov eax,0x10 join at 0x574a53, then `or al,0x20`).
-- **VERDICT** (`:80-90`): 0x800 at **0** sites; the 0xc00 PAIR at **0** sites. **0x400 IS
-  attainable** at 0x4dacf7/0x4dad22 (push 0x400 @0x4db0aa; one test, two je paths). So
-  M382's "0x5552ff = sole 0x400-only reader" is **RETRACTED** (three now); population 15 -> 17.
-- **PITFALLS**: (1) arg = `[ebp+8]` for a `ret 0x4` callee; the push before
-  `mov ecx,this / call` is arg0. (2) A flat-dump boundary is NEITHER the ebp prologue NOR the
-  last `ret`: 0x4dad40 ends at 0x4dadc2, FUN_004dadd0 (frameless) starts at 0x4dadd0,
-  FUN_004dabb0 has an early ret. Entry = call-target UNION prologue, checked vs
-  `ghidra_out/index.csv` (`:103-113`). (3) `or al,imm` is a partial write - map al->eax or the
-  def scan walks past it. (4) the 0x94d448 whole-file count (653) calibrates the dword census.
-- **OPEN**: FUN_004dabb0's entry mechanism and 0x551cf0's boolean arg noun.
+- **ACCEPT** `python3 -u scripts/m385_mask_walk.py` -> **`PASS M385: 44/44`** `0103209f070e60f7`
+  (`evidence/m385_mask_walk.txt:140`), re-run identical (`evidence/m385_twice.txt`, cmp);
+  `scripts/m385_mutate.py` **33/33 killed** (`evidence/m385_mutate.txt:36`). Static only.
+- **DEF-USE** (`:17-26`): 4 LITERAL sites - 0x1000 @0x4dafcf (0x4db003/0x4db01f), 0x2000
+  @0x4db035 (0x4db063/0x4db07f); the nearest def DOMINATES each site (no branch enters the
+  def-site gap, `:35`).
+- **STACK-COPY** (`:18-21`,`:37-52`): 4 sites take edi = `[ebp+8]` (`ret 0x4`, one literal
+  push each). FUN_004dacc0: 4 callers push {0x20,0x2000000,0x400,0x40000}; FUN_004dabb0:
+  0 call insns + 0 dword refs of 0x4dabb0 in 3,067,904 B -> **DEAD-INF** (2 sites excluded
+  from the proven set).
+- **REGISTER SITE** (`:59-82`): 0x574a66 masks `(0x0|0x10)|0x20` = **{0x20,0x30}**.
+- **VERDICT** (`:86-95`): 7 PROVEN + 2 DEAD-INF; 0x800 at no PROVEN site; the 0xc00 pair at no
+  PROVEN site; **0x400 asked ALONE at 0x4dacf7/0x4dad22** (push 0x400 @0x4db0aa, one test,
+  two je paths). M382's "0x5552ff = sole 0x400 reader" is **RETRACTED**, counted against
+  M382's own PASS evidence: 1+2 = 3, population 15 -> 17 (`:124-131`).
+- **PITFALLS**: (1) arg = `[ebp+8]` for a `ret 0x4` callee. (2) A flat-dump boundary is
+  neither the ebp prologue nor the last `ret` (0x4dad40 ends 0x4dadc2;
+  FUN_004dadd0 is frameless). Entry = call-target UNION prologue,
+  checked vs index.csv (`:112-120`). (3) `or al,imm` is a partial write: map al->eax.
+  (4) M382's 0x94d448 count (653) calibrates the dword census.
+- **REVIEW (10 findings)**: dominance-gated def tracer; caller decoder requires `ret 0x4`
+  + one literal push; exe size asserted; "0x400 alone" == mask 0x400; population COUNTED
+  from M382's evidence; second-derivation digest; rotate `--verify` full sha1.
+- **OPEN**: FUN_004dabb0's entry mechanism (INF) and 0x551cf0's boolean-arg noun.

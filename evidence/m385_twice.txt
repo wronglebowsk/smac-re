@@ -15,15 +15,15 @@ G0  parse / population
   ok   G0 nine dynamic sites - 9
 
 G1  mask register -> reaching definition (inside the containing function)
-  0x4dabe7   reg=edi func=0x4dabb0   def=0x4dabb5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
-  0x4dac10   reg=edi func=0x4dabb0   def=0x4dabb5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
-  0x4dacf7   reg=edi func=0x4dacc0   def=0x4dacc5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
-  0x4dad22   reg=edi func=0x4dacc0   def=0x4dacc5   STACKARG mov    edi,DWORD PTR [ebp+0x8]
-  0x4db003   reg=edi func=0x4dadd0   def=0x4dafcf   CONST    mov    edi,0x1000
-  0x4db01f   reg=edi func=0x4dadd0   def=0x4dafcf   CONST    mov    edi,0x1000
-  0x4db063   reg=edi func=0x4dadd0   def=0x4db035   CONST    mov    edi,0x2000
-  0x4db07f   reg=edi func=0x4dadd0   def=0x4db035   CONST    mov    edi,0x2000
-  0x574a66   reg=eax func=0x574370   def=0x574a55   ORIMM    or     al,0x20
+  0x4dabe7   reg=edi func=0x4dabb0   def=0x4dabb5   STACKARG dominates mov    edi,DWORD PTR [ebp+0x8]
+  0x4dac10   reg=edi func=0x4dabb0   def=0x4dabb5   STACKARG dominates mov    edi,DWORD PTR [ebp+0x8]
+  0x4dacf7   reg=edi func=0x4dacc0   def=0x4dacc5   STACKARG dominates mov    edi,DWORD PTR [ebp+0x8]
+  0x4dad22   reg=edi func=0x4dacc0   def=0x4dacc5   STACKARG dominates mov    edi,DWORD PTR [ebp+0x8]
+  0x4db003   reg=edi func=0x4dadd0   def=0x4dafcf   CONST    dominates mov    edi,0x1000
+  0x4db01f   reg=edi func=0x4dadd0   def=0x4dafcf   CONST    dominates mov    edi,0x1000
+  0x4db063   reg=edi func=0x4dadd0   def=0x4db035   CONST    dominates mov    edi,0x2000
+  0x4db07f   reg=edi func=0x4dadd0   def=0x4db035   CONST    dominates mov    edi,0x2000
+  0x574a66   reg=eax func=0x574370   def=0x574a55   ORIMM    dominates or     al,0x20
   CONST sites: 0x4db003=0x1000, 0x4db01f=0x1000, 0x4db063=0x2000, 0x4db07f=0x2000
   STACKARG functions: 0x4dabb0, 0x4dacc0
   ok   G1 four CONST masks - 4
@@ -32,20 +32,26 @@ G1  mask register -> reaching definition (inside the containing function)
   ok   G1 one ORIMM site 0x574a66 - ['0x574a66']
   ok   G1 the four literal sites sit in FUN_0x4dadd0 (an early ret ends 0x4dad40) - ['0x4dadd0', '0x4dadd0', '0x4dadd0', '0x4dadd0']
   ok   G1 no UNKNOWN/NONE row - []
+  ok   G1 every reaching def DOMINATES its site (no branch enters the def-site gap) - []
 
 G2  STACKARG functions: call census + address-taken census (whole exe)
-  FUN_0x4dabb0  call-site-insns=0  absolute-dword-occurrences=0
+  exe: /home/paul/reverse/smac/terran.exe  size=3067904 B
+  ok   G2 the censused file is the 3,067,904-B terran.exe - 3067904
+  FUN_0x4dabb0  call-site-insns=0  absolute-dword-occurrences=0  ret4=2 other-ret=0
   ok   G2 FUN_0x4dabb0 address-taken occurrences 0 - 0
+  ok   G2 FUN_0x4dabb0 has the `ret 0x4` one-arg shape - ret4=2 other=0
   ok   G2 FUN_0x4dabb0 has ZERO direct callers - 0
-  FUN_0x4dacc0  call-site-insns=4  absolute-dword-occurrences=0
-    call @0x4db099   arg=0x20
-    call @0x4db0a5   arg=0x2000000
-    call @0x4db0b1   arg=0x400
-    call @0x4db0bd   arg=0x40000
+  FUN_0x4dacc0  call-site-insns=4  absolute-dword-occurrences=0  ret4=2 other-ret=0
+    call @0x4db099   arg=0x20       pushes=1
+    call @0x4db0a5   arg=0x2000000  pushes=1
+    call @0x4db0b1   arg=0x400      pushes=1
+    call @0x4db0bd   arg=0x40000    pushes=1
   ok   G2 FUN_0x4dacc0 address-taken occurrences 0 - 0
+  ok   G2 FUN_0x4dacc0 has the `ret 0x4` one-arg shape - ret4=2 other=0
   ok   G2 FUN_0x4dacc0 has 4 direct callers - 4
+  ok   G2 each call carries EXACTLY ONE pushed argument - [(5091481, '0x20', 1), (5091493, '0x2000000', 1), (5091505, '0x400', 1), (5091517, '0x40000', 1)]
   ok   G2 its pushed arg masks are {0x20,0x400,0x40000,0x2000000} - ['0x20', '0x2000000', '0x400', '0x40000']
-  ok   G2 every arg is a literal push (no register arg) - [(5091481, '0x20'), (5091493, '0x2000000'), (5091505, '0x400'), (5091517, '0x40000')]
+  ok   G2 every arg is a literal push (no register arg) - [(5091481, '0x20', 1), (5091493, '0x2000000', 1), (5091505, '0x400', 1), (5091517, '0x40000', 1)]
   ok   G2 the 0x400 mask reaches the pair test: a NEW 0x400-only reader - push 0x400 @0x4db0aa
   ok   G2 no pushed arg carries 0x800 - ['0x20', '0x2000000', '0x400', '0x40000']
   ok   G2 no pushed arg carries the 0xc00 PAIR - ['0x20', '0x2000000', '0x400', '0x40000']
@@ -78,23 +84,24 @@ G3  site 0x574a66: mask built by `or al,imm` on two converging paths
   ok   G3 composed set is exactly {0x20,0x30} - ['0x20', '0x30']
 
 G4  VERDICT - attainable mask per site, per 0xc00 bit
-  0x4dabe7   func=0x4dabb0   STACKARG masks=-                            0x400:no    0x800:no    0xc00-pair:no    (zero callers + not address-taken -> never invoked)
-  0x4dac10   func=0x4dabb0   STACKARG masks=-                            0x400:no    0x800:no    0xc00-pair:no    (zero callers + not address-taken -> never invoked)
-  0x4dacf7   func=0x4dacc0   STACKARG masks=0x20,0x400,0x40000,0x2000000 0x400:0x400 0x800:no    0xc00-pair:no    (4 caller pushes; no other reference to the function)
-  0x4dad22   func=0x4dacc0   STACKARG masks=0x20,0x400,0x40000,0x2000000 0x400:0x400 0x800:no    0xc00-pair:no    (4 caller pushes; no other reference to the function)
-  0x4db003   func=0x4dadd0   CONST    masks=0x1000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
-  0x4db01f   func=0x4dadd0   CONST    masks=0x1000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
-  0x4db063   func=0x4dadd0   CONST    masks=0x2000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
-  0x4db07f   func=0x4dadd0   CONST    masks=0x2000                       0x400:no    0x800:no    0xc00-pair:no    (literal imm in the same function)
-  0x574a66   func=0x574370   ORIMM    masks=0x20,0x30                    0x400:no    0x800:no    0xc00-pair:no    (xor/mov + `or al,imm` path set)
-  ok   G4 all nine masks decided (no unknown set) - 9
-  ok   G4 NO site's mask can contain 0x800 - []
-  ok   G4 NO site's mask can contain the 0xc00 PAIR - []
-  ok   G4 exactly TWO sites can ask 0x400 alone (0x4dacf7 0x4dad22) - ['0x4dacf7', '0x4dad22']
+  0x4dabe7   func=0x4dabb0   STACKARG DEAD-INF masks=-                            0x400-only:no    0x800:no    0xc00-pair:no   
+  0x4dac10   func=0x4dabb0   STACKARG DEAD-INF masks=-                            0x400-only:no    0x800:no    0xc00-pair:no   
+  0x4dacf7   func=0x4dacc0   STACKARG PROVEN   masks=0x20,0x400,0x40000,0x2000000 0x400-only:0x400 0x800:no    0xc00-pair:no   
+  0x4dad22   func=0x4dacc0   STACKARG PROVEN   masks=0x20,0x400,0x40000,0x2000000 0x400-only:0x400 0x800:no    0xc00-pair:no   
+  0x4db003   func=0x4dadd0   CONST    PROVEN   masks=0x1000                       0x400-only:no    0x800:no    0xc00-pair:no   
+  0x4db01f   func=0x4dadd0   CONST    PROVEN   masks=0x1000                       0x400-only:no    0x800:no    0xc00-pair:no   
+  0x4db063   func=0x4dadd0   CONST    PROVEN   masks=0x2000                       0x400-only:no    0x800:no    0xc00-pair:no   
+  0x4db07f   func=0x4dadd0   CONST    PROVEN   masks=0x2000                       0x400-only:no    0x800:no    0xc00-pair:no   
+  0x574a66   func=0x574370   ORIMM    PROVEN   masks=0x20,0x30                    0x400-only:no    0x800:no    0xc00-pair:no   
+  ok   G4 seven sites are PROVEN from a dominating def; two are DEAD-INF (no static entry) - [('0x4dabe7', 'DEAD-INF'), ('0x4dac10', 'DEAD-INF'), ('0x4dacf7', 'PROVEN'), ('0x4dad22', 'PROVEN'), ('0x4db003', 'PROVEN'), ('0x4db01f', 'PROVEN'), ('0x4db063', 'PROVEN'), ('0x4db07f', 'PROVEN'), ('0x574a66', 'PROVEN')]
+  ok   G4 NO PROVEN site's mask can contain 0x800 - []
+  ok   G4 NO PROVEN site's mask can contain the 0xc00 PAIR - []
+  ok   G4 exactly TWO PROVEN sites can ask 0x400 ALONE (0x4dacf7 0x4dad22) - ['0x4dacf7', '0x4dad22']
+  ok   G4 no mask mixes 0x400 with another bit at any site - []
   ok   G4 the 0x400 sites are the SAME logical test, two je paths of FUN_0x4dacc0 - func 0x4dacc0
 
 G5  rivals (each must be refuted by the printed numbers)
-  ok   R1 'some site's mask is a runtime pair word loaded from memory' refuted - every mask is a literal, or an arg pushed as a literal
+  ok   R1 'some site's mask is a runtime pair word loaded from memory' refuted - every def dominates its site and is a literal or an arg pushed as a literal
   ok   R2 'FUN_0x4dabb0 is live and gets 0xc00 from an unseen caller' refuted - 0 calls, 0 dword occurrences in 3067904 B
   ok   R3 '0x4dadd0's 0x1000/0x2000 sites inherit the arg' refuted - nearest def is the literal, after the prologue's [ebp+8]
   ok   R4 '0x574a66's high eax bytes could carry 0xc00' refuted - xor eax,eax / mov eax,0x10 write the whole dword
@@ -114,9 +121,20 @@ G7  attribution cross-check against ghidra_out/index.csv
   ok   G7 hosts are FUN_004dabb0 / 004dacc0 / 004dadd0 / 00574370 - {5090279: 'FUN_004dabb0', 5090320: 'FUN_004dabb0', 5090551: 'FUN_004dacc0', 5090594: 'FUN_004dacc0', 5091331: 'FUN_004dadd0', 5091359: 'FUN_004dadd0', 5091427: 'FUN_004dadd0', 5091455: 'FUN_004dadd0', 5720678: 'FUN_00574370'}
   ok   G7 index.csv sizes split the neighbours (0x4dad40 ends before 0x4dadd0) - 0x4dadd0
 
-G6  digest
-  digest=0103209f070e60f7  recomputed=0103209f070e60f7
+G8  cross-milestone population (reads M382's own PASS evidence)
+  M382 PASS line present: True
+  M382 0x400-only register readers: 1
+   load 0x5552f9   test 0x5552ff   mask=0x400    test   ah,0x4
+  M385 0x400-only sites: 2
+  ok   G8 M382's evidence is a passing run - /home/paul/reverse/wt-chain3/evidence/m382_treaty_readers.txt
+  ok   G8 M382 had exactly ONE 0x400-only register reader (0x5552ff) - 1
+  ok   G8 total 0x400-only readers is 3 (1 + 2 here) - the retraction is COUNTED - 3
+  ok   G8 population 15 -> 17 - 17
+
+G6  digest (second derivation from the parsed rows)
+  digest=0103209f070e60f7  recomputed=0103209f070e60f7  tables_equal=True
+  ok   G6 the two derivations agree - 0103209f070e60f7/0103209f070e60f7
   ok   G6 digest stable and pinned - 0103209f070e60f7
 
-M385: 33/33 checks passed
-PASS M385: 33/33  0103209f070e60f7
+M385: 44/44 checks passed
+PASS M385: 44/44  0103209f070e60f7

@@ -13,6 +13,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SCRIPT = os.path.join(HERE, "m385_mask_walk.py")
 
 MUTANTS = [
+    ("MU0", "G0 the nine-site population is a measurement",
+     {"M385_PATCH": "0x574a66|test   DWORD PTR [edx*4+0x94d448],0x20"},
+     "G0 nine dynamic sites"),
     ("MU1", "G1 four CONST masks: 0x4dafcf's literal is the reaching def",
      {"M385_PATCH": "0x4dafcf|mov    edi,DWORD PTR [ebp+0x8]"}, "G1 four CONST masks"),
     ("MU2", "G1 const set {0x1000 x2, 0x2000 x2}",
@@ -51,9 +54,9 @@ MUTANTS = [
     ("MU17", "R5 the wrapper's callers bound the mask",
      {"M385_PATCH": "0x4db0bd|push   0xc00"}, "R5 'the generic wrapper admits any mask' refuted"),
     ("MU18", "G4 NO site can contain 0x800 (bit classifier)",
-     {"M385_PATCH": "0x4db09e|push   0x800"}, "G4 NO site's mask can contain 0x800"),
+     {"M385_PATCH": "0x4db09e|push   0x800"}, "G4 NO PROVEN site's mask can contain 0x800"),
     ("MU19", "G4 exactly TWO 0x400 sites",
-     {"M385_PATCH": "0x4db0aa|push   0x800"}, "G4 exactly TWO sites"),
+     {"M385_PATCH": "0x4db0aa|push   0x800"}, "G4 exactly TWO PROVEN sites"),
     ("MU20", "G6 digest pins the verdict table",
      {"M385_PATCH": "0x4db035|mov    edi,0x3000"}, "G6 digest stable and pinned"),
     ("MA1", "ALGO: calls clobber callee-saved edi (def tracer)",
@@ -61,19 +64,40 @@ MUTANTS = [
     ("MA2", "ALGO: `or al` path join ignored (classifier)",
      {"M385_ALGO": "2"}, "G3 composed set is exactly"),
     ("MA3", "ALGO: 0x400 and 0x800 read as one bit (bit classifier)",
-     {"M385_ALGO": "3"}, "G4 NO site's mask can contain 0x800"),
+     {"M385_ALGO": "3"}, "G4 NO PROVEN site's mask can contain 0x800"),
     ("MA4", "ALGO: body bounded by the ebp frame, blind to the early ret (attribution)",
      {"M385_ALGO": "4"}, "G1 the four literal sites sit in FUN_0x4dadd0"),
     ("MA5", "ALGO: same attribution law, cross-checked against index.csv",
      {"M385_ALGO": "4"}, "G7 func_of agrees with index.csv"),
+    ("MA6", "ALGO: every forward branch counts as an entry (dominance law)",
+     {"M385_ALGO": "5"}, "G1 every reaching def DOMINATES"),
+    ("MA7", "ALGO: a mis-derived bit column diverges between the two digests",
+     {"M385_ALGO": "3"}, "G6 the two derivations agree"),
+    ("MU21", "G1 dominance: a branch injected into the def-site gap",
+     {"M385_PATCH": "0x4dabbb|jmp    0x4db003"}, "G1 every reaching def DOMINATES"),
+    ("MU22", "G2 each call carries exactly one pushed argument",
+     {"M385_PATCH": "0x4db0a3|push   eax"}, "G2 each call carries EXACTLY ONE"),
+    ("MU23", "G2 the censused file is the pinned 3,067,904-B terran.exe",
+     {"M385_TRUNC": "1"}, "G2 the censused file is the 3,067,904-B terran.exe"),
+    ("MU24", "G8 the total 0x400-only reader count is counted, not asserted",
+     {"M385_PATCH": "0x4db0aa|push   0x800"}, "G8 total 0x400-only readers is 3"),
+    ("MU25", "G8 population 15 -> 17",
+     {"M385_PATCH": "0x4db0aa|push   0x800"}, "G8 population 15 -> 17"),
 ]
 
 
 def run(env):
     e = dict(os.environ)
-    e.pop("M385_PATCH", None)
-    e.pop("M385_ALGO", None)
-    e.update(env)
+    for k in ("M385_PATCH", "M385_ALGO", "M385_EXE"):
+        e.pop(k, None)
+    if env.get("M385_TRUNC"):
+        import tempfile
+        src = open("/home/paul/reverse/smac/terran.exe", "rb").read()[:1000000]
+        fd, path = tempfile.mkstemp(suffix=".exe")
+        os.write(fd, src)
+        os.close(fd)
+        e["M385_EXE"] = path
+    e.update({k: v for k, v in env.items() if not k.startswith("M385_TRUNC")})
     p = subprocess.run([sys.executable, "-u", SCRIPT], capture_output=True, text=True, env=e)
     return p.returncode, p.stdout + p.stderr
 

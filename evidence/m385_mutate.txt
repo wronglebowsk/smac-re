@@ -1,3 +1,4 @@
+MU0   KILLED G0 the nine-site population is a measurement                                   
 MU1   KILLED G1 four CONST masks: 0x4dafcf's literal is the reaching def                    
 MU2   KILLED G1 const set {0x1000 x2, 0x2000 x2}                                            
 MU3   KILLED G1 four STACKARG sites in two functions                                        
@@ -23,6 +24,13 @@ MA2   KILLED ALGO: `or al` path join ignored (classifier)
 MA3   KILLED ALGO: 0x400 and 0x800 read as one bit (bit classifier)                         
 MA4   KILLED ALGO: body bounded by the ebp frame, blind to the early ret (attribution)      
 MA5   KILLED ALGO: same attribution law, cross-checked against index.csv                    
+MA6   KILLED ALGO: every forward branch counts as an entry (dominance law)                  
+MA7   KILLED ALGO: a mis-derived bit column diverges between the two digests                
+MU21  KILLED G1 dominance: a branch injected into the def-site gap                          
+MU22  KILLED G2 each call carries exactly one pushed argument                               
+MU23  KILLED G2 the censused file is the pinned 3,067,904-B terran.exe                      
+MU24  KILLED G8 the total 0x400-only reader count is counted, not asserted                  
+MU25  KILLED G8 population 15 -> 17                                                         
 
-25/25 mutants killed
-PASS M385-mutate: 25/25
+33/33 mutants killed
+PASS M385-mutate: 33/33

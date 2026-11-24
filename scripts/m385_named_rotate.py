@@ -35,14 +35,20 @@ def main():
     if "--verify" in sys.argv:
         body = open(ARCHIVE).read().split("\n\n", 1)[1]
         got = hashlib.sha1(body.encode()).hexdigest()
-        ln = next((ln for ln in text.splitlines() if ln.startswith(HEAD)), None)
-        if ln is None:
-            print("MISSING stub")
-            return 1
+        stubs = [ln for ln in text.splitlines() if ln.startswith(HEAD)]
+        ok = True
+        print("archive sha1 %s  bytes=%d" % (got, len(body)))
+        ok &= len(stubs) == 1
+        print("NAMED %s lines: %d %s" % (HEAD, len(stubs), "ok" if len(stubs) == 1 else "FAIL"))
+        ln = stubs[0] if stubs else ""
         want = ln.split("sha1 `")[1].split("`")[0] if "sha1 `" in ln else ""
-        print("archive %s... stub %s... %s" % (got[:16], want[:16],
-              "PASS" if want.startswith(got) or got.startswith(want) else "FAIL"))
-        return 0 if (want.startswith(got) or got.startswith(want)) else 1
+        print("stub sha1 %s  %s" % (want, "ok" if want == got else "FAIL (full 40-char equality)"))
+        ok &= want == got
+        ok &= "FULL rows VERBATIM" in ln and len(body) > 500
+        print("stub names the archive and the body is non-trivial: %s"
+              % ("ok" if ok else "FAIL"))
+        print("VERIFY " + ("PASS" if ok else "FAIL"))
+        return 0 if ok else 1
     body, pre, post = split_block(text)
     if "VERBATIM at `docs/named-archive-m385-m364-rows.md`" in body:
         print("already rotated")

@@ -128,47 +128,90 @@ def dynamic_sites():
 
 
 def reaching_def(i, reg):
-    """Backward scan inside the body; returns (addr, body) of the first write."""
+    """Backward scan inside the body; returns (addr, body, bypass) of the first write.
+
+    `bypass` is True when some branch/jump whose SOURCE lies outside [def, site]
+    targets an address inside (def, site): then a path reaches the site without
+    executing the def, and the nearest linear write is not the only reaching def.
+    """
     lo = func_of(i)[1]
+    da, db = None, None
     for j in range(i - 1, lo - 1, -1):
         a, b = INS[j]
         if writes(b, reg):
-            return a, b
+            da, db = a, b
+            break
         if is_call(b) and ALGO != 1 and reg in CALLEE_SAVED:
             continue                       # callee-saved: a call cannot redefine it
         if is_call(b) and ALGO == 1:
-            return a, b                    # law mutant: calls clobber
+            return a, b, True              # law mutant: calls clobber
         if is_call(b) and reg not in CALLEE_SAVED:
-            return a, b
-    return None, None
+            return a, b, True
+    if db is None:
+        return None, None, True
+    if ALGO == 5:                          # law mutant: every forward branch counts as an entry
+        return da, db, any(da < int(m.group(1), 16) <= INS[i][0]
+                           for k in range(0, i + 1)
+                           for m in [re.search(r"(?:j\w+|loop)\s+0x([0-9a-f]+)$", INS[k][1])] if m)
+    bypass = False
+    for k in range(0, i + 1):
+        bb = INS[k][1]
+        if not (bb.startswith("j") or bb.startswith("loop")):
+            continue
+        m = re.search(r"(?:j\w+|loop)\s+0x([0-9a-f]+)$", bb)
+        if not m:
+            continue
+        t = int(m.group(1), 16)
+        if da < t <= INS[i][0] and not (da <= INS[k][0] <= INS[i][0]):
+            bypass = True
+    return da, db, bypass
+
+
+def callee_argc(fn):
+    """(n_ret4, n_other_ret) over the callee's entry body - the `ret 0x4` shape."""
+    lo = ADDR.index(fn)
+    hi = len(INS)
+    for k in range(lo + 1, len(INS)):
+        if INS[k][0] in ENTRIES and k > lo + 1:
+            hi = k
+            break
+    n4 = sum(1 for k in range(lo, hi) if INS[k][1].startswith("ret    0x4"))
+    no = sum(1 for k in range(lo, hi) if INS[k][1].startswith("ret")
+             and not INS[k][1].startswith("ret    0x4"))
+    return n4, no
 
 
 def caller_census(fn):
-    """All direct calls to fn: (call_addr, arg_text) with the pushed stack argument."""
+    """All EXACT direct calls to fn: (call_addr, arg_text, n_pushes_before_call)."""
     out = []
-    pat = "0x%x" % fn
+    pat = re.compile(r"call\s+0x%x$" % fn)
     for i, (a, b) in enumerate(INS):
-        if not b.startswith("call") or pat not in b:
+        if not pat.match(b):
             continue
-        arg = None
+        arg, npush = None, 0
         for j in range(i - 1, max(-1, i - 8), -1):
             bb = INS[j][1]
             if bb.startswith("push"):
-                arg = bb.split(None, 1)[1].strip()
+                npush += 1
+                if arg is None:
+                    arg = bb.split(None, 1)[1].strip()
+                continue
+            if bb.startswith(("add    esp", "sub    esp", "pop", "ret", "call")):
                 break
-            if bb.startswith(("add    esp", "sub    esp", "call", "pop", "ret")):
-                arg = "STACK-BROKEN"
-                break
-        out.append((a, arg))
+        if arg is None:
+            arg = "STACK-BROKEN"
+        out.append((a, arg, npush))
     return out
 
 
+EXEDATA = open(EXE, "rb").read()
+
+
 def dword_occ(fn):
-    data = open(EXE, "rb").read()
-    pat = fn.to_bytes(4, "little")
+    data = EXEDATA
     if ALGO == 4:
         data = data[:0x100000]
-    return data.count(pat)
+    return data.count(fn.to_bytes(4, "little"))
 
 
 print("M385 nine dynamic-mask sites - field = DWORD [pair*4 + 0x%s]" % FIELD)
@@ -189,7 +232,7 @@ for a, b in sites:
     i = ADDR.index(a)
     reg = b.rsplit(",", 1)[1].strip()
     fa, _lo = func_of(i)
-    da, db = reaching_def(i, reg)
+    da, db, bypass = reaching_def(i, reg)
     if db is None:
         kind, val = "NONE", None
     elif re.match(r"mov\s+%s,(0x[0-9a-f]+)$" % reg, db):
@@ -201,9 +244,9 @@ for a, b in sites:
     else:
         kind, val = "UNKNOWN", db
     rows.append({"site": a, "text": b, "reg": reg, "func": fa, "def": da,
-                 "deftxt": db, "kind": kind, "val": val})
-    print("  0x%-8x reg=%-3s func=0x%-8x def=0x%-8x %-8s %s"
-          % (a, reg, fa, da if da else 0, kind, db))
+                 "deftxt": db, "kind": kind, "val": val, "bypass": bypass})
+    print("  0x%-8x reg=%-3s func=0x%-8x def=0x%-8x %-8s %-9s %s"
+          % (a, reg, fa, da if da else 0, kind, "BYPASS" if bypass else "dominates", db))
 
 consts = [(r["site"], r["val"]) for r in rows if r["kind"] == "CONST"]
 argfns = sorted(set(r["func"] for r in rows if r["kind"] == "STACKARG"))
@@ -223,33 +266,42 @@ check("G1 the four literal sites sit in FUN_0x4dadd0 (an early ret ends 0x4dad40
       str([hex(r["func"]) for r in rows if r["kind"] == "CONST"]))
 check("G1 no UNKNOWN/NONE row", not any(r["kind"] in ("UNKNOWN", "NONE") for r in rows),
       str([hex(r["site"]) for r in rows if r["kind"] in ("UNKNOWN", "NONE")]))
+check("G1 every reaching def DOMINATES its site (no branch enters the def-site gap)",
+      not any(r["bypass"] for r in rows),
+      str([hex(r["site"]) for r in rows if r["bypass"]]))
 
 # ---------------- G2 -----------------------------------------------------------
 print("\nG2  STACKARG functions: call census + address-taken census (whole exe)")
+print("  exe: %s  size=%d B" % (EXE, len(EXEDATA)))
+check("G2 the censused file is the 3,067,904-B terran.exe", len(EXEDATA) == 3067904, str(len(EXEDATA)))
 mask_sets = {}
 for fn in argfns:
     calls = caller_census(fn)
     occ = dword_occ(fn)
-    print("  FUN_0x%x  call-site-insns=%d  absolute-dword-occurrences=%d" % (fn, len(calls), occ))
-    for ca, arg in calls:
-        print("    call @0x%-8x arg=%s" % (ca, arg))
+    n4, no = callee_argc(fn)
+    print("  FUN_0x%x  call-site-insns=%d  absolute-dword-occurrences=%d  ret4=%d other-ret=%d"
+          % (fn, len(calls), occ, n4, no))
+    for ca, arg, np in calls:
+        print("    call @0x%-8x arg=%-10s pushes=%d" % (ca, arg, np))
     vals = set()
-    for _, arg in calls:
-        if arg and re.match(r"^0x[0-9a-f]+$", arg):
-            vals.add(int(arg, 16))
-        elif arg and re.match(r"^0x[0-9a-f]+$", str(arg)):
+    for _, arg, _np in calls:
+        if arg and re.match(r"^0x[0-9a-f]+$", str(arg)):
             vals.add(int(arg, 16))
     mask_sets[fn] = vals
     check("G2 FUN_0x%x address-taken occurrences 0" % fn, occ == 0, str(occ))
+    check("G2 FUN_0x%x has the `ret 0x4` one-arg shape" % fn, n4 >= 1 and no == 0,
+          "ret4=%d other=%d" % (n4, no))
     if fn == 0x4DABB0:
         check("G2 FUN_0x4dabb0 has ZERO direct callers", len(calls) == 0, str(len(calls)))
     else:
         check("G2 FUN_0x4dacc0 has 4 direct callers", len(calls) == 4, str(len(calls)))
+        check("G2 each call carries EXACTLY ONE pushed argument",
+              all(np == 1 for _, _, np in calls), str(calls))
         check("G2 its pushed arg masks are {0x20,0x400,0x40000,0x2000000}",
               vals == {0x20, 0x400, 0x40000, 0x2000000},
               str(sorted(hex(v) for v in vals)))
         check("G2 every arg is a literal push (no register arg)",
-              all(re.match(r"^0x[0-9a-f]+$", a or "") for _, a in calls),
+              all(re.match(r"^0x[0-9a-f]+$", a or "") for _, a, _ in calls),
               str(calls))
         check("G2 the 0x400 mask reaches the pair test: a NEW 0x400-only reader",
               0x400 in vals, "push 0x400 @0x4db0aa")
@@ -299,39 +351,47 @@ for r in rows:
     else:
         s = mask_sets.get(r["func"])
         if s is None:                    # function missed the STACKARG census: derive here
-            s = set(int(a, 16) for _, a in caller_census(r["func"])
+            s = set(int(a, 16) for _, a, _n in caller_census(r["func"])
                     if a and re.match(r"^0x[0-9a-f]+$", a))
         why = "4 caller pushes; no other reference to the function"
-    b400 = sorted(v for v in s if v & 0x400)
+    b400 = sorted(v for v in s if v == 0x400)          # "0x400 ALONE" == the mask
+    b400x = sorted(v for v in s if (v & 0x400) and v != 0x400)
     b800 = sorted(v for v in s if (v & (CORE if ALGO == 3 else 0x800)))
     pair = sorted(v for v in s if (v & CORE) == CORE)
-    verdict.append((r["site"], r["func"], r["kind"], s, b400, b800, pair, why))
-    print("  0x%-8x func=0x%-8x %-8s masks=%-28s 0x400:%-5s 0x800:%-5s 0xc00-pair:%-5s (%s)"
-          % (r["site"], r["func"], r["kind"],
+    status = "DEAD-INF" if r["func"] == 0x4DABB0 else "PROVEN"
+    verdict.append((r["site"], r["func"], r["kind"], s, b400, b800, pair, status, why, b400x))
+    print("  0x%-8x func=0x%-8x %-8s %-8s masks=%-28s 0x400-only:%-5s 0x800:%-5s 0xc00-pair:%-5s"
+          % (r["site"], r["func"], r["kind"], status,
              ",".join(hex(v) for v in sorted(s)) or "-",
              ",".join(hex(v) for v in b400) or "no",
              ",".join(hex(v) for v in b800) or "no",
-             ",".join(hex(v) for v in pair) or "no", why))
-live = [v for v in verdict if v[3]]
-check("G4 all nine masks decided (no unknown set)", len(verdict) == 9 and
-      all(v[2] != "UNKNOWN" for v in verdict), str(len(verdict)))
-check("G4 NO site's mask can contain 0x800", all(not v[5] for v in verdict),
-      str([hex(v[0]) for v in verdict if v[5]]))
-check("G4 NO site's mask can contain the 0xc00 PAIR", all(not v[6] for v in verdict),
-      str([hex(v[0]) for v in verdict if v[6]]))
-check("G4 exactly TWO sites can ask 0x400 alone (0x4dacf7 0x4dad22)",
+             ",".join(hex(v) for v in pair) or "no"))
+live = [v for v in verdict if v[7] == "PROVEN"]
+check("G4 seven sites are PROVEN from a dominating def; two are DEAD-INF (no static entry)",
+      len(live) == 7 and sum(1 for v in verdict if v[7] == "DEAD-INF") == 2,
+      str([(hex(v[0]), v[7]) for v in verdict]))
+check("G4 NO PROVEN site's mask can contain 0x800",
+      all(not v[5] for v in verdict if v[7] == "PROVEN"),
+      str([hex(v[0]) for v in verdict if v[7] == "PROVEN" and v[5]]))
+check("G4 NO PROVEN site's mask can contain the 0xc00 PAIR",
+      all(not v[6] for v in verdict if v[7] == "PROVEN"),
+      str([hex(v[0]) for v in verdict if v[7] == "PROVEN" and v[6]]))
+check("G4 exactly TWO PROVEN sites can ask 0x400 ALONE (0x4dacf7 0x4dad22)",
       [v[0] for v in verdict if v[4]] == [0x4DACF7, 0x4DAD22],
       str([hex(v[0]) for v in verdict if v[4]]))
+check("G4 no mask mixes 0x400 with another bit at any site",
+      not any(v[9] for v in verdict), str([hex(x) for v in verdict for x in v[9]]))
 check("G4 the 0x400 sites are the SAME logical test, two je paths of FUN_0x4dacc0",
       verdict[2][1] == 0x4DACC0 and verdict[3][1] == 0x4DACC0, "func 0x4dacc0")
 
 # ---------------- G5 -----------------------------------------------------------
 print("\nG5  rivals (each must be refuted by the printed numbers)")
 r1 = any(r["kind"] in ("UNKNOWN", "NONE") for r in rows) or \
+    any(r["bypass"] for r in rows) or \
     any(a is None or not re.match(r"^0x[0-9a-f]+$", a or "")
-        for r in rows if r["kind"] == "STACKARG" for _, a in caller_census(r["func"]))
+        for r in rows if r["kind"] == "STACKARG" for _, a, _n in caller_census(r["func"]))
 check("R1 'some site's mask is a runtime pair word loaded from memory' refuted", not r1,
-      "every mask is a literal, or an arg pushed as a literal")
+      "every def dominates its site and is a literal or an arg pushed as a literal")
 r2 = (dword_occ(0x4DABB0) > 0) or (len(caller_census(0x4DABB0)) > 0)
 check("R2 'FUN_0x4dabb0 is live and gets 0xc00 from an unseen caller' refuted", not r2,
       "0 calls, 0 dword occurrences in 3067904 B")
@@ -383,17 +443,58 @@ check("G7 index.csv sizes split the neighbours (0x4dad40 ends before 0x4dadd0)",
       owner(0x4DADD0)[1] == "FUN_004dadd0" and owner(0x4DB003)[1] == "FUN_004dadd0",
       "0x4dadd0")
 
+# ---------------- G8 -----------------------------------------------------------
+print("\nG8  cross-milestone population (reads M382's own PASS evidence)")
+M382EV = os.environ.get("M385_M382EV", os.path.join(ROOT, "evidence/m382_treaty_readers.txt"))
+ev_lines = open(M382EV, encoding="utf-8", errors="replace").read().splitlines()
+m382_pass = any(l.startswith("PASS M382:") for l in ev_lines)
+m382_400 = [l for l in ev_lines if re.search(r"test 0x[0-9a-f]+\s+mask=0x400(\s|$)", l)]
+print("  M382 PASS line present: %s" % m382_pass)
+print("  M382 0x400-only register readers: %d" % len(m382_400))
+for l in m382_400:
+    print("   %s" % l.strip())
+new400 = [v[0] for v in verdict if v[4]]
+print("  M385 0x400-only sites: %d" % len(new400))
+check("G8 M382's evidence is a passing run", m382_pass, M382EV)
+check("G8 M382 had exactly ONE 0x400-only register reader (0x5552ff)", len(m382_400) == 1,
+      str(len(m382_400)))
+check("G8 total 0x400-only readers is 3 (1 + 2 here) - the retraction is COUNTED",
+      len(m382_400) + len(new400) == 3, str(len(m382_400) + len(new400)))
+check("G8 population 15 -> 17", 15 + len(new400) == 17, str(15 + len(new400)))
+
 # ---------------- G6 -----------------------------------------------------------
-print("\nG6  digest")
+print("\nG6  digest (second derivation from the parsed rows)")
+import json
+
+
+def recompute_set(r):
+    if r["kind"] == "CONST":
+        m = re.match(r"mov\s+\w+,(0x[0-9a-f]+)$", r["deftxt"] or "")
+        return {int(m.group(1), 16)} if m else set()
+    if r["kind"] == "ORIMM":
+        return composed
+    if r["func"] == 0x4DABB0:
+        return set()
+    return set(int(a, 16) for _, a, _n in caller_census(r["func"])
+               if a and re.match(r"^0x[0-9a-f]+$", a))
+
+
 tbl = "\n".join("0x%x|0x%x|%s|%s|%s|%s|%s" % (v[0], v[1], v[2],
                                              ",".join("%x" % x for x in sorted(v[3])),
                                              ",".join("%x" % x for x in v[4]),
                                              ",".join("%x" % x for x in v[5]),
                                              ",".join("%x" % x for x in v[6])) for v in verdict)
+tbl2 = "\n".join("0x%x|0x%x|%s|%s|%s|%s|%s" % (v[0], v[1], v[2],
+                                               ",".join("%x" % x for x in sorted(recompute_set(r))),
+                                               ",".join("%x" % x for x in sorted(x for x in recompute_set(r) if x == 0x400)),
+                                               ",".join("%x" % x for x in sorted(x for x in recompute_set(r) if x & 0x800)),
+                                               ",".join("%x" % x for x in sorted(x for x in recompute_set(r) if (x & CORE) == CORE)))
+                for v, r in zip(verdict, rows))
 h1 = hashlib.sha1(tbl.encode()).hexdigest()[:16]
-h2 = hashlib.sha1("\n".join(tbl.split("\n")).encode()).hexdigest()[:16]
-print("  digest=%s  recomputed=%s" % (h1, h2))
-check("G6 digest stable and pinned", h1 == h2 and h1 == DIGEST_PIN, h1)
+h2 = hashlib.sha1(tbl2.encode()).hexdigest()[:16]
+print("  digest=%s  recomputed=%s  tables_equal=%s" % (h1, h2, tbl == tbl2))
+check("G6 the two derivations agree", tbl == tbl2 and h1 == h2, h1 + "/" + h2)
+check("G6 digest stable and pinned", h1 == DIGEST_PIN, h1)
 
 print("\nM385: %d/%d checks passed" % (TOTAL[0] - len(FAILS), TOTAL[0]))
 if FAILS:

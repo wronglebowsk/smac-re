@@ -1671,13 +1671,14 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | hosts: the 15 span 8 functions (5 for the named 6); AI hub FUN_0055f650 holds 5 of 15; 2095-fold proved at all 5 inline sites (seed mov + register used as the index) | `:107` `:100` | V MU12 MU14 MU15 MU19 |
 | 9 dynamic-mask sites CLOSED by M385: no site can ask 0x800 or the 0xc00 pair; 0x400 IS asked at 0x4dacf7/0x4dad22 (so 0x5552ff is not alone) | `:9` | V M385 |
 | OPEN: register-through-copy / stack-copy readers and uses beyond the 8-insn window (M385 walked only the 9 sites) | `:9` | OPEN |
-## M385 (s342-c3, 33/33) - 9 dyn-mask 0xc00 sites DECIDED: no 0x800, no 0xc00 pair; 0x400 IS asked at two (M382 sole-0x400 RETRACTED). ACCEPT `scripts/m385_mask_walk.py` -> **`PASS M385: 33/33`** `0103209f070e60f7` (`evidence/m385_mask_walk.txt:122`), 25 mutants (`evidence/m385_mutate.txt:28`).
+## M385 (s342-c3) - nine dyn-mask 0xc00 sites: 7 PROVEN + 2 DEAD-INF; no 0x800, no 0xc00 pair; 0x400 ALONE at two (M382 sole-0x400 RETRACTED). `scripts/m385_mask_walk.py` -> **`PASS M385: 44/44`** `0103209f070e60f7` (`evidence/m385_mask_walk.txt:140`).
 | claim | ev | conf/mutant |
 |---|---|---|
-| 4 CONST, 4 STACKARG (literal args), 1 ORIMM; no 0x800, no 0xc00 pair | `:17-26` `:36-44` `:91-92` | V MU1-4 MU18 MA1 MA3 |
-| 4 literal sites 0x1000/0x2000 in FUN_004dadd0 (entry law, index 9/9) | `:22-25` `:103-113` | V MU2 MA4 MA5 |
-| FUN_004dabb0: 0 call insns, 0 dword refs in 3,067,904 B -> dead INF | `:36-39` | V MU5 / INF |
-| FUN_004dacc0: 4 callers push {0x20,0x2000000,0x400,0x40000} -> 0x400 at 0x4dacf7/0x4dad22 | `:40-49` `:83` | V MU6-10 |
-| RETRACTION: 0x5552ff is not the sole 0x400 reader (3 now, pop 15->17) | `:93` | V MU19 |
-| 0x574a66 masks `(0x0|0x10)|0x20` = {0x20,0x30} | `:53-76` | V MU11 MU12 MA2 |
+| 4 CONST, 4 STACKARG (`[ebp+8]`, literal push), 1 ORIMM; defs dominate | `:17-26` `:35` `:37-52` | V MU1-4 MU21-22 MA1 MA6 |
+| 4 literal sites in FUN_004dadd0 (entry law; index.csv 9/9) | `:22-25` `:112-120` | V MU2 MA4 MA5 |
+| FUN_004dabb0: 0 call insns, 0 dword refs -> DEAD-INF | `:41-43` | V MU5 / INF |
+| FUN_004dacc0: 4 callers push {0x20,0x2000000,0x400,0x40000} -> 0x400 ALONE at 0x4dacf7/0x4dad22 | `:45-48` `:99` | V MU6-10 MU24 |
+| RETRACTION: 0x5552ff not the sole 0x400 reader (3 total, pop 15->17) | `:124-131` | V MU24-25 |
+| 0x574a66 masks {0x20,0x30} | `:59-82` | V MU11 MU12 MA2 |
+| 0x800 / 0xc00 pair at no PROVEN site | `:96-98` | V MU18 MA3 |
 | OPEN: FUN_004dabb0 entry; 0x551cf0 arg noun | - | OPEN |
