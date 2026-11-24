@@ -649,3 +649,26 @@ whether a facility completion stamps at all.
   reads ints with NO gate.
 - **OPEN**: what `Laptop` selects (its atoi feeds masks @0x58ea12/0x58eb2b); the twins'
   0x3a7168/0x327168 return; whether any completion path re-persists.
+
+## Session 329-chain3 (2026-11-24) — M355: `Laptop` = the DEFAULT bit-vectors of `Preferences` / `More Preferences`
+
+- **ACCEPT** `python3 -u scripts/m355_laptop_masks.py` -> **`PASS M355: 7/7 gates`**, digest
+  `027484f454cdf207` (62 rows), sha1 `3cf7d5da` x2 identical (`evidence/m355_x2.txt:3-4`);
+  `m355_mutate.py` -> **16/16 killed**, 2 NO-OP green (`evidence/m355_mutate.txt:20-22`).
+- **`Laptop`** = 4 read sites only (0x58e9f3/0x58eb0c in FUN_0058e7f0; 0x58e688/0x58e708 in getters
+  FUN_0058e640/FUN_0058e6c0), 2 VAs both "Laptop"; `neg`/`sbb` -> 0/-1 = `atoi != 0`; an ABSENT key
+  equals explicit 0 (lpDefault is the zeroed 0x997120).
+- **MASKS** (from the encoded `and`/`add` immediates): Preferences 0xbbe1dd96 / 0xa3e1dd16
+  (Laptop!=0); More Preferences 0x3a7168 / 0x327168. Laptop!=0 CLEARS bits {7,27,28} resp. {19} —
+  it removes options, never adds.
+- **ROLE**: the mask is the lpDefault of two bit-string reads (0x58eaf7 key=`Preferences`, 0x58ec0d
+  key=`More Preferences`), emitted as '1'/'0' over bits 31..0 (leading zeros above bit 8 dropped);
+  the image's parser 0x628720 (`v=v*2+(c-0x30)`, '0'/'1' only) gives the dword = the mask.
+- **GATE**: `Difficulty` (ds:0x92bde8) < 2 ORs Preferences bit 5 — LOADER default only; B block and
+  both getters hold 0 refs to 0x92bde8.
+- **CONSUMER**: the getters feed one dialog block (0x493b0b..0x493b79, 5+5 sites) storing
+  +0xa30..+0xa58; APPLY FUN_004923d0 ORs +0xa30 into ds:0x92befc and +0xa34 into ds:0x92bf00
+  @0x492464/0x49246f, then calls the persist. `Laptop` changes DEFAULTS only.
+- **PROTOCOL**: NAMED headroom 4,204 B (< 5 KB trigger) -> `scripts/m355_named_rotate.py` rotated
+  `## M293` VERBATIM (sha1 `e548f949`) to `docs/named-archive-m355-rows.md`.
+- **OPEN**: the option NAME of each set bit; whether another path re-derives 0x92befc/0x92bf00.

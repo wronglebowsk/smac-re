@@ -1,0 +1,23 @@
+== M355 mutation harness (16 mutants + 2 no-op controls) ==
+MU1   0x58ea12|and    esi,0xfff80000                 gate=G2  rc=1  state=FAIL reds=G2b,G2c,G2d    KILLED
+MU2   0x58ea23|or     esi,0x40                       gate=G3  rc=1  state=FAIL reds=G3a            KILLED
+MU3   0x58ea1e|cmp    eax,0x3                        gate=G3  rc=1  state=FAIL reds=G3a            KILLED
+MU4   0x58eaf1|push   0x692760                       gate=G1  rc=1  state=FAIL reds=G1b            KILLED
+MU5   0x58e688|push   0x6926e8                       gate=G1  rc=1  state=FAIL reds=G1a            KILLED
+MU6   0x493b10|mov    DWORD PTR [esi+0xa60],eax      gate=G5  rc=1  state=FAIL reds=G5b            KILLED
+MU7   0x492464|mov    ds:0x92bf00,eax                gate=G5  rc=1  state=FAIL reds=G5c            KILLED
+MU8   0x58ea18|add    esi,0xbbe1dd97                 gate=G2  rc=1  state=FAIL reds=G2b,G2c        KILLED
+MU9   0x493b79|call   0x58e640                       gate=G5  rc=1  state=FAIL reds=G5a,G5b        KILLED
+MU10  0x58e6ab|and    eax,0xfff80000                 gate=G2  rc=1  state=FAIL reds=G2b            KILLED
+MU11  0x493b68|mov    DWORD PTR [esi+0xa49],eax      gate=G5  rc=1  state=FAIL reds=G5b            KILLED
+MU12  ALGO 1                                         gate=G4  rc=1  state=FAIL reds=G4c            KILLED
+MU13  ALGO 2                                         gate=G4  rc=1  state=FAIL reds=G4c            KILLED
+MU14  ALGO 3                                         gate=G1  rc=1  state=FAIL reds=G1b            KILLED
+MU15  ALGO 4                                         gate=G2  rc=1  state=FAIL reds=G2c,G2d,G6     KILLED
+MU16  ALGO 5                                         gate=G5  rc=1  state=FAIL reds=G5b            KILLED
+
+-- no-op controls (must stay GREEN) --
+NO-OP1 rc=0 GREEN M355: 7/7 gates
+NO-OP2 rc=0 GREEN M355: 7/7 gates
+
+PASS M355 harness: 16/16 mutants killed, 2 no-op green
