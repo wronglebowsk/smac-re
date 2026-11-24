@@ -294,3 +294,28 @@ printers of measured values need the same None-guard as the gate.
   tokens and re-syncs per row (`0x5ea448` -> fgets).
 - Chain 2 owns `milestone/m336` (wt-chain2); NAMED rotation = M277 ->
   `docs/named-archive-m337-rows.md:8` (sha1 `653c93cda817`, pinned in `m337_named_rotate.py`).
+## Session 318-chain2 (2026-11-24) — M336: ds:0x8f0090 = THE DIFFICULTY BYTE OF PLAYER RECORD 1, read by an UNCLAMPED #DIFF lookup
+
+- **ANSWER (pick (x6), `0x8f0090`'s consumer):** record 1, byte +2 of an 8-record array at FRAME
+  `0x8eff18`, stride `0x176` (end `0x8f0ac8` = FRAME+8*0x176, reset 0x4e2482; record-1 pointer
+  `0x8f008e` at 0x525c42). Its ONE reader: `movsx edx,BYTE [ecx+0x8eff1a]` at **0x486788**
+  (FUN_004865c0, player-row paint), ecx = 0x176*(k+1), k from 0 (0x4865dc) to `BYTE ds:0x8f0c10`
+  (4 at reset, 0x4e2444) => k=0 is row 0, so the load is address-equal to `0x8f0090`; the byte
+  indexes `[b*4+0x94d2ac]` (0x48678f), the six-row `#DIFF` table.
+- **WRITE SET = 6 sites, THREE forms:** direct 0x48884d; stride-indexed 0x487e87 / 0x525b83 /
+  0x525cb9 / 0x525d28 (sources 0x8f0c11 x3 + literal 0); pointer walk 0x4e249c..0x4e24b1
+  (8 iterations from 0x8eff1a) whose iteration 1 (`[eax]`) writes it — DEFINITE.
+  M332's "1 ref, 1 write" is FORM-limited, not wrong.
+- **INDEX 6 IS ADMISSIBLE:** all 6 writers of 0x8f0c11 store an unclamped byte (pref copies
+  0x488828/0x484efe, int->byte 0x48549c, literals 2/1); the ONLY clamp on
+  any read is 0x486f30 `FUN_00423af0(diff,0,6)`, inclusive both ends (jl/jge/jle 0x423afc-0x423b14)
+  => clamp(6,0,6)=6 and `[6*4+0x94d2ac]` = **0x94d2c4 = the loader's END pointer** (base
+  0x94d2ac, end cmp 0x57ac88), one row past six; the consumer has NO clamp. OPEN: does the INI
+  reader FUN_0058e7f0 admit >=6?
+- ACCEPT `python3 -u scripts/m336_cell090_consumer.py` -> **PASS M336: 7/7 gates**, digest
+  `38d17175eba142ab`, 2 runs byte-identical sha256 `a55b9fc1840725d8`
+  (`evidence/m336_cell090_consumer.txt`, `_rerun.txt`); harness `python3 -u scripts/m336_mutate.py`
+  -> **PASS HARNESS 10/10** `d063bbf83189ff10`, `--selftest` 4/4. MU8's declared set corrected to
+  the MEASURED `{G4,G6}`.
+- PITFALL: a naive displacement census undercounts a cell three ways (direct / [base+idx] / walk) —
+  MU9 reproduces it; `is_write` must count `mov ds:0x...,al` as a store.
