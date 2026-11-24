@@ -1,0 +1,36 @@
+base rc=0 red=[]
+MU1   0x5a11f3|lea    ecx,[edx+ecx*4+0x92bbc]              expect=G1   rc=1 red=G1         KILLED
+MU2   0x5a11e3|lea    ecx,[ecx+ecx*7]                      expect=G1   rc=1 red=G1         KILLED
+MU3   0x5a11ea|lea    esi,[edx+edx*5]                      expect=G1   rc=1 red=G1         KILLED
+MU4   0x52b822|mov    ecx,0xa                              expect=G1   rc=1 red=G1         KILLED
+MU5   0x5a1203|cmp    eax,0xa                              expect=G1   rc=1 red=G1         KILLED
+MU6   0x57ab94|mov    ecx,0xc                              expect=G1   rc=1 red=G1         KILLED
+MU7   0x52b82c|add    eax,0x30                             expect=G1   rc=1 red=G1,G2,G3,G5 KILLED
+MU8   0x52b84d|cmp    eax,0x2a0                            expect=G1   rc=1 red=G1         KILLED
+MU9   0x5a1193|idiv   ebx                                  expect=G1   rc=1 red=G1         KILLED
+MU10  0x57abe0|mov    esi,0x9270d8                         expect=G2   rc=1 red=G1,G2      KILLED
+MU11  0x57abf8|sub    eax,ecx                              expect=G2   rc=1 red=G2         KILLED
+MU12  1                                                    expect=G2   rc=1 red=G2         KILLED
+MU13  0x5a118e|mov    ecx,0x4                              expect=G3   rc=1 red=G3,G5      KILLED
+MU14  0x5a119d|mov    ecx,0x2                              expect=G3   rc=1 red=G3         KILLED
+MU15  0x5a1160|mov    ecx,0xb                              expect=G3   rc=1 red=G3         KILLED
+MU16  0x5a11a7|lea    eax,[edx+esi*3]                      expect=G3   rc=1 red=G3         KILLED
+MU17  0x5a1213|cmp    ebx,0x7                              expect=G3   rc=1 red=G3         KILLED
+MU18  0x5a120d|add    edi,0x598                            expect=G3   rc=1 red=G3         KILLED
+MU19  0x5a1171|mov    edi,0x9280b0                         expect=G3   rc=1 red=G3         KILLED
+MU20  0x5a11fd|jge    0x5a120a                             expect=G3   rc=1 red=G3         KILLED
+MU21  2                                                    expect=G3   rc=1 red=G3,G5      KILLED
+MU22  0x4a66d9|imul   eax,eax,0x2c                         expect=G4   rc=1 red=G4         KILLED
+MU23  0x4a66ff|mov    ecx,DWORD PTR [edx+eax*4+0x92ba98]   expect=G4   rc=1 red=G4         KILLED
+MU24  0x4a667b|cmp    DWORD PTR [edx+eax*4+0x927b18],0x0   expect=G3   rc=1 red=G3         KILLED
+MU25  factions=11                                          expect=G5   rc=1 red=G5         KILLED
+MU26  rawsize                                              expect=G5   rc=1 red=G5         KILLED
+MU27  0x523cfa|mov    esi,0x927b28                         expect=G3   rc=1 red=G3         KILLED
+MU28  0x5a1197|call   0x5ea448                             expect=G3   rc=1 red=G3         KILLED
+MU29  0x4237cd|push   0x997124                             expect=G4   rc=1 red=G4         KILLED
+MU30  0x52b847|add    esi,0x78                             expect=G1   rc=1 red=G1         KILLED
+MU31  0x57ab45|mov    esi,0x92ba9c                         expect=G1   rc=1 red=G1         KILLED
+MU32  0x57ac02|cmp    esi,0x9275a8                         expect=G1   rc=1 red=G1,G2      KILLED
+MU33  0x4a6707|call   0x423900                             expect=G4   rc=1 red=G4         KILLED
+
+HARNESS PASS 33/33 killed, cov=True G1-G4, 1 declared NO-OP (G0 anchors)
