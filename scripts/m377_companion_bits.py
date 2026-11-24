@@ -248,6 +248,27 @@ def reach(start, stop, block=None, cap=20000):
     return False
 
 
+def reaches_ret_without(fstart, fsize, avoid, cap=20000):
+    """True if some path from the entry reaches a `ret` without executing `avoid`."""
+    seen = set()
+    stack = [fstart]
+    n = 0
+    while stack and n < cap:
+        a = stack.pop()
+        if a == avoid or a in seen:
+            continue
+        seen.add(a)
+        n += 1
+        if a not in IDXBY:
+            continue
+        i = INS[IDXBY[a]]
+        if i["mn"].startswith("ret"):
+            return True
+        for d, _k in edges_from(i):
+            stack.append(d)
+    return False
+
+
 def essential_edges(fstart, fsize, stop):
     """block every (jump, dest) edge one at a time; the ones whose blocking kills
     reachability of `stop` are the gates on EVERY path to it."""
@@ -418,16 +439,46 @@ for name, (bit, site, _pad) in (("0x8000", WAR_STAMP), ("0x10000", TRUCE_STAMP))
         say(f"      jcc @0x{j:06x} {kind:4s}->0x{d:06x}   gate: {flag_text(j)}"
             + (f"   [{du}]" if du else ""))
     if not e and ALGO != 2:
-        say("      (none - the stamp is on EVERY path through the function)")
+        say("      (none - no single edge gates the stamp)")
 war_ess = ess["0x8000"]
 want_war = []
-if [(j, k) for j, k, d in war_ess] != want_war:
-    bad(f"G2 0x8000 must be unconditional (no essential edge); got {[(hex(j),k) for j,k,_ in war_ess]}")
+war_bypass = reaches_ret_without(f_war[1], f_war[2], WAR_STAMP[1])
+tru_bypass = reaches_ret_without(0x5525D0, 642, 0x5526B3)
+say(f"  bypass: a path from entry to a ret that SKIPS the stamp - 0x8000 {war_bypass},"
+    f" 0x10000 {tru_bypass}")
+if [(j, k) for j, k, d in war_ess] != want_war or war_bypass:
+    bad(f"G2 0x8000 must be unconditional: essential={[(hex(j),k) for j,k,_ in war_ess]}"
+        f" bypass={war_bypass}")
+elif not tru_bypass:
+    bad("G2 0x10000 bypass must exist (the stamp is conditional)")
 else:
-    say("ok  G2 0x8000 is UNCONDITIONAL: blocking any single jcc inside FUN_00507ce0"
-        " still reaches 0x507d21")
+    say("ok  G2 0x8000 is UNCONDITIONAL: 0 essential edges AND no entry->ret path skips"
+        " 0x507d21 (0x10000: such a path exists, so its stamp is conditional)")
+# (3) the clear-then-stamp arc inside FUN_00507ce0, read from bytes
+arc = []
+for k in range(IDXBY[0x507CE0], IDXBY.get(0x507D30, len(INS))):
+    i = INS[k]
+    if i["a"] >= 0x507D30:
+        break
+    arc.append(i)
+pre = [i for i in arc if i["mn"] in ("test", "call") and i["a"] < 0x507D1A]
+clear = [i for i in pre if i["mn"] == "call" and last_imm(i["ops"]) == 0x5076D0]
+tst7 = [i for i in pre if i["mn"] == "test" and dwords_at(i["ops"]) and last_imm(src_of(i)) == 7]
+neg1 = [i for i in arc if i["a"] < 0x507D1A and i["mn"] == "push"
+        and last_imm(i["ops"]) == 0xFFFFFFFF]
+say(f"  arc before the stamp: test7 {[hex(i['a']) for i in tst7]}, call0x5076d0"
+    f" {[hex(i['a']) for i in clear]}, push -1 x{len(neg1)}")
+if not (len(tst7) == 1 and len(clear) == 1 and len(neg1) == 1 and clear[0]["a"] < 0x507D1A):
+    bad("G2 the clear-then-stamp arc is not read from FUN_00507ce0's bytes")
+else:
+    say("ok  G2 FUN_00507ce0 clears status&7 first: `test BYTE [pair],0x7` @0x507cff ->"
+        " FUN_005076d0(a,b,-1) @0x507d0d (mask -1 = clear-all) -> stamp 0x8010 @0x507d1a")
 want_truce = [(0x5525F2, "fall"), (0x552646, "fall"), (0x5526AD, "fall"), (0x5526B1, "fall")]
 got_truce = [(j, k) for j, k, d in ess["0x10000"]]
+du_truce = {j: def_use(j) for j, k, d in ess["0x10000"] if def_use(j)}
+say(f"  def-use of the gated registers: {[(hex(j), t) for j, t in du_truce.items()]}")
+if du_truce != {0x552646: "mov eax,ds:0x920434", 0x5526B1: "and edx,0x8"}:
+    bad(f"G2 the rel&0x8 provenance is not measured: {du_truce}")
 if got_truce != want_truce:
     bad(f"G2 0x10000 gates are not the measured set: {[(hex(j),k,hex(d)) for j,k,d in ess['0x10000']]}")
 else:
@@ -478,6 +529,15 @@ for name, bit, shift in BITS:
             if fam(ops.split(",")[0].strip()) != r:
                 break
             v = last_imm(src_of(t))
+            dirty = False
+            for m in range(k + 1, j):
+                u = INS[m]
+                dst = u["ops"].split(",")[0].strip().lower()
+                if fam(dst) == r and u["mn"] in ("mov", "and", "or", "xor", "add", "sub", "lea"):
+                    dirty = True
+                    break
+            if dirty:
+                break
             if v is not None and (v & bit):
                 lift.append((i["a"], t["a"]))
                 break
@@ -510,12 +570,21 @@ war_skip00 = any(i["mn"] == "mov" and "0x0" == i["ops"].split(",")[-1].strip()
                  and "[ebp-0x1c]" in i["ops"] for i in blk)
 if not war_skip00:
     bad("G4 0x53bbed's skip block must zero the flag [ebp-0x1c]")
-# the taken path must compare a per-pair scalar for (a,b) vs (b,a)
-cmp_arc = [i for i in INS if 0x53BC0D <= i["a"] < 0x53BC27 and i["mn"] == "cmp"
+# (6) the compare lives on the FALL-THROUGH (bit-set) path: window derived from the jump
+fall0 = 0x53BBED + len(INS[IDXBY[0x53BBED]]["b"].split())
+cmp_arc = [i for i in INS if fall0 <= i["a"] < tgt and i["mn"] == "cmp"
            and "0x94e48c" in i["ops"]]
-say(f"    taken-block compare: {[(hex(i['a']), i['mn'] + ' ' + i['ops']) for i in cmp_arc]}")
-if not cmp_arc:
-    bad("G4 0x53bbed's taken path does not compare the 0x94e48c pair scalars")
+say(f"    bit-set path 0x{fall0:06x}..0x{tgt:06x} compare:"
+    f" {[(hex(i['a']), i['mn'] + ' ' + i['ops']) for i in cmp_arc]}")
+if len(cmp_arc) != 1:
+    bad(f"G4 0x53bbed's bit-set path must hold exactly one 0x94e48c compare: {cmp_arc}")
+# (4) the reader's host and its only caller, read from bytes
+f53 = fn_of(0x53BBED)
+c53 = [i["a"] for i in INS if i["mn"] == "call" and last_imm(i["ops"]) == f53[1]]
+say(f"    0x53bbed host {f53[0]} (0x{f53[1]:06x}, {f53[2]} B); its callers"
+    f" {[hex(a) for a in c53]} in {[fn_of(a)[0] for a in c53]}")
+if f53[0] != "FUN_0053bb90" or c53 != [0x545D4A] or fn_of(0x545D4A)[0] != "FUN_00545c50":
+    bad(f"G4 the reader's provenance is not FUN_0053bb90 <- FUN_00545c50@0x545d4a")
 # 0x547367: the jcc and the string the skipped block logs
 k = IDXBY[0x547367]
 jt = INS[k + 1]
@@ -615,9 +684,11 @@ for a, s in stores:
 opq = [s for s in stores if s[1].startswith("opaque")]
 if ALGO == 6:
     sar = stores[:1]
-if len(sar) != 0 or len(opq) != 27:
+wordish = [s for s in stores if s[1].startswith("BYTE/WORD")]
+if len(sar) != 0 or len(opq) != 27 or len(stores) != 27 or wordish:
     bad(f"G6 store shapes are not 27 register-sourced / 0 provable clearers:"
-        f" {len(opq)} opaque, {len(sar)} clear-capable")
+        f" {len(stores)} stores, {len(opq)} opaque, {len(sar)} clear-capable,"
+        f" {len(wordish)} byte/word")
 else:
     say("ok  G6 all 27 direct stores are register-sourced (opaque): 0 stores PROVE a clear and"
         " 0 prove a preserve - both stamps survive only as long as each rewrite's register keeps"

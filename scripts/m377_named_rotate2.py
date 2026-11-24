@@ -3,12 +3,13 @@
 `docs/named-archive-m377-m362-rows.md` and leave a one-line pointer stub.
 
 M377 must add a block and NAMED.md carried only 1,735 B of headroom (248,265 B against
-the 250,000 B FAIL) - under the 5 KB rotation trigger.  M362 (0x94d5dc = record +0x1ac)
-is settled: its noun was already INF and nothing since M369 depends on the row.  The
-rotated text is byte-for-byte what NAMED carried.
+the 250,000 B FAIL) - under the 5 KB rotation trigger.  M362 (the 0x4db1xx relations
+page: its +0x15a0 group is 13 checkboxes whose ids ARE the relations bits) is settled
+and is not re-read by anything since M375.  The rotated text is byte-for-byte what
+NAMED carried.
 
-    python3 scripts/m377_named_rotate.py            # rotate (idempotent)
-    python3 scripts/m377_named_rotate.py --verify   # sha1 of the archive vs HEAD's block
+    python3 scripts/m377_named_rotate2.py           # rotate (idempotent)
+    python3 scripts/m377_named_rotate2.py --verify  # archive sha1 == the NAMED stub sha1
 """
 import hashlib
 import os
@@ -50,9 +51,9 @@ def main():
     sha = hashlib.sha1(body.encode()).hexdigest()
     open(ARCHIVE, "w").write(ARCHIVE_HEAD + body)
     stub = (f"## M362 - VERBATIM at `docs/named-archive-m377-m362-rows.md` "
-            f"(sha1 `{sha[:16]}`, {len(body)} B): 0x94d5dc = per-(fac,tgt) dword at record "
-            f"+0x1ac, 23 sites 8W/15R, zeroed by the writer / ++ on contact / read as a "
-            f"DEADLINE; noun INF. ev `evidence/m362_pair_slot.txt:142`\n")
+            f"(sha1 `{sha[:16]}`, {len(body)} B): the 0x4db1xx sibling IS the FACTION "
+            f"RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. "
+            f"ev `evidence/m362_sibling.txt:100`\n")
     open(NAMED, "w").write(pre + stub + post)
     print(f"rotated M362 ({len(body)} B, sha1 {sha[:16]}) -> {os.path.relpath(ARCHIVE, ROOT)}")
     return 0

@@ -47,7 +47,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 
 ## (ARCHIVE) M89-M221: moved VERBATIM to `docs/named-archive-m89-m221.md` (s251 hygiene split - 619 lines, 55 headings; grep there for per-id semantics of M89-M221 incl. UNMERGED M101/M103/M109; git history is the trail)
 ## (ARCHIVE) M227-M245 + B1-B2: moved VERBATIM to `docs/named-archive-m227-m245.md` (s254 hygiene split - 133 lines, 10 headings; grep there for per-id semantics; git history is the trail)
-## M246 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `5fc00420de391631`, 757 B)
+## M246 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `5fc00420de391631`, 757 B)
 ## M247 (s197) — the region map's row stride is `Rw>>1`, not `(Rw+1)/2` — rows in the same archived region; this stub governs.
 - 6 referencing functions; the only element accessors `FUN_00582340`/`FUN_00582360` index `(param_1>>1)+DAT_0092ae18+(DAT_0092ad9c>>1)*param_2`; `(Rw+1)/2` occurs once image-wide (the length) | G4 | V
 - builder `FUN_0058ce00` (y<Rh, x=(y&1) step 2<Rw) writes exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 for odd Rw, else 0 | G5 | V
@@ -74,7 +74,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 | OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
 | instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
 
-## M250-M254 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `a9fc5ea5dbca1673`, 591 B)
+## M250-M254 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `a9fc5ea5dbca1673`, 591 B)
 ## M255-M258 (s201-s202, PASS 8/8) - ROTATED VERBATIM to `docs/named-archive-m255-m258.md`
 Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`, asserted byte-exact by `scripts/m329_named_rotate.py`; the archive holds the full rows, git history is the trail. One line per claim, gates and cites unchanged:
 
@@ -195,7 +195,7 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | deterministic: two runs -> byte-identical 67,790-B dump, sha256 3b62847494b252ad... | `evidence/b7_moveslice.txt:5` (`python3 -m sim.selftest --b7 ...` -> `PASS B7: 6/6 gates`) | V |
 | declared ASSUMED in the dump `smac-sim-move/1`: positions come from the save (load-restore not modeled - M106 kernel write); the gesture is applied to EVERY unit (the trace's 117-120 live in a different save); uniform 3 MP cost | dump `assumed` | ASSUMED (declared) |
 
-## M277 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `6aa8eebae1f0d955`, 513 B)
+## M277 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `6aa8eebae1f0d955`, 513 B)
 ## M278 (s219, PASS 7/7) - block 0 is the player-index-0 real row AND the unowned fallback; no neutral/player slot
 
 | fact | evidence | status |
@@ -738,8 +738,8 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 - BOTH STORES ARE MAX BY POLARITY (`cmp edi,eax`/`jle`; a MIN store needs `jge`), graded with the old loads; last-write / min / owner-blind rivals diverge - V (`evidence/b18_sitegate.txt:8`)
 - ACCEPTANCE `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> PASS B18: 10/10 - V (`evidence/b18_sitegate.txt:11`)
 - LEAD: contents of 0x989ce8 / 0x94eca8 never dumped; the slot's `[+4]` visitor counter; ebx provenance - lead
-## M299 — VERBATIM at `docs/named-archive-m377-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
-## M300 — VERBATIM at `docs/named-archive-m377-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
+## M299 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
+## M300 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
 ## M301 (s256, STATIC, zero box) - the lead "ebx's walked table 0x51de2c-0x51df1d" REFUTED: it is a base_array walk, not a table
 | claim | evidence | conf |
 |---|---|---|
@@ -1005,12 +1005,12 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
-## M377 (s339-c3, 8/8) — 0x8000/0x10000 are DEAL STAMPS: 0x8000 rides WAR (0x8010), 0x10000 the first-contact TRUCE (0x10004). **`PASS M377: 8/8`** `c9e99e3b7e9f0a31` (`evidence/m377_companion_bits.txt:93`), re-run identical; harness 14/14 (`evidence/m377_mutate.txt:16`).
+## M377 (s339-c3, 8/8) — 0x8000/0x10000 are DEAL STAMPS: 0x8000 rides WAR (0x8010), 0x10000 the first-contact TRUCE (0x10004). **`PASS M377: 8/8`** `c9e99e3b7e9f0a31` (`evidence/m377_companion_bits.txt:98`), re-run identical; harness 18/18 (`evidence/m377_mutate.txt:20`).
 - carriers: 0x8000 <- 0x8010 only @0x507d1a (host FUN_00507ce0, 80 B); 0x10000 <- 0x10004 @0x54d2e5/0x552680 (0x530640) + @0x5526b3 (FUN_005525d0 x2, FUN_00546800 x1) — V MU1-5 (`:4-34`)
-- 0x8000 UNCONDITIONAL: status&7 cleared via FUN_005076d0(a,b,-1) then 0x8010 on every path — V MU6 MU7 (`:38-39`)
-- 0x10000 needs player-bit(a), 0x920434!=0, player-bit(b), rel&0x8==0 (`and edx,0x8`@0x55261a) = FIRST CONTACT — V MU6 MU13 (`:40-44`)
-- readers 0x8000 3 (`0x8020` @0x5380f2/0x541c5c + byte+1 @0x53bbed), M375's "1" RETRACTED; 0x10000 1 direct + 2 lift — V MU8 MU9 (`:48-52`)
-- 0x53bbed (from FUN_00545c50@0x545d4a) = AI compare of the 0x94e48c pair scalars; the 0x10000 reader skips 'Sending TREATY OFF' x2 + NOPATIENCE(FRIEND); 27 stores register-sourced, 0 provable clearer — V MU10 MU12 (`:55-76`)
+- 0x8000 UNCONDITIONAL: `test BYTE [pair],0x7` @0x507cff -> FUN_005076d0(a,b,-1) @0x507d0d -> 0x8010 @0x507d1a; 0 edges AND no entry->ret path skips the stamp — V MU6 MU7 MU16 (`:38-48`)
+- 0x10000 needs player-bit(a), 0x920434!=0, player-bit(b), rel&0x8==0 (`and edx,0x8`@0x55261a def-use); such a bypass path exists — V MU6 MU13 (`:50-55`)
+- readers 0x8000 3 (`0x8020` @0x5380f2/0x541c5c + byte+1 @0x53bbed), M375's "1" RETRACTED; 0x10000 1 direct + 2 lift — V MU8 MU9 MU18 (`:56-61`)
+- 0x53bbed (host FUN_0053bb90, only caller FUN_00545c50@0x545d4a) compares the 0x94e48c pair scalars on the bit-set path @0x53bc1c, skip zeroes the flag; the 0x10000 reader skips 'Sending TREATY OFF' x2 + NOPATIENCE(FRIEND); 27 stores all register-sourced, 0 provable clearer — V MU10 MU15 MU17 MU12 (`:62-90`)
 - NOUNS INF: 0x8000 'war declared'; 0x10000 'truce never negotiated'.
 ## M375 (s338-c3, STATIC 8/8) — the five bits B36 left unnamed are DEAL-PROTOCOL terms; 0x40 owns a 50-tick cell. ACCEPT `scripts/m375_relation_bits.py` -> **`PASS M375: 8/8`** `34bcef7ab64b9272` (`evidence/m375_relation_bits.txt:88`), re-run identical (`evidence/m375_twice.txt:4`); harness **13/13** (`evidence/m375_mutate.txt:16`). `:N` = a line of the acceptance file.
 | claim | ev | conf |
@@ -1069,7 +1069,7 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | ACCEPT 13/13 digest 470d844054b1b101 x2 (`:67-68`,`_rerun.txt:67-68`); 31/31+1 digest cf85092dea6baa93 (`evidence/m330_mutate.txt:36-38`); ST 5/5 (`evidence/m330_mutate_selftest.txt:6`) | cite | V |
 | OPEN: slot; ~~985aec~~ ANSWERED M332 (runtime mirror of the INI pref "Difficulty", master 0x92bde8); ~~+2fc/+308~~ ANSWERED M331 (income siblings); profile+300 | - | lead |
 
-## M326 — VERBATIM at `docs/named-archive-m377-m362-rows.md` (sha1 `b35a213c4a689285`, 550 B)
+## M326 — VERBATIM at `docs/named-archive-m362-rows.md` (sha1 `b35a213c4a689285`, 550 B)
 ## M325 (s299-chain2) - block+220=faction ENERGY; turnfn writes none; MIN feed (M324 MAX retracted)
 
 | claim | evidence | conf |

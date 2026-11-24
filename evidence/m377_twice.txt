@@ -36,13 +36,17 @@ ok  G1 0x8000 lives in ONE 80-byte host (FUN_00507ce0); 0x10000 in TWO (FUN_0055
 
 G2  essential edges - every condition that MUST hold on the way to a stamp
   0x8000  store @0x507d21 in FUN_00507ce0: 0 essential edge(s)
-      (none - the stamp is on EVERY path through the function)
+      (none - no single edge gates the stamp)
   0x10000 store @0x5526b3 in FUN_005525d0: 4 essential edge(s)
       jcc @0x5525f2 fall->0x5525f8   gate: test eax,edx
       jcc @0x552646 fall->0x55264c   gate: test eax,eax   [mov eax,ds:0x920434]
       jcc @0x5526ad fall->0x5526af   gate: test ecx,eax
       jcc @0x5526b1 fall->0x5526b3   gate: test edx,edx   [and edx,0x8]
-ok  G2 0x8000 is UNCONDITIONAL: blocking any single jcc inside FUN_00507ce0 still reaches 0x507d21
+  bypass: a path from entry to a ret that SKIPS the stamp - 0x8000 False, 0x10000 True
+ok  G2 0x8000 is UNCONDITIONAL: 0 essential edges AND no entry->ret path skips 0x507d21 (0x10000: such a path exists, so its stamp is conditional)
+  arc before the stamp: test7 ['0x507cff'], call0x5076d0 ['0x507d0d'], push -1 x1
+ok  G2 FUN_00507ce0 clears status&7 first: `test BYTE [pair],0x7` @0x507cff -> FUN_005076d0(a,b,-1) @0x507d0d (mask -1 = clear-all) -> stamp 0x8010 @0x507d1a
+  def-use of the gated registers: [('0x552646', 'mov eax,ds:0x920434'), ('0x5526b1', 'and edx,0x8')]
 ok  G2 0x10000 needs exactly 4 edges: player-bit(a), 0x920434 != 0, player-bit(b), and rel&0x8 == 0 (edx = [pair]&0x8 @0x55261a); the human branch reaches the same join, so a != human is NOT a gate
 
 G3  readers of bit 15/16 - direct byte/dword test + load-then-test-register
@@ -55,7 +59,8 @@ ok  G3 0x8000: 3 readers - test DWORD 0x8020 at 0x5380f2/0x541c5c and the BYTE t
 G4  what each reader does with the bit
   0x53bbed test -> je 0x53bc3a
     taken-block: 53bc3a:mov DWORD PTR [ebp-0x1c],0x0 | 53bc41:mov eax,ds:0x92077c
-    taken-block compare: [('0x53bc1c', 'cmp edi,DWORD PTR [eax*4+0x94e48c]')]
+    bit-set path 0x53bbf5..0x53bc3a compare: [('0x53bc1c', 'cmp edi,DWORD PTR [eax*4+0x94e48c]')]
+    0x53bbed host FUN_0053bb90 (0x53bb90, 3692 B); its callers ['0x545d4a'] in ['FUN_00545c50']
   0x547367 test -> jne 0x547626
     strings pushed on the skipped path: [('0x54738d', '0x690174', 'Sending TREATY OFF'), ('0x547402', '0x690174', 'Sending TREATY OFF'), ('0x5475ab', '0x690b88', 'NOPATIENCEFRIEND'), ('0x547607', '0x690b9c', 'NOPATIENCE')]
 ok  G4 0x8000 gates an AI comparison (flag=0 on the skip path); 0x10000 skips the block that logs 'Sending TREATY OFF'

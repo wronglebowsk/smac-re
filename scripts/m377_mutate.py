@@ -7,8 +7,11 @@ Coverage map (gate <- mutant):
   G0 carriers      MU1 / MU2 / MU3 (drop a mask) / MU4 (mask slot off by one)
   G1 hosts         MU5 (an argument push becomes an immediate)
   G2 reach         MU6 (a gate jump becomes unconditional) / MU7 (jcc is not a gate)
+                   MU16 (the status-clear call before the stamp is retargeted)
   G3 readers       MU8 (the byte test tests another bit) / MU9 (only dword tests count)
-  G4 reader act    MU10 (the logged string is rewritten)
+                   MU18 (the lifted register is clobbered before its test)
+  G4 reader act    MU10 (the logged string is rewritten) / MU15 (the 0x94e48c compare
+                   vanishes) / MU17 (the reader host's caller is retargeted)
   G5 callers       MU11 (a call site is retargeted)
   G6 erasure       MU12 (the store-shape algebra is forced to find a clearer)
   G7 rivals        MU13 (rel&0x8 becomes rel&0x4 -> the contact rival would HOLD)
@@ -50,6 +53,14 @@ MUTANTS = [
      "the gate's source becomes rel&0x4, so the no-contact rival would hold"),
     ("MU14", {"M377_ALGO": "8"}, "FAIL G8",
      "one digest row is dropped"),
+    ("MU15", {"M377_PATCH": "0x53bc1c|cmp edi,edi"}, "FAIL G4",
+     "the 0x53bbed bit-set path loses its 0x94e48c compare"),
+    ("MU16", {"M377_PATCH": "0x507d0d|call 0x5076e0"}, "FAIL G2",
+     "FUN_00507ce0's status-clear call is retargeted"),
+    ("MU17", {"M377_PATCH": "0x545d4a|call 0x53bba0"}, "FAIL G4",
+     "the 0x53bbed host's only caller is retargeted"),
+    ("MU18", {"M377_PATCH": "0x532fad|mov al,0x7"}, "FAIL G3",
+     "the lift reader's register is clobbered between load and test"),
 ]
 
 
