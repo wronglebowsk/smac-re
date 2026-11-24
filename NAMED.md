@@ -28,14 +28,14 @@
 - `0x585720` `unit_action_resolve(unit, param, mode)` — per-unit action executor (AI + end of turn) (M)
 - `0x5abb40` `unit_array_compact()` — slides records down with `rep movsd` (H)
 
-## M388 (s342-chain6, 37/37) — slot 0's agenda pair (+0x584/+0x58c) has NO writer; the SE commit writes the live grid only. **`PASS M388: 37/37`** `bb2f4329dd2467f2` (`evidence/m388_agenda_slot0.txt:164`), x2 same; 15/15 (`evidence/m388_mutate.txt:18`).
+## M388 (s342-chain6, 39/39) — slot 0's agenda pair has NO writer; the SE commit writes the live grid only. **`PASS M388: 39/39`** `e03bfb351d33c64e` (`evidence/m388_agenda_slot0.txt:164`), x2 same; 19/19 (`evidence/m388_mutate.txt:22`).
 | claim | ev | conf/mutant |
 |---|---|---|
 | randomizer: seed 0x9280b8, stride 0x59c, `mov ebx,0x1`/`cmp ebx,0x8` -> 7 records 0x927b2c..0x929cd4; slot0 0x927590, pair 0x927b14/0x927b1c; block 8*0x59c | `:12-21` | V MU1-5 MU14 |
-| 4 censuses / 64,494 stores: 3 ctor stores, 2 at rec+0, 33 folded operands, 0 folded stores, 39 seeds none on the pair | `:23-34,68,109` | V MU11-13 |
-| commit 0x4b2570: `[eax+ecx*4+0x94d658]`, eax=f*0x20bc, src +0xcf8+cat*4; 1 grid store, 0 block; handlers 0x4b5530/0x4b55d0 | `:115-140` | V MU8-10 |
-| choice = rand%3+1 (1..3); 9 +0x58c loads 0-tested (5) or name-pushed (4) => slot0 (0,0) = no agenda | `:148-149` | V MU6 MU7 |
-| OPEN: slot 0's owner (vs M43's 0x20bc family); save/load copies 0x2ce0 verbatim | `:110` | OPEN |
+| 4 censuses / 64,494 stores: 3 ctor, 2 at rec+0, 33 folded operands / 0 stores, 39 seeds none on the pair | `:23-34,68,109` | V MU11-13 MU19 |
+| commit 0x4b2570: `[eax+ecx*4+0x94d658]` <- `[esi+edx*4+0xcf8]`, eax=f*0x20bc; 1 grid dword, 1 at +0x20, 0 in the block; handlers 0x4b5530/0x4b55d0 | `:139` | V MU8-10 MU16 MU17 |
+| choice = rand%3+1 (1..3); 9 +0x58c loads: 5 0-tested, 3 name-pushed, 1 vs +0x590 => slot0 (0,0) = no agenda | `:148-149` | V MU6 MU7 |
+| OPEN: slot 0's owner; the 0x2ce0 block is pushed to the save/load helpers (4x) | `:110` | OPEN |
 ## Not yet named (candidates, ranked by `COVERAGE.md`)
 - `0x5f6de9` — 305 callers, 550 B, 118 insns, no string literals
 - `0x483470` — 292 callers, 556 B, 141 insns, no string literals

@@ -14,5 +14,9 @@ MU12  1    G2 (d) the only slot0 seed is skip-guarded           KILLED
 MU13  1    G2 (a) none of them sits in a record context         KILLED
 MU14  1    G1 block size imm                                    KILLED
 MU15  1    G1 slot0 pair = 0x927b14/0x927b1c                    KILLED
+MU16  1    G3 source operand is +0xcf8+cat*4                    KILLED
+MU17  1    G3 dialog handlers call the commit                   KILLED
+MU18  1    G2 (d) the only slot0 seed is skip-guarded           KILLED
+MU19  1    G2 store population                                  KILLED
 
-HARNESS 15/15 killed
+HARNESS 19/19 killed

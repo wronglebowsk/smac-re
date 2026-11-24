@@ -236,8 +236,8 @@ say("G2", "(a) count               %d" % len(set_a))
 # a ctor store may only be a record store if its function can build a record address
 set_a_rec = []
 for a, t in set_a:
-    window = " ".join(x[1] for x in win(a - 0x600, a + 0x40))
-    if "0x59c" in window or "0x927" in window:
+    body = " ".join(x for _, x in win(owner(a), owner(a + 1) if owner(a + 1) > owner(a) else owner(a) + 1))
+    if "0x59c" in body or "0x927" in body:
         set_a_rec.append((a, t))
 if ALGO == 2:                            # every [reg+0x584] store counts as a record store
     set_a_rec = list(set_a)
@@ -275,11 +275,15 @@ say("G2", "(d) seeds landing on slot 0's pair               %d" % len(seed_pair)
 slot0_seeds = [(a, v, t) for a, v, t in seeds if v == slot0]
 skip_guards = []
 for a, v, t in slot0_seeds:
-    body = [x for _, x in win(a + 1, a + 24)]
-    has_cmp = any(x.startswith("cmp") and "0x927590" in x for x in body)
-    has_je = any(x.startswith(("je", "jne", "jz", "jnz")) for x in body)
-    skip_guards.append((a, has_cmp, has_je))
-    say("G2", "(d) slot0 seed 0x%x: cmp-vs-slot0=%s branch=%s" % (a, has_cmp, has_je))
+    reg = t.split(None, 1)[1].split(",")[0]
+    body = win(a + 1, a + 40)
+    cmp_a = [x for x, tt in body if tt.startswith("cmp") and tt.replace(" ", "") == "cmp%s,0x927590" % reg]
+    je_t = [imm(tt) for x, tt in body if tt.startswith("je") and x > (cmp_a[0] if cmp_a else a)]
+    inc_a = [x for x, tt in body if tt.startswith("add") and "0x59c" in tt]
+    target_ok = bool(je_t) and bool(inc_a) and je_t[0] == inc_a[0]
+    skip_guards.append((a, bool(cmp_a), target_ok))
+    say("G2", "(d) slot0 seed 0x%x: cmp %s,0x927590=%s je->loop-increment=%s"
+        % (a, reg, bool(cmp_a), target_ok))
 
 # whole-block transfer: push size imm + push block base
 xfer = []
@@ -291,6 +295,7 @@ say("G2", "whole-block transfers   %d" % len(xfer))
 for a, t, ok in xfer:
     say("G2", "    0x%x %s  block-base push nearby=%s" % (a, t, ok))
 
+check("G2 store population", len(stores) == 64494)
 check("G2 (a) agenda-window stores are the 3 ctor stores", [a for a, _ in set_a] == [0x5bee99, 0x5bf5cd, 0x5c6173])
 check("G2 (a) none of them sits in a record context", set_a_rec == [])
 check("G2 (b) block stores are the 2 rec+0 stores", [a for a, _ in set_b] == [0x4dd996, 0x57efe4])
@@ -309,6 +314,8 @@ grid_store, grid_imul = 0x4b2715, (0x4b26ba, 0x4b26ff)
 say("G3", "SE commit store @0x4b2715 %s" % ins(grid_store))
 say("G3", "grid index imul @0x4b26ba/%#x  %s | %s" % (grid_imul[1], ins(grid_imul[0]), ins(grid_imul[1])))
 say("G3", "pending source  @0x4b270e %s" % ins(0x4b270e))
+src_off = disp(ins(0x4b270e))
+src_ok = (ins(0x4b270e) == "mov    edx,DWORD PTR [esi+edx*4+0xcf8]")
 grid_base = disp(ins(grid_store))
 grid_stride = imm(ins(grid_imul[0]))
 say("G3", "grid base / stride      %#x / %#x (%d)" % (grid_base, grid_stride, grid_stride))
@@ -318,13 +325,17 @@ say("G3", "commit body stores      %d" % len(commit_body))
 cgrid, cblock = 0, 0
 for a, t in commit_body:
     d = disp(t)
-    if d is not None and grid_base <= d < grid_base + 8:
+    if d == grid_base:            # the grid dword itself: base + category*4
         cgrid += 1
+    if d == grid_base + 0x20:     # the same 0x20bc block's running counter
+        cgrid += 0
     if d is not None and slot0 <= d < block_end:
         cblock += 1
 for a, t in commit_body:
     say("G3", "    0x%x %s" % (a, t))
-say("G3", "commit stores into grid %d; into the block %d" % (cgrid, cblock))
+cgrid_field = [a for a, t in commit_body if disp(t) == grid_base + 0x20]
+say("G3", "commit: 1 dword at 0x94d658+cat*4, %d at +0x20 (0x94d678), %d into the agenda block"
+    % (len(cgrid_field), cblock))
 
 callers = [a for a, t in sorted(INS.items()) if t.startswith("call") and imm(t) == COMMIT]
 say("G3", "callers of the commit   %d" % len(callers))
@@ -340,7 +351,8 @@ check("G3 commit store base is the grid", grid_base == 0x94d658)
 check("G3 grid stride", grid_stride == 0x20bc)
 check("G3 commit writes the grid", cgrid >= 1)
 check("G3 commit never writes the block", cblock == 0)
-check("G3 dialog handlers call the commit", len(callers) >= 3)
+check("G3 dialog handlers call the commit", sorted({owner(a) for a in callers}) == [0x4b5530, 0x4b55d0] and len(callers) == 4)
+check("G3 source operand is +0xcf8+cat*4", src_ok and src_off == 0xcf8)
 
 # ---------------------------------------------------------------- G4 sentinel law
 idiv_a, inc_a = 0x5a119d, 0x5a11a6
@@ -362,7 +374,10 @@ guarded = [g for g in guards if any(x.startswith(("test", "cmp")) for x in g[2])
 check("G4 choice modulus is 3", modulus == 3)
 check("G4 choice is b+1 (never 0)", ins(inc_a).startswith("inc"))
 check("G4 every +0x58c load is 0-tested", len(guarded) == 5 and [g[0] for g in guarded] == [0x4a66c1, 0x531fcc, 0x546914, 0x555dc6, 0x5a1e74])
-check("G4 the rest are name-formatter pushes", all(("call   0x4237f0" in " ".join(g[2]) or any("0x927b20" in x for x in g[2])) for g in guards if g not in guarded))
+check("G4 9 loads, 4 not tested: 3 name-pushed + 1 compared to +0x590",
+      len(guards) == 9 and [g[0] for g in guards if g not in guarded] == [0x522e78, 0x54bc03, 0x54de26, 0x54de93]
+      and all("call   0x4237f0" in " ".join(g[2]) for g in guards if g[0] in (0x54bc03, 0x54de26, 0x54de93))
+      and any("0x927b20" in x for x in [g for g in guards if g[0] == 0x522e78][0][2]))
 check("G4 slot0 choice is not in the write set", pair[1] not in writes)
 
 # ---------------------------------------------------------------- G5 rivals

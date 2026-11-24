@@ -29,6 +29,10 @@ CASES = [
     ("MU13", {"M388_ALGO": "2"}, "G2 (a) none of them sits in a record context"),  # ALGORITHM: ctor stores count
     ("MU14", {"M388_PATCH": "0x596ea4|push   0x2ce1"}, "G1 block size imm"),
     ("MU15", {"M388_PATCH": "0x5a11d1|mov    DWORD PTR [edi-0x4],esi"}, "G1 slot0 pair = 0x927b14/0x927b1c"),
+    ("MU16", {"M388_PATCH": "0x4b270e|mov    edx,DWORD PTR [esi+edx*4+0xcfc]"}, "G3 source operand is +0xcf8+cat*4"),
+    ("MU17", {"M388_PATCH": "0x4b5605|call   0x4b2280"}, "G3 dialog handlers call the commit"),
+    ("MU18", {"M388_PATCH": "0x579ea7|je     0x579eb5"}, "G2 (d) the only slot0 seed is skip-guarded"),
+    ("MU19", {"M388_PATCH": "0x5a11fa|mov    DWORD PTR [ecx],0x0"}, "G2 store population"),
 ]
 
 bad = 0
@@ -37,7 +41,8 @@ for cid, env, gate in CASES:
     e = dict(os.environ)
     e.update(env)
     p = subprocess.run([sys.executable, "-u", SCRIPT], capture_output=True, text=True, env=e, timeout=900)
-    red = gate in p.stdout
+    fails = [ln[5:] for ln in p.stdout.splitlines() if ln.startswith("FAIL ")]
+    red = any(f == gate or f.startswith(gate) for f in fails)
     ok = p.returncode != 0 and red
     if not ok:
         bad += 1

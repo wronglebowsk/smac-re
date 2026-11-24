@@ -106,7 +106,7 @@ G2       0x5a1171 -> 0x9280b8 mov    edi,0x9280b8
 G2       0x5a13a5 -> 0x928034 mov    eax,0x928034
 G2       0x5a88ee -> 0x92802c mov    eax,0x92802c
 G2   (d) seeds landing on slot 0's pair               0
-G2   (d) slot0 seed 0x579e9c: cmp-vs-slot0=True branch=True
+G2   (d) slot0 seed 0x579e9c: cmp esi,0x927590=True je->loop-increment=True
 G2   whole-block transfers   4
 G2       0x596ea4 push   0x2ce0  block-base push nearby=True
 G2       0x596ec3 push   0x2ce0  block-base push nearby=True
@@ -136,7 +136,7 @@ G3       0x4b27e7 mov    DWORD PTR [ebp-0xc],edx
 G3       0x4b27f4 mov    DWORD PTR [ebp-0x14],0x0
 G3       0x4b27fb mov    DWORD PTR [ebp-0x18],0x0
 G3       0x4b2802 mov    DWORD PTR [ebp-0x8],0x0
-G3   commit stores into grid 1; into the block 0
+G3   commit: 1 dword at 0x94d658+cat*4, 1 at +0x20 (0x94d678), 0 into the agenda block
 G3   callers of the commit   4
 G3       0x4b5578  in FUN_4b5530   call   0x4b2570
 G3       0x4b558c  in FUN_4b5530   call   0x4b2570
@@ -161,4 +161,4 @@ RIVAL2 the randomizer covers all 8 records                        -> FAIL (must 
 RIVAL3 the SE commit writes the agenda pair in the same pass      -> FAIL (must FAIL)
 RIVAL4 slot 0's CHOICE address is inside the write set            -> FAIL (must FAIL)
 
-PASS M388: 37/37  bb2f4329dd2467f2
+PASS M388: 39/39  e03bfb351d33c64e
