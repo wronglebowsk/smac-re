@@ -1,0 +1,3 @@
+M386 acceptance re-runs at head (cap: 3 invocations):
+run2 cmp run1 -> IDENTICAL (137 lines, sha1 588296295aaff875)
+run3 after the G6 absolute-form scan fix -> cmp evidence/m386_marker_pair.txt: IDENTICAL (no table line changed)

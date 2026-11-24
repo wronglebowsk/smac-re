@@ -684,6 +684,27 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   store classifier keyed on "the address appears" counted two. (3) NAMED was 2.7 KB from FAIL, so
   B3+B4 were rotated verbatim first.
 - **NEXT**: chain-1 pick (a) — the two peace writers outside `FUN_005537d0` (0x53fcb3 / 0x523f4c).
+## Session 342-chain4 — M386: +0x94d820 is the X of a per-faction coordinate PAIR (+0x94d824 = Y), not a deadline/counter
+
+- **ACCEPT** `python3 -u scripts/m386_marker_pair.py` -> **`PASS M386: 55/55`** `3e6d87261b7fe88e`
+  (`evidence/m386_marker_pair.txt:146`; pinned table `401580f3c8ad292e` `:143`), re-run identical
+  (`evidence/m386_twice.txt:2`); `scripts/m386_mutate.py` **15/15 killed** (`evidence/m386_mutate.txt:19`).
+  Static only, zero box; round-1 review hardened G2-G7.
+- **ANSWER**: the X half of a (x,y) PAIR at `0x94d448 + 0x20bc*f + 0x3d8` (Y at +0x3dc). 6 writers move both
+  halves: 5 write -1 to BOTH (`or reg,-1`), 1 copies a UNIT x,y (0x558e0c/12 <- `movsx
+  [..+0x95da10]`/`[..+0x95da12]`, stride 0x130); 1 lone X=-1 (0x55fce0) disables the marker (`:35-51`).
+- **READERS = MAP ARITHMETIC** (`:69-75`): 0x557d29-4d computes `(Y*ds:0x692184 + (X>>1))*11*4+3` and reads
+  byte +3 of the 0x2c tile array 0x92ae14; FUN_004e34f0 cmp's x/y vs ds:0x92a378/0x92a37c.
+- **R1 DEADLINE refuted** (`:108-112`): 0 RMW on either half, 0 loads meeting ds:0x985afc within 6 insns; the
+  real per-turn cell +0x80 (0x94d4c8) is load/dec/store 5 insns away. **R2/R3 refuted** (`:120`): 0 inc/dec/add,
+  0 absolute forms, all 54 references base-register-relative.
+- **M378 CORRECTION** (`:98`): the guard's base at 0x5553a4 is `ebx = 0x20bc*esi`, the PARTNER row, and a CFG cut
+  proves 0x55531d DOMINATES it - jge 0x5553ac tests the partner's marker X, not the pair's. 0x20000
+  stays an OUTSTANDING request INFERRED: 0 readers ON THE RELATIONS DWORD (`:125`, scanner control 373 tests),
+  cleared by the exact `and 0xfffdfbff` (`:127`); its gate is the partner's marker.
+- **INFERRED**: the marker = the faction's "unit-of-interest" tile (best unit by distance 0x8f0d34; HUD
+  highlights the unit there; 0x5a5776 clears it). Which unit, and why the arm reads the PARTNER's, stay OPEN.
+- **NAMED**: rotated settled `## M342` VERBATIM to `docs/named-archive-m342-rows.md` (verify PASS 9/9).
 
 ## Session 342-chain3 — M385: nine dynamic-mask sites resolved; no 0xc00, 0x400 at two (M382's sole-0x400 reader RETRACTED)
 
