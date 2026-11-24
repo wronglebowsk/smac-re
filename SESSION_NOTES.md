@@ -701,3 +701,23 @@ whether a facility completion stamps at all.
 - **PROTOCOL**: NAMED headroom 4,204 B (< 5 KB trigger) -> `m355_named_rotate.py` rotated `## M293`
   VERBATIM (block sha1 `e548f949`) to `docs/named-archive-m355-rows.md`.
 - **OPEN**: the option NAME of each set bit; whether another path re-derives 0x92befc/0x92bf00.
+
+## Session 330 (2026-11-24) — B33: the OR at `0x4f0ec0` is UNIT-ONLY — the facility leg spends and never stamps
+
+- **ACCEPT** `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** `f8442b847c68016d`
+  (`evidence/b33_facilityleg.txt:66`), rerun byte-identical; relay `--b33` identical;
+  `scripts/b33_mutate.py` 10/10 (`evidence/b33_mutate.txt:12`).
+- **CENSUS** FUN_004ef6d0 = 3,164 insns, `0x4ef6d0..0x4f26da` == Ghidra `size=12298`; CFG 3,482
+  edges, 0 external, 0 indirect (closed). Fixture: `scripts/b33_extract.py --check`.
+- **REACH** entry + unit branch `0x4ef8a4` reach the stamp block `0x4f0e90` (3,045 insns);
+  facility branch `0x4efa2c` reaches 886 and does NOT.
+- **DOOR** `preds(0x4f0e90)={0x4f0d94}`, `preds(0x4f0ca1)={0x4f0b80}`, `0x4f0b80` = `jg` on
+  `[ebp-0x30]`; that local is written at ONE site, `0x4ef8a4` (unit branch), never facility-reached.
+- **SPEND** facility `0x4efed8/db/dd` (`[ecx+0x40]`), unit `0x4f0ca1/a4/a6` (`[edx+0x40]`).
+- **SCORE** recorded: 4/4 unit heads gain the mapper bit, 0/2 facility-range; Virgin Soil head 2,
+  bitmap `00000008..` -> `10000000..` (bit 2 absent, 4 gained, 27 lost), `st` 2 -> 0.
+- **RIVALS** shared-OR 4/6 windows (predicts `0400000800000000`), off-map refusal 1/6, after-pop 0/6.
+- **RETRACTION (declared gap)** B32's "why a facility head does not stamp" is ANSWERED: the `jg`.
+- **PROTOCOL** `scripts/b33_named_rotate.py` rotated `## M333` VERBATIM (sha1 `be87f76187588fde
+  4268db6355ba93f44eacc0cd`, 26 tokens) to `docs/named-archive-b33-rows.md`.
+- **OPEN** facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the `0x98adb8` row; loss 27.
