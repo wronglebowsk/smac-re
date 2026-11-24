@@ -765,3 +765,30 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   or `(...,edi,0)` at 0x4dad30) and M385 `:55` pushes **0x400** into it at 0x4db0aa -- so
   an 8th live 0x400 setter exists behind that argument. `0x52b9c7/0x52b9d0` remain M383's
   two stack-copy slots.
+
+## Session 342-chain5 — M387: M380's last two rewrites split on an arg7 guard the store does not carry
+
+- **ACCEPT** `python3 -u scripts/m387_last_two.py` -> **`PASS M387: 11/11`** `c0e46fd18f2fc313`
+  (`evidence/m387_last_two.txt:111`), twice identical (`evidence/m387_twice.txt:10`);
+  harness **20/20** (`evidence/m387_mutate.txt:24`); static, zero box.
+- **BLOCKER, measured**: FUN_0052a720 (4859 B) closes over 5 jump tables, 0
+  unresolved edges (`:12`); slots -0x50/-0x4c have ONE writer each (52affb/52b004, from the
+  pair dword) and ONE reader (`:21-25`) - a verbatim dword copy.
+- **GUARD 1 [ebp+0x8]**: 7 reads / 0 writes (`:43`), indexing BOTH 42-entry tables (`:13`).
+  M383's non-dominance witness is predicate-INFEASIBLE (0x52a759 `jg` msg>0x30 AND 0x52b904
+  msg==0x16 on one value, `:32`). Pinned: 1 of 53 messages reaches the store
+  (`:49`); T1[0x16]=0x52a9e7, T2[0x16]=0x52af1b = the snapshot case.
+- **GUARD 2 [ebp+0x1c]**: the snapshot sits behind `test eax,eax / je 0x52b1ee`
+  (0x52af1b-0x52af30) and the store block reads [ebp+0x1c] 0 times (`:78-80`). The
+  writer-skipping paths are exactly arg7==0 (0x52b1ee) or count==0 (0x52b88c, `:66-69`);
+  count = (0x48+0x7ff)>>11 = 1 -> that leg is dead (`:74-75`).
+- **VERDICT**: arg7!=0 -> PRESERVE (the stored dword IS the pair dword read); arg7==0 ->
+  UNWRITTEN frame dword written into +0x94d448 (`:82-85`) - not a stamp drop. M383's 23/2/2
+  becomes 23 PRESERVE + 2 DROP + 2 CONDITIONAL (preserve / uninit by leg), not 25/2.
+- **RETRACTION**: M383's "the writer does NOT dominate" is not an instrument limit - the
+  writer is genuinely skipped on a feasible path.
+- **0x20 (M366)**: carried by the copy, tested 0 times here (`:89-91`) -> the noun stays INF.
+- **PITFALLS**: `test X,X` compares with ZERO (folding X as its own second operand inverts
+  every `jne`); keep the tracked set closed (eax/ax/[ebp-0x28]) or the loop state space
+  explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
+- **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).

@@ -120,3 +120,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M385 (s342-c3): nine dyn-mask 0xc00 sites resolved (7 PROVEN, 2 DEAD-INF) - no 0x800, no 0xc00 pair, but 0x400 ALONE at 0x4dacf7/0x4dad22 (M382 sole-0x400 RETRACTED). 44/44 `0103209f070e60f7`, 33/33 mutants.
 
 - M384 (s342-c2): 0x400 has 7 setters - `0x5534ae`/`0x555a6b` inline, plus 5 callers of the pair-mask API FUN_00551a20/FUN_00551cf0 passing 0x400 (95/106 masks resolved); `PASS M384: 39/39` `evidence/m384_bit400_writer.txt:280`, 23 mutants. Next: the 7 runtime mask args (0x4dadxx family) or what `0x551a20`'s `and 0xfaeef378` blanket clear means for the 0xc00 cluster.
+- M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
