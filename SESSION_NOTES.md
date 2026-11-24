@@ -695,6 +695,30 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
   the address silently digests stale addresses — the second-pass digest read `e07b94e9`
   against `f1c53db1` and only G10 caught it; use `ins[i][0]` inside every comprehension.
 
+## Session 335-chain3 (2026-11-24) — M367: the 13 relations labels ARE labels.txt lines (element = off/4, line = 10+element)
+- **ACCEPT** `python3 -u scripts/m367_label_index.py` -> **`PASS M367: 27/27 gates` `a48d5dd630542166`**
+  (`evidence/m367_label_index.txt:104`, digest `:105`, re-run identical); `m367_mutate.py` ->
+  **30/30 killed, NO-OP 0, cov 27/27** (`evidence/m367_mutate.txt:36`).
+- **THE INDEX (not an image string table)**: the loader `FUN_00614681` fopens `labels`+`.txt`
+  (mode `rt`, 0x5ea673), `atoi`s ONE line into `0x997b24` = 1089, allocs `count*4` and fills
+  `arr[i] = 0x5ea457()` (read line + arena strdup 0x6147ec). Each row loads ONE dword element
+  through the VALIDATOR 0x61482f (24 insns, argument read by mov/cmp only).
+- **THE MAPPING**: element i = labels.txt **line 10+i** (`#LABELS` line 8; line 9 = `1089` = the 1089
+  lines that follow; element 0 = `Mission Year`; 3 lines past it unread).
+- **THE TABLE** (id == bit; 11 plain / 2 high dword): 0x1 `Pact`, 0x2 `Treaty`, 0x4 `Truce`,
+  0x8 `Commlink`, 0x10 `Vendetta`, 0x20 `I want revenge`, 0x400 `I shall betray`,
+  0x1000 `I have infiltrator`, 0x2000 `I want to talk`, 0x40000 `I am atrocity victim`,
+  0x2000000 `I have surrendered`; high 0x80000008 `Fight to the death`, 0x80002000 `Fix current
+  status as permanent` (`:73-87`); title elem 866 = `Diplomacy for`.
+- **ANCHOR (independent of file order)**: the status dam `0x4120c4` tests bit 0x1 of the SAME
+  0x82f record -> the je fallthrough loads 0xa14 (`Pact`), its target 0xa10 (`Treaty`).
+- **QUALIFIED (M364)**: bit 0x8's label reads **Commlink**, not "at war" (M364 read AT WAR off the
+  vendetta case keys) -> a QUALIFICATION, not a retraction: both hold only if 0x8 gates contact (INF).
+- **PITFALL**: 18 clamp sites, not 13 — split rows from statics on BOTH the trailing call
+  (0x604fd2) AND the `ds:0x997b20` base.
+- **REVIEW #398 (9 findings)**: added the alloc data-flow gate (G0d), the count's source (G0e),
+  the je-branch gate (G4b), the mask equality (G5a), all-13-triples (G5c).
+
 ## Session 335-chain2 (2026-11-24) — M366: relation bits 0x10 / 0x20 — 0x10 = AT WAR (V), 0x20 = the human-branch war record (INF)
 
 - **ACCEPT** `python3 -u scripts/m366_bitnouns.py` -> **`PASS M366: 29/29 gates` digest
