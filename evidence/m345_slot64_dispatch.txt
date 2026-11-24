@@ -1,0 +1,83 @@
+M345 slot+0x64 dispatch census -- computed from scratch/m574/text.txt (781379 insns)
+
+TABLE 1  slot pointer 0x5f58fa in the image bytes
+   data occurrences : 5
+     0x6716b0   (vtable+0x64 of 0x67164c)
+     0x671830   (vtable+0x64 of 0x6717cc)
+     0x672924   (vtable+0x64 of 0x6728c0)
+     0x675d28   (vtable+0x64 of 0x675cc4)
+     0x67772c   (vtable+0x64 of 0x6776c8)
+   .text operand refs: 0
+
+TABLE 2  the trio at vtable 0x67164c (slot -> function -> ret imm)
+   +0x60  0x5f59bf    dword 0x5f59bf    ret 0x8
+   +0x64  0x5f58fa    dword 0x5f58fa    ret 0x4
+   +0x68  0x5f59e8    dword 0x5f59e8    ret 0x4
+   ctor 0x405ef0 installs: ['0x405f31 mov DWORD PTR [eax],0x67164c', '0x405f3a mov DWORD PTR [ecx+0x444],0x671644']
+
+TABLE 3  every indirect call with displacement 0x64/0x6c, receiver walked back
+   #  addr      reg  fn             arity  kind        receiver source
+    1 0x432965  edx  FUN_00432900   1      MEMBER      43295e: mov edx,DWORD PTR [eax+edx*1+0xf624]
+    2 0x443016  edx  FUN_00442f80   1      MEMBER      443010: mov edx,DWORD PTR [eax+0xd9ec]
+    3 0x488b5c  eax  FUN_00488ac0   1      MEMBER      488b56: mov eax,DWORD PTR [edx+0x3870]
+    4 0x4b855b  edx  FUN_004b84f0   0      VPTR-SELF   4b8556: mov edx,DWORD PTR [eax]
+    5 0x4b85bc  eax  FUN_004b84f0   0      VPTR-SELF   4b85b7: mov eax,DWORD PTR [edx]
+    6 0x4b8843  edx  FUN_004b8820   0      VPTR-SELF   4b8841: mov edx,DWORD PTR [eax]
+    7 0x4b9087  eax  FUN_004b9060   1      VPTR-SELF   4b9085: mov eax,DWORD PTR [edx]
+    8 0x5b5368  edx  FUN_005b5240   5      VPTR-SELF   5b5365: mov edx,DWORD PTR [eax]
+    9 0x5b689d  ecx  FUN_005b64c0   5      VPTR-SELF   5b689a: mov ecx,DWORD PTR [eax]
+   10 0x5b68f7  ecx  FUN_005b64c0   5      VPTR-SELF   5b68f2: mov ecx,DWORD PTR [eax]
+   11 0x5b6915  ecx  FUN_005b64c0   5      VPTR-SELF   5b6910: mov ecx,DWORD PTR [eax]
+   12 0x5b6942  ecx  FUN_005b64c0   5      VPTR-SELF   5b693d: mov ecx,DWORD PTR [eax]
+   13 0x5ca950  edx  FUN_005ca8d2   5      VPTR-SELF   5ca94d: mov edx,DWORD PTR [eax]
+   14 0x5cf743  eax  FUN_005cf43a   1      VPTR-SELF   5cf73e: mov eax,DWORD PTR [edx]
+   15 0x60931d  ecx  FUN_00608c79   5      ?           609317: mov ecx,DWORD PTR [ebp-0xdc]
+   16 0x6363e2  eax  FUN_00636371   6      VPTR-SELF   6363d9: mov eax,DWORD PTR [edx]
+   17 0x63640c  eax  FUN_00636371   6      VPTR-SELF   636403: mov eax,DWORD PTR [edx]
+   18 0x638e49  edx  FUN_00638ddd   6      VPTR-SELF   638e46: mov edx,DWORD PTR [eax]
+   19 0x63d05b  ecx  FUN_0063d004   5      VPTR-SELF   63d058: mov ecx,DWORD PTR [edx]
+   (#: 1-19 are `call [r+0x64]`; the 18 `call [r+0x6c]` sites follow)
+
+TABLE 4  arity histogram over the 19 +0x64 sites: {0: 3, 1: 5, 5: 8, 6: 3}
+   slot arity is 1 (ret 4) -> arity-compatible sites: 5
+     0x432965  FUN_00432900   kind=MEMBER
+     0x443016  FUN_00442f80   kind=MEMBER
+     0x488b5c  FUN_00488ac0   kind=MEMBER
+     0x4b9087  FUN_004b9060   kind=VPTR-SELF
+     0x5cf743  FUN_005cf43a   kind=VPTR-SELF
+
+TABLE 5  the dialog module 0x5f0000-0x600000: [r+0x64] instructions
+   total 4 ; call/jmp forms 0 ; mov forms 4
+     0x5f49ad  mov ecx,DWORD PTR [eax+0x64]   (FUN_005f3f5b)
+     0x5f49b9  mov DWORD PTR [edx+0x64],eax   (FUN_005f3f5b)
+     0x5fc6fc  mov DWORD PTR [edx+0x64],0x0   (FUN_005fc500)
+     0x5fcc34  mov DWORD PTR [eax+0x64],0x0   (FUN_005fca14)
+   the 0x5f49ad/0x5f49b9 pair is a FIELD SWAP on [this+0x2240]+0x64:
+     0x5f49a1 add edx,0x2240 ; 0x5f49ad read [eax+0x64] ; 0x5f49b9 store back
+   runner 0x5f1394: slot-call sites 0
+
+RIVALS (each verdict computed from the numbers above)
+   R1 runner dispatches its own commit slot     -> FAILS (0 site calls)
+   R2 one of the 19 sites reaches a dialog        -> FAILS (0 sites in module, 5 one-arg sites)
+   R3 the commit is called directly             -> FAILS (0 text refs)
+   R4 the slot is cached then `call reg`        -> FAILS (0 pairs)
+   R5 any [r+0x64] in the module is a dispatch  -> FAILS (0 call/jmp forms, 4 mov forms)
+
+TABLE 6  dispatch evasions
+   cached slot -> `call reg` pairs : 0
+   `lea r,[obj+0x64]` + call [r]  : 0
+   jmp [r+0x64]/[r+0x6c] forms     : 0
+
+PASS G1 slot data census == 5, all .rdata at a family vt+0x64 5 occ
+PASS G2 no .text operand names the slot (no direct call/thunk/lea) 0 refs
+PASS G3 trio dwords match; 0x671644+0x6c == 0x67164c+0x64 pane alias
+PASS G4 ctor installs 0x67164c at +0 and 0x671644 at +0x444 2 stores
+PASS G5 slot arity is 1 (ret 4)                           0x4
+PASS G6 census: 19 x +0x64, 18 x +0x6c, 0 jmp forms       19/18/0
+PASS G7 zero dispatch sites inside the dialog module      0 call forms in module
+PASS G8 module's [r+0x64] forms are 4 movs, 0 calls, swap pinned at 0x5f49ad 4 mov / 0 call
+PASS G9 zero dispatch evasions (cached-slot, lea+call)    0/0
+PASS G10 arity-compatible sites == 5, each on a MEMBER/child pointer 5 one-arg
+PASS G11 runner 0x5f1394 dispatches no slot               0
+
+PASS M345: 12/12 gates   digest=73e03a68d5e3fd23

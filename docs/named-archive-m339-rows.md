@@ -22,3 +22,18 @@ Each region keeps its original `## <id>` heading and table bytes.
 
 
 (§rotation-1 ends; nothing below it belongs to this region.)
+
+<!-- m345-rotation: M339 verbatim -->
+## M339 VERBATIM (moved by `scripts/m345_named_rotate.py`, sha1 `9a93e8acca0a99ac0779babaa63a94ae5afca934`)
+
+## M339 (s320-chain2, pick (x6) "callee 0x5f1394", STATIC 7/7, review #359 hardened) — 0x5f1394 = the modal SCREEN RUNNER; its return is the screen OBJECT's `+0xa40` result cell, and the difficulty dialog writes that return into `ds:0x985aec` + all 8 faction blocks — `evidence/m339_modal_runner.txt:1`
+
+| claim | line | kind |
+|---|---|---|
+| FUN_005f1394 = 11,207 B span / 2,235 insns (gap histogram 2220x0 + 14x3 = the objdump byte-column wraps, no overlap); `ret 0x8`, args read = only `[ebp+0x8]`/`[ebp+0xc]`; SEH `0x66f786`, `sub esp,0x38c`, first call `[vtbl+0x170]`@0x5f13c6 whose 0 -> `or eax,-1`; vtable lane {15c,160,164,16c,170}; window create 0x5e3ed9's error returned verbatim | `:1`, `:42-43` | V MU1,MU2,MU9 |
+| 7 exits, all jumping to the ONE SEH-restore label (no jump skips it): -1 x2, 0 x1, passthrough x2, `ds:0x698d0c` x1, `[obj+0xa40]` x1; the two passthroughs are TRACED to their feeder calls `[vtbl+0x15c]` and `0x5e3ed9`; +0xa40 read ONCE / written 0x, +0xa44 never read | `:43-44` | V MU3,MU7,ALG_A1 |
+| 94 direct thiscall sites, exact receiver census: 76 `lea ecx,[ebp-…]` (screen object = a caller frame local), 14 pointer slots, 3 register, 1 global `0x9210a8`; none without a receiver | `:45` | V MU4,MU10 |
+| FUN_004ddaa0 seeds `ds:0x985aec` into obj+0xa44 (0x4ddb3e/4d, the store ADJACENT to the call, receiver = the same lea 0x4ddb47), `call 0x5f1394`, `test eax,eax`/`jge 0x4ddcf1`; there `mov ds:0x985aec,eax` (no eax write in between) then `mov [ecx],eax` + `add ecx,0x20bc` + back-edge `jl 0x4ddcfb` from 0x94d438 to 0x95da18 = 8 iterations => the return IS the new effective difficulty of 8 factions | `:46` | V MU5,MU6,MU8,MU11,MU12 |
+| rivals dead: "the runner is the chooser" — 0 refs to 0x94d2ac/0x985aec in 2,235 insns vs 3 in FUN_004ddaa0's own extent; "return is a dialog ID" — its only IMMEDIATE returns are -1 and 0 | `:47` | V MU7 |
+| ACCEPT `python3 -u scripts/m339_modal_runner.py` -> `PASS M339: 7/7` `d76a5e83770b77bb` x2, `text_sha256=eb9f463e…` (`evidence/m339_modal_runner.txt:49-50`); harness `m339_mutate.py` 13/13 `927a1c66c322709e`, `--selftest` 3/3 | `evidence/m339_mutate.txt:17` | V |
+| OPEN: the writer of `[screen+0xa40]` (outside the runner and outside FUN_004ddaa0); call site 0x57dd45 pushes ONE dword against `ret 0x8` (frame restore tolerates it); the MFC `DoModal` identity is INFERRED from shape only | - | lead |
