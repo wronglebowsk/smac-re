@@ -1,0 +1,20 @@
+baseline: PASS M346: 17/17 gates   digest=ab4f0ca8123245bb
+MU0   OK   baseline (no mutation, must stay 17/17)   red=[]
+MU1   OK   completion posts kinds 1 then 2   red=['G2']
+MU2   OK   kind-1 payload reads the item table 0x984d38   red=['G3']
+MU3   OK   kind-2 payload base array 0x927894   red=['G4']
+MU4   OK   both posters share the payload array 0x999ff4   red=['G5']
+MU5   OK   bound k <= 9 in poster FUN_006265a2   red=['G6']
+MU6   OK   text-buffer stride is 0x100   red=['G7']
+MU7   OK   expander reads the numeric array 0x999fa4 at 4 sites   red=['G8']
+MU8   OK   text slots are addressed 0x99a01c + (k<<8)   red=['G8', 'G9']
+MU9   OK   token vocabulary at 0x69911c   red=['G10']
+MU10  OK   drainer clears slot1 0x99a11c   red=['G11']
+MU11  OK   drainer calls the modal runner 0x5f1394 at 0x63732d   red=['G12']
+MU12  OK   drainer reads slot2 0x99a21c   red=['G13']
+MU13  OK   0x985b10 absent from the whole alert chain   red=['G14']
+MU14  OK   0x985b10 absent from the post window   red=['G15']
+MU15  OK   no head/tail/count: only the publishers and the drainer clear a slot   red=['G16']
+MU16  OK   drainer has 0 direct .text callers   red=['G17']
+
+PASS HARNESS M346: 17/17

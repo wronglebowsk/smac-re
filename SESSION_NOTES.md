@@ -491,3 +491,29 @@ Docs: NAMED 245,757 B (B24 4,772 B rotated VERBATIM to `docs/named-archive-b31-r
 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `--verify` ok). NEXT_PROMPT patched by section.
 STILL OPEN: the unit-id decoding (M68/M69 NEG_TYPE); which loss is a raze vs a record identity change;
 whether a facility completion stamps at all.
+
+## Session 325 (2026-11-24) — M346: who raises the build-finished ALERT (milestone/m346)
+
+- **ACCEPT** `python3 -u scripts/m346_alert_raiser.py` -> **`PASS M346: 17/17 gates`** digest
+  `ab4f0ca8123245bb`, two runs byte-identical (`evidence/m346_alert_raiser.txt:107`);
+  `scripts/m346_mutate.py` -> **17/17**, NO-OP `[]` (`evidence/m346_mutate.txt:19`).
+- **POST:** in FUN_004ef6d0 the block after the queue pop (`call 0x4ef5d0` @0x4f0f46) makes
+  exactly 2 alert posts — `0x6265a2` kind 1 @0x4f0f78 with payload `[edi*48+0x984d38]`, and
+  `0x626634` kind 2 @0x4f0f96 with payload `0x927894+1436*idx` (base record, stride 0x59c).
+  The function holds 14 posts total, so the pair is the completion block's, not the function's.
+  (First draft claimed "exactly 2 in the function"; G1 caught it and the gate was rewritten to
+  the pop-anchored window instead of the threshold being loosened.)
+- **TABLE:** both posters store payload -> `0x999ff4+4k`, owner -> `0x999fcc+4k`, zero the first
+  byte of `0x99a01c+0x100k`, and bound `k<=9` — TEN fixed slots.
+- **EXPANDER:** FUN_00625b20 reads 0x999fa4 (4x) and adds `0x99a01c+(k<<8)` (4x); the literal
+  block at 0x69911c is `$` / `$NUMBER` / `$NUM` / `$HEX` / `$LINK<`.
+- **DRAINER:** FUN_00636b1e clears slots 0/1/2 @0x63730e,15,1c, calls the modal runner 0x5f1394
+  @0x63732d, then re-loops while `strlen(slot1) > 0x10`; 0 direct .text callers.
+- **RETRACTION:** the footing's "0x985b10 = the alert channel/event queue" is WRONG — 0 refs in
+  the five alert functions and in the post window, 0 stores in FUN_004ef6d0; it is the M96/M308
+  player mask. No head/tail/count exists: the only first-byte writers are the 2 posters and the
+  drainer.
+- **Docs:** NAMED 247,182 B (M313 4,132 B rotated VERBATIM to `docs/named-archive-m313-rows.md`,
+  sha1 `b674876b9a743893`, `scripts/m346_named_rotate.py --verify` PASS); M344 patched in place.
+- **STILL OPEN:** which .rdata template consumes slots 1/2 (and whether a facility completion
+  ever reaches a template); the unit-id decoding (M68/M69 NEG_TYPE).
