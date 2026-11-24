@@ -1555,7 +1555,7 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page: its flag widget is an INLINE +0x15a0 group of 13 checkboxes whose ids ARE the bits; 0x80000000 selects the record's SECOND dword. ev `evidence/m362_sibling.txt`
+## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page: its flag widget is an INLINE +0x15a0 group of 13 checkboxes whose ids ARE the bits; 0x80000000 selects the record's SECOND dword. ev `evidence/m362_sibling.txt:97`
 | claim | ev | conf |
 |---|---|---|
 | FUN_004db1b0 syncs 13 ids {8,10,4,2,1,1000,2000,20,2000000,400,40000} from 0x94d448 + {80000008,80002000} from 0x94d468; id==mask 11/11, id==mask\|0x80000000 2/2, high set == the 0x94d468 rows | `:9-20` | V MU1,2,3,18 |
