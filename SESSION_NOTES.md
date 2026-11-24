@@ -792,3 +792,27 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   every `jne`); keep the tracked set closed (eax/ax/[ebp-0x28]) or the loop state space
   explodes (3.3M steps); cdecl arg7 = [ebp+0x1c].
 - **NEXT**: caller census for arg7==0 with msg 0x16 (is the UNINIT leg live?).
+
+## Session 343-chain2 — M389: the 0x4dadxx family's five OPEN masks are verbs (49/49)
+
+- **ACCEPT** `python3 -u scripts/m389_family_mask.py` -> **`PASS M389: 49/49`** `05a36a50540466f3`
+  (`evidence/m389_family_mask.txt:101`), x2 same; `python3 -u scripts/m389_mutate.py` -> **21/21**
+  (`evidence/m389_mutate.txt:26`).
+- **THE FIVE SITES** (M384): the four register masks resolve INSIDE FUN_004dadd0 —
+  `mov ebx,0x4`@0x4daea3 -> 0x4daedd, `mov ebx,0x2`@0x4daf07 -> 0x4daf41, `mov edi,0x1000`@0x4dafcf -> 0x4db02d,
+  `mov edi,0x2000`@0x4db035 -> 0x4db08d, zero intervening writes (`:13-17`). 0x4dad30's mask is
+  edi=[ebp+8] of FUN_004dacc0; its 4 callers push {0x20,0x2000000,0x400,0x40000} (`:19-27`).
+- **THE LADDER** `:34-44`: FUN_004dadd0 = 7 arms keyed by `FUN_0x6051fa(this+0x15a0,mask)`, ladder
+  {1,2,4,8,0x10,0x1000,0x2000}, two `test [pair]` sites per arm; eax!=0 -> SET, eax==0 -> CLEAR on every arm.
+  Five lows SET 0x551a20 (`or`) / CLEAR 0x5518f0 (`not`+`and`); 0x1000/0x2000 = ONE 0x551cf0 call whose
+  [ebp+0x14] flag picks OR vs AND (`:46-60`).
+- **0x400** `:52-66`: exactly one `push 0x400` in the family (0x4db0aa into the FUN_004dacc0 gate); no arm can
+  ask 0x400 or 0x800.
+- **ENTRY** `:68-78`: FUN_004dadd0 has two direct callers — 0x4dab96 in FUN_004dab90 (0 call/jmp sites
+  image-wide; ONE 4-byte pointer at 0x277ff8 = VA 0x677ff8, a post-.text table of .text pointers)
+  and 0x4dbc5a in FUN_004db480 (1 call site). Live path = FUN_004db480; FUN_004dab90 = indirect dispatch only.
+- **OPEN**: the guard FUN_0x6051fa's noun ([ecx]->[+8]->+0xbc, returns 0/nonzero); 3 applies outside the arms
+  (0x4db101 set 1, 0x4db11b clear 0xc20, 0x4db165 set 0x10) (`:45` `:55`).
+- **PITFALLS**: (1) a backward def walk must clobber eax/ecx/edx ONLY — with callee-saved ebx/edi clobbered the
+  four masks go opaque (MA1). (2) a 4-arg API's direction lives in a pushed flag, not the call site: two arms
+  share ONE 0x551cf0 call for both directions. (3) index n_callers counts data refs (FUN_004dab90's 1 = one .rdata slot).
