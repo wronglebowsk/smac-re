@@ -1245,7 +1245,7 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | **32/512 slots named = 14 band-0 + 18 faction designs**, per band == M80's live census minus 324/325 (its own creations); 67/67 recs name a slot ⇒ 10^-80.7; type byte **+0x2d==0xff exactly on the 14 band-0 slots**; `+0x30` bit 2 NOT a band marker | `:6-8`, `:762` | V / INFERRED (names); MU9, MU12, MU15, MU20, MU22 |
 | the coord exemption is **ours, not the game's**: `0x5ab320` (90 insns, 9 jumps) has **0 branches on the entry path to the `+0`/`+2` stores** (0x5ab355/5c) | `:756` | V; MU4, MU5, MU19 |
 | the only save where it bites is **our own poke** `m113map` = `m54b_clean` + 20 markers `0xc0de0001..14`, stride 128 from 222000; 13 windows in-array (one straddles rec16/17); out-of-grid recs **12 (3076,56832), 17 (192) both marker-struck**; all-record check ⇒ found_units 67→**49**; the 20 diff-derived windows == the 20 marker dwords an INDEPENDENT value scan of `m113map` finds (`:741`, s305) | `:741-755` | V; MU10, MU13, MU14 |
-| rivals dead: AND of the 8 band values = **0** (no flag bit); every band rec names a slot and matches its owner; store unguarded | `:758`, `:768` | V; MU4, MU6-8, MU16, MU18-20 |
+| rivals measured: R1 0-based page covers 0..34 too, so bounds do NOT discriminate — it dies on the decoded const -5; R2 a coherent 6-row page (step 6, 6 pages, 36 cells) reaches index 35 = the terminator; R3 a flat list needs coef_n == 1 but all three sites decode (5,-5); R4 base 0x983984 ends at 0x984ca8 != term | `:36-40` | V MU2,MU3,MU4,MU11 |
 | **RETRACTED IN PLACE**: `sim/save.py:52` + `_unit_ok`'s docstring (comments only — `--b26` 10/10 `ae43e0ab9c8cfc3d`, `--b25` 9/9 `901a286332960a10` re-run after); `## B25`'s `.exe shares the rule`; the `0x933278` row's "flags at +10"; M26's `unit_can_act` bits (bit 6 = index bit 6, 6 recs; the word at **+12** is zero on **67/67** — G3 now asserts it — while the same census at +10 is nonzero on 64/67, `:757`) | `:757`, `:761` | V; MU4/MU19 (guarded-store rival), MU6/MU16/MU18 (band==owner), MU11 (out-of-band index), MU13 (shared-rule claim), MU23 (+12 census — G3+G10), MU24 (bit 10 of +10 poked — G3+G5+G6+G10) |
 | OPEN: what `+0x2d` means; what the game validates on LOAD; `m112poke.SAV` is a byte-copy of `m54b_clean.SAV` (4 saves = 3 states) | - | lead |
 
@@ -1360,21 +1360,20 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 - recs 39..71 built, 0 reachable (bounds 1..34); bound 39 == branch (`:81`) — V MU2/ME3; B28 re-run fed the derived table reproduces `705a4520c08c4062` / `99c52201f073499d` / `38bba29ab857654b`, honest touch `[]` (`:82`) — V MU1/MU3 (G7).
 - OPEN: why M46 numbered by alpha line; rec 39..71 trailing columns; the 11-token re-sync INFERRED.
 
-## M338 (s319-chain2, STATIC 8/8, review #357 hardened) — the LAST two `#DIFF` readers: `0x57c606` is the literal loop counter 0..5; `0x44a1c8` indexes with a hall-of-fame record byte (+0x20) that is the faction's EFFECTIVE DIFFICULTY — `evidence/m338_diff_readers.txt:1`
+## M338 (s319-chain2, STATIC 8/8, review #357 hardened; ROTATED by s321-chain2) — the LAST two `#DIFF` readers: `0x57c606` is the literal loop counter 0..5; `0x44a1c8` indexes with a hall-of-fame record byte (+0x20) that is the faction's EFFECTIVE DIFFICULTY. FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m341-rows.md:5` (sha1 `b82cddad74c8`); this stub governs, one line per claim
 
 | claim | line | kind |
 |---|---|---|
-| table census: `.text` refs to 0x94d2ac = 2 base loads + 7 scaled readers {0x44a1c8,0x484cc9,0x485426,0x48678f,0x486f40,0x57c606,0x599405}, 0 stores; declared==measured both ways | `:1-10` | V MU2,MU11,MU12,ALG1 |
-| `0x57c606`: `xor esi,esi` (0x57c604) immediately precedes; the body's only esi write (broad write-classifier) is `inc` 0x57c6ca; `cmp esi,6`/`jl 0x57c606` => 0..5, and the LOADER is read (0x57ac74 mov esi / 0x57ac85 add 4 / 0x57ac88 cmp 0x94d2c4) = the same 6 | `:11-16` | V MU1 |
-| `0x44a1c8`: exact 6-instruction window `eax=[ebp-0x1c]`, `xor edx,edx`, scratch clear, `ecx=0x997b28`, `dl=BYTE[eax+0x20]`, `[edx*4+0x94d2ac]`; 0 insns between the byte load and the index; 0 eax clobbers (write-classifier) | `:17-24` | V MU3,MU15 |
-| `[ebp-0x1c]` = record of the 35x0x8c buffer 0x983a10: 3 stores only, the 0x4497b7 store's SOURCE is eax, no eax clobber in (0x4497ad,0x4497b7), no bracket-crossing jump; `(8-1)*(1+4)*4 = 0x8c` | `:25-33` | V MU4,MU5,MU13 |
-| buffer = `hallfame.jhh`: the fopen WINDOW is `push 0x689f3c; push 0x689f40; call 0x64c980` with PE strings `rb`/`hallfame.jhh`, the read window pushes size 0x1324/buffer/call 0x64cc00, zero-init is the exact 8-insn sequence 35x0x8c to 0x984d34, sibling 0x44adc0 nests 5 per 0x2bc | `:34-41` | V MU6,MU7 |
-| field +0x20: the module is MEASURED as the 7 functions that address 0x983a10 (ghidra extents); their union has exactly 2 stores — 0x44b15b from `BYTE[0x94d438+8380*faction]` (fold decoded = 0x20bc, cell = 0x94d430+8) and 0x44b612 a struct copy (scope: a computed-pointer store outside them is not excluded) | `:42-47` | V MU8,MU9 |
-| 0x94d438 = the faction's EFFECTIVE DIFFICULTY: the exact 6-insn branch `mov al,ds:0x985b10; test dl,al; mov eax,ds:0x985aec; jne 0x59eed6; mov eax,3; mov [esi+0x94d438],eax`, plus save-load 0x57ef57 (same 8380 fold) | `:48-50` | V MU10,MU14 |
-| rivals dead: index is NOT `ds:0x985aec` (0 refs in the chain); 0x983a10 is NOT the faction array (decoded 0x8c vs 0x20bc); 0x57c606's index is NOT stored | `:51-58` | V MU7 |
-| ACCEPT `m338_diff_readers.py` -> `PASS M338: 8/8` `1ae1563d47d0039e` x2 (sha256 288a0edc); harness 16/16 `56455db0eadbedd7` (`evidence/m338_mutate.txt:18`), ST 3/3; review #357's 10 findings all fixed IN the gates | `:59-67` | V |
-| OPEN: the +0x20 index is UNCLAMPED (a HoF byte >=6 reads past `0x94d2c4`); FUN_0058e7f0 admitting a pref >=6 is now ANSWERED by M340 (ADMITTED, 7/7); 0x44a1c8's window is the HoF screen INFERRED | - | lead |
-
+| table census: `.text` refs to 0x94d2ac = 2 base loads + 7 scaled readers {0x44a1c8,0x484cc9,0x485426,0x48678f,0x486f40,0x57c606,0x599405}, 0 stores | `:1` | V MU2,MU11,MU12,ALG1 |
+| `0x57c606`: `xor esi,esi` precedes; only esi write is `inc` 0x57c6ca; `cmp esi,6`/`jl` = 0..5, same 6 as the loader end 0x94d2c4 | `:2` | V MU1 |
+| `0x44a1c8`: 6-insn window, `dl=BYTE[eax+0x20]`, 0 insns between byte load and `[edx*4+0x94d2ac]`, 0 eax clobbers | `:3` | V MU3,MU15 |
+| `[ebp-0x1c]` = a 0x983a10 record: 3 stores, the 0x4497b7 source is `lea eax,[edx*4+0x983a10]` with `(8-1)*(1+4)*4 = 0x8c` | `:4` | V MU4,MU5,MU13 |
+| buffer = `hallfame.jhh`: fopen 0x64c980 window, read size 0x1324, zero-init 35x0x8c to 0x984d34 | `:5` | V MU6,MU7 |
+| field +0x20: 7-function module, exactly 2 stores (0x44b15b from faction block +8, 0x44b612 struct copy) | `:6` | V MU8,MU9 |
+| 0x94d438 = the faction's EFFECTIVE DIFFICULTY (creation 0x59eec3 branch, save-load 0x57ef57) | `:7` | V MU10,MU14 |
+| rivals dead: index is not 0x985aec; 0x983a10 is not the faction array (0x8c vs 0x20bc); 0x57c606's index is not stored | `:8` | V MU7 |
+| ACCEPT `PASS M338: 8/8` `1ae1563d47d0039e` x2, harness 16/16 `56455db0eadbedd7` | `:9` | V |
+| OPEN: the +0x20 index is UNCLAMPED; a pref >=6 is ADMITTED (M340); 0x44a1c8's window is the HoF screen (INFERRED). **CLOSED by `## M341`:** the window's page arithmetic | - | lead |
 ## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, review #358 hardened) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder — `evidence/m340_pref_admission.txt:79-90`
 
 | claim | evidence | conf |
@@ -1400,3 +1399,17 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | rivals dead: "the runner is the chooser" — 0 refs to 0x94d2ac/0x985aec in 2,235 insns vs 3 in FUN_004ddaa0's own extent; "return is a dialog ID" — its only IMMEDIATE returns are -1 and 0 | `:47` | V MU7 |
 | ACCEPT `python3 -u scripts/m339_modal_runner.py` -> `PASS M339: 7/7` `d76a5e83770b77bb` x2, `text_sha256=eb9f463e…` (`evidence/m339_modal_runner.txt:49-50`); harness `m339_mutate.py` 13/13 `927a1c66c322709e`, `--selftest` 3/3 | `evidence/m339_mutate.txt:17` | V |
 | OPEN: the writer of `[screen+0xa40]` (outside the runner and outside FUN_004ddaa0); call site 0x57dd45 pushes ONE dword against `ret 0x8` (frame restore tolerates it); the MFC `DoModal` identity is INFERRED from shape only | - | lead |
+
+## M341 (s321-chain2, STATIC 10/10) — the HoF record window is `5*n - 5 + s`: THREE .text sites decode to the same law, so the 35 records at 0x983a10 are 7 blocks x 5 rows and page index 8 lands on the terminator — `evidence/m341_hof_window.txt:1`
+
+| claim | evidence | conf |
+|---|---|---|
+| SITE A 0x449793/0x449796 `lea ecx,[eax+ebx*4]` + `lea ecx,[ebx+ecx*1-0x5]` decodes to 5*page + slot - 5; inputs exactly [obj+0x59f4] (0x44970f) and [obj+0xa918] (0x449715, spill 0x449728, reload 0x44978d), 0 other ebx definitions | `:2-10` | V MU1,MU2,MU8,MU9,ALG1 |
+| SITE B 0x44af9b/0x44af9e = 5*[obj+0xa4c] + slot - 5; the cell's DATAFLOW is read: `mov eax,ds:0x91b5b4` @0x44aecb -> `mov [esi+0xa4c],eax` @0x44aed9 with 0 eax writes between; slot from the rank scan seeded 4 with the `jge 0x44af2b` back-edge (5 probes) | `:20-26` | V MU3,MU11,MU13,MU14,MU15 |
+| SITE C 0x44b5a7..0x44b5b9 insert-shift: src index 5n+k-5, dst 5n+k-4 (delta +1); BOTH address chains (*8, sub, *5, *4+0x983a10) evaluate at (n=2,k=3) to 0x983a10+idx*0x8c and the dst = src+0x8c; k in {0..3} from four pushes each followed by `call 0x44b450` | `:11-19` | V MU10,MU16,MU17 |
+| extent MEASURED at FIVE zero-init/fault sites: all base 0x983a10 / stride 0x8c / inner 5 / term 0x984d34; 0x1324 = 35*0x8c = 7*0x2bc; {1..7}x{0..4} is a bijection onto 0..34; index 35 = 0x984d34 | `:22-31` | V MU4,MU5,MU6,MU7 |
+| NO CLAMP: over the 781,379 parsed insns the only direct 0x59f4 reference is the load 0x44970f; the 12 other hits are the indexed form of a DIFFERENT array (every one `[reg+reg*4+0x59f4]`, printed); 0 cmp/test on ebx between the load and the lea | `:32-33` | V MU8 |
+| the 6-iteration loop is COLUMNS: the probes {1,2,4,8,0x10,0x20} sit at the exact addresses {0x449915,0x449985,0x4499f1,0x449a5c,0x449ac8,0x449b34} on byte +1 of the ONE record, and the run has exactly ONE ebx definition — the reload `mov ebx,[ebp-0x1c]` @0x449982 | `:34-35` | V MU12,MU18 |
+| rivals dead: 0-based page (indices 35..39), 6 rows/page (36 cells, hi 35), flat list (three sites + k<=3), base 0x983984 (end 0x984ca8 != term) | `:36-40` | V MU1,MU3,MU4 |
+| ACCEPT `python3 -u scripts/m341_hof_window.py` -> `PASS M341: 11/11` two runs diff-identical; harness 19/19 `e1c003e81552f53f` (baseline re-run = the NO-OP control), ST 4/4 | `:45-58`, `evidence/m341_mutate.txt:21` | V MU1,ALG1 |
+| OPEN: +0x59f4's writer — no named store exists in .text (INFERRED: a control at obj+0x5970); the page's upper bound is therefore not established statically; reading "page 1..7" as faction-block numbering is INFERRED from the shared 5-block law | - | lead |
