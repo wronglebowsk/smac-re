@@ -318,3 +318,29 @@ printers of measured values need the same None-guard as the gate.
   MU12 table base, MU13 chain slot, MU14 SECOND alias load INSERTED; the digest hashes PASS bits.
 - PITFALL: displacement-keyed censuses miss strength-reduced forms; an O(n) replay per site needs
   a bisect index (180 s).
+## Session 319-chain1 (2026-11-24) — B29: the item table DERIVED through M337's loader law
+
+- **ANSWER:** `sim/itemtable.py` replays `0x57a7ef..0x57a899` over `data/alpha.json`: 72 records,
+  branch rec 39, 71 iterations, token widths 42/2/27 — all four parsed out of the M337 census and
+  REPRODUCED from the file (G2). The derived table equals `sim.economy.upkeep_table` on 38/38 ids
+  by name AND upkeep, so `ALPHA_SHIFT = 1` is now a CONSEQUENCE of the loader, not B4's assumption
+  (G3; the shift-0 rival differs 22 ids by value and 38/38 by name).
+- **B4's four `table-later` DIFFERS rows CLOSED as a convention artifact:** read at the ALPHA
+  INDEX the derived table reproduces all four M46 values (Fusion Lab 4, Nanoreplicator 4, Quantum
+  Converter 6, Quantum Lab 3), at index+1 zero of four — M46 numbered its rows by alpha line (G5).
+  The same convention puts the wrong NAME at all five ids B4 pinned, so one convention cannot
+  explain both sets.
+- **BOUNDARY:** records 39..71 (33 past the branch) are built and unreachable — the feeder's
+  bounds 1..34 charge 0 of them; consumer bound 39 == the branch (G6).
+- ACCEPT `python3 -u -m sim.selftest --b29` -> **PASS B29: 9/9**, rows `e4b1c98e68ff8685`,
+  print `377094bc16aa8f27`, table `fa829fcd87cf43d5`, alpha sha `bac04f33eb692085`, 2 runs
+  byte-identical and the direct entry prints the same text (`evidence/b29_item_table.txt:85-86`);
+  `scripts/b29_mutate.py` -> **HARNESS PASS 9/9** `ae1f8e0292a59ed3`, NO-OP `[]`, ST 4/4
+  (`evidence/b29_mutate.txt:10`).
+- **REUSE:** B28's whole run fed the DERIVED table reproduces its anchors `705a4520c08c4062` /
+  `99c52201f073499d` / `38bba29ab857654b` with honest touch `[]` (G7) — nothing loosened.
+- NAMED headroom: M334 block rotated VERBATIM to `docs/named-archive-b29-rows.md:5`
+  (sha1 `579f90da7d8c`, `scripts/b29_named_rotate.py --verify`); B4's OPEN row and B27's UNMODELED
+  row patched in place (the row order is alpha's).
+- PITFALL: a value-only rival does NOT discriminate on the five pinned rows (upkeeps 0,0,1,1,1);
+  the NAME is the discriminator and G4 prints the rival's 3/5 so the gap is measured, not hidden.
