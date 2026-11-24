@@ -1698,3 +1698,13 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | 0 of 65 resolved masks to FUN_00551a20 carry 0xc00, so all 24 WAR-arm callers drop 0xc00; the 5 setters pass 0xc00 through FUN_00551cf0 | `:59-73` | V MU5 |
 | survival (masks read off the stream, G5.0): all-arms net `0xfa6e7328`; a TRUCE write preserves 0xc00 (`0xff6e7faf`); vectors (0x80000f18,0x10)->0x80000318, (,0x4)->0x80000f0c, (,0x11)->0x80000319; final `or edx,ebx` restores every mask bit and 0x80000108 survives its own AND | `:74-119` | V MU3 MU6 MU7 |
 | OPEN: 3 opaque set=0 masks to FUN_00551cf0 -- 0x4dad30 is FUN_004dacc0's clear leg and CAN carry 0x400 (M389: masks {0x20,0x2000000,0x400,0x40000}), so bit10 has a 6th, dynamic clear; 0x4db02d/0x4db08d unresolved; 0x800 reachable nowhere; nouns stay INF | `:64` | OPEN |
+## M392 (s343-c5 10/10) — UNINIT leg LIVE: 1/65 pass the zero guard. **`PASS M392: 10/10`** `3b27a4bd7c31181b` (`evidence/m392_caller_census.txt:146`; 22/22 `m392_mutate.txt:26`). `:N` = its lines.
+
+| claim | ev | conf |
+|---|---|---|
+| 65 direct calls (22 fns + unindexed 0x5844b6); msg = movsx WORD [ebp+8], guard [ebp+0x1c] 15R/0W | `:2-21` | V MU0 MU0b MU1 MU9 MU14 MU15 |
+| 64 push guard=1, ONE (0x52d873) pushes 0; 65/65 straight-line decode | `:86-99` | V MU2 MU3 MU1b MU16 MU5 |
+| 49 literal ids; 0x16 once (0x58459d; live wrapper 0x584580, caller 0x5355eb), pushes 1; 1 expression id | `:101-108` | V MU4 MU4b MU12 |
+| joint 0 close/1 open: ebx single def 0x52bd33 <- [ebp+8], CFG back-reach; entries only on record word 0x1101/0x4101, 18-instr block, 0 +0x10 tests | `:114-126` | V MU6 MU7 MU8 MU10 MU13 MU17 MU18 |
+| verdict 64 PRESERVE + 0 closed + 1 LIVE-UNINIT + 0 arithmetic-dead | `:136` | V MU5 |
+| OPEN: the record's +0x10 writer (does a 0x1101/0x4101 record carry 0x16?) | `:142` | OPEN |
