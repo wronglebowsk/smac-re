@@ -1,1 +1,1 @@
-M365 | accept `python3 -u scripts/m365_pair_slot.py` -> PASS 21/21 `896b589c55a10bc4` (`evidence/m365_pair_slot.txt:141`), harness 25/25 (`evidence/m365_mutate.txt:32`) | MERGED #___ (fill at merge) | next: relation bit NOUNS (chain-2 lane); the 13 label strings (0x997b20 heap)
+M365 | accept `python3 -u scripts/m365_pair_slot.py` -> PASS 22/22 `d1d567339ee8c5b2` (`evidence/m365_pair_slot.txt:142`), harness 26/26 (`evidence/m365_mutate.txt:33`) | MERGED #395 | next: relation bit NOUNS (chain-2 lane); the 13 label strings (0x997b20 heap)

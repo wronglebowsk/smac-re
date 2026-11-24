@@ -68,8 +68,14 @@ def main():
         k = arch.index(m[0]) + len(m[0]) + 1
         blk = arch[k:k + n]
         ok = hashlib.sha1(blk.encode()).hexdigest()[:16] == sha
+        # the NAMED stub must quote the same sha1 and byte count, else the provenance is
+        # one-sided (the archive could be right while the pointer at the stub is wrong)
+        line = [l for l in named.splitlines() if l.startswith(head)]
+        stub_ok = bool(line) and ("sha1 `%s`" % sha) in line[0] and ("%d B" % n) in line[0]
+        ok = ok and stub_ok
         bad += 0 if ok else 1
-        print("%-10s sha1 %s %s" % (head.strip(), sha, "OK" if ok else "SHA MISMATCH"))
+        print("%-10s sha1 %s %s" % (head.strip(), sha,
+                                    "OK" if ok else "SHA/STUB MISMATCH"))
     print("NAMED.md %d B, archive %d B, mismatches %d"
           % (os.path.getsize(NAMED), os.path.getsize(ARCHIVE), bad))
     return 1 if bad else 0

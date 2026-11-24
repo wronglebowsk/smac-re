@@ -1,6 +1,6 @@
 M365 mutation harness
-baseline: rc=0 PASS M365: 21/21 gates
-baseline gates (21): G1a G1b G1c G1d G2b G2c G3a G3b G3d G4a G4b G5a G5b G5c G6a G6b G6c R1 R2 R3 R4
+baseline: rc=0 PASS M365: 22/22 gates
+baseline gates (22): G1a G1b G1c G1d G2b G2c G3a G3b G3c G3d G4a G4b G5a G5b G5c G6a G6b G6c R1 R2 R3 R4
   MU1   G1a       red=True the census counts 23 instructions that name 0x94d5dc; one moved off th
   MU2   G4b       red=True the ONLY constant ever stored at the slot is 0 (a stored 1 falsifies i
   MU3   G5c       red=True at paired sites BOTH dwords get the same delta class (here both ++)
@@ -8,7 +8,7 @@ baseline gates (21): G1a G1b G1c G1d G2b G2c G3a G3b G3d G4a G4b G5a G5b G5c G6a
   MU5   G6a       red=True the round fraction is exactly /50 (magic 0x51eb851f, sar 4), not /12
   MU6   G6b       red=True both deadlines carry the small addend (+1 for 0x94d5dc, +2 for 0x94d5b
   MU7   G6c       red=True 4 distinct cmp instructions consume the slot (one per direction pair)
-  MU8   G2b       red=True the five sibling arrays are exactly 0x20 apart with 0x94d5dc last
+  MU8a  G2b       red=True the five sibling arrays are exactly 0x20 apart with 0x94d5dc last
   MU9   G3b       red=True the folded sites build the 0x82f stride with a shl 6 first
   MU10  R2        red=True no bit-mask constant is ever stored at this slot (that is 0x94d448's s
   MU11  R3        red=True the slot is only ever zeroed, never stamped -1 (no 'unset' sentinel)
@@ -18,6 +18,7 @@ baseline gates (21): G1a G1b G1c G1d G2b G2c G3a G3b G3d G4a G4b G5a G5b G5c G6a
   MU17  G1c       red=True 4 absolute-indexed + 19 base+disp: moving one store to the absolute fo
   MU18  G1d       red=True the per-function census (1,2,2,2,2,6,8) depends on where the sites are
   MU20  G3d       red=True every site is either folded (0x82f) or a plain record pointer (0 unkno
+  MU25  G3c       red=True +0xa1c is the faction field that carries the 0x20bc stride (not +0xa20
   MU24  G4a       red=True the 8 stores split 2 zero / 2 carry / 3 single-step ++ / 1 scaled-byte
   MU21  G5b       red=True the paired stores use the SAME base register (one pair index), not two
   MU22  R1        red=True the pair index is not a per-faction scalar: 12 folded sites carry a un
@@ -27,6 +28,6 @@ baseline gates (21): G1a G1b G1c G1d G2b G2c G3a G3b G3d G4a G4b G5a G5b G5c G6a
   MU15  G3b       red=True byte forms (0x20bc) are divided back to dwords (0x82f) before the stri
   MU23  G3b       red=True the site's OWN addressing scale is part of its form: absolute forms in
 
-KILLED 25/25   NO-OP 0
-gate coverage: 21/21 gates have a mutant; unnamed: -
-PASS M365-MUT: 25/25 killed, NO-OP 0, coverage 21/21
+KILLED 26/26   NO-OP 0
+gate coverage: 22/22 gates have a mutant; unnamed: -
+PASS M365-MUT: 26/26 killed, NO-OP 0, coverage 22/22

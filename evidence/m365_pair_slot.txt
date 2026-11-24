@@ -37,7 +37,7 @@ G2  GEOMETRY - the slot's position in the 0x20bc-byte faction block and its fami
     0x94d5dc - mask  0x94d448 = 0x194 (404 B = 101 dwords)
     displacements in FUN_004da2c0 (its store block): 0x94d554, 0x94d55c, 0x94d57c, 0x94d59c, 0x94d5bc, 0x94d5dc
     the five per-target slots from 0x94d55c on: 0x94d55c, 0x94d57c, 0x94d59c, 0x94d5bc, 0x94d5dc  steps 0x20, 0x20, 0x20, 0x20; 0x94d554 = first - 0x8
-  [ok] G2b  six displacements: 0x94d554 (M165's pair head, 8 B before the first) plus five per-target slots exactly 0x20 apart ending at 0x94d5dc = block+0x1ac = mask+0x194
+  [ok] G2b  the function's 11 stores name six displacements: 0x94d554 (M165's pair head, 8 B before the first) plus five per-target slots exactly 0x20 apart ending at 0x94d5dc = block+0x1ac = mask+0x194
   [ok] G2c  the paired sibling 0x94d5bc is the array immediately before (block+0x18c)
 
 G3  INDEX FORMS - linear-form tracer (self-tested first), then each site's base
@@ -73,6 +73,7 @@ G3  INDEX FORMS - linear-form tracer (self-tested first), then each site's base
     folded 12 / pointer-param 11 / unresolved 0; byte form {0x20bc,4}: 12; dword form {0x82f,1} after /4: 12
   [ok] G3b  every folded site is 4*(fac*0x82f + tgt) bytes: coefficient multiset {0x20bc, 4} (12/12) and {0x82f, 1} in elements (12/12)
   [ok] G3d  0 unresolved addressing forms: all 23 sites classified (12 folded + 11 plain record pointer)
+  [ok] G3c  which symbol is which: the dialog's +0xa1c (faction) carries the 0x20bc stride and +0xa20 (target) the unit coefficient, and the two FUN_004da2c0 stores SWAP them (the two directions of the pair)
 
 G4  WRITERS - right-hand side of the 8 stores, by local def-use
     0x4da604  CARRY:ebx                                      mov    DWORD PTR [edx*4+0x94d5dc],ebx
@@ -84,7 +85,7 @@ G4  WRITERS - right-hand side of the 8 stores, by local def-use
     0x551af6  CONST:0x0                                      mov    DWORD PTR [edx*4+0x94d5dc],0x0
     0x551b01  CONST:0x0                                      mov    DWORD PTR [eax+0x94d5dc],0x0
     classes: CARRY:ebx x2, CONST:0x0 x2, DELTA:2x(signed byte BYTE PTR [edi+0x95da16]) x1, INC1:ecx x1, INC1:edx x1, INC1:esi x1
-  [ok] G4a  2 zero-stores + 2 carried-register stores + 3 ++ + 1 scaled-byte delta ({'CARRY': 2, 'INC1': 3, 'DELTA': 1, 'CONST': 2})
+  [ok] G4a  2 zero-stores + 2 stores of the carried ebx + 3 single-step ++ + 1 2*(signed byte) delta ({'CARRY': 2, 'INC1': 3, 'DELTA': 1, 'CONST': 2})
   [ok] G4b  the only constant ever stored at this slot is 0
 
 G5  PAIRING - 0x94d5bc and 0x94d5dc move together
@@ -112,10 +113,10 @@ G6  CONSUMERS - deadlines and cross-direction compares
   [ok] G6b  both deadlines add the slot value to a round fraction plus a small addend (2 sites with +1, 2 with +2)
     0x5034cd  cmp@0x5034da cmp    edx,esi
     0x5034d3  no use in 6 instructions
-    0x5049cc  storeback mov    DWORD PTR [eax+0x94d5dc],ecx
-    0x5060be  storeback mov    DWORD PTR [eax+0x94d5dc],edx
-    0x506c8e  storeback mov    DWORD PTR [eax+0x94d5dc],esi
-    0x507f99  storeback mov    DWORD PTR [ecx+0x94d5dc],edx
+    0x5049cc  clobber@0x5049d2 inc    ecx
+    0x5060be  clobber@0x5060c4 inc    edx
+    0x506c8e  clobber@0x506c94 inc    esi
+    0x507f99  clobber@0x507fa2 add    edx,eax
     0x532016  arith@0x53201c lea    eax,[eax+edx*1+0x1]
     0x532023  arith@0x532029 lea    edx,[eax+edx*1+0x1]
     0x54a363  no use in 6 instructions
@@ -135,8 +136,8 @@ G7  RIVALS (each must FAIL on the numbers above)
   [ok] R2   R2 refuted: no bit-mask store exists at 0x94d5dc (there are many at 0x94d448)
     R3 '-1 marks unset' -> stores of -1 at this slot: 0
   [ok] R3   R3 refuted: the slot is only ever zeroed, never set to -1
-    R4 'the two counters are one 0x20-byte row' -> delta 0x20, two separate dword reads at 0x54cd58 and 0x54cd8d (0x94d5bc at 0x54cd6c, 0x94d5dc at 0x54cd8d)
-  [ok] R4   R4 refuted: 0x20 apart = two 8-dword arrays (0x18c and 0x1ac) in the same record
+    R4 'the two counters are one 0x20-byte row' -> delta 0x20; the consumer at 0x54cd6c reads 'mov    edx,DWORD PTR [ecx+0x94d5bc]' and 0x54cd8d reads 'mov    edx,DWORD PTR [eax+0x94d5dc]'
+  [ok] R4   R4 refuted: 0x20 apart = two 8-dword slots (0x18c and 0x1ac) of the same record, read as two separate dwords by the same function
 
-PASS M365: 21/21 gates
-digest 896b589c55a10bc4
+PASS M365: 22/22 gates
+digest d1d567339ee8c5b2

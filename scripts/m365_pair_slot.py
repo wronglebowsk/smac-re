@@ -361,11 +361,15 @@ def main():
     say("G2  GEOMETRY - the slot's position in the 0x20bc-byte faction block and its family")
     d_blk = TGT - BLOCK
     d_mask = TGT - MASK
-    # the family is MEASURED off FUN_004da2c0's own store block, never authored
+    # the family is MEASURED off FUN_004da2c0's own STORES (memory destinations only)
     fa0, fan, fasz = owner(0x4DA2C0)
     fam_all = sorted({int(m.group(1), 16) for i in INS
-                      if fa0 <= i["a"] < fa0 + fasz
-                      for m in [re.search(r"\[(?:[a-z]{2,3}(?:\*4)?\+)?(0x94d5[0-9a-f]{2})\]", i["t"])] if m})
+                      if fa0 <= i["a"] < fa0 + fasz and i["op"] == "mov" and
+                      MEMDEST.match(i["arg"].split(",")[0].strip())
+                      for m in [re.search(r"\[(?:[a-z]{2,3}(?:\*4)?\+)?(0x94d5[0-9a-f]{2})\]", i["arg"])] if m})
+    fam_store_n = sum(1 for i in INS if fa0 <= i["a"] < fa0 + fasz and i["op"] == "mov" and
+                      MEMDEST.match(i["arg"].split(",")[0].strip()) and
+                      re.search(r"\[(?:[a-z]{2,3}(?:\*4)?\+)?0x94d5[0-9a-f]{2}\]", i["arg"]))
     fam_far = [x for x in fam_all if x != 0x94D554]
     fam_steps = [b - a for a, b in zip(fam_far, fam_far[1:])]
     say("    0x94d5dc - block 0x94d430 = %s (%d B = %d dwords)" % (hexa(d_blk), d_blk, d_blk // 4))
@@ -375,11 +379,13 @@ def main():
     say("    the five per-target slots from 0x94d55c on: %s  steps %s; 0x94d554 = first - %s"
         % (", ".join(hexa(x) for x in fam_far), ", ".join(hexa(x) for x in fam_steps),
            hexa(fam_far[0] - 0x94D554) if fam_far else "?"))
-    gate("G2b", len(fam_all) == 6 and len(fam_far) == 5 and fam_steps == [0x20] * 4 and
+    gate("G2b", len(fam_all) == 6 and fam_store_n == 11 and len(fam_far) == 5 and
+         fam_steps == [0x20] * 4 and
          fam_far[-1] == TGT and fam_far[0] - 0x94D554 == 8 and
          d_blk == 0x1AC and d_mask == 0x194 and d_mask % 4 == 0,
-         "six displacements: 0x94d554 (M165's pair head, 8 B before the first) plus five "
-         "per-target slots exactly 0x20 apart ending at 0x94d5dc = block+0x1ac = mask+0x194")
+         "the function's 11 stores name six displacements: 0x94d554 (M165's pair head, 8 B "
+         "before the first) plus five per-target slots exactly 0x20 apart ending at 0x94d5dc "
+         "= block+0x1ac = mask+0x194")
     gate("G2c", SIB in fam_all and TGT - SIB == 0x20 and SIB - BLOCK == 0x18C,
          "the paired sibling 0x94d5bc is the array immediately before (block+0x18c)")
 
@@ -433,6 +439,15 @@ def main():
     gate("G3d", len(unres) == 0 and len(folded) + len(ptrs) == len(forms) and len(ptrs) == 11,
          "0 unresolved addressing forms: all 23 sites classified (%d folded + %d plain record "
          "pointer)" % (len(folded), len(ptrs)))
+    fmap = dict(forms)
+
+    def cf(a, sym, c):
+        return (fmap.get(a) or {}).get(sym) == c
+    gate("G3c", cf(0x4DA604, "mem@0xa1c", STRIDE * 4) and cf(0x4DA604, "mem@0xa20", 4) and
+         cf(0x4DA6DE, "mem@0xa20", STRIDE * 4) and cf(0x4DA6DE, "mem@0xa1c", 4),
+         "which symbol is which: the dialog's +0xa1c (faction) carries the 0x20bc stride and "
+         "+0xa20 (target) the unit coefficient, and the two FUN_004da2c0 stores SWAP them "
+         "(the two directions of the pair)")
 
     say("")
     say("G4  WRITERS - right-hand side of the 8 stores, by local def-use")
@@ -447,9 +462,11 @@ def main():
     kinds = {}
     for k, v in wf.items():
         kinds[k.split(":")[0]] = kinds.get(k.split(":")[0], 0) + v
-    gate("G4a", kinds.get("CONST", 0) == 2 and kinds.get("CARRY", 0) == 2 and
-         kinds.get("INC1", 0) == 3 and kinds.get("DELTA", 0) == 1,
-         "2 zero-stores + 2 carried-register stores + 3 ++ + 1 scaled-byte delta (%s)" % kinds)
+    gate("G4a", wf.get("CARRY:ebx", 0) == 2 and wf.get("CONST:0x0", 0) == 2 and
+         sum(v for k, v in wf.items() if k.startswith("INC1")) == 3 and
+         sum(v for k, v in wf.items() if k.startswith("DELTA:2x(signed byte")) == 1,
+         "2 zero-stores + 2 stores of the carried ebx + 3 single-step ++ + 1 "
+         "2*(signed byte) delta (%s)" % kinds)
     gate("G4b", [k for k in wf if k.startswith("CONST")] == ["CONST:0x0"],
          "the only constant ever stored at this slot is 0")
 
@@ -526,6 +543,8 @@ def main():
         for k in range(POS[s["a"]] + 1, min(len(INS), POS[s["a"]] + 7)):
             b = INS[k]
             o = [x.strip() for x in b["arg"].split(",")]
+            if b["op"] in ("ret", "call", "jmp") or b["op"].startswith("j"):
+                break
             uses = re.search(r"\b%s\b" % dest, ",".join(o[1:])) is not None
             if b["op"] == "cmp" and uses:
                 kind = "cmp@" + hexa(b["a"]) + " " + b["t"]
@@ -538,6 +557,12 @@ def main():
             elif b["op"] == "mov" and MEMDEST.match(o[0]) and len(o) > 1 and o[1] == dest:
                 kind = "storeback " + b["t"]
             if kind:
+                break
+            # liveness: a redefinition of the loaded register before any use makes the
+            # register name stale - stop instead of attributing the next use to this load
+            if o and o[0] == dest and b["op"] in ("mov", "add", "sub", "lea", "inc", "dec",
+                                                 "xor", "or", "and", "shl", "shr", "imul"):
+                kind = "clobber@" + hexa(b["a"]) + " " + b["t"]
                 break
         consumers.append((s["a"], kind))
         say("    %-9s %s" % (hexa(s["a"]), kind or "no use in 6 instructions"))
@@ -566,11 +591,16 @@ def main():
     gate("R3", len(neg) == 0, "R3 refuted: the slot is only ever zeroed, never set to -1")
     # R4: aliased with 0x94d5bc?
     both = [a for a, b in pairs]
-    say("    R4 'the two counters are one 0x20-byte row' -> delta %s, two separate dword reads "
-        "at %s and %s (0x94d5bc at 0x54cd6c, 0x94d5dc at 0x54cd8d)"
-        % (hexa(0x94D5DC - 0x94D5BC), hexa(0x54CD58), hexa(0x54CD8D)))
-    gate("R4", 0x94D5DC - 0x94D5BC == 0x20 and len(both) == 5,
-         "R4 refuted: 0x20 apart = two 8-dword arrays (0x18c and 0x1ac) in the same record")
+    t6c = INS[POS[0x54CD6C]]["t"]
+    t8d = INS[POS[0x54CD8D]]["t"]
+    say("    R4 'the two counters are one 0x20-byte row' -> delta %s; the consumer at "
+        "0x54cd6c reads %r and 0x54cd8d reads %r"
+        % (hexa(0x94D5DC - 0x94D5BC), t6c, t8d))
+    gate("R4", 0x94D5DC - 0x94D5BC == 0x20 and len(both) == 5 and
+         "0x94d5bc" in t6c and "0x94d5dc" in t8d and
+         owner(0x54CD6C)[1] == owner(0x54CD8D)[1] == "FUN_00546800",
+         "R4 refuted: 0x20 apart = two 8-dword slots (0x18c and 0x1ac) of the same record, read "
+         "as two separate dwords by the same function")
 
     npass = sum(1 for _, ok, _ in gates if ok)
     dig = hashlib.sha1(("\n".join(out)).encode()).hexdigest()

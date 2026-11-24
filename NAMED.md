@@ -1537,17 +1537,17 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## M365 (s334-c3) — `0x94d5dc` = a per-(fac,tgt) dword at faction-record **+0x1ac**: the relation writer ZEROES it, contact paths ++ it, and consumers turn it into a round-fraction DEADLINE compared across the two directions. ev `evidence/m365_pair_slot.txt:141`
+## M365 (s334-c3) — `0x94d5dc` = per-(fac,tgt) dword at record **+0x1ac**: zeroed by the writer, ++ on contact, read as a DEADLINE. ev `evidence/m365_pair_slot.txt:142`
 | claim | ev | conf |
 |---|---|---|
-| census: 23 instructions (8 W / 15 R) in 7 fns, 4 abs-indexed + 19 base+disp, 0 unclassified | `:8-29` | V MU1,16,17,18 |
-| slot = block+0x1ac = mask+0x194; FUN_004da2c0 fills 6 displacements: 0x94d554 (8 B before) + five per-target slots 0x20 apart ending at 0x94d5dc | `:34-40` | V MU8,19 |
-| 12 folded sites index as 4*(fac*0x82f+tgt) bytes {0x20bc,4} = {0x82f,1} elements; 11 take a record pointer | `:47-74` | V MU9,15,20,22,23 |
-| writers: 2 zero-stores (only constant ever stored = 0), 2 carried ebx, 3 `++`, 1 `+= 2*signed byte` | `:76-87` | V MU2,24 |
-| 0x94d5bc (block+0x18c) moves WITH it: same block, same delta class, same base register 5/5 | `:90-104` | V MU3,4,21 |
-| consumers: deadline = value + round/50 + 1 (sibling + round/25 + 2), 4 distinct cmp across the directions, 4 add/lea terms | `:106-128` | V MU5,6,7 |
-| RIVALS refuted on the numbers: per-faction scalar, mask array, -1 sentinel, aliased 0x20 row | `:131-139` | V MU10,11,12,13 |
-| INFERRED: the NOUN (treaty/contact age). The key emitted at 0x54a373 is the 4-byte string `"a"` inside .data's diplomacy action-name table (HALFBRIBE/WEASELOUT/DEMANDTECH/AGREEDENERGY...), not a label | `:129` | INF |
+| 23 sites (8W/15R), 7 fns; 4 abs + 19 disp; 0 unclassified | `evidence/m365_pair_slot.txt:3-33` | V MU1,16,17,18 |
+| FUN_004da2c0's 11 stores: 0x94d554 (head) + 5 slots 0x20 apart ending 0x94d5dc = block+0x1ac = mask+0x194 | `:35-41` | V MU8a,8,19 |
+| 12 folded = 4*(fac*0x82f+tgt) B {0x20bc,4}={0x82f,1}; +0xa1c stride/+0xa20 unit swapped; 11 pointer | `:43-76` | V MU9,15,20,22,23,25 |
+| writers: 2 zeros (only constant 0), 2 carried ebx, 3 `++`, 1 `+=2*byte` | `:78-89` | V MU2,24 |
+| 0x94d5bc (+0x18c) moves with it 5/5 | `:91-105` | V MU3,4,21 |
+| consumers: +round/50+1; 4 cmp; 4 add/lea | `:107-129` | V MU5,6,7 |
+| RIVALS refuted: faction scalar, mask array, -1, aliased row | `:132-140` | V MU10,11,12,13 |
+| INFERRED noun (treaty/contact AGE); key 0x54a373 = 4-byte `"a"` | `:130` | INF |
 
 ## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |
