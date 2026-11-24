@@ -378,9 +378,11 @@ def gates(m):
                 OR_SITE not in m["r_fac"] and OR_SITE in m["r_unit"]
                 and keys.get(OR_SITE, "").startswith("or ")
                 and "BYTE PTR [eax],cl" in keys.get(OR_SITE, "")))
-    out.append(("G11", "the facility region writes [ebp-0x20] at 0x4efed1 and the unit block's "
-                "read of it (0x4f0d8f) is unreachable from the facility entry",
-                0x4efed1 in m["r_fac"] and cfg.ins[0x4efed1][1] == "w[ebp-0x20]"
+    out.append(("G11", "the facility region splits on head >= 0x40 at 0x4efe41/0x4efe44 (jl to the "
+                "spend) and writes [ebp-0x20] at 0x4efed1; the unit block's read of it (0x4f0d8f) "
+                "is unreachable from the facility entry",
+                0x4efe44 in m["r_fac"] and cfg.ins[0x4efe44][1] == "0x4efed1"
+                and 0x4efed1 in m["r_fac"] and cfg.ins[0x4efed1][1] == "w[ebp-0x20]"
                 and cfg.ins[0x4f0d8f][1] == "r[ebp-0x20]" and 0x4f0d8f not in m["r_fac"]))
     out.append(("G12", "the CFG is CLOSED, two passes agree, every anchor is pinned to a literal",
                 cfg.indirect == 0 and cfg.external == 0

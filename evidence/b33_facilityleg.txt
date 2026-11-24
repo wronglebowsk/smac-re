@@ -59,7 +59,7 @@ ok   G7 the model scores 6/6: unit 4/4 stamp the mapper bit, facility-range 2/2 
 ok   G8 Virgin Soil: facility head 2, 0000000800000000 -> 1000000000000000 (bit 2 absent, bit 4 gained, 27 lost), st 2 -> 0, a stamp would predict 0400000800000000
 ok   G9 rivals FAIL: shared OR matches 4/6 windows, an off-map refusal covers 1/6 rows (Virgin Soil in-window), after-pop head 0/6
 ok   G10 the OR instruction itself is unreachable from the facility entry, reachable from the unit entry, and reads as `or BYTE PTR [eax],cl`
-ok   G11 the facility region writes [ebp-0x20] at 0x4efed1 and the unit block's read of it (0x4f0d8f) is unreachable from the facility entry
+ok   G11 the facility region splits on head >= 0x40 at 0x4efe41/0x4efe44 (jl to the spend) and writes [ebp-0x20] at 0x4efed1; the unit block's read of it (0x4f0d8f) is unreachable from the facility entry
 ok   G12 the CFG is CLOSED, two passes agree, every anchor is pinned to a literal  census=f8442b847c68016d cfg=e1304fc33c09e349 reach=cead75d5e443057d score=6000c87277dcb198 vs=462f20b2da918c6b
 
 DIGEST f8442b847c68016d gates=12

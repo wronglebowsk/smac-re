@@ -75,16 +75,16 @@ def mu10(raw):                     # a branch target outside the span (an open C
 
 # (id, gate that must redden, description, pre-build mutator, post-build mutator)
 MUTANTS = [
-    ("M1", "G5", "the single write of [ebp-0x30] renamed to [ebp-0x34]", mu1, None),
-    ("M2", "G4", "0x4f0d94 re-pointed past the stamp block (a second door)", mu2, None),
-    ("M3", "G3", "the facility path re-pointed into the unit spend+stamp block", mu3, None),
-    ("M4", "G7", "one unit completion relabelled FACILITY (the score's premise)", None, mu4),
-    ("M5", "G8", "the Virgin Soil after-window doctored to the stamp prediction", None, mu5),
-    ("M6", "G7", "the Virgin Soil gain set given the head's own bit", None, mu6),
-    ("M7", "G9", "Virgin Soil's mapper byte moved off the eight-byte map", None, mu7),
-    ("M8", "G9", "the after-pop head counted as a hit", None, mu8),
-    ("M9", "G1", "the census truncated by one instruction", mu9, None),
-    ("M10", "G2", "a branch target outside the function span (open CFG)", mu10, None),
+    ("MU1", "G5", "the single write of [ebp-0x30] renamed to [ebp-0x34]", mu1, None),
+    ("MU2", "G4", "0x4f0d94 re-pointed past the stamp block (a second door)", mu2, None),
+    ("MU3", "G3", "the facility path re-pointed into the unit spend+stamp block", mu3, None),
+    ("MU4", "G7", "one unit completion relabelled FACILITY (the score's premise)", None, mu4),
+    ("MU5", "G8", "the Virgin Soil after-window doctored to the stamp prediction", None, mu5),
+    ("MU6", "G7", "the Virgin Soil gain set given the head's own bit", None, mu6),
+    ("MU7", "G9", "Virgin Soil's mapper byte moved off the eight-byte map", None, mu7),
+    ("MU8", "G9", "the after-pop head counted as a hit", None, mu8),
+    ("MU9", "G1", "the census truncated by one instruction", mu9, None),
+    ("MU10", "G2", "a branch target outside the function span (open CFG)", mu10, None),
 ]
 
 

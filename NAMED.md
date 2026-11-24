@@ -1565,11 +1565,11 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 
 | claim | cite | conf |
 |---|---|---|
-| census: FUN_004ef6d0 3,164 insns, 0x4ef6d0..0x4f26da == Ghidra size 12,298 | `evidence/fixtures/b33_fun4ef6d0_census.txt:1` | V G1,M9 |
-| CFG closed: 3,482 edges, 0 external targets, 0 indirect jumps | `evidence/b33_facilityleg.txt:53` | V G2,M10 |
-| stamp 0x4f0e90 reached from entry + unit (3,045), NOT from facility (886) | `:54` | V G3,M3 |
-| door: preds(0x4f0e90)={0x4f0d94}, preds(0x4f0ca1)={0x4f0b80 `jg`} | `:10-11` | V G4,M2 |
-| `[ebp-0x30]` written at `0x4ef8a4` only; none facility-reachable | `:16` | V G5,M1 |
-| recorded 4/4 unit stamps, 0/2 facility (model 6/6); Virgin Soil head 2 bit absent | `:40,43` | V G7,G8,M4,M5,M6 |
-| rivals: shared-OR 4/6 windows, off-map refusal 1/6, after-pop head 0/6 | `:47-49` | V G9,M7,M8 |
+| census: FUN_004ef6d0 3,164 insns, 0x4ef6d0..0x4f26da == Ghidra size 12,298 | `evidence/fixtures/b33_fun4ef6d0_census.txt:1` | V MU9 |
+| CFG closed: 3,482 edges, 0 external targets, 0 indirect jumps | `evidence/b33_facilityleg.txt:53` | V MU10 |
+| stamp 0x4f0e90 reached from entry + unit (3,045), NOT from facility (886) | `:54` | V MU3 |
+| door: preds(0x4f0e90)={0x4f0d94}, preds(0x4f0ca1)={0x4f0b80 `jg`} | `:10-11` | V MU2 |
+| `[ebp-0x30]` written at `0x4ef8a4` only; none facility-reachable | `:16` | V MU1 |
+| recorded 4/4 unit stamps, 0/2 facility (model 6/6); Virgin Soil head 2 bit absent | `:40,43` | V MU4,MU5,MU6 |
+| rivals: shared-OR 4/6 windows, off-map refusal 1/6, after-pop head 0/6 | `:47-49` | V MU7,MU8 |
 | OPEN: facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the 0x98adb8 row | - | lead |
