@@ -796,8 +796,8 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 ## Session 342-chain6b — M393: the second agenda pair (+0x588/+0x590) has NO producer; two of its three reads are inert
 
 - **ACCEPT** `python3 -u scripts/m393_pair2_writer.py` -> **`PASS M393: 26/26`** `b0a0eb22422c2db1`
-  (`evidence/m393_pair2.txt:97`), x2 identical (`evidence/m393_twice.txt:1`); **15/15**
-  (`evidence/m393_mutate.txt:19`); zero box.
+  (`evidence/m393_pair2.txt:97`), x2 identical (`evidence/m393_twice.txt:97`); **15/15**
+  (`evidence/m393_mutate.txt:18`); zero box.
 - **GEOMETRY** (`:19-23`): the SCORER's own multiply `0x522dd3..de` = stride **0x59c**; anchors
   `0x927b14/18/1c/20`; slot0 `0x927590`, size `0x2ce0` = 8*stride; slot0's pair2 =
   `0x927b18`/`0x927b20`.

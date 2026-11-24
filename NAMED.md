@@ -36,7 +36,7 @@
 | commit 0x4b2570: `[eax+ecx*4+0x94d658]` <- `[esi+edx*4+0xcf8]`, eax=f*0x20bc; 1 grid dword, 1 at +0x20, 0 in the block; handlers 0x4b5530/0x4b55d0 | `:139` | V MU8-10 MU16 MU17 |
 | choice = rand%3+1 (1..3); 9 +0x58c loads: 5 0-tested, 3 name-pushed, 1 vs +0x590 => slot0 (0,0) = no agenda | `:148-149` | V MU6 MU7 |
 | OPEN: slot 0's owner; 0x2ce0 is pushed to the save/load helpers (4x) | `:110` | OPEN |
-## M393 (26/26) — pair 2 (+0x588/+0x590) has NO producer; 2 of its 3 reads cannot fire. `PASS M393: 26/26` `b0a0eb22422c2db1` (`evidence/m393_pair2.txt:97`); 15/15 (`evidence/m393_mutate.txt:19`).
+## M393 (26/26) — pair 2 (+0x588/+0x590) has NO producer; 2 of its 3 reads cannot fire. `PASS M393: 26/26` `b0a0eb22422c2db1` (`evidence/m393_pair2.txt:97`), x2 same; 15/15 (`evidence/m393_mutate.txt:18`).
 | claim | ev | conf/mutant |
 |---|---|---|
 | stride from scorer's multiply 0x59c; anchors 927b14/18/1c/20; slot0 0x927590; 0x2ce0=8*stride | `:19-23` | V MU15 |
