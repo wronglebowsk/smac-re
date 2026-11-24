@@ -124,7 +124,12 @@ def fn_of(a):
 
 
 def mask_at(ins, idx, a):
-    """the mask is the sole immediate push in the argument run before `call 0x551a20`."""
+    """the mask is the sole immediate push of a THREE-push argument run before the call.
+
+    The call shape is `push mask; push arg2; push arg1; call 0x551a20` (stdcall, 3 args).
+    Interleaved lea/shl/mov between pushes are allowed; a run of !=3 pushes or !=1
+    immediate is reported as CARRIED rather than guessed at.
+    """
     i = idx.get(a)
     if i is None:
         return None, []
@@ -137,30 +142,31 @@ def mask_at(ins, idx, a):
             ps.append(t)
         j -= 1
     imms = [p for p in ps if push_imm(p) is not None]
-    if len(imms) == 1:
-        return push_imm(imms[0]), ps
-    if not REQUIRE_SOLE and imms:
+    if len(ps) == 3 and len(imms) == 1 and all(p.startswith("push e") for p in ps if p != imms[0]):
         return push_imm(imms[0]), ps
     return None, ps
 
 
 def load_builder_rows():
-    body = []
+    body, gaps = [], []
     for path in sorted(glob.glob(SHARDS)):
         lines = open(path, "r", errors="replace").read().split("\n")
         for i, line in enumerate(lines):
             if line.startswith("// ==== %s " % BUILDER):
-                body = lines[i:i + 600]
-    rows, pend = [], None
-    for line in body:
+                end = next((j for j in range(i + 1, len(lines))
+                            if lines[j].startswith("// ==== ")), len(lines))
+                body = lines[i:end]
+    rows, pend, pend_ln = [], None, None
+    for ln, line in enumerate(body):
         m = re.search(r"uVar5 = (0x[0-9a-f]+|\d+);", line)
         if m:
-            pend = int(m.group(1), 16)
+            pend, pend_ln = int(m.group(1), 16), ln
         m = re.search(r"FUN_0061482f\(\*\(undefined4 \*\)\(DAT_00997b20 \+ (0x[0-9a-f]+)\)\)", line)
         if m and pend is not None:
             rows.append((pend, int(m.group(1), 16)))
+            gaps.append(ln - pend_ln)
             pend = None
-    return rows
+    return rows, gaps
 
 
 def cstring(va):
@@ -199,10 +205,14 @@ def main():
         say("      0x%06x 0x%-9x %s" % (a, m, n))
     gate("G1a", warish == HOST_WARISH and len(host_calls) == 10,
          "10 host setter calls; the %d bit-8/war rows are exactly the pinned set" % len(HOST_WARISH))
-    g1b = all((m & 8) and (m & 0x10 or m & 0x80000000) for _, m, _ in warish) and \
-        all((m & 8) for _, m, _ in warish)
-    gate("G1b", g1b, "every host war-ish mask carries bit 8; 0x18/0x80000018 carry war 0x10, "
-                     "0x88000008/0x80000008 carry only bit31+8 (pending, no 0x10)")
+    war_m = {m for _, m, _ in warish if m & 0x10}
+    pend_m = {m for _, m, _ in warish if not (m & 0x10)}
+    say("    war masks %s | pending (no 0x10) masks %s"
+        % (sorted("0x%x" % m for m in war_m), sorted("0x%x" % m for m in pend_m)))
+    gate("G1b", all(m & 8 for m in war_m | pend_m) and war_m == {0x18, 0x80000018}
+         and pend_m == {0x88000008, 0x80000008},
+         "every host war-ish mask carries bit 8; the war masks are exactly {0x18,0x80000018}, "
+         "the pending masks exactly {0x88000008,0x80000008} (no 0x10)")
 
     # ---------------------------------------------------------------- G2 setter
     say("")
@@ -219,11 +229,14 @@ def main():
     say("    guard before the bit-8 OR: 0x%06x %s" % (guard[0] or 0, guard[1] or "NONE"))
     say("    and-masks: %s" % ", ".join("0x%06x %s" % (a, t) for a, t in ands))
     say("    final symmetric ORs: %s" % ", ".join("0x%06x %s" % (a, t) for a, t in stores))
-    gate("G2a", len(ors8) == 1 and ors8[0][0] == 0x551B11 and imm_of(ors8[0][1]) == 0x80000108
+    orv = imm_of(ors8[0][1]) if ors8 else None
+    gate("G2a", len(ors8) == 1 and ors8[0][0] == 0x551B11 and orv == 0x80000108
          and guard[1] == "test bl,0x10",
-         "exactly one mask OR of bit 8: `or ebx,0x80000108` at 0x551b11, inside the `test bl,0x10` branch")
-    gate("G2b", bits(0x80000108) == [3, 8, 31],
-         "0x80000108 = bits %s: a war request also sets 0x100, bit 8 (contact) and bit 31" % bstr(0x80000108))
+         "exactly one mask OR of bit 8: `or ebx,0x%x` at 0x551b11, inside the `test bl,0x10` branch"
+         % (orv or 0))
+    gate("G2b", orv is not None and bits(orv) == [3, 8, 31],
+         "the MEASURED OR immediate 0x%x = bits %s: a war request also sets 0x100, bit 8 (contact) "
+         "and bit 31" % (orv or 0, bstr(orv or 0)))
     keep = {}
     for a, t in ands:
         v = imm_of(t)
@@ -232,10 +245,13 @@ def main():
     for v in sorted(keep):
         say("      0x%08x   %-5s %-5s (%d site)" % (v, "KEPT" if v & 8 else "CLEAR",
                                                     "KEPT" if v & 0x10 else "CLEAR", len(keep[v])))
+    clears4 = [v for v in keep if not (v & 0x10)]
     gate("G2c", set(keep) == {0xffee7faf, 0xfaeef378, 0xff7fffff}
-         and all(v & 8 for v in keep) and not (0xffee7faf & 0x10) and (0xfaeef378 & 0x10),
-         "three clear masks, NONE clears bit 8; only the 0x7 (peace) mask 0xffee7faf clears 0x10: "
-         "contact survives war -> peace")
+         and all(v & 8 for v in keep) and all(len(keep[v]) == 2 for v in keep)
+         and clears4 == [0xffee7faf],
+         "three clear masks x2 sites each, NONE clears bit 8; ONLY the 0x7 (peace) mask "
+         "0xffee7faf clears 0x10 (clears4=%s): contact survives war -> peace"
+         % ["0x%x" % v for v in clears4])
     gate("G2d", stores == [(0x551BE6, "or edx,ebx"), (0x551C09, "or edx,ebx")]
          and (0x551BEA, "mov eax,esi") in w,
          "the war-augmented mask register (ebx) is stored in BOTH directions (0x551be6 / 0x551c09)")
@@ -256,9 +272,17 @@ def main():
         say("      0x%-10x %2d  bits=%s" % (m, census[m], bstr(m)))
     say("    carried (not linearly visible) %d sites, first 6: %s"
         % (len(carried), ", ".join("0x%06x %s" % (a, f) for a, f, _ in carried[:6])))
+    shape_n = {}
+    for a, _ in calls:
+        m, ps = mask_at(ins, idx, a)
+        shape_n[(m is not None, len(ps))] = shape_n.get((m is not None, len(ps)), 0) + 1
+    say("    argument shapes (resolved?, visible pushes): %s"
+        % sorted((k, v) for k, v in shape_n.items()))
     gate("G3a", census == CENSUS_PIN and len(calls) == CALLS_TOTAL
-         and sum(census.values()) == LITERAL and len(carried) == CARRIED,
-         "%d calls = %d literal + %d carried; 18 distinct literal masks as pinned"
+         and sum(census.values()) == LITERAL and len(carried) == CARRIED
+         and shape_n == {(True, 3): 46, (False, 3): 5, (False, 0): 19},
+         "%d calls = %d literal (all with a 3-push run) + %d carried (5 three-push "
+         "register-mask, 19 not linearly visible); 18 distinct literal masks as pinned"
          % (len(calls), sum(census.values()), len(carried)))
     w_only = sorted(a for a, _ in calls if (mask_at(ins, idx, a)[0] or 0) & 0x10
                     and not (mask_at(ins, idx, a)[0] & 8))
@@ -302,21 +326,27 @@ def main():
                   or re.search(r"test (DWORD PTR )?\[?[^,]*0x94d448[^,]*,0x10", t)]
     say("    FUN_00554d10 (atrocity) reads of 0x10 before its 0x18 write: %s"
         % ["0x%06x" % x for x in atro_reads])
-    gate("G4c", bool(atro_reads) and all(x < 0x554E88 for x in atro_reads),
+    gate("G4c", (0x554E6B, "test al,0x10") in win(ins, 0x554D10, 0x55501D)
+         and 0x554E6B in atro_reads and all(x < 0x554E88 for x in atro_reads),
          "the atrocity host asks `at war already?` (bit 0x10) BEFORE writing 0x18 - the war bit is the "
          "state, bit 8 rides along as contact")
 
     # ---------------------------------------------------------------- G5 labels
     say("")
     say("G5  the page nouns (builder FUN_004db480 -> labels.txt line 11+elem)")
-    rows = load_builder_rows()
-    got = {}
+    rows, gaps = load_builder_rows()
+    got, lno = {}, {}
     for bid, off in rows:
-        ln = 11 + off // 4
+        ln = lno[bid] = 11 + off // 4
         got[bid] = L[ln - 1].decode("latin-1") if ln - 1 < len(L) else "<eof>"
         say("    id 0x%-9x elem %d -> line %d = %r" % (bid, off // 4, ln, got.get(bid)))
-    gate("G5a", len(rows) == 13 and got.get(0x8) == "Commlink" and got.get(0x10) == "Vendetta",
-         "id 8 = 'Commlink', id 0x10 = 'Vendetta': two different nouns on the page")
+    say("    structural: %d rows, pair gaps %s, ids unique %s"
+        % (len(rows), sorted(set(gaps)), len({r[0] for r in rows}) == len(rows)))
+    gate("G5a", len(rows) == 13 and max(gaps) <= 3 and len({r[0] for r in rows}) == 13
+         and lno.get(0x8) == 886 and lno.get(0x10) == 657
+         and got.get(0x8) == "Commlink" and got.get(0x10) == "Vendetta",
+         "13 adjacent (id element -> label call) pairs; id 8 -> labels.txt line 886 'Commlink', "
+         "id 0x10 -> line 657 'Vendetta'")
 
     # ---------------------------------------------------------------- G6 roles
     say("")
@@ -354,12 +384,17 @@ def main():
     gate("R1", len(p8) > 0 and all(v & 8 for v in keep) and got.get(0x8) == "Commlink",
          "RIVAL '8 = war companion / one bit' is DEAD on all three printed predictions")
     say("")
-    say("R2  RIVAL '0x88000008 / 0x80000008 are war writes' - refuted by decomposition")
-    say("    0x88000008 bits %s | 0x80000008 bits %s | war bit 0x10 present in neither"
-        % (bstr(0x88000008), bstr(0x80000008)))
-    gate("R2", not (0x88000008 & 0x10) and not (0x80000008 & 0x10) and (0x88000008 & 8)
-         and (0x80000008 & 8),
-         "the vendetta-pending masks set bit 31/27 + contact; they never set war 0x10")
+    say("R2  RIVAL '0x88000008 / 0x80000008 are war writes' - refuted by the measured census")
+    pend_obs = {m: census[m] for m in (0x88000008, 0x80000008) if m in census}
+    say("    census: %s | war masks: %s"
+        % (", ".join("0x%x x%d" % (m, n) for m, n in sorted(pend_obs.items())),
+           ", ".join("0x%x x%d" % (m, census[m]) for m in (0x18, 0x80000018) if m in census)))
+    say("    0x88000008 bits %s | 0x80000008 bits %s" % (bstr(0x88000008), bstr(0x80000008)))
+    gate("R2", set(pend_obs) == {0x88000008, 0x80000008} and pend_obs[0x88000008] == 3
+         and pend_obs[0x80000008] == 1 and all(not (m & 0x10) for m in pend_obs)
+         and all(census.get(m, 0) >= 1 and (m & 0x18) == 0x18 for m in (0x18, 0x80000018)),
+         "the vendetta-pending masks are measured call masks (3x0x88000008, 1x0x80000008) and "
+         "never set war 0x10; the war masks 0x18/0x80000018 do")
     say("")
     say("R3  RIVAL 'war can be stored without contact' - refuted at the choke point")
     say("    any 0x10 request leaves FUN_00551a20 with 0x18 (or ebx,0x80000108 in the 0x10 branch,")

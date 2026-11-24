@@ -708,29 +708,26 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 ## Session 337-chain2 (2026-11-24) — M371: the war-initiation hosts' 0x8 is COMMLINK; contact and vendetta are TWO bits
 
 - **ACCEPT** `python3 -u scripts/m371_war_contact.py` -> **`PASS M371: 18/18 gates`** digest
-  `6670dd9eda4b73da` (`evidence/m371_war_contact.txt:124`), re-run byte-identical;
-  `scripts/m371_mutate.py` **25/25 killed**, 1 NO-OP (`evidence/m371_mutate.txt:33`).
+  `4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`); `scripts/m371_twice.py` byte-identical
+  (`evidence/m371_twice.txt:4`); `scripts/m371_mutate.py` **27/27 killed** (`evidence/m371_mutate.txt:35`).
 - **HOSTS** (`:8-25`): 10 setter calls in the four hosts; the 6 bit-8 rows are exactly
   {0x554389 0x80000008, 0x554426 0x88000008, 0x554e88 0x18, 0x55566e+0x555bb9 0x88000008,
-  0x507653 0x80000018}. Roles: FUN_00554d10 = MAJORATROCITY, FUN_00507460 = AIDSTHEM/AIDSUS,
+  0x507653 0x80000018}. Roles: FUN_00554d10 MAJORATROCITY, FUN_00507460 AIDSTHEM/AIDSUS,
   FUN_005551e0 -> FUN_00554350 @0x5558cf.
-- **SETTER LAW** (`:28-40`): `test bl,0x10` @0x551abf -> `or ebx,0x80000108` @0x551b11
-  (bits 31,8,0x100) — ANY war request leaves as war+contact, stored both directions
-  (0x551be6/0x551c09). 16 resolved callers request war with NO contact bit (14x0x10, 0x8010,
-  0x50), both exits of the human declare path FUN_005076d0 among them (`:57-66`).
-- **CONTACT SURVIVES PEACE** (`:35-39`): the 0x7 clear mask 0xffee7faf clears 0x10 and KEEPS
-  bit 8; 0xfaeef378 keeps both; no and-mask clears 8. Pure-8 writes = 4: new game
-  FUN_005a7970 0x5a7c0a, council 0x42999d, commit 0x4dae13, pod 0x56f5ad (`:67-74`).
-- **READS** (`:70-78`): FUN_005551e0's vendetta gate `(rel&0x40018)==8` @0x555491 and
-  third-faction test `(rel&0x18)==8` @0x555502; FUN_00554d10 tests `al,0x10` @0x554e6b
-  BEFORE writing 0x18.
-- **NOUNS** (`:88-94`): builder row id 8 -> labels.txt:886 "Commlink"; 0x10 -> :657 "Vendetta".
-- **DECISION: two bits.** Rival "8 = war companion / one bit" DEAD on three printed
-  predictions (R1 `:105-110`); the 0x88000008/0x80000008 writes carry bit31/27+8 and no 0x10
-  (R2 `:112-114`); a stored 0x18 is the setter's implication, not a second meaning (R3).
-- **OPEN**: 0x88000008's bits 27 and 31 (vendetta-pending candidates, INF); the 24 carried
-  (not linearly resolvable) call sites; the 0x100 the war branch adds.
-- **PITFALL**: argument pushes are split by lea/shl, so a nearest-push walk-back misses masks
-  — scan a 14-instruction window back to the previous call/jmp/ret (0x554426 is the proof;
-  MU21). NAMED.md was 3,825 B under the cap: `## M318` rotated VERBATIM to
-  `docs/named-archive-m371-rows.md` (`scripts/m371_named_rotate.py --verify`, `:1`).
+- **SETTER LAW** (`:28-40`): `test bl,0x10`@0x551abf -> measured `or ebx,0x80000108`@0x551b11
+  (31,8,0x100): any war request leaves as war+contact, both directions 0x551be6/0x551c09.
+  16 callers request war with NO contact bit (14x0x10, 0x8010, 0x50), incl. both FUN_005076d0
+  exits (`:64-68`).
+- **PEACE** (`:35-40`): of three and-masks x2 sites only the 0x7 mask 0xffee7faf clears 0x10;
+  none clears bit 8. Pure-8 writes = 4: new game 0x5a7c0a, council 0x42999d, commit 0x4dae13,
+  pod 0x56f5ad (`:69-76`).
+- **READS** (`:74-80`): `(rel&0x40018)==8`@0x555491, `(rel&0x18)==8`@0x555502; the atrocity
+  host tests `al,0x10`@0x554e6b BEFORE writing 0x18.
+- **NOUNS** (`:88-97`): id 8 -> labels.txt:886 "Commlink"; 0x10 -> :657 "Vendetta".
+- **DECISION: two bits** — rival "8 = war companion" DEAD on three printed predictions (R1
+  `:108-113`); pending masks measured 3x0x88000008 + 1x0x80000008 with no 0x10 (R2 `:115-118`);
+  a stored 0x18 is the setter's implication (R3).
+- **OPEN**: 0x88000008 bits 27/31 (INF); 24 carried sites (5 register masks, 19 not visible);
+  the 0x100. **PITFALL**: pushes split by lea/shl — scan 14 insns back, require a 3-push run
+  with one immediate (0x554426; MU21). `## M318` rotated to
+  `docs/named-archive-m371-rows.md` (`evidence/m371_named_rotate.txt:1`).

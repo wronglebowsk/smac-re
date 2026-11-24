@@ -1647,12 +1647,12 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | RIVALS refuted: AT WAR (pod/council set it with war bits clear), high-dword label (0x80000008/0x80002000 = other texts), bookkeeping flag (row 1 is a page noun), case-8 membership (same guard on a non-war option) | `:123-140` | V MU13,16,18,20,37 |
 | INF: is 0x8 also the AI's "can address them" predicate inside the 0x18/0x88000008 war writes? | - | INF |
 
-## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..124) of `evidence/m371_war_contact.txt:8`.
+## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..128) of `evidence/m371_war_contact.txt:8`.
 | claim | evidence | conf |
 |---|---|---|
-| HOSTS/SETTER: 6/10 host setter calls carry bit 8 — FUN_00554350 0x80000008@0x554389 + 0x88000008@0x554426, FUN_00554d10 0x18@0x554e88, FUN_005551e0 0x88000008@0x55566e/0x555bb9, FUN_00507460 0x80000018@0x507653; `test bl,0x10`@0x551abf -> `or ebx,0x80000108`@0x551b11 stores war+contact both ways 0x551be6/0x551c09 | `:8-40` G1a,G2a,G2d | V MU1,2,5-8 |
-| WAR ALONE: 16 callers name 0x10/0x8010/0x50 with NO bit 8 (both FUN_005076d0 exits) — contact is supplied by the setter, never requested | `:64-66` G3b | V MU9-12 |
-| PEACE keeps bit 8 (0xffee7faf clears 0x10 only); CONTACT ALONE: 4 exact-0x8 writes (new game 0x5a7c0a, council 0x42999d, commit 0x4dae13, pod 0x56f5ad) | `:35-39,:67-74` G2c,G4a | V MU3,4,13-15 |
-| READ AS PREDICATE: `(rel&0x40018)==8`@0x555491, `(rel&0x18)==8`@0x555502; FUN_00554d10 `test al,0x10`@0x554e6b before 0x18 | `:72-78` G4b/G4c | V MU16-18 |
-| NOUNS id 8 = labels.txt:886 "Commlink", 0x10 = :657 "Vendetta"; RIVAL '8=war companion' DEAD on 3 predictions; 0x88000008/0x80000008 = 31/27+8, no 0x10 | `:88-119` G5a,R1-R3 | V MU19-25 |
-| ACCEPT `PASS M371: 18/18 digest 6670dd9eda4b73da` (`evidence/m371_war_contact.txt:124`) x2; harness 25/25 (`evidence/m371_mutate.txt:33`); OPEN: 0x88000008 bits 27/31 (INF), 24 carried sites, 0x100 | as cited | V |
+| HOSTS/SETTER: 6/10 host setter calls carry bit 8 — FUN_00554350 0x80000008@0x554389 + 0x88000008@0x554426, FUN_00554d10 0x18@0x554e88, FUN_005551e0 0x88000008@0x55566e/0x555bb9, FUN_00507460 0x80000018@0x507653; `test bl,0x10`@0x551abf -> measured `or ebx,0x80000108`@0x551b11 stores war+contact both ways 0x551be6/0x551c09 | `:8-40` G1a,G2a,G2b | V MU1-2,5-8 |
+| WAR ALONE: 16 callers name 0x10/0x8010/0x50 with NO bit 8 (both FUN_005076d0 exits) — contact is supplied by the setter, never requested | `:64-68` G3b | V MU9-12 |
+| PEACE keeps bit 8 (only 0xffee7faf clears 0x10, of three masks x2 sites); CONTACT ALONE: 4 exact-0x8 writes (new game 0x5a7c0a, council 0x42999d, commit 0x4dae13, pod 0x56f5ad) | `:35-40,:69-76` G2c,G4a | V MU3-4,13-15 |
+| READ AS PREDICATE: `(rel&0x40018)==8`@0x555491, `(rel&0x18)==8`@0x555502; FUN_00554d10 `test al,0x10`@0x554e6b before 0x18 | `:74-80` G4b,G4c | V MU16-18 |
+| NOUNS id 8 = labels.txt:886 "Commlink", 0x10 = :657 "Vendetta"; RIVAL '8=war companion' DEAD on 3 predictions; pending masks measured (3x0x88000008, 1x0x80000008, no 0x10) | `:88-123` G5a,R1-R2 | V MU19-20,26-27 |
+| ACCEPT `PASS M371: 18/18 digest 4e82206112fe63ad` (`evidence/m371_war_contact.txt:128`), twice byte-identical (`evidence/m371_twice.txt:4`); harness 27/27 (`evidence/m371_mutate.txt:35`); OPEN: 0x88000008 bits 27/31 (INF), 24 carried sites, 0x100 | as cited | V |
