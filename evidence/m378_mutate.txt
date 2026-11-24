@@ -1,0 +1,19 @@
+MU1   ok    red=['G1', 'G8']                 want=['G1']         arm A's OR loses 0x40: the set algebra no longer reads 0x840
+MU2   ok    red=['G1', 'G8']                 want=['G1']         arm A's AND spares 0x400: the clear algebra is no longer 0x20400
+MU3   ok    red=['G0']                       want=['G0']         arm A's store re-pointed at the sibling field
+MU4   ok    red=['G2', 'G8']                 want=['G2']         arm B sets 0x400 instead of 0x20000
+MU5   ok    red=['G2', 'G8']                 want=['G2']         the guard's direction inverted: the arm would be the < 0 leg
+MU6   ok    red=['G3', 'G7', 'G8']           want=['G3']         the PACT path spares 0x20000 (clears only 0xc00)
+MU7   ok    red=['G3', 'G7', 'G8']           want=['G3']         the PACT path gated on bit 1 instead of bit 0
+MU8   ok    red=['G4', 'G8']                 want=['G4']         the 0x400 reader re-pointed one bit up
+MU9   ok    red=['G5', 'G8']                 want=['G5']         FUN_00552970's arm sets 0x8: its 0x40 signature disappears
+MU10  ok    red=['G5', 'G8']                 want=['G5']         the sibling 0xc00 clear re-pointed at the relations dword
+MU11  ok    red=['G4', 'G7', 'G8']           want=['G4']         one of the five 0x400-carrying sites reduced to 0x10: the count and the rival move
+MU13  ok    red=['G6', 'G8']                 want=['G6']         a 0x20000 bit smuggled into a test mask: the zero-reader negative reddens
+MU12  ok    red=['G1', 'G7', 'G8']           want=['G1']         the lease store redirected into the relations dword itself
+MU14  ok    red=['G1', 'G8']                 want=['G1']         the lease value moved 0x32 -> 0x33: G1 now reads the immediate, not just the address
+MU15  ok    red=['G3', 'G8']                 want=['G3']         the PACT gate moved to another register: the `test al,0x1` shape reddens
+MU16  ok    red=['G2', 'G8']                 want=['G2']         the guard's source field shifted: the provenance chain reddens
+NOOP  ok    red=[]                           want=[]             identity: nothing may redden
+
+RUN PASS 17 mutants, 0 unexpected

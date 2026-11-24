@@ -740,7 +740,7 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | ACCEPTANCE `python3 -m sim.selftest --b20 programs/saves/m54b_clean.SAV` -> **PASS B20: 10/10** (G10 two runs byte-identical; zero box, zero /proc, zero gdb) | `evidence/b20_bytecounter.txt:39` (9/9 module line; G10 in selftest stdout) | V |
 | DECLARED UNMODELED: live byte-table contents; block upper bound (<8 implied); per-call zero-rebuild cadence (FUN_0051dcb0 callers OPEN); dispatch/settle-nest meaning (M303 S7, M304); save-carry vs rebuild; 8380-B siblings | docstring + BUILD_SPINE §B20 | lead |
 
-## M305 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `9bc9c82dfc0139e7`, 3108 B); noun: FUN_0051dcb0 = the zero-rebuild OWNER (11 callers, round-mod-4 gate).
+## M305 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `9bc9c82dfc0139e7`, 3108 B); noun: FUN_0051dcb0 = the zero-rebuild OWNER: 11 single-site callers, one loop-enclosed, a...
 ## M306 (s264, STATIC, zero box) - 0x4f35e0 = a real 2673-B function absorbed by tail-jump folding; the export's "hole" is an index.csv size/containment lie
 | claim | evidence | conf |
 |---|---|---|
@@ -862,7 +862,7 @@ QUALIFIED BY B24 (s287): `fold()` in this module is now PARAMETERIZED - new hook
 | MU2's FIRST anchor reddened NOTHING (the driver's per-turn write re-composes from the container's bytes); replaced by the write-side anchor `ent["raw"] = bytearray(target_raw)` | `scripts/b24_mutate.py` comment | V |
 | OPEN: the queue content ON the founded base (the log records fac/x/y/cnt only - the seed span is a declared fixture); real income/price during t22-t29 (`D0_DECL`/`PRICE_DECL` are fixtures) | - | lead |
 
-## M311 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `8ac1d711b2aaa84f`, 3180 B); noun: `ds:0x68cbb0` = CURRENT-RECORD INDEX of the 304-B entity array. 
+## M311 - VERBATIM at `docs/named-archive-m379-m311-m305-rows.md` (sha1 `8ac1d711b2aaa84f`, 3180 B); noun: `ds:0x68cbb0` is the CURRENT-RECORD INDEX of the 304-B entity array; `ds:0x8f0d60` is its...
 ## M312 (s276, STATIC, zero box; mutation-tested 23/23) - ROTATED VERBATIM to `docs/named-archive-m354-rows.md` (sha1 `5e8df0971a3d`) - the selection check (FUN_00470b90, M310) has TWO firing trunks; the forwarder's invalidator tail is UNREACHABLE from every caller; the pair is the cursor-tile neighbourhood
 
 | claim (one line each; full rows in the archive) | evidence | conf |
@@ -1041,19 +1041,16 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | ACCEPT 12/12 digest 12e247bdbc0f77ef (`evidence/m320_sibling_census.txt:418`); mutate 26/26 digest 0d18a3d23b3e94b4 (`evidence/m320_mutate.txt:27`) | as cited | V |
 | OPEN: game nouns; 985afc; dfbe41; tail; save-carry | - | lead |
 
-## M319 (s293, STATIC, zero box; 7/7 + 14/14 scored + 1 NO-OP + selftest 4/4) - pick (v) CLOSED: the 8 unguarded memo sites are NOT guarded by their callers
-
-| claim | evidence | conf |
-|---|---|---|
-| MEMO READS FEW + PRIVATE (operand-substring census, mnemonic shape pinned): exactly 6 read/test instrs image-wide (0x4e5155, 0x4eb6bf, 0x4efe83, 0x4f21e9, 0x4f5c41, 0x5ab74d; {mov:5,cmp:1}) in 5 funcs; readers(5) subset writers(15) - no read-only consumer could hold a hoist | `evidence/m319_guard_hoist.txt:67-68` G2/G5 | V (MU3,MU4,MU10,MU11) |
-| NOT HOISTED: 8 sites -> 4 nameable owners, 8 distinct direct callers; only 1 caller reads the memo (FUN_004f5a70) and it OWNS a guarded site (0x4f5c4a, pinned), so its read is its OWN guard; non-owner memo-readers 0 | :69 G3 | V (MU2,MU3,MU5,MU10-MU13) |
-| NOT DEAD, NO MEMO-GATED ARRIVAL: min 1 call/owner; 9 arrivals, 0/9 under a memo test; the FULL histogram {other-test:8, fallthrough-only:1} is pinned; the flag-setter walk spans EVERY flag-writing class (not cmp/test only); 0x4f3f7f has no range (M315 A10), callers not nameable | :70-71 G4/G6 | V (MU2,MU3,MU5,MU6,MU10-MU12,MU14) |
-| CLASSIFIER NOT BLIND, KINDS PINNED PER ADDRESS: memo-direct exactly at 0x4eb6c7, memo-copy at 0x4efeaa/0x4f2201/0x4f5c4a, no memo edge at any of the 7 nameable unguarded stores | :72 G7 | V (MU1-MU3,MU5,MU7,MU9,MU11,MU13,MU15) |
-| PAIR LAW IS ORDERED: pair-fed only when `call 0x4e8d60` PRECEDES `call 0x4e78e0` in the 17 B reach (presence alone would accept a reversed pair) | :15 G1 | V (MU1,MU2,MU7) |
-| THUNK-FOLLOWING MEASURED INERT HERE: turning it off moves NO printed number (a harness NO-OP, not a bite - the census does not depend on it) | MU8 `evidence/m319_mutate.txt:9` | V (harness measurement) |
-| ACCEPT 7/7 digest fb4e802dac1995a2 (hashes T1 partition+guard kinds, T2 refs+mnemonics, T3 callers, T4 per-call arrival, T5 edge labels); 3 accepted runs byte-identical, sha256 5ea00d859bf4503f (`evidence/m319_guard_hoist.txt:73`, `evidence/m319_guard_hoist_rerun2.txt:73`, `evidence/m319_guard_hoist_rerun3.txt:73`; re-derive by re-running the acceptance 3x and `diff`ing each stdout against the committed file); sweep 14/14 scored + 1/1 NO-OP (`evidence/m319_mutate.txt:17`); selftest 4/4 (`evidence/m319_mutate_selftest.txt:5`) | as cited | V |
-| REVIEW ROUND #317 + the squash title: the title's 459f47e3178f439d / 12-12+1 are the PRE-REVIEW harness; the ACCEPT row is what held at merge head (same defect as M314's "20/20"). Governance note - adds no byte claim | - | lead |
-| OPEN (one lane CLOSED by M321): what gates the 8 - `BYTE PTR [eax+0x38],0x40` x3 is now NAMED (base_array field 56 bit 6, gating the FUN_004f41f0 talent-request leg: `NAMED ## M321`, `evidence/m321_memo_owners.txt:30-34`); still unnamed: al,0x10; eax,0x1; ecx,eax. Also open: 0x4f3f7f callers; never live. Caveat: `guarded()` accepts via-copy on copy-liveness AT THE JCC (over-approximation) - the 4/8 split stands on agreement with M315 + the pinned kinds | - | lead |
+## M319 (s293, STATIC, zero box; 7/7 + 14/14 scored + 1 NO-OP + selftest 4/4) - pick (v) CLOSED: the 8 unguarded memo sites are NOT guarded by their callers - ROTATED VERBATIM to `docs/named-archive-m378-rows.md` (sha1 `520c00d79bb0306c52ea9b7c8af4ad803d267e7c`); one line per claim with the same conf/mutants and full `path:line`, plus `archive:<line>` for the verbatim row.
+- 6 memo read/test insns in 5 fns; readers(5) subset writers(15) - V (MU3,MU4,MU10,MU11) - `evidence/m319_guard_hoist.txt:67-68` G2/G5 - archive:21
+- 8 unguarded sites -> 4 owners / 8 callers; only 1 caller reads, and it owns a guarded site - V (MU2,MU3,MU5,MU10-MU13) - :69 G3 - archive:22
+- not dead, no memo-gated arrival: 9 arrivals, 0/9 under a memo test - V (MU2,MU3,MU5,MU6,MU10-MU12,MU14) - :70-71 G4/G6 - archive:23
+- classifier not blind: memo-direct / memo-copy kinds pinned per address - V (MU1-MU3,MU5,MU7,MU9,MU11,MU13,MU15) - :72 G7 - archive:24
+- pair law ordered: `call 0x4e8d60` precedes `call 0x4e78e0` - V (MU1,MU2,MU7) - :15 G1 - archive:25
+- thunk-following measured inert here (harness NO-OP) - V (harness measurement) - MU8 `evidence/m319_mutate.txt:9` - archive:26
+- ACCEPT 7/7 digest `fb4e802dac1995a2`, 3 runs byte-identical - V - as cited - archive:27
+- review #317: the squash title's `459f47e3178f439d` is the PRE-review harness - lead - - - archive:28
+- OPEN: what gates the 8 (M321 closed the 0x38/0x40 leg) - lead - - - archive:29
 
 ## M318 — VERBATIM at `docs/named-archive-m371-rows.md` (sha1 `3f2a4dfaf04a31685049d1e5864f516f48435e09`, 2070 B); this stub governs: the selection-REFRESH PAIR = FUN_004e8d60 (selected-base unit-support census) then FUN_004e78e0 (pane refresh)
 
@@ -1540,19 +1537,17 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | QUALIFIES `## B34`'s OPEN row: `FUN_0059ce10`'s 11 literal items are DECODED (grant items, set-flag 1 on ten, one arg-order anomaly) and the founder - not that path - is what the recorded births show | `:13-28,79-89` | V MU1,MU2 |
 | OPEN: which of the founder's 3 sites fired per birth; why base 20 was born EMPTY (falsifies "item 1 unconditional"); which of the 27 `0x4e44f0` callers added bits 3/6 | - | lead |
 
-## M366 (s335-chain2, STATIC 29/29) — 0x10 = AT WAR / vendetta in force (V); 0x20 = the human-branch war record (INF). ev `evidence/m366_bitnouns.txt:597`
-| claim | ev | conf |
-|---|---|---|
-| asks: 0x10 = 37 bare / 52 total in 16 fns; 0x20 = 18 bare / 30 total in 5 fns; both-bit masks 0x30/0x31/0x40c31; both are dword-A ids (0x8/0x2000 the only B twins) | `:13-23` | V MU1,2,3,4 |
-| the ask decoder is sound: 214/232 sites are 3-push cdecl, 212 pop with `add esp,0xN` (N>=0xc), 2 inline-result sites named | `:28` | V MU5 |
-| set-writer `FUN_00551a20` `test bl,0x10 -> and 0xfaeef378` clears {1,2,4,0x80,0x400,0x800,0x10000,0x100000,0x1000000,0x4000000} and `or 0x80000108` sets {0x8,0x100,0x80000000}; clear-writer `FUN_005518f0` `test dl,0x10 -> or 0x8040`; 0x20's rules drop B's 0xc00 / B's 0x40 | `:36-46` | V MU6,7,8,9,10,ALG2 |
-| 0x10 is what the declare-vendetta path writes: `FUN_00507ce0` tests 0x7 inline -> `FUN_005076d0` -> setter with push 0x8010, and the routine pushes 0x10 on BOTH exits (0x507abc/0x507c71) while firing `VENDETTAWARNING`/`INCITED` (0x68d684/0x68d67c, bytes from the image) | `:545-556` | V MU11,12,13,14,ALG1 |
-| 0x20 is SET by that same routine: `FUN_00551cf0`'s 4th arg at [ebp+0x14] selects the CLEAR (not/and) block by `je`, and the call site pushes 4 args with arg3=0x20, arg4=1 (0x507aad/0x507c52) | `:559-561` | V MU15,16 |
-| read side: the instruction at 0x51ef55 IS `test <pair dword>,0x40020`; `jne` skips the mild load so SET keeps `ECONOMICLOSE2` ("tiny cubicle") over `ECONOMICLOSE` ("estate"); `FUN_00502cd0` asks 0x10 and carries PACTATTACKED/PACTATTACKING/VENDETTAREPORT; the naming menu is NOT among 0x20's 3 askers | `:566-574` | V MU17,18,19,20,21 |
-| direct tests 62 (0x10) / 37 (0x20) / 3 (0x40020) reproduce M364's G6; 0x8010 is never a direct test (write mask); 7 writer calls pass 0x8 alone, 4 to the A-setter | `:579-585` | V MU22,23,24 |
-| RIVALS refuted: 0x10 as a peace bit (its set-rule clears 1/2/4); 0x10 == 0x20 (different clear side-effects); 0x10 == 0x8 (20 vs 37 bare, 0x8 settable alone, implication one-way); 0x20 == 0x40000 (18 vs 3 bare) | `:588-596` | V MU25-29 |
-| ACCEPT `python3 -u scripts/m366_bitnouns.py` -> 29/29 `c36db3d154a5ea1b` x2; harness 32/32 | `evidence/m366_bitnouns.txt:597`, `evidence/m366_mutate.txt:33` | V MU0 |
-| INF: the noun WORD for 0x20 (inferred from the human branch + B-ladder + ending text); 0x80000000's role | - | INF |
+## M366 (s335-chain2, STATIC 29/29) — 0x10 = AT WAR / vendetta in force (V); 0x20 = the human-branch war record (INF). ev `evidence/m366_bitnouns.txt:597` - ROTATED VERBATIM to `docs/named-archive-m378-rows.md` (sha1 `c479fb8d704558eb6f5f2401c402a5c15700e60c`); one line per claim with the same conf/mutants and full `path:line`, plus `archive:<line>` for the verbatim row.
+- asks: 0x10 37 bare/52 total in 16 fns, 0x20 18/30 in 5 fns; B-twins only 0x8/0x2000 - V MU1,2,3,4 - `evidence/m366_bitnouns.txt13-23` - archive:6
+- ask decoder sound: 214/232 sites 3-push cdecl, 2 inline-result sites named - V MU5 - `evidence/m366_bitnouns.txt28` - archive:7
+- set-writer FUN_00551a20 `test bl,0x10 -> and 0xfaeef378`; clear-writer FUN_005518f0 `or 0x8040` - V MU6,7,8,9,10,ALG2 - `evidence/m366_bitnouns.txt36-46` - archive:8
+- 0x10 IS what the declare-vendetta path writes (FUN_00507ce0, VENDETTAWARNING/INCITED) - V MU11,12,13,14,ALG1 - `evidence/m366_bitnouns.txt545-556` - archive:9
+- 0x20 is SET by the same routine through FUN_00551cf0's arg4 ([ebp+0x14] selects the clear) - V MU15,16 - `evidence/m366_bitnouns.txt559-561` - archive:10
+- reader 0x51ef55 IS `test ...,0x40020`: SET keeps ECONOMICLOSE2 over ECONOMICLOSE - V MU17,18,19,20,21 - `evidence/m366_bitnouns.txt566-574` - archive:11
+- direct tests 62 / 37 / 3 reproduce M364 G6; 0x8010 is never a direct test - V MU22,23,24 - `evidence/m366_bitnouns.txt579-585` - archive:12
+- rivals refuted: 0x10 not a peace bit, != 0x20, != 0x8, 0x20 != 0x40000 - V MU25-29 - `evidence/m366_bitnouns.txt588-596` - archive:13
+- ACCEPT `python3 -u scripts/m366_bitnouns.py` 29/29 `c36db3d154a5ea1b` x2, harness 32/32 - V MU0 - `evidence/m366_bitnouns.txt:597`, `evidence/m366_mutate.txt:33` - archive:14
+- INF: the noun WORD for 0x20; 0x80000000's role - INF - - - archive:15
 
 ## M368 (s336-chain1, STATIC 34/34, review #399 hardened) — relations bits 0x2 = TREATY, 0x4 = TRUCE (V); the peace ladder is truce < treaty < pact and FUN_005076d0's classifier is an ordered EQUALITY test, not a rank. ACCEPT `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 34/34`** `6f4b692777cc3549` x2 (`evidence/m368_peace_ladder.txt:94`); harness 32/32 NO-OP `[]`, 34/34 gates covered (`evidence/m368_mutate.txt:36`). `:N` = line of that evidence.
 | claim | ev | conf |
@@ -1636,6 +1631,15 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | STORES: 41 register stores (+0 `and/or/xor [word],imm`, +0 `mov [word],imm32` shapes) — 33 cannot clear bit 31, the ONLY 2 literal clears are the pass's own, 3 caller-mask, 3 opaque; G4c ties the sim's 3 masks to the dump's bytes | `:76-121` | V MU6,7,11,12 |
 | SECOND CLEARER: FUN_005518f0 (`not edx`) / FUN_00551cf0 (4th arg 0) clear a CALLER mask — 66 sites, 46 with a contiguous >=3-push run / 35 literal (20 undecoded, disclosed); `0x9000ff48`@0x59f176 (FUN_0059ec90 sweep) is the only LITERAL mask carrying bit 31 | `:124-132` | V MU9 |
 | UNRESOLVED: the noun of bit 13 (0x2000); 0xdd9bc3c0@0x4da404 (flag = caller's ebx) and the 20 undecoded call sites could clear bit 31; which live event fires the ARM | `:132` | OPEN MU10 |
+## M378 (s340-c1) — 0x800 = TREATY IN FORCE, 0x20000 = an OUTSTANDING request; FUN_00552970 is NOT a 0x800 setter. ACCEPT `scripts/m378_bit_nouns.py` **`PASS 45/45`** `b841021cb7b0f4b8` (`evidence/m378_bit_nouns.txt:115`; x2 in SESSION_NOTES), 17 mutants (`evidence/m378_mutate.txt:19`). `:N` = evidence line.
+| claim | ev | conf/mutant |
+|---|---|---|
+| sign arm (`and 0xfffdfbff`+`or 0x840`) sets {0x800,0x40}, clears {0x20000,0x400}, arms 0x94d4c8=0x32 | `:15-25` | V MU1,2,12,14 |
+| arm B `or eax,0x20000`@0x555405 on the SAME load; only entry `jge` on [pair+0x94d820]>=0 | `:27-50` | V MU4,5,16 |
+| PACT `test al,0x1`@0x555371 -> `and 0x20c00` clears all three | `:37-44` | V MU6,7,15 |
+| 0x20000: 0 readers; 0x800 only in the 0xc00 cluster + 0x810; 0x400 + `test ah,0x4`@0x5552ff | `:52-97` | V MU8,11,13 |
+| FUN_00552970: 0x552ce6 sets 0x40, 0x552cca clears 0x20; both `and 0xfffff3ff` hit SIBLING +0x94d468 | `:67-82` | V MU9,10 |
+| nouns: 0x800 V, 0x20000/0x400 INFERRED | `:15-50` | INF |
 ## M379 (s340-c2, 31/31) — +0x594 has 2 readers (AI SE scorers); 0x92a7fc is a POINTER — M376 OPEN RETRACTED.
 ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (`evidence/m379_field594.txt:85`, x2 cmp-identical).
 | claim | ev | conf |

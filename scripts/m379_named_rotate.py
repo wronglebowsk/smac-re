@@ -57,7 +57,7 @@ def main():
     text = open(NAMED).read()
     for head in HEADS:
         ln = next(l for l in text.splitlines() if l.startswith(head + " "))
-        if "VERBATIM" in ln:
+        if "VERBATIM at `docs/named-archive-m379" in ln:
             raise SystemExit(f"{head} is already a rotation stub - refusing to re-rotate "
                              "(the archive is the source of truth; use --verify)")
     sp = spans(text)

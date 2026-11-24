@@ -45,9 +45,9 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   `docs/field-atlas-faction.md` (read §M297 first - the 0x94d104 phrasing is WRONG).
 - **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
-  B37's own leads (ANALYSE, static, zero box): (a) the noun of **0x800** - set by BOTH `and 0xfffdfbff`+`or 0x840`
-  arms (0x5553ed/0x5556e6) with 0x20000/0x400 cleared in the same mask - the first bit B37 could not name;
-  (b) **FUN_00552970** (0x552cec arm, `or al,0x40`); (c) bit 13's noun (M373). ANSWERED: M227-M340,M344,M346 + B1-B37 (M241 FAIL 2/5 #180).
+  M378 CLOSED B37's lead: 0x800 = TREATY IN FORCE, 0x20000 = an OUTSTANDING request, FUN_00552970 is no 0x800
+  setter. Next (ANALYSE, static, zero box): (a) who asks the 0xc00 cluster - the 5 field-inline tests
+  (0x4ec9c3 0x523a7c 0x563165 0x56a8a2 0x5859ae) and the 2 register readers (0x5468c7/0x5552ff); (c) bit 13 (M373). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
   CLOSED enumeration + pick rows + open-lead census (v..x4, B27) VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   NEVER bp mid-instruction (s213).
@@ -114,5 +114,5 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - B37 (s339-c1) MERGED: the lifecycle RUN - `0x40` arms `0x94d4c8=0x32`; 10-insn countdown 0x5552b6..0x5552d4 (`and al,0xbf`@0x5552d1), ONE exit; PEACE clears 0x40 so its expiry is a NULL write, WAR keeps it (0x78) so its expiry is real. 8/8 `5dd4119bd1882d1d`.
 - M376 (s339-chain2): `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix (11 effect keywords = the columns); bit-24 stores (category, choice) at rec +0x584/+0x58c; Future Society row never sampled. 29/29 `f22d2b46cc7e9507`, harness 33/33. NEXT: +0x594's reader / the 8th write 0x92a7fc.
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); 0x53bbed = AI compare of the 0x94e48c scalars; M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
-- OPEN LEADS: bit 13's noun (M373); 0x800/0x20000/0x400 nouns (B37); FUN_00552970 (0x552cec arm); 0x94e48c's noun (M377).
-- M379 (s340-c2): +0x594 = 2 AI readers; M376 8th-write RETRACTED (CFG run: 7 bodies, 0x92a7fc = terminal POINTER). 31/31 `256603d5fb70d2ad`.
+- OPEN LEADS: bit 13's noun (M373); the 0xc00 cluster's 5 readers + 0x5468c7/0x5552ff (M378); 0x94e48c's noun (M377 = chain 3).
+- M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
