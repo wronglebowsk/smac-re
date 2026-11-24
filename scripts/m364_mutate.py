@@ -17,6 +17,8 @@ SRC = os.path.join(ROOT, "scripts/m364_bitnouns.py")
 SCRATCH = os.path.join(ROOT, "scratch")
 GATE = re.compile(r"^  (G\d[a-z]?)\s+(PASS|FAIL)", re.M)
 
+NOOP = "MU0"          # the control: the unmutated instrument must stay 24/24
+
 MUTANTS = [
     ("MU1",  "G1a", 'and all(h[2] == (h[1] & 0x7FFFFFFF) for h in hits),',
                     'and all(h[2] == h[1] for h in hits),'),
@@ -73,7 +75,7 @@ def main():
     out, rc = run(src, "noop")
     red = {g for g, v in GATE.findall(out) if v == "FAIL"}
     noop = (rc == 0 and not red and "PASS  M364: 24/24 gates" in out)
-    print(f"MU0   NO-OP rc={rc} red={sorted(red) or 'none'}  -> {'PASS' if noop else 'BAD'}")
+    print(f"{NOOP}   NO-OP rc={rc} red={sorted(red) or 'none'}  -> {'PASS' if noop else 'BAD'}")
     ok += noop
     bad += not noop
     for mid, gate, old, new in MUTANTS:
