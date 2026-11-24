@@ -219,6 +219,7 @@ def loop_trip(start, stop, step, cmp_addr):
 
 
 ROWS = []
+MEAS = []
 
 
 def say(s, row=None):
@@ -291,8 +292,18 @@ def main():
     say("   absolute receiver 0x74df70 == 0x%x+0x%x : %s" % (OBJ, SUB, abs_ok))
     lea_n = sum(1 for _, _, _, r in recs if r.startswith("lea:") and sub_receiver(r))
     mov_n = sum(1 for _, _, _, r in recs if r == "mov:0x74df70")
-    rows.append(("G4", "4 calls, receiver = lea [reg+0x5970] x3 + abs 0x74df70 (= 0x748600+0x5970)",
-                 lea_n == 3 and mov_n == 1 and abs_ok))
+    sub_calls = []
+    for callee in (0x629169, 0x6291A3, 0x6291E3):
+        for a in callers(callee):
+            if sub_receiver(receiver(a, 40)):
+                sub_calls.append((a, callee))
+    sub_calls.sort()
+    say("   all sub-receiver calls into the class: %s"
+        % [(hex(a), hex(c)) for a, c in sub_calls])
+    MEAS.append("sub_calls=" + repr([(hex(a), hex(c)) for a, c in sub_calls]))
+    rows.append(("G4", "the call set = 4 (init/register/select x2), receivers lea[reg+0x5970] x3 + abs 0x74df70 (=0x748600+0x5970)",
+                 sub_calls == sorted((a, c) for a, c, _, _ in sites) and lea_n == 3
+                 and mov_n == 1 and abs_ok))
 
     # ------------------------------------------------------------ TABLE 5
     say("T5 child ids (the id namespace the selector matches):")
@@ -331,11 +342,14 @@ def main():
         % (sel_id[1], sel_id[2], sel_cmp[1], sel_cmp[2], sel_arg[1], sel_arg[2]))
     id_ok = (pre_inc and trip == 7 and init_store[2].endswith("[edx+0xa78],eax")
              and split_ops(init_arg[2])[1] == "DWORD PTR [ebp+0xc]"
-             and mem(sel_id[2]) == "edx+0xa78" and "0x84" in sel_cmp[2])
-    say("   checks: pre_inc=%s trip7=%s init_a78=%s sel_a78=%s sel_84=%s ids=%s"
+             and mem(sel_id[2]) == "edx+0xa78" and "0x84" in sel_cmp[2]
+             and inc_i[1] == "inc" and inc_i[2] == "edx"
+             and add_ins[1] == "add" and cmp_ins[1] == "cmp" and ebx0[1] == "mov")
+    say("   checks: pre_inc=%s trip7=%s init_a78=%s sel_a78=%s sel_84=%s inc=%s/%s ids=%s"
         % (pre_inc, trip == 7, init_store[2].endswith("[edx+0xa78],eax"),
-           mem(sel_id[2]) == "edx+0xa78", "0x84" in sel_cmp[2], ids))
-    rows.append(("G5", "ids = {1..7}: trip 7, counter reloaded AFTER inc, Init stores arg2 at +0xa78, selector matches +0xa78",
+           mem(sel_id[2]) == "edx+0xa78", "0x84" in sel_cmp[2], inc_i[1], inc_i[2], ids))
+    MEAS.append("ids=%r trip=%d init_a78=%s" % (ids, trip, init_store[2]))
+    rows.append(("G5", "ids = {1..7}: trip 7 (mov/add/cmp mnemonics pinned), counter inc'd and reloaded AFTER the store, Init stores arg2 at +0xa78, selector matches +0xa78",
                  id_ok and ids == [1, 2, 3, 4, 5, 6, 7]))
 
     # ------------------------------------------------------------ TABLE 6
@@ -357,8 +371,11 @@ def main():
     ply_load2 = at(0x44AECB)
     say("   player path: %s %s ; %s %s ; %s %s" % (ply[1], ply[2], ply_load2[1], ply_load2[2], ply_store[1], ply_store[2]))
     same_src = (ply[2] == "eax,ds:0x91b5b4" and ply_load2[2] == "eax,ds:0x91b5b4"
-                and ply_store[2] == "DWORD PTR [esi+0xa4c],eax")
-    rows.append(("G6", "block ids = {1..7} (7-block scan, +1) ; player id = ds:0x91b5b4 = the SITE B cell [screen+0xa4c] (its 1..7 block domain cited M312)",
+                and ply_store[2] == "DWORD PTR [esi+0xa4c],eax"
+                and at(0x44B725)[1] == "push" and at(0x44B725)[2] == "eax"
+                and pushid[1] == "push" and pushid[2] == "eax")
+    MEAS.append("blk_trip=%d blk_ids=%r ply=%s ply_store=%s" % (blk_trip, blk_ids, ply[2], ply_store[2]))
+    rows.append(("G6", "block ids = {1..7} (7-block scan, +1, pushed at 0x44ae6b) ; player id = ds:0x91b5b4, pushed at 0x44b725 and stored to the SITE B cell [screen+0xa4c] (1..7 domain cited M312)",
                  blk_trip == 7 and blk_ids == ids and argload[2] == "eax,DWORD PTR [ebp+0x8]"
                  and incid[1] == "inc" and same_src))
 
@@ -376,8 +393,23 @@ def main():
     say("   guards on ebx between load and use: %d" % len(guard))
     say("   n=-1: %s" % [hex(a) for n, s, i, a in sent if n == -1])
     say("   n=-2: %s" % [hex(a) for n, s, i, a in sent if n == -2])
-    rows.append(("G7", "no guard on the page; a -1/-2 sentinel indexes BEFORE 0x983a10",
-                 len(guard) == 0 and all(a < BASE for n, s, i, a in sent)))
+    nf_cmp = at(0x62932D)
+    nf_je = at(0x629331)
+    nf_land = at(0x62936B)
+    nf_store = at(0x62936E)
+    found_flag = at(0x6292A0)
+    match_cmp = at(0x629295)
+    match_jne = at(0x629298)
+    branch_ok = (nf_cmp[2] == "DWORD PTR [ebp-0x14],0x0" and nf_je[1] == "je"
+                 and imm(nf_je[2]) == 0x62936B and nf_store[0] == 0x62936E
+                 and found_flag[2] == "DWORD PTR [ebp-0x14],0x1"
+                 and match_cmp[2].endswith("[ebp+0x8]") and match_jne[1] == "jne")
+    say("   -1 path: %s %s ; %s %s ; land %s ; store %s ; found-flag %s %s"
+        % (nf_cmp[1], nf_cmp[2], nf_je[1], nf_je[2], hex(nf_land[0]),
+           hex(nf_store[0]), found_flag[1], found_flag[2]))
+    MEAS.append("sent=%r branch_ok=%s" % ([hex(a) for n, s, i, a in sent], branch_ok))
+    rows.append(("G7", "no guard on the page; the -1 store is the NOT-FOUND branch (je @629331 -> 0x62936b); a sentinel would index BEFORE 0x983a10",
+                 len(guard) == 0 and all(a < BASE for n, s, i, a in sent) and branch_ok))
 
     # ------------------------------------------------------------ RIVALS
     say("RIVALS:")
@@ -392,9 +424,15 @@ def main():
     off49 = [a for a, m, o in indexed if not (0x490000 <= a < 0x4A0000)]
     if ALGO == "census":
         field_refs = all_refs
-    r2 = len(field_refs) == 1 and len(indexed) == 12
-    say("      plain ref = %s ; indexed outside 0x49xxxx = %d -> R2 %s"
-        % ([hex(a) for a, m, o in field_refs], len(off49), "ALIVE" if not r2 else "DEAD"))
+    r2 = len(field_refs) == 1 and len(indexed) == 12 and len(off49) == 1
+    hof_indexed = [a for a, m, o in indexed if 0x440000 <= a < 0x450000]
+    r2 = r2 and not hof_indexed
+    say("      plain ref = %s ; indexed outside 0x49xxxx = %s ; indexed inside the HoF module = %s -> R2 %s"
+        % ([hex(a) for a, m, o in field_refs], [hex(a) for a in off49], hof_indexed,
+           "ALIVE" if not r2 else "DEAD"))
+    MEAS.append("field_refs=%r indexed=%r off49=%r" % ([hex(a) for a, m, o in field_refs],
+                                                     [hex(a) for a, m, o in indexed],
+                                                     [hex(a) for a in off49]))
     cap = [r for r in window(0x6290B0, 0x629110)
            if r[1] == "cmp" and r[2] == "DWORD PTR [ebp-0x4],0x20"]
     regs = callers(0x6291A3)
@@ -424,7 +462,7 @@ def main():
     for gid, text, ok in rows:
         say("%s %s %s" % ("PASS" if ok else "FAIL", gid, text), (gid, text, ok))
         fails += 0 if ok else 1
-    table = "\n".join("%s|%s|%s" % r for r in ROWS)
+    table = "\n".join("%s|%s|%s" % r for r in ROWS) + "\n" + "\n".join(MEAS)
     dig = hashlib.sha256(table.encode()).hexdigest()[:16]
     say("table_sha256=%s" % dig)
     say("digest=%s gates=%d pass=%d" % (dig, len(rows), len(rows) - fails))

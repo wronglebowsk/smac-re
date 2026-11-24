@@ -508,12 +508,15 @@ whether a facility completion stamps at all.
   callers; the reader 0x44970f..0x449793 has 0 guards, so a sentinel would
   index BEFORE 0x983a10 (n=-1 -> 0x983498.., n=-2 -> 0x9831dc..).
 - ACCEPT `python3 -u scripts/m347_page_writer.py` -> **`PASS M347: 12/12`**
-  `9eb19bc9d3538225`, 2 runs diff-identical; `m347_mutate.py` **16/16**,
-  NO-OP `[]` (`evidence/m347_mutate.txt:22`).
+  `3fadfd6e6d26e64c`, 2 runs diff-identical; `m347_mutate.py` **20/20**,
+  NO-OP `[]`, uncovered `[]` (measured) (`evidence/m347_mutate.txt:22`).
 - RIVALS: ctor-zero DEAD (0 stores); textual census 13 refs = 1 plain + 12
   `[r+r*4+0x59f4]` in 0x49xxxx (another array) DEAD; 0-based ids DEAD (pre-inc);
   capacity-32 DEAD (7 registered); receiver-blind DEAD (2 of 35 call sites).
-- NAMED: `## B26` rotated VERBATIM to `docs/named-archive-b26-governing.md`
-  (sha1 `2b800e500b8c`, `m347_named_rotate.py --verify`); NAMED 235,832 B.
+- REVIEW #370 (10 findings, all fixed): rotation scope is B26 ONLY (the first
+  version also moved `## M327`/`## M329`; both restored and `--verify` checks
+  them), stub carries B26's own OPEN row; G4 gates the call SET, G5 pins
+  inc/add/cmp, G6 the pushes, G7 the not-found branch, R2 the 0x44xxxx
+  absence, the digest hashes MEASURED literals, harness computes coverage.
 - UNKNOWN: which ids the other 33 callers of 0x6291e3 pass (other screens);
   whether a player value 0 can reach 0x44b71e.

@@ -9,6 +9,10 @@ baseline gates: 12 PASS, 0 FAIL
   MU4   G3 the four stores (id store moved off +0x84)        G3         G3         RED
   MU5   G3 no lea-alias store evasion                        G3         G3         RED
   MU6   G4 absolute receiver 0x74df70                        G4         G4,R5      RED
+  MU16  G4 the call SET is exactly 4 (register retargeted)   G4         G4         RED
+  MU17  G5 the counter instruction is an inc                 G5         G5         RED
+  MU18  G6 the player id is PUSHED to the selector           G6         G6         RED
+  MU19  G7 the -1 store is the NOT-FOUND branch              G7         G7         RED
   MU7   G5 child count 7 (algorithm: trip+1)                 G5,R4      G5,G6,R4   RED
   MU8   G5 reload AFTER the counter inc                      G5         G5         RED
   MU9   G5 Init stores arg2 at +0xa78                        G5         G5         RED
@@ -19,4 +23,4 @@ baseline gates: 12 PASS, 0 FAIL
   MU14  R2 textual census would claim all 13                 R2         R2         RED
   MU15  R5 receiver-blind census                             R5         R5         RED
 
-HARNESS PASS M347: 16/16 scored, NO-OP [], uncovered []
+HARNESS PASS M347: 20/20 scored, NO-OP [], uncovered [] (covered 12/12)

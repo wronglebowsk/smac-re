@@ -23,6 +23,10 @@ MUTANTS = [
     ("MU4", "G3 the four stores (id store moved off +0x84)", {"M347_PATCH_INS": "629363=DWORD PTR [ecx+0x88],edx"}, {"G3"}),
     ("MU5", "G3 no lea-alias store evasion", {"M347_PATCH_MN": "62935d=lea", "M347_PATCH_INS": "62935d=ecx,[ecx+0x84]"}, {"G3"}),
     ("MU6", "G4 absolute receiver 0x74df70", {"M347_PATCH_INS": "44b726=ecx,0x74df74"}, {"G4"}),
+    ("MU16", "G4 the call SET is exactly 4 (register retargeted)", {"M347_PATCH_INS": "449462=0x629169"}, {"G4"}),
+    ("MU17", "G5 the counter instruction is an inc", {"M347_PATCH_MN": "4493c8=add", "M347_PATCH_INS": "4493c8=edx,0x1"}, {"G5"}),
+    ("MU18", "G6 the player id is PUSHED to the selector", {"M347_PATCH_INS": "44b725=edx"}, {"G6"}),
+    ("MU19", "G7 the -1 store is the NOT-FOUND branch", {"M347_PATCH_INS": "629331=0x629378"}, {"G7"}),
     ("MU7", "G5 child count 7 (algorithm: trip+1)", {"M347_ALGO": "trip"}, {"G5", "R4"}),
     ("MU8", "G5 reload AFTER the counter inc", {"M347_PATCH_INS": "4493e1=DWORD PTR [ebp-0x18],edx"}, {"G5"}),
     ("MU9", "G5 Init stores arg2 at +0xa78", {"M347_PATCH_INS": "5f9f72=DWORD PTR [edx+0xa7c],eax"}, {"G5"}),
@@ -82,8 +86,21 @@ def main():
             print("HARNESS FAIL %s: reddened=%s missing=%s" % (mid, f, missing))
         print("HARNESS FAIL M347: %d/%d scored" % (len(MUTANTS) - len(bad), len(MUTANTS)))
         return 1
-    print("HARNESS PASS M347: %d/%d scored, NO-OP [], uncovered []"
-          % (len(MUTANTS), len(MUTANTS)))
+    covered = set()
+    noop = []
+    for mid, row, env, expect in MUTANTS:
+        if mid == "MU0":
+            continue
+        f, p, tail2, err2 = run(env)
+        if not f:
+            noop.append(mid)
+        covered |= f
+    uncovered = sorted(set(base_gates) - covered)
+    if noop or uncovered:
+        print("HARNESS FAIL M347: NO-OP %s uncovered %s" % (noop, uncovered))
+        return 1
+    print("HARNESS PASS M347: %d/%d scored, NO-OP %s, uncovered %s (covered %d/%d)"
+          % (len(MUTANTS), len(MUTANTS), noop, uncovered, len(covered), len(base_gates)))
     return 0
 
 
