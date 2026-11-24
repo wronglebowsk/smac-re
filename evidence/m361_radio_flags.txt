@@ -1,0 +1,160 @@
+# M361 — A/V radio flag dwords: readers + relabel terminal
+corpus: 781379 instructions (scratch/m574/text.txt), 10284 functions (ghidra_out/index.csv)
+
+-- G1 literal field census (exact [reg+0x<disp>] addressing) --
+0x136d4: 16 sites in 5 functions
+   FUN_0048fed0   0x48fed0    1  store:1
+   FUN_00492030   0x492030    4  store:4
+   FUN_00493a10   0x493a10    1  store:1
+   FUN_00493ec0   0x493ec0    1  load:1
+   FUN_00493ff0   0x493ff0    9  load:4 store:5
+0x14220: 15 sites in 10 functions
+   FUN_004353b0   0x4353b0    1  store:1
+   FUN_0043c130   0x43c130    1  store:1
+   FUN_0043c5a0   0x43c5a0    1  store:1
+   FUN_0048fed0   0x48fed0    1  store:1
+   FUN_00492030   0x492030    1  cmp:1
+   FUN_00492940   0x492940    1  load:1
+   FUN_004930e0   0x4930e0    2  store:2
+   FUN_00493a10   0x493a10    1  store:1
+   FUN_00493ec0   0x493ec0    1  load:1
+   FUN_00493ff0   0x493ff0    5  load:1 store:4
+   (non-field `reg,0x14220` arithmetic forms: 21 sites, first 0x4373c9 eax,0x14220)
+0x14d6c: 12 sites in 7 functions
+   FUN_0048fed0   0x48fed0    1  store:1
+   FUN_00492030   0x492030    1  cmp:1
+   FUN_00492940   0x492940    1  load:1
+   FUN_004930e0   0x4930e0    2  store:2
+   FUN_00493a10   0x493a10    1  store:1
+   FUN_00493ec0   0x493ec0    1  load:1
+   FUN_00493ff0   0x493ff0    5  load:1 store:4
+0x158b8: 12 sites in 7 functions
+   FUN_0048fed0   0x48fed0    1  store:1
+   FUN_00492030   0x492030    1  load:1
+   FUN_00492940   0x492940    1  load:1
+   FUN_004930e0   0x4930e0    2  store:2
+   FUN_00493a10   0x493a10    1  store:1
+   FUN_00493ec0   0x493ec0    1  load:1
+   FUN_00493ff0   0x493ff0    5  load:1 store:4
+[PASS] G1a census totals 16/15/12/12 = 55  [16, 15, 12, 12]
+
+-- G2 family partition: functions naming >=2 of the four --
+   FUN_004353b0   0x4353b0   0x14220
+   FUN_0043c130   0x43c130   0x14220
+   FUN_0043c5a0   0x43c5a0   0x14220
+   FUN_0048fed0   0x48fed0   0x136d4 0x14220 0x14d6c 0x158b8
+   FUN_00492030   0x492030   0x136d4 0x14220 0x14d6c 0x158b8
+   FUN_00492940   0x492940   0x14220 0x14d6c 0x158b8
+   FUN_004930e0   0x4930e0   0x14220 0x14d6c 0x158b8
+   FUN_00493a10   0x493a10   0x136d4 0x14220 0x14d6c 0x158b8
+   FUN_00493ec0   0x493ec0   0x136d4 0x14220 0x14d6c 0x158b8
+   FUN_00493ff0   0x493ff0   0x136d4 0x14220 0x14d6c 0x158b8
+   family=7 ['0x48fed0', '0x492030', '0x492940', '0x4930e0', '0x493a10', '0x493ec0', '0x493ff0']
+[PASS] G2a exactly 7 family functions, 3 loners  family=7 loners=3
+[PASS] G2b the family is the A/V dialog's own function set  ['FUN_0048fed0', 'FUN_00492030', 'FUN_00492940', 'FUN_004930e0', 'FUN_00493a10', 'FUN_00493ec0', 'FUN_00493ff0']
+   loners: [('FUN_004353b0', 1, True), ('FUN_0043c130', 1, True), ('FUN_0043c5a0', 1, True)]
+[PASS] G2c every loner site is a BYTE store — a different class's member  [('FUN_004353b0', 1, True), ('FUN_0043c130', 1, True), ('FUN_0043c5a0', 1, True)]
+
+-- G3 dispatcher jump table @0x493fe0 --
+   cmd 0x4b -> 0x493f9d
+   cmd 0x4c -> 0x493f1c
+   cmd 0x4d -> 0x493edc
+   cmd 0x4e -> 0x493f5d
+[PASS] G3a jump table = 0x493f9d,0x493f1c,0x493edc,0x493f5d  ['0x493f9d', '0x493f1c', '0x493edc', '0x493f5d']
+[PASS] G3b guard: eax = cmd-0x4b, cmp 3, ja  [('push', 'ebp'), ('mov', 'ebp,esp'), ('mov', 'eax,DWORD PTR [ebp+0x8]'), ('push', 'esi'), ('add', 'eax,0xffffffb5'), ('mov', 'esi,ecx')]
+
+-- G4 relabel chain 0x493ec0 block -> 0x61482f -> 0x5fa1e8 --
+   cmd 0x4b @0x493f9d flag=0x136d4 widget=0x12cbc label-ids=['0x10e0', '0x10e4'] calls=['0x61482f', '0x5fa1e8']
+   cmd 0x4c @0x493f1c flag=0x14220 widget=0x13808 label-ids=['0x10f0', '0x10f4'] calls=['0x61482f', '0x5fa1e8']
+   cmd 0x4d @0x493edc flag=0x14d6c widget=0x14354 label-ids=['0x10e8', '0x10ec'] calls=['0x61482f', '0x5fa1e8']
+   cmd 0x4e @0x493f5d flag=0x158b8 widget=0x14ea0 label-ids=['0x10f8', '0x10fc'] calls=['0x61482f', '0x5fa1e8']
+[PASS] G4a cmd -> flag -> widget map matches the four blocks  [(75, 79572, 76988), (76, 82464, 79880), (77, 85356, 82772), (78, 88248, 85664)]
+[PASS] G4b every block calls 0x61482f (label-id resolve) then 0x5fa1e8 (set text)  [['0x61482f', '0x5fa1e8'], ['0x61482f', '0x5fa1e8'], ['0x61482f', '0x5fa1e8'], ['0x61482f', '0x5fa1e8']]
+[PASS] G4c each block names exactly one of the four label-id PAIRS  [['0x10e0', '0x10e4'], ['0x10e8', '0x10ec'], ['0x10f0', '0x10f4'], ['0x10f8', '0x10fc']]
+
+-- G5 widget geometry: base 0x12cbc + k*0xb4c, flag=+0xa18, label=+0xa7c --
+   cmd 0x4b widget=0x12cbc (expect 0x12cbc, delta +0)  flag-widget=0xa18
+   cmd 0x4c widget=0x13808 (expect 0x13808, delta +0)  flag-widget=0xa18
+   cmd 0x4d widget=0x14354 (expect 0x14354, delta +0)  flag-widget=0xa18
+   cmd 0x4e widget=0x14ea0 (expect 0x14ea0, delta +0)  flag-widget=0xa18
+[PASS] G5a widget = 0x12cbc + k*0xb4c for all four  [(75, 0, 2584), (76, 0, 2584), (77, 0, 2584), (78, 0, 2584)]
+[PASS] G5b flag - widget == 0xa18 for all four  [(75, 0, 2584), (76, 0, 2584), (77, 0, 2584), (78, 0, 2584)]
+   ctor calls through [obj+0xf0]: 14 total, on radio widget bases ['0x13808', '0x14354', '0x14ea0']
+   master row 0x12cbc: built at ['0x491bfe'], no [obj+0xf0] call (it is a plain widget)
+[PASS] G5c the three CHILD rows are vtable objects; the master row is not  ['0x13808', '0x14354', '0x14ea0']
+
+-- G6 field READ vs WRITE split --
+   forms: {'store': 38, 'load': 15, 'cmp': 2}
+   readers: 17 sites in 4 functions ['FUN_00492030', 'FUN_00492940', 'FUN_00493ec0', 'FUN_00493ff0']
+   writers: 38 sites in 8 functions ['FUN_004353b0', 'FUN_0043c130', 'FUN_0043c5a0', 'FUN_0048fed0', 'FUN_00492030', 'FUN_004930e0', 'FUN_00493a10', 'FUN_00493ff0']
+[PASS] G6a 55 sites split 17 read (load/cmp) + 38 written (store)  17+38
+[PASS] G6b reader set = dispatcher + 3 state functions  ['FUN_00492030', 'FUN_00492940', 'FUN_00493ec0', 'FUN_00493ff0']
+
+-- G7 commit path 0x492940: flag -> pending preference bit --
+   flag 0x14d6c  -> cell +0xa50  |= 0x4000   @0x492e02 (ah,40)
+   flag 0x14220  -> cell +0xa4c  |= 0x400    @0x492e15 (ebx)
+   flag 0x158b8  -> cell +0xa4c  |= 0x800    @0x492e2b (ah,8)
+[PASS] G7a commit map = 0x14d6c->a50|0x4000, 0x14220->a4c|0x400, 0x158b8->a4c|0x800  {'0x14d6c': ('0xa50', '0x4000'), '0x14220': ('0xa4c', '0x400'), '0x158b8': ('0xa4c', '0x800')}
+[PASS] G7b the three cells/bits are pairwise distinct  ['0x400', '0x4000', '0x800']
+[PASS] G7c the master 0x136d4 is NEVER committed to a preference bit  absent
+[PASS] G7d the 0x14220 bit comes from a register resolved by def-use = 0x400  0x400
+
+-- G8 aggregate 0x492030: any child on -> master 0x136d4 --
+   store @0x49217b value=0 guard=none
+   store @0x49218a value=1 guard=0x158b8
+   store @0x492198 value=1 guard=0x14d6c
+   store @0x4921a6 value=1 guard=0x14220
+[PASS] G8a four master stores: one unconditional 0 then three guarded 1s  [(0, None), (1, 88248), (1, 85356), (1, 82464)]
+[PASS] G8b each 1-store is guarded by its own child flag (the master is the OR of children)  [88248, 85356, 82464]
+
+-- G9 toggle handler 0x493ff0: radio-group semantics --
+   pushed cmd values: ['0x4b', '0x4b', '0x4b', '0x4e', '0x4d', '0x4c']
+[PASS] G9a the handler drives all four relabel cmds 0x4b..0x4e  [75, 76, 77, 78]
+   byte masks in the master-off branch: [('0x49418d', 'ch,0xf3'), ('0x494190', 'ah,0xbf')]
+   preference cells loaded/stored around the masks: ['ecx,DWORD PTR ds:0x985ab8', 'eax,ds:0x985abc', 'DWORD PTR ds:0x985ab8,ecx', 'ds:0x985abc,eax']
+[PASS] G9b master-off clears exactly bits 0x400|0x800 (and ch,0xf3) and 0x4000 (and ah,0xbf)  ['ch,0xf3', 'ah,0xbf']
+[PASS] G9c those clears land on globals 0x985ab8 and 0x985abc (the two committed cells)  ['ecx,DWORD PTR ds:0x985ab8', 'eax,ds:0x985abc', 'DWORD PTR ds:0x985ab8,ecx', 'ds:0x985abc,eax']
+   child-ON branches that set the master and relabel 0x4b: ['0x14d6c', '0x14220', '0x158b8']
+[PASS] G9d all three children propagate ON to the master (and none goes the other way)  ['0x14d6c', '0x14220', '0x158b8']
+
+-- G10 setter 0x5fa1e8: generic set-label, not flag-aware --
+   10 call sites in 4 functions: ['FUN_0041e160', 'FUN_004867f0', 'FUN_00492730', 'FUN_00493ec0']
+   flag displacements inside: 0; non-stack fields touched: ['0xa7c']
+[PASS] G10a the setter has 10 call sites in 4 functions (generic, not dialog-specific)  10/4
+[PASS] G10b the setter never names a radio flag
+[PASS] G10c its only data field is +0xa7c (free old, strlen+1, strcpy)  ['0xa7c']
+
+-- G11 label-id table [0x997b20+0x10e0..0x10fc] --
+   READ FUN_0048fed0   4 sites
+   READ FUN_00493ec0   8 sites
+   ADDR-OF FUN_0050aa60   1 sites (a different class's member, not a table read)
+   ADDR-OF FUN_00518980   1 sites (a different class's member, not a table read)
+   ADDR-OF FUN_00518ba0   1 sites (a different class's member, not a table read)
+[PASS] G11a exactly two functions read the table  ['FUN_0048fed0', 'FUN_00493ec0']
+   ctor label ids: ['0x10e0', '0x10e8', '0x10f0', '0x10f8'] (expect one per block, the first of each pair)
+[PASS] G11e the ctor reads the four FIRST-of-pair ids, once each  ['0x10e0', '0x10e8', '0x10f0', '0x10f8']
+[PASS] G11b dispatcher reads 8 (two per block), ctor 4 (one per block)  (8, 4)
+[PASS] G11c the eight label ids are read once each  ['0x10e0', '0x10e4', '0x10e8', '0x10ec', '0x10f0', '0x10f4', '0x10f8', '0x10fc']
+[PASS] G11d the 3 address-of sites are LEA, in 3 other classes (no aliasing read)  ['FUN_0050aa60', 'FUN_00518980', 'FUN_00518ba0']
+
+-- G12 seed path 0x4930e0: bit cell -> child flag -> relabel --
+   store @0x4934fd flag 0x14d6c = 1, relabel 0x4d
+   store @0x493515 flag 0x14d6c = 0, relabel 0x4d
+   store @0x493531 flag 0x14220 = 1, relabel 0x4c
+   store @0x493546 flag 0x14220 = 0, relabel 0x4c
+   store @0x49355f flag 0x158b8 = 1, relabel 0x4e
+   store @0x493574 flag 0x158b8 = 0, relabel 0x4e
+[PASS] G12a the seed writes all three child flags both ways (6 stores)  6
+[PASS] G12b every seed store is paired with its own relabel cmd  [('0x14d6c', '0x4d'), ('0x14d6c', '0x4d'), ('0x14220', '0x4c'), ('0x14220', '0x4c'), ('0x158b8', '0x4e'), ('0x158b8', '0x4e')]
+   pending-bit-cell reads [obj+0xa50] in the seed path: 3
+[PASS] G12c the seed derives the flag from the +0xa50 bit cell, not from another flag  3
+
+-- RIVALS (each must be refuted by the printed numbers) --
+R1 one shared flag behind all four rows              | holds=False | distinct flag offsets=4
+R2 the relabel setter is flag-aware                  | holds=False | setter flag sites=0
+R3 the three children are independent of the master   | holds=False | child->master propagations=3
+R4 the flags are not dialog-local: 3 other classes touch 0x14220 | holds=False | all loner sites byte-store=True
+R5 0x493ec0 is the flags' ONLY reader                    | holds=False | reader functions=4 ['FUN_00492030', 'FUN_00492940', 'FUN_00493ec0', 'FUN_00493ff0']
+[PASS] R all five rivals are refuted by the printed numbers  r1=False r2=False r3=False r4=False r5=False
+
+PASS  M361: 36/36 gates  digest 3f372964c2179782

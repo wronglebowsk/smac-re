@@ -1,0 +1,67 @@
+listing: 781379 instructions from /home/paul/reverse/wt-chain2/scratch/m574/text.txt
+baseline rc=0  PASS  M361: 36/36 gates  digest 3f372964c2179782
+
+ id    gate addr       verdict what breaks
+ MU1   G1   493f9d     RED     one flag load loses its displacement -> census 15/15/12/12
+        [FAIL] G1a census totals 16/15/12/12 = 55  [15, 15, 12, 12]
+ MU2   G2   435538     RED     a loner byte store becomes a dword field -> not a different class
+        [FAIL] G2c every loner site is a BYTE store — a different class's member  [('FUN_004353b0', 1, False), ('FUN_0043c130'
+ MU5   G4   493fd3     RED     one block's label setter call disappears
+        [FAIL] G4b every block calls 0x61482f (label-id resolve) then 0x5fa1e8 (set text)  [['0x61482f', '0x5fa1e9'], ['0x6148
+ MU6   G4   493f7b     RED     one block reads a duplicate label id -> pair collapses
+        [FAIL] G4c each block names exactly one of the four label-id PAIRS  [['0x10e0', '0x10e4'], ['0x10e8', '0x10ec'], ['0x1
+ MU7   G5   493f8d     RED     one widget base shifts by 4 -> stride breaks
+        [FAIL] G5a widget = 0x12cbc + k*0xb4c for all four  [(75, 0, 2584), (76, 0, 2584), (77, 0, 2584), (78, 4, 2580)]
+        [FAIL] G5b flag - widget == 0xa18 for all four  [(75, 0, 2584), (76, 0, 2584), (77, 0, 2584), (78, 4, 2580)]
+ MU8   G5   493f5d     RED     flag-widget delta is no longer 0xa18
+        [FAIL] G5b flag - widget == 0xa18 for all four  [(75, 0, 2584), (76, 0, 2584), (77, 0, 2584), (78, 0, -85665)]
+ MU9   G5   491d9c     RED     one widget loses its vtable call (G5c lookback)
+        [FAIL] G5c the three CHILD rows are vtable objects; the master row is not  ['0x13808', '0x14354']
+ MU11  G7   492e02     RED     0x14d6c commits bit 0x2000 instead of 0x4000
+        [FAIL] G7a commit map = 0x14d6c->a50|0x4000, 0x14220->a4c|0x400, 0x158b8->a4c|0x800  {'0x14d6c': ('0xa50', '0x2000'), 
+ MU12  G7   492d08     RED     def-use bit source of the 0x14220 commit (algorithm mutant)
+        [FAIL] G7a commit map = 0x14d6c->a50|0x4000, 0x14220->a4c|0x400, 0x158b8->a4c|0x800  {'0x14d6c': ('0xa50', '0x4000'), 
+        [FAIL] G7b the three cells/bits are pairwise distinct  ['0x4000', '0x800', '0x800']
+ MU13  G7   492e1b     RED     the master becomes a committed flag
+        [FAIL] G7a commit map = 0x14d6c->a50|0x4000, 0x14220->a4c|0x400, 0x158b8->a4c|0x800  {'0x14d6c': ('0xa50', '0x4000'), 
+        [FAIL] G7c the master 0x136d4 is NEVER committed to a preference bit  present
+ MU14  G8   49217b     RED     the aggregate's unconditional 0 becomes a 1
+        [FAIL] G8a four master stores: one unconditional 0 then three guarded 1s  [(None, None), (1, 88248), (1, 85356), (1, 8
+ MU15  G8   492190     RED     one 1-store loses its child guard
+        [FAIL] G8a four master stores: one unconditional 0 then three guarded 1s  [(0, None), (1, 88248), (1, None), (1, 82464
+        [FAIL] G8b each 1-store is guarded by its own child flag (the master is the OR of children)  [88248, None, 82464]
+ MU16  G9   49418d     RED     master-off stops clearing bits 0x400|0x800
+        [FAIL] G9b master-off clears exactly bits 0x400|0x800 (and ch,0xf3) and 0x4000 (and ah,0xbf)  ['ch,0xff', 'ah,0xbf']
+ MU17  G9   494182     RED     the mask lands on a shifted global
+        [FAIL] G9c those clears land on globals 0x985ab8 and 0x985abc (the two committed cells)  ['ecx,DWORD PTR ds:0x985ab9',
+ MU18  G9   49404b     RED     one child stops propagating ON to the master
+        [FAIL] G9d all three children propagate ON to the master (and none goes the other way)  ['0x14220', '0x158b8']
+ MU21  G10  5fa1f4     RED     the setter touches a second field
+        [FAIL] G10c its only data field is +0xa7c (free old, strlen+1, strcpy)  ['0xa78', '0xa7c']
+ MU23  G11  491cfc     RED     the ctor reads a duplicate label id
+        [FAIL] G11e the ctor reads the four FIRST-of-pair ids, once each  ['0x10e0', '0x10e8', '0x10f0', '0x10f4']
+ MU24  G12  49355f     RED     one seed store moves off the flag
+        [FAIL] G12a the seed writes all three child flags both ways (6 stores)  5
+ MU25  G12  4934f9     RED     a seed store relabels the wrong widget
+        [FAIL] G12b every seed store is paired with its own relabel cmd  [('0x14d6c', '0x4c'), ('0x14d6c', '0x4d'), ('0x14220'
+ MU26  G3   493ecc     RED     the dispatcher's cmd guard widens to 5
+        [FAIL] G3b guard: eax = cmd-0x4b, cmp 3, ja  [('push', 'ebp'), ('mov', 'ebp,esp'), ('mov', 'eax,DWORD PTR [ebp+0x8]'),
+ MU3   G3   image      RED     table entry 0 points at block 0x4c
+        [FAIL] G3a jump table = 0x493f9d,0x493f1c,0x493edc,0x493f5d  ['0x493f1c', '0x493f1c', '0x493edc', '0x493f5d']
+ MU4   G4   image      RED     cmds 0x4b and 0x4d swap targets
+        [FAIL] G4a cmd -> flag -> widget map matches the four blocks  [(75, 85356, 82772), (76, 82464, 79880), (77, 79572, 769
+ MU10  G6   +494200    RED     a fifth function reads a flag -> reader set grows
+        [FAIL] G6a 55 sites split 17 read (load/cmp) + 38 written (store)  18+38
+        [FAIL] G6b reader set = dispatcher + 3 state functions  ['FUN_00492030', 'FUN_00492940', 'FUN_00493ec0', 'FUN_00493ff0
+ MU19  G10  +494200    RED     an 11th setter caller in a fifth function
+        [FAIL] G10a the setter has 10 call sites in 4 functions (generic, not dialog-specific)  11/5
+ MU20  G10  +5fa22a    RED     the setter becomes flag-aware
+        [FAIL] G10b the setter never names a radio flag  ['DWORD PTR [esi+0x14220],0x0']
+        [FAIL] G10c its only data field is +0xa7c (free old, strlen+1, strcpy)  ['0xa7c', '0x14220']
+ MU22  G11  +50ab02    RED     a third function reads the label-id table
+        [FAIL] G11a exactly two functions read the table  ['FUN_0048fed0', 'FUN_00493ec0', 'FUN_0050aa60']
+ MU27  G2   +4353b8    RED     a loner class gains a second flag -> family 8
+        [FAIL] G2a exactly 7 family functions, 3 loners  family=8 loners=2
+        [FAIL] G2b the family is the A/V dialog's own function set  ['FUN_004353b0', 'FUN_0048fed0', 'FUN_00492030', 'FUN_0049
+
+ mutants 27, red 27, NO-OP none
