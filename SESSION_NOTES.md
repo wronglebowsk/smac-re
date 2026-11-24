@@ -659,3 +659,10 @@ whether a facility completion stamps at all.
   indirect calls `ind`; cites repointed (`:65`).
 - **MERGED** #381 as `8cb969b` (squash) after the #381 triage; CI gate pass.
 - **OPEN** facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the `0x98adb8` row; loss 27.
+
+## Session 331 (docs, 2026-11-24) — record the B33 merge; no new milestone taken
+
+- B33 merged as `8cb969b` (#381 squash) on a GREEN verdict after the local review triage; the
+  cursor said "PR pending" when it was committed pre-merge, which would send the next fire looking
+  for an open PR - it now records the squash hash.
+- Archived the #381 review artifacts under `evidence/ai_review/` (they were untracked).
