@@ -1,0 +1,26 @@
+M390 mutation harness - 11 mutants
+BASE  rc=0  red=0  ['PASS M390: 44/44']
+MU1   KILLED rc=1 red=5  G2 zero direct `call` instructions reach 0x4dabb0 | G2 no branch from outside lands inside the body | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
+      a real `call` to the target is injected (the called sibling 0x4dac30's site)
+MU2   KILLED rc=1 red=2  G2 zero `jmp`/`jcc` reach 0x4dabb0 | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
+      a conditional jump into the target's entry is injected
+MU3   KILLED rc=1 red=6  G3 zero occurrences of the 0x4dabb0 VA in the image | G4 no indirect table slot equals 0x4dabb0 (from the G3 census, 0 | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
+      the census is aimed at the live sibling 0x4dab90 (a stored VA must then be found)
+MU4   KILLED rc=1 red=3  G3 CONTROL: the live sibling 0x4dab90 IS address-taken once, in  | G3 CONTROL: that slot sits in a run of >=100 contiguous .text po | G5 every OTHER family member has >=1 entry mechanism (the census
+      the byte census is restricted to .text, so the .rdata slot becomes invisible
+MU5   KILLED rc=1 red=2  G1 the predecessor instruction is a `ret 4` (no fallthrough) | R2 'code falls or jumps into the body: 0x4dabb0 is no entry at a
+      fallthrough is assumed through a `ret 4` boundary
+MU6   KILLED rc=1 red=2  G0 image has NO DYNAMIC_BASE (never relocated) | R3 'the relocations would fix up a pointer the byte search canno
+      the image is treated as rebasable, which would make the byte census incomplete
+MU7   KILLED rc=1 red=1  R4 '0x4dabb0 is a COMDAT fold of the live sibling 0x4dac30' refu
+      the body diff only looks at the 6-instruction prologue (which IS identical)
+MU8   KILLED rc=1 red=1  G7 the branch tests the 4th arg [ebp+0x14]
+      the flag is read from arg3's slot [ebp+0x10] instead of arg4's
+MU9   KILLED rc=1 red=3  G7 both polarities occur: literal 0 AND literal 1 are used | G7 32 of 36 sites pass a literal bool; 4 pass a runtime register | G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) pas
+      the caller classifier takes the LAST push (arg1) instead of the 4th arg
+MU10  KILLED rc=1 red=1  G7 noun = SET/CLEAR polarity, not 'arm the timer' (the 0x40 test
+      the SET/CLEAR polarity is flipped (the classifier's law), numbers unchanged
+MU11  KILLED rc=1 red=2  G7 32 of 36 sites pass a literal bool; 4 pass a runtime register | G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) pas
+      the real `push 0x1` at M385's set-site is rewritten to 0 in the dump
+
+PASS M390 mutants: 11/11 killed

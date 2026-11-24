@@ -1,0 +1,181 @@
+M390  FUN_004dabb0's entry mechanism + the noun of FUN_00551cf0's boolean
+
+G0  parse + the PE law that makes an address census complete
+  insns=781429  file=3067904 B
+  ImageBase=0x400000  DllCharacteristics=0x0000 (DYNAMIC_BASE=False)  reloc dir=(0x0,0x0)
+  ok   G0 linear dump parses to 781429 insns - 781429
+  ok   G0 the censused file is the 3,067,904-B terran.exe - 3067904
+  ok   G0 ImageBase is 0x400000 - 0x400000
+  ok   G0 image has NO DYNAMIC_BASE (never relocated) - 0x0
+  ok   G0 reloc data directory is empty - (0, 0)
+  -> a stored pointer can only name 0x4dabb0 by holding its literal dword;
+     the loader never rewrites an address, so the byte census in G3 is complete
+
+G1  entry shape of FUN_004dabb0
+  index.csv: entry=0x4dabb0 size=122 insns=48 n_callers=0
+  body 0x4dabb0..0x4dac28:
+    0x004dabb0  push   ebp
+    0x004dabb1  mov    ebp,esp
+    0x004dabb3  push   esi
+    0x004dabb4  push   edi
+    0x004dabb5  mov    edi,DWORD PTR [ebp+0x8]
+    0x004dabb8  mov    esi,ecx
+    0x004dabba  push   edi
+    0x004dabbb  lea    ecx,[esi+0x15a0]
+    0x004dabc1  call   0x6051fa
+    0x004dabc6  test   eax,eax
+    0x004dabc8  mov    eax,DWORD PTR [esi+0xa1c]
+    0x004dabce  mov    esi,DWORD PTR [esi+0xa20]
+    0x004dabd4  mov    ecx,eax
+    0x004dabd6  je     0x4dac01
+    0x004dabd8  shl    ecx,0x6
+    0x004dabdb  add    ecx,eax
+    0x004dabdd  lea    edx,[eax+ecx*2]
+    0x004dabe0  shl    edx,0x4
+    0x004dabe3  sub    edx,eax
+    0x004dabe5  add    edx,esi
+    0x004dabe7  test   DWORD PTR [edx*4+0x94d448],edi
+    0x004dabee  jne    0x4dac24
+    0x004dabf0  push   edi
+    0x004dabf1  push   esi
+    0x004dabf2  push   eax
+    0x004dabf3  call   0x551a20
+    0x004dabf8  add    esp,0xc
+    0x004dabfb  pop    edi
+    0x004dabfc  pop    esi
+    0x004dabfd  pop    ebp
+    0x004dabfe  ret    0x4
+    0x004dac01  shl    ecx,0x6
+    0x004dac04  add    ecx,eax
+    0x004dac06  lea    edx,[eax+ecx*2]
+    0x004dac09  shl    edx,0x4
+    0x004dac0c  sub    edx,eax
+    0x004dac0e  add    edx,esi
+    0x004dac10  test   DWORD PTR [edx*4+0x94d448],edi
+    0x004dac17  je     0x4dac24
+    0x004dac19  push   edi
+    0x004dac1a  push   esi
+    0x004dac1b  push   eax
+    0x004dac1c  call   0x5518f0
+    0x004dac21  add    esp,0xc
+    0x004dac24  pop    edi
+    0x004dac25  pop    esi
+    0x004dac26  pop    ebp
+    0x004dac27  ret    0x4
+  predecessor   0x004dabad  ret    0x4
+  first         0x004dabb0  push   ebp
+  last          0x004dac27  ret    0x4
+  successor     0x004dac2a  nop
+  rets=2 ['ret    0x4', 'ret    0x4']
+  ok   G1 body is 122 B / 48 insns and ends at the 0x4dac2a nop pad - 122/48/0x4dac2a
+  ok   G1 the predecessor instruction is a `ret 4` (no fallthrough) - 0x4dabad ret    0x4
+  ok   G1 both exits are `ret 4` (one ebp frame, one arg) - ['0x4dabfe', '0x4dac27']
+  prologue      ['push   ebp', 'mov    ebp,esp', 'push   esi', 'push   edi', 'mov    edi,DWORD PTR [ebp+0x8]', 'mov    esi,ecx']
+  sibling 0x4dac30 prologue ['push   ebp', 'mov    ebp,esp', 'push   esi', 'push   edi', 'mov    edi,DWORD PTR [ebp+0x8]', 'mov    esi,ecx']
+  ok   G1 prologue is the family signature, identical to the CALLED sibling 0x4dac30
+
+G2  branch census over the whole .text: who transfers control to 0x4dabb0
+  direct branch instructions=124659  distinct targets=52195
+  call -> 0x4dabb0 : 0 []
+  jmp/jcc -> 0x4dabb0 : 0 []
+  branch targets INTO the body from outside : 0 []
+  non-branch instructions carrying 0x4dabb0 as an immediate : 0 []
+  ok   G2 zero direct `call` instructions reach 0x4dabb0 - 0
+  ok   G2 zero `jmp`/`jcc` reach 0x4dabb0 - 0
+  ok   G2 no branch from outside lands inside the body - 0
+  ok   G2 no immediate operand is 0x4dabb0 - 0
+
+G3  address-taken census over the whole image (positive control included)
+  dword 0x004dabb0 in 3067904 B : 0 []
+  image-base-relative dword 0x000dabb0 : 0
+  dword positions holding a .text address : 14754 of 766976 aligned slots
+  family  va        hits  stored-at
+    0x004dab90     1  ['0x677ff8']
+    0x004dabb0     0  []
+    0x004dac30     0  []
+    0x004dacc0     0  []
+    0x004dadd0     0  []
+  CONTROL 0x4dab90 <- dword at ['0x277ff8'] (VA ['0x677ff8'], section ['.rdata'])
+  CONTROL run: 187 contiguous .text pointers at VA 0x677dbc, first 12 ['0x4cc7a0', '0x405350', '0x4cb610', '0x5cdd0a', '0x5cdf82', '0x5e47ac', '0x404e70', '0x404e10', '0x4bc6d0', '0x404e30', '0x4bc6d0', '0x404e30']
+  ok   G3 zero occurrences of the 0x4dabb0 VA in the image - 0
+  ok   G3 zero image-base-relative occurrences of 0xdabb0 - 0
+  ok   G3 the census surface is real: >5000 stored .text addresses - 14754
+  ok   G3 CONTROL: the live sibling 0x4dab90 IS address-taken once, in .rdata - 1 ['.rdata']
+  ok   G3 CONTROL: that slot sits in a run of >=100 contiguous .text pointers - 187
+
+G4  indirect dispatch: every slot an indirect call/jmp could read
+  indirect sites=4288  {'call reg': 206, 'call [mem]': 3720, 'jmp reg': 21, 'jmp [mem]': 341}
+  indirect sites naming an absolute table: 1864, sections ['.data', '.rdata', '.text', 'None', 'UVA_DATA'], out-of-section 104 [('0x43a245', '0x955e0043'), ('0x43a24c', '0xa8004395'), ('0x461e9c', '0xb300461a'), ('0x4764dd', '0xcc00474c'), ('0x493854', '0xfc004933'), ('0x4b82e9', '0x8a7adc')]
+  register-indirect sites=213, of which load a family address (0x4dab00..0x4db100): 0 []
+  ok   G4 the dump contains indirect call/jmp sites (instrument is live) - 4288
+  ok   G4 all four indirect forms appear - {'call reg': 206, 'call [mem]': 3720, 'jmp reg': 21, 'jmp [mem]': 341}
+  ok   G4 in-section table bases live only in .text/.rdata/.data/UVA (never _SELFMOD/.rsrc) - ['.data', '.rdata', '.text', 'UVA_DATA'] in-section, 104 out-of-section
+  ok   G4 no register-indirect site loads a family address into its target register - 0 of 213
+  ok   G4 no indirect table slot equals 0x4dabb0 (from the G3 census, 0 dwords anywhere) - 0
+
+G5  verdict table - entry mechanisms per family member
+   va          size  calls  jmp/jcc  stored-dwords  run-member  verdict
+   0x004dab90    32      0        0              1        True  LIVE
+   0x004dabb0   122      0        0              0       False  DEAD-INF
+  ok   G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/run) - 0/0/0/False
+  ok   G5 index.csv agrees it has 0 callers - 0
+   0x004dac30   129      1        0              0       False  LIVE
+   0x004dacc0   126      4        0              0       False  LIVE
+   0x004dadd0   985      2        0              0       False  LIVE
+  other family members' mechanism counts: [('0x4dab90', 1), ('0x4dac30', 1), ('0x4dacc0', 4), ('0x4dadd0', 2)]
+  ok   G5 every OTHER family member has >=1 entry mechanism (the census discriminates) - [(5090192, 1), (5090352, 1), (5090496, 4), (5090768, 2)]
+
+G6  rivals (each must be refuted by the printed numbers)
+  ok   R1 'a computed dispatch (vtable/switch table/registry) reaches 0x4dabb0' refuted - 0 stored VAs, 0 base-relative
+  ok   R2 'code falls or jumps into the body: 0x4dabb0 is no entry at all' refuted - pred=ret    0x4 inside=0 prologue-eq=True
+  ok   R3 'the relocations would fix up a pointer the byte search cannot see' refuted - 0x0000 (0, 0)
+  body vs sibling 0x4dac30: 6/48 instructions identical (compared 48)
+  ok   R4 '0x4dabb0 is a COMDAT fold of the live sibling 0x4dac30' refuted - 6/48 identical
+  fields touched: 0x4dabb0 ['0x94d448'] | 0x4dac30 ['0x94d468']
+  ok   R4b the two bodies write DIFFERENT relations fields - ['0x94d448'] vs ['0x94d468']
+
+G7  FUN_00551cf0(a,b,mask,flag): what is `flag`?
+  body=118 B / 41 insns, index.csv n_callers=36
+  stack slots read: ['[ebp+0x10]', '[ebp+0x14]', '[ebp+0x8]', '[ebp+0xc]']
+  flag read: ['mov    eax,DWORD PTR [ebp+0x14]'] then test   eax,eax
+  mask ops: [('0x551d1d', 'or     edx,ecx'), ('0x551d60', 'and    edx,ecx')]
+  loads/stores through 0x94d448: [('0x551d22', 'mov    DWORD PTR [eax+0x94d448],edx')]
+  lea of the field: [('0x551d52', 'lea    eax,[edx*4+0x94d448]')] ; ALL dword stores in body: 3 [('0x551d22', 'mov    DWORD PTR [eax+0x94d448],edx'), ('0x551d2a', 'mov    DWORD PTR [eax+0x94d4c8],0x32'), ('0x551d62', 'mov    DWORD PTR [eax],edx')]
+  `not`=1  ['0x551d50'] ; timer cell stores=[('0x551d2a', 'mov    DWORD PTR [eax+0x94d4c8],0x32')]
+  branch on the flag: [('0x551cf8', 'je     0x551d36'), ('0x551d28', 'je     0x551d64')]
+  SET side = 0x551cf0..0x551d36 (fallthrough);  CLEAR side = 0x551d36..0x551d66 (je target)
+  ok   G7 the callee reads 4 cdecl args ([ebp+8/0xc/0x10/0x14]) - ['10', '14', '8', 'c']
+  ok   G7 the branch tests the 4th arg [ebp+0x14] - mov    eax,DWORD PTR [ebp+0x14]
+  ok   G7 exactly one AND-shaped and one OR-shaped write to 0x94d448 - 1/1/1/3/1
+  ok   G7 the CLEAR side is AND-NOT: the single `not` precedes the single `and` - ['0x551d50']
+  ok   G7 the OR write sits on the flag!=0 side, the AND write on the flag==0 side - [('0x551d1d', 'or     edx,ecx'), ('0x551d60', 'and    edx,ecx')] zero-side starts 0x551d36
+  ok   G7 the 0x40 -> 0x32 countdown store exists once and only on the flag!=0 side - [('0x551d2a', 'mov    DWORD PTR [eax+0x94d4c8],0x32')]
+  NOUN: flag!=0 -> OR the mask in (SET);  flag==0 -> AND it out (CLEAR);
+        SET additionally stamps 94d4c8=0x32 when the mask carries 0x40
+  ok   G7 noun = SET/CLEAR polarity, not 'arm the timer' (the 0x40 test is inside the SET side) - or=1 cell=1
+
+  caller census: 36 `call 0x551cf0` sites
+  flag arg (4th push): SET(1)=26  CLEAR(0)=6  runtime/register=4
+  push-window size: min=4 max=4  (exactly-4 window: 36/36)
+    0x004da3eb  flag <- push   ebx   (window 4 pushes)
+    0x004da404  flag <- push   ebx   (window 4 pushes)
+    0x004dad30  flag <- push   0x0   (window 4 pushes)
+    0x004db02d  flag <- push   0x0   (window 4 pushes)
+    0x004db08d  flag <- push   0x0   (window 4 pushes)
+    0x004db11b  flag <- push   0x0   (window 4 pushes)
+    0x00519bb5  flag <- push   0x0   (window 4 pushes)
+    0x0052e5a7  flag <- push   eax   (window 4 pushes)
+    0x00530786  flag <- push   ecx   (window 4 pushes)
+    0x00542c8c  flag <- push   0x0   (window 4 pushes)
+  ok   G7 the caller census finds all 36 sites named by index.csv - 36/36
+  ok   G7 both polarities occur: literal 0 AND literal 1 are used - {'1': 26, '0': 6, 'reg': 4}
+  ok   G7 32 of 36 sites pass a literal bool; 4 pass a runtime register - {'1': 26, '0': 6, 'reg': 4}
+  ok   G7 no site collects a 5th push (the window is exactly the 4 args) - [4]
+  ok   G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) passes 1, 0x4dad30 (bit SET -> clear) passes 0 - {'0x4dad05': 'push   0x1', '0x4dad30': 'push   0x0'}
+
+G8  digest
+  payload=10528 B  digest run1=05ea891851aace25 run2=05ea891851aace25
+  ok   G8 digest is stable across two computations - 05ea891851aace25/05ea891851aace25
+  M390_DIGEST=05ea891851aace25
+
+PASS M390: 44/44
