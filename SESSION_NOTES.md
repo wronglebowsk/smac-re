@@ -695,3 +695,30 @@ whether a facility completion stamps at all.
   cursor said "PR pending" when it was committed pre-merge, which would send the next fire looking
   for an open PR - it now records the squash hash.
 - Archived the #381 review artifacts under `evidence/ai_review/` (they were untracked).
+
+## Session 330-chain2 (2026-11-24) — M356: +0x30 bit 2 = state bit (11 setters, 1 toggler); +0x24/+0x25/+0x26 feed three rule tables
+
+- **ACCEPT** `scripts/m356_prototype_stamp.py` -> **`PASS M356: 17/17 gates`**,
+  digest `c1a2beb794cec9f8`, x2 same (`evidence/m356_x2.txt:103`); `m356_mutate.py` ->
+  **27/27, NO-OP ['MU29'], coverage ALL 17 gates** (`evidence/m356_mutate.txt:32`).
+- **CENSUS** (instruction shapes; last write to the stored register + flags-word load
+  provenance): 46 writes to +0x30 (= 0x98adb8); **11 bit-2 setters**, **0 AND-clears**,
+  **1 XOR-toggler 0x4396f6** (`xor dx,0x4` @0x4396e6), 0 unresolved register masks, 16 ANDs
+  all carrying immediates. First draft said "one-way latch" — the toggler REFUTES it.
+- **TWO 0->1 GUARDS**: 0x4d2ff9 load->test->jne-skips-store->OR->store->`call 0x584520`;
+  0x4efe60 stores `al|4` then tests the OLD bit, `call 0x572800` only on 0->1; both behind
+  `cmp idx,0x40 / jl` (owner band).
+- **FEEDS** (`trace_base`): **+0x24 -> 0x92ae80** chassis, stride 0x90, 188 chains; **+0x25 ->
+  0x92b950** 21 recs, 181 chains; **+0x26 -> 0x92fd18** 10 recs, 47 chains — exclusive; extents
+  DERIVED from each loop (init/stride/bound). Reference census 238/227/11, 94/88/6: every
+  non-load reference is a `cmp`, none names a table base.
+- **FINALIZER 0x595e80** compares weapon `[0x92b950][+0x25]` with armor `[0x92fd18][+0x26]`
+  (`cmp al,bl`) and assigns the +0x2b mode (3/1/4/5/10); flags init 1/0x105/0x115.
+- **RIVAL REFUTED**: "+0x27/+0x28 are 0x10-stride ordinals" — 0 table chains either; +0x28 has
+  ONE writer (0x595d1c).
+- **RETRACTIONS**: (M354) +0x24 is the CHASSIS ORDINAL, not "domain"; (this draft) bit 2 is
+  not monotone. A fixed backwards window had attributed a guard `and` to a later store —
+  classify by the LAST write to the register (0x4399c5 vs the 0x4399d8 reload).
+- **DOC CAP**: `scripts/m356_named_rotate.py` rotated `## M298` VERBATIM ->
+  `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
+- OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.

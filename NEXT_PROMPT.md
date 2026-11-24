@@ -125,3 +125,5 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M354 (s329-chain2): section A's item IS the 0x98ad88 unit-type/design row (name +0x00, weight +0x29, class +0x2a read off the item); A rows +, B rows -; M349/M351 leg NOUNS swapped. 11/11 `dd5e689e8d9af320`, harness 23/24.
 - M355 (s329-c3): `Laptop` = the DEFAULT bit-vectors of `Preferences` (0xbbe1dd96/0xa3e1dd16 -> 0x92befc) / `More Preferences` (0x3a7168/0x327168 -> 0x92bf00); Laptop!=0 clears {7,27,28}/{19}. 7/7 `c742bc13`, 24/24. NEXT: bit->option labels.
 - M357 (s330-c3): pref checkbox LABELS — 6 Script.txt sections -> 66 rows (id->cell bit, 1:1); Laptop delta = movies/interludes/SFX/monuments. 18/18 `095258c8b40d0e23`, harness 23/23.
+
+- M356 (s330-chain2): +0x30 bit 2 = state bit (11 setters, 0 AND-clears, ONE XOR-toggler 0x4396f6, two 0->1 guards, band 0x40); +0x24 -> chassis 0x92ae80 (0x90), +0x25 -> 0x92b950 weapons 21x0x10, +0x26 -> 0x92fd18 armor 10x0x10; +0x27/+0x28 index no table. 17/17 `c1a2beb794cec9f8`, harness 27/27. NEXT: +0x27/+0x28 nouns.

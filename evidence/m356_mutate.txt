@@ -1,0 +1,32 @@
+PASS baseline MU0: rc=0 red=[]
+PASS MU1 -> G1 owner-band setter loses bit 2
+PASS MU2 -> G1 decoder store moves to +0x31
+PASS MU3 -> G4 owner-band guard 0x40 -> 0x41
+PASS MU4 -> G15 second latch tests the wrong bit
+PASS MU5 -> G15 second latch ORs the wrong bit
+PASS MU6 -> G1 a 0x573a90 setter loses bit 2
+PASS MU7 -> G3 init constant 0x105 loses bit 2
+PASS MU8 -> G3 init constant 0x115 loses bit 2
+PASS MU9 -> G9 offense scan bound +1 record
+PASS MU10 -> G10 armor scan bound +1 record
+PASS MU11 -> G11 chassis stride 9*16 -> 9*8
+PASS MU12 -> G12 finalizer reads the armor table as offense
+PASS MU13 -> G14 +0x28 writer becomes a +0x29 writer
+PASS MU14 -> G2 an AND now CLEARS bit 2
+PASS MU15 -> G1 word setter loses bit 2
+PASS MU16 -> G1 production-loop setter loses bit 2
+PASS MU17 -> G1 ALGORITHM: RMW setter no longer an `or`
+PASS MU18 -> G12 finalizer comparison register swapped
+PASS MU19 -> G12 finalizer armor load repointed
+PASS MU20 -> G3 init constant 0x1 gains bit 2
+PASS MU21 -> G5 decoder's 0->1 follow-up call retargeted
+PASS MU22 -> G8 one chassis-table read leaves the table
+PASS MU23 -> G13 +0x25 read becomes a +0x27 read
+PASS MU25 -> G2 the one bit-2 toggler moves to bit 3
+PASS MU26 -> G2 an immediate AND becomes a REGISTER mask
+PASS MU27 -> G1b setter loses its flags-word load provenance
+PASS MU28 -> G16 +0x28 cmp becomes a load (reference census shifts)
+PASS MU29 -> NO-OP stayed green (a +0x31 write no gate pins)
+
+scored 27/27, missed none, noop_bad none
+MEASURED gate coverage: ['G1', 'G1b', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10', 'G11', 'G12', 'G13', 'G14', 'G15', 'G16'] (17 gates)
