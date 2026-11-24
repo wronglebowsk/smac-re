@@ -923,6 +923,16 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
+## M387 (s342-c5, 11/11) — M380's last 2: arg7 gates the snapshot, not the store -> arg7==0 writes UNWRITTEN. **`PASS M387: 11/11`** `c0e46fd18f2fc313` (`evidence/m387_last_two.txt:111`, twice `evidence/m387_twice.txt:10`; harness 20/20 `evidence/m387_mutate.txt:24`). `:N` = evidence line.
+| claim | ev | conf |
+|---|---|---|
+| 27 stores to +0x94d448; 2 slot-sourced: 52b9c7<- -0x50, 52b9d0<- -0x4c | `:2-6` | V MU10 |
+| one frame FUN_0052a720, CFG closed, 5 tables; 1W+1R per slot from the pair dword | `:10-25` | V MU1 MU2 MU6 MU7 MU11 MU25 |
+| dominance fails; the witness needs msg>0x30 AND msg==0x16 | `:28-32` | V MU12 |
+| [ebp+0x8] 7R/0W; pinned, only m=0x16 reaches the store; skipping paths = arg7==0 (0x52b1ee) or count==0 (0x52b88c, dead: 1 iteration) | `:36-49`,`:66-75` | V MU3 MU4 MU5 MU8 MU13 MU20 MU21 MU22 MU24 |
+| verdict: arg7!=0 PRESERVE / arg7==0 UNINIT (no arg7 ref at the store); 0 bit-0x20 -> M366 INF | `:78-91` | V MU9 MU14 MU23 |
+| OPEN: a caller passing arg7==0 with msg 0x16? | - | OPEN |
+
 ## M383 (s341-c3, 9/9) — 0x94e48c = a per-UNIT military sum; 12 of M380's 14 rewrites resolve. **`PASS M383: 9/9`** 1d419b65323aec6c (`evidence/m383_composition.txt:154`); harness 29/29 (`evidence/m383_mutate.txt:33`); re-run identical (`evidence/m383_twice.txt:5`). `:N` = acceptance-file line; NOUNS INF (s341).
 | claim | ev | conf |
 |---|---|---|
@@ -1201,20 +1211,7 @@ ROTATED VERBATIM to `docs/named-archive-b28-feeder-rows.md` (sha1 `bd196a95e56c8
 | charge = `trunc((cost+carry)/2)` (cdq/sub/sar, not a shift), parity written back into bit5; full-price leaves the carry | `:6` | V MU1/MU2/MU3/MU8 |
 | FIXTURE-ONLY persistence: no carry written by the save's own run; honest run touches `[]` and rewrites bit5 unchanged | `:7` | V MU3/MU7/MU8/MU11/MU12/ME4/ME5 (fixture-only) |
 | the NOUN of `ds:0x985ba0`; `ebx` == the charged base's owner | M333 G6 (no .text writer) | INFERRED |
-## M335 (s317-chain2, pick (x6), STATIC 7/7) — the difficulty LADDER: `ds:0x985aec` indexes alpha.txt's six `#DIFF` names at `0x94d2ac` in file order; 4 = Thinker, 5 = Transcend
-
-| claim | evidence | conf |
-|---|---|---|
-| alpha.txt has ONE `#DIFF` section, 6 rows in file order Citizen/Specialist/Talent/Librarian/Thinker/Transcend | `evidence/m335_difficulty_ladder.txt:2` | V MU4,5 |
-| loader `push "DIFF"`@0x57ac56 -> `call 0x5ea431` -> fill `0x94d2ac`, `add esi,4`, `cmp 0x94d2c4`/`jl` = 6 iterations == 6 file rows (the count is the immediate, never read from the file) | `:3` | V MU1,2,3 |
-| census with token-boundary matching over all addressing forms (7 scaled): exactly 11 sites on `0x94d2ac..0x94d2c4`, 0 literal-address STORES; scope: a register-indirect store elsewhere is NOT excluded | `:4` | V MU1,6,13,20 |
-| ORDER: in 0x4ddaf8..0x4ddb60 the 11 fragments occur in the order base-load, `[esi]`, resolve, `push edi`, append, `add esi,4`, `inc edi`, `cmp 0x94d2c4`, `jl 0x4ddaff`; `edi` starts at 0 and the seed `ds:0x985aec`->`[ebp-0x494c]` precedes `call 0x5f1394` | `:5` | V MU10,11,14,15 |
-| INDEX: `0x599405` `mov ecx,ds:0x985aec; mov edx,[ecx*4+0x94d2ac]`; both other readers are COUNTING loops 0..5 over the table (`cmp [slot],6` + `add eax,1`->same slot + `jmp` back) at `0x484cb3`,`0x485410` | `:6` | V MU7,12,19 |
-| DOMAIN (geometry READ from the bytes, not from the script): base 0x94d2ac, bound 0x94d2c4 and clamp hi=6 with `hi*4 == end-base`, so the INCLUSIVE hi is the array LENGTH = one past the last row; of 169 `call 0x423af0` sites exactly 1 (`0x486f38`) is fed by an `0x8f0c11` load; cmp immediates on `0x985aec` = {1,2,3,4}+ebx (M332 reproduced); refund 3/jle + 4/jne => k=1 at 4, k=2 at >=5 = TRANSCEND (M330 refined) | `:7` | V MU8,9,16,17 |
-| RIVAL killed: "0x94d2ac is not the difficulty names" — section string + row count + iteration count agree | `:8` | V MU3,4,5,13 |
-| ACCEPT `7/7` digest `fb58bdc3307d6258` x2 (`:9-10`,`_rerun.txt`); harness `20/20` `6e0e05a8ffb388d8` incl. an ALGORITHM mutant (`--selftest` 3/3, `evidence/m335_mutate_selftest.txt:4`) | `evidence/m335_mutate.txt:22-23` | V |
-| OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x48678f / 0x57c606 | - | lead |
-
+## M335 (s317-chain2, pick (x6), STATIC 7/7) — the difficulty LADDER: `ds:0x985aec` indexes alpha.txt's six `#DIFF` names at `0x94d2ac` in file order; 4 = Thinker, 5 = Transcend - FULL rows VERBATIM at `docs/named-archive-m387-m335-rows.md` (sha1 `3414cbfc831e5ffd1e9df8ed54757cb2061a8ee2`, 2355 B); this stub governs.
 ## M337 (s318-chain1, x8, STATIC 8/8) — item table row order = alpha `#FACILITIES` FILE order (rec i = alpha row i-1)
 
 | fact | evidence | status |

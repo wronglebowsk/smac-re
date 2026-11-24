@@ -1,0 +1,24 @@
+BASELINE PASS rc=0
+id    kind  gate  result   detail
+MU10  code  G0    killed   'G0 the population is not the 27'
+MU11  code  G1    killed   'G1 the jump-table set changed'
+MU1   code  G2    killed   'G2 -0x50: lineage changed'
+MU2   code  G2    killed   'G2 -0x4c: lineage changed'
+MU6   code  G2    killed   'G2 -0x50: lineage changed'
+MU7   code  G2    killed   'G2 -0x50: lineage changed'
+MU12  code  G3    killed   'G3 the witness guards changed shape'
+MU4   code  G4    killed   'G4 [ebp+0x8] is not a read-only invariant'
+MU5   code  G4    killed   'G4 [ebp+0x8] is not a read-only invariant'
+MU3   code  G5    killed   'G5 the store is not reachable for exactly message 0x16'
+MU13  code  G6    killed   'pass NEITHER guard'
+MU8   code  G7    killed   'G7 the count for m=0x16 is not 1'
+MU9   code  G8    killed   'G8 the arg7 guard changed shape'
+MU14  code  G9    killed   'G9 a bit-0x20 test exists in this function'
+MU20  algo  G4    killed   'G4 [ebp+0x8] is not a read-only invariant'
+MU21  algo  G5    killed   'G5 the store is not reachable for exactly message 0x16'
+MU22  algo  G7    killed   'G7 the count for m=0x16 is not 1'
+MU23  algo  G8    killed   'G8 the epilogue DOES read [ebp+0x1c]'
+MU24  algo  G5    killed   'G5 the store is not reachable for exactly message 0x16'
+MU25  algo  G1    killed   'G1 the CFG is not closed'
+
+SUMMARY M387: 20/20 killed

@@ -1,0 +1,10 @@
+re-run determinism check for M387
+run 1: python3 -u scripts/m387_last_two.py  -> evidence/m387_last_two.txt (rc=0)
+run 2: python3 -u scripts/m387_last_two.py  -> scratch/m387/run_b.txt (rc=0)
+
+$ diff -q evidence/m387_last_two.txt scratch/m387/run_b.txt
+(captured) exit status = 0  (0 = byte-identical)
+------ diff begin ------
+------ diff end ------
+
+both runs printed: PASS M387: 11/11  c0e46fd18f2fc313

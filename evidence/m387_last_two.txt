@@ -1,0 +1,111 @@
+G0  the relations-dword store population and its two slot-sourced members
+  dword stores to +0x94d448, image-wide: 27
+  slot-sourced store 52b9c7 <- 52b9c4 loads slot:-0x50
+  slot-sourced store 52b9d0 <- 52b9cd loads slot:-0x4c
+  M380's 14 all in the population: True; the slot-sourced set = ['0x52b9c7', '0x52b9d0']
+  anchor 0x551b1d (M375's status store) present: True
+  ok  G0 27 stores; exactly 2 are fed by a frame slot (52b9c7, 52b9d0)
+
+G1  the enclosing function and its control-flow closure
+  index.csv: FUN_0052a720 @0x52a720 size 4859 callers 64
+  store 52b9c7 owner FUN_0052a720; writer 52affb owner FUN_0052a720; same function: True
+  CFG: 1353 instruction nodes, 1564 edges, 0 unresolved indirect edge(s)
+   table 52a771 -> 0x52ba1c [42 entries]   52a771 jmp DWORD PTR [eax*4+0x52ba1c]
+   table 52aaf8 -> 0x52bac4 [14 entries]   52aaf8 jmp DWORD PTR [eax*4+0x52bac4]
+   table 52ad64 -> 0x52bafc [42 entries]   52ad64 jmp DWORD PTR [eax*4+0x52bafc]
+   table 52b10b -> 0x52bba4 [14 entries]   52b10b jmp DWORD PTR [eax*4+0x52bba4]
+   table 52b5a2 -> 0x52bbdc [14 entries]   52b5a2 jmp DWORD PTR [eax*4+0x52bbdc]
+  ok  G1 one frame; 0 unresolved edges; 5 tables (42, 14, 42, 14, 14 entries)
+
+G2  slot lineage: one writer, one reader, both from the pair dword
+  -0x50: 2 ref(s) -> 1 write(s) ['0x52affb'], 1 read(s) ['0x52b9c4']
+    writer source: 52aff5 mov edx,DWORD PTR [eax+0x94d448]   reads +0x94d448: True
+  -0x4c: 2 ref(s) -> 1 write(s) ['0x52b004'], 1 read(s) ['0x52b9cd']
+    writer source: 52affe mov edx,DWORD PTR [ecx+0x94d448]   reads +0x94d448: True
+  ok  G2 each slot has exactly 1 write + 1 read in this frame and both writers load the pair dword -> the stored dword is that dword verbatim (nothing can mask the slot between its single writer and its single reader)
+
+G3  the M383 blocker, reproduced: edge-feasible dominance from the entry
+  dom[52b9c7] contains writer 52affb: False
+  dom[52b9d0] contains writer 52b004: False
+  edge-feasible path to 52b9c7 avoiding 52affb: True (107 nodes)
+   jccs on the witness: 52a759 jg 0x52aadb; 52b904 jne 0x52ba03
+  witness guard shapes: 52a759 jg(msg>0x30) / 52b900 cmp ax,0x16 + 52b904 jne = True
+  ok  G3 dominance fails for both stores AND an edge-feasible witness avoids the writer; that witness satisfies 0x52a759 `jg` (msg>0x30) and 0x52b904 (msg==0x16) -> contradictory on one read-only parameter
+
+G4  [ebp+0x8] is a function invariant, and two jump tables are indexed by it
+  52a752 movsx  eax,WORD PTR [ebp+0x8]
+  52ad45 movsx  eax,WORD PTR [ebp+0x8]
+  52b219 mov    ax,WORD PTR [ebp+0x8]
+  52b398 mov    cx,WORD PTR [ebp+0x8]
+  52b54b mov    ax,WORD PTR [ebp+0x8]
+  52b86f mov    ax,WORD PTR [ebp+0x8]
+  52b892 mov    ax,WORD PTR [ebp+0x8]
+  reads 7, writes 0
+  entry dispatch 52a771 jmp DWORD PTR [eax*4+0x52ba1c] bounded by 52a759 jg 0x52aadb / 52a762 je 0x52aa9f / 52a76b ja 0x52ac5c
+  iteration dispatch 52ad64 jmp DWORD PTR [eax*4+0x52bafc] fed by 52ad45 movsx eax,WORD PTR [ebp+0x8] bounded by 52ad4f jg 0x52b0ee / 52ad55 je 0x52b0c8 / 52ad5e ja 0x52b37e
+  ok  G4 7 reads / 0 writes; the same slot drives the entry table 0x52ba1c, the iteration table 0x52bafc and the epilogue cmp chain
+
+G5  PINNED reachability: fold [ebp+0x8] = m, prune both tables by m, re-walk
+  message values probed: 53; 52b9c7 reachable for 1: ['0x16']
+  entry target by m: 0x00->0x52a778, 0x02->0x52ac55, 0x11->0x52a8c0, 0x13->0x52a96b, 0x16->0x52a9e7, 0x29->0x52aa95
+  T1[0x16]=0x52a9e7 (entry case)   T2[0x16]=0x52af1b (the snapshot case)   T2[0x11]=0x52ae9c
+  pinned witness for m=0x16: True; a pinned path THROUGH the writer exists: True (245 nodes)
+  shortest pinned path that SKIPS the writer: True (111 nodes)
+    52a759 jg 0x52aadb
+    52a762 je 0x52aa9f
+    52a76b ja 0x52ac5c
+    52ad4f jg 0x52b0ee
+    52ad55 je 0x52b0c8
+    52ad5e ja 0x52b37e
+    52af1b mov eax,DWORD PTR [ebp+0x1c]
+    52b900 cmp ax,0x16
+    52b904 jne 0x52ba03
+  ok  G5 only m=0x16 reaches the store; T1[0x16]=52a9e7, T2[0x16]=52af1b (the snapshot); the 42-way dispatches collapse to one edge each, and one pinned path runs through the writer
+
+G6  every pinned path that skips the writer passes an arg7 or a count guard
+  writer-skipping pinned paths collected: 2 -> {'arg7==0': 1, 'count==0': 1, 'neither': 0}
+  arg7==0 leg enters 52af1b mov eax,DWORD PTR [ebp+0x1c] -> 52af30 je 0x52b1ee -> 0x52b1ee
+  count==0 leg exits at 52ac89 jle 0x52b88c -> 0x52b88c
+  ok  G6 all 2 writer-skipping paths pass 0x52b1ee (arg7==0) or 0x52b88c (count==0); no third route
+
+G7  the loop count for m=0x16, by the emitted round-up idiom
+  entry case 52a9e7 mov esi,0x48 -> esi = 0x48
+  idiom: mov eax,esi ; cdq  ; and edx,0x7ff ; add eax,edx ; sar eax,0xb ; mov ecx,eax ; mov DWORD PTR [ebp-0xc],eax ; shl ecx,0xb ; sub esi,ecx ; mov DWORD PTR [ebp-0x20],esi ; je 0x52ac80
+  count = (esi + 0x7ff) >> 11 = 1; remainder 0x48
+  ok  G7 esi=0x48 -> count=1, remainder 0x48 != 0: exactly one iteration runs T2[0x16], so the snapshot executes before the epilogue -> the count==0 leg is dead
+
+G8  the two legs, and the verdict for each
+  refs to [ebp+0x1c]: 15; on the epilogue path (>=52b86c): 0
+  the snapshot guard: 52af1b mov eax,DWORD PTR [ebp+0x1c] / 52af21 test eax,eax / 52af30 je 0x52b1ee  (fall-through = the snapshot case, je -> 0x52b1ee = the arg7==0 leg)
+  ok  G8 the snapshot sits behind test [ebp+0x1c] / je 0x52b1ee and the store block reads [ebp+0x1c] 0 times -> the two legs diverge at the store
+  verdict table (M380's last two):
+   store    slot   writer   arg7!=0 (snapshot ran)         arg7==0 (snapshot skipped)
+   52b9c7 -0x50  52affb PRESERVE - verbatim dword copy   UNINIT - writes an unwritten frame dword
+   52b9d0 -0x4c  52b004 PRESERVE - verbatim dword copy   UNINIT - writes an unwritten frame dword
+   PRESERVE = the dword written IS the pair dword read at the writer (every bit travels unchanged; the slot has one writer and one reader, so nothing can mask it)
+   UNINIT  = on the arg7==0 leg the slots are never written and the store carries no arg7 guard, so 0x94d448 receives whatever [ebp-0x50]/[ebp-0x4c] held. NOT a stamp drop - a different defect class, gated on a caller-supplied flag, caller census OPEN
+
+G9  bit 0x20 (M366's human-branch war record, INF): does this instrument reach a noun?
+  bit-0x20 tests on the pair dword inside FUN_0052a720: 0
+  pair-dword writers added by this function: 52b9c7, 52b9d0 (whole-dword copies)
+  ok  G9 0 bit-0x20 tests here: the copy CARRIES 0x20 into a second pair but names nothing -> the noun stays INF (M366 unchanged)
+
+G10 rivals, each measured against the printed numbers
+    R1 'the 2 are an artifact of an incomplete CFG'          0 unresolved edge(s), 5 tables -> REFUTED
+    R2 'the slots alias another function's frame'            one index.csv function; writes 0x52affb, 0x52b004; reads 0x52b9c4, 0x52b9cd -> REFUTED
+    R3 'the store is dead code'                              pinned witness m=0x16: True; count=1 -> REFUTED
+    R4 'dominance is the oracle: both must be PRESERVE'      epilogue refs to [ebp+0x1c] = 0; writer-skipping paths = 2 -> REFUTED
+    R5 'any message can write the pair dword here'           store reachable for 1 of 53 message values -> REFUTED
+    R6 'the store is guarded by the same flag as the snapshot' epilogue refs to [ebp+0x1c] = 0 -> REFUTED
+  ok  G10 6/6 rivals refuted on the printed numbers
+
+  k0:94d448:27
+  k1:52b9c7/52b9d0<-52affb/52b004
+  k2:1353:0:5
+  k3:7:0:15:0
+  k4:52a9e7:52af1b:48:1
+  k5:[22]:2:{'arg7==0': 1, 'count==0': 1, 'neither': 0}
+  k6:0
+  digest c0e46fd18f2fc313 (twice: True)
+
+PASS M387: 11/11  c0e46fd18f2fc313

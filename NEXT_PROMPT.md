@@ -118,3 +118,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M382 (s341-c2): 0xc00 cluster = 15 readers (0x5468c7 is NOT one - bits 2|16). 35/35 `90cb89f84ce7feeb`. Next: who SETS 0x400.
 - M381 (s341-c3): 0x2000 = PEACE; setter A 0x50393d (PACT third party + peace/commlink + strict might(ecx) > might(esi), peer's own scalar); setter B 0x506cf1 = not-at-war only; both rows. 9/9 `2fa1a4100ec6f4f6`, 20/20.
 - M383 (s341-c3): 0x94e48c = per-unit (OFF+ARM) sum; 12/14 rewrites resolve. 9/9 `1d419b65323aec6c`, 29/29.
+- M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
