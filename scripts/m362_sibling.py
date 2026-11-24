@@ -215,17 +215,18 @@ def build_rows():
         if not (BUILD[0] <= ins["a"] <= BUILD[1]):
             continue
         rid = off = None
-        for k in range(n - 1, max(0, n - 14), -1):
-            b = INS[k]
+        win14 = [INS[k] for k in range(n - 1, max(0, n - 15), -1)]
+        got_text = any("ds:0x%x" % TEXTOBJ in b["t"] for b in win14) and \
+            any(b["t"].replace(" ", "") == "movecx,0x%x" % (TEXTOBJ + 8) for b in win14) and \
+            any(b["op"] == "call" and imm(b["arg"]) == GET_TEXT for b in win14)
+        for b in win14:
             if rid is None and b["op"] == "push" and imm(b["arg"]) is not None and imm(b["arg"]):
                 rid = imm(b["arg"])
             if off is None and b["op"] == "mov":
                 m = re.search(r"DWORD PTR \[[a-z]{2,3}\+0x([0-9a-f]+)\]$", b["arg"])
                 if m and 0x900 <= int(m.group(1), 16) <= 0xEFF:
                     off = int(m.group(1), 16)
-            if rid is not None and off is not None:
-                break
-        rows.append({"addr": ins["a"], "id": rid, "label_off": off})
+        rows.append({"addr": ins["a"], "id": rid, "label_off": off, "text": got_text})
     return rows
 
 
@@ -289,6 +290,10 @@ def writer_row(va):
         if i["op"] != "lea" or not m:
             continue
         r, base_reg = m.group(1), m.group(2)
+        # the index idiom is lea / shl r,4 / sub r,base - anything else is an address lea
+        if not any(body[k]["op"] == "shl" and body[k]["arg"].replace(" ", "") == "%s,0x4" % r
+                   for k in range(n + 1, min(len(body), n + 4))):
+            continue
         mult = roles_at(body, n, base_reg)
         addend = None
         sub_at = None
@@ -409,9 +414,20 @@ def main():
         say("    %2d %-11s %-10s %-10s %-6s" % (len(forms), hexa(s), hexa(fa), hexa(tb), hexa(c)))
     gate("G2a", len(forms) == 13 and all(f == (STRIDE, 1, 0) for f in forms),
          "all 13 blocks compute %s*fac + 1*tgt + 0" % hexa(STRIDE))
-    gate("G2b", STRIDE * 4 == 0x20BC,
-         "the dword stride is 0x%x bytes = the per-faction block size"
-         % (STRIDE * 4))
+    RECLO, RECHI = BASE_A, BASE_A + STRIDE * 4
+    slots = {}
+    for i in INS:
+        if not (0x4DA2C0 <= i["a"] <= 0x4DC000):
+            continue
+        for mm in re.finditer(r"\*4\+0x(94[0-9a-f]{4})\b", i["t"]):
+            slots.setdefault(int(mm.group(1), 16), []).append(i["a"])
+    inrec = [b for b in slots if RECLO <= b < RECHI]
+    say("    record 0x%x..0x%x: the enclosing dialog touches %d slots (%d in-record, %d out)"
+        % (RECLO, RECHI, len(slots), len(inrec), len(slots) - len(inrec)))
+    gate("G2b", len(inrec) >= 10 and len(inrec) == len(slots) and BASE_B in slots and
+         STRIDE * 4 == 0x20BC,
+         "%d distinct slots, ALL inside the one 0x%x-byte record (0x82f dwords)"
+         % (len(inrec), STRIDE * 4))
     seqs = []
     for p, s in zip(pairs, starts):
         _, ops = emu_stride(s, p["addr"])
@@ -452,6 +468,9 @@ def main():
          "13 rows, ids and ORDER identical to the sync (%d/%d)" % (len(rows), len(ids)))
     gate("G4b", len(set(offs)) == 13 and None not in offs,
          "13 distinct label slots in the 0x997b20 text object (%d distinct)" % len(set(offs)))
+    gate("G4c", all(r["text"] for r in rows),
+         "every row's slot is an argument to FUN_0061482f(0x997b28, [0x997b20+off], 0) (%d/13)"
+         % sum(1 for r in rows if r["text"]))
 
     say("")
     say("G5  the 4 toggle handlers -> writer pairs")
@@ -481,6 +500,10 @@ def main():
             " ".join("%s>%s" % (a or "?", b or "?") for a, b in w["forms"]) or "-",
             w["n_store"]))
     dirs = sorted(w["dirs"] for w in wrows)
+    unresolved = sum(1 for w in wrows for f in w["forms"] if None in f)
+    gate("G6c", unresolved == 0 and sum(w["n_idx"] for w in wrows) >= 14,
+         "every index form resolves to a parameter (0 unknown of %d)"
+         % sum(w["n_idx"] for w in wrows))
     gate("G6a", dirs == [1, 1, 2, 2, 2, 2],
          "4 writers build both (p1,p2)/(p2,p1) forms, 2 only one (%s)" % dirs)
     prim = {w["va"]: w["primary"] for w in wrows}
@@ -500,10 +523,14 @@ def main():
         % (",".join(hexa(i) for i in sorted(ids)), contiguous))
     gate("R2", not contiguous and sum(1 for i in ids if i & (i - 1) == 0) == 11,
          "R2 refuted: 11 ids are single bits, gaps at 0x40/0x800/0x8000/0x100000")
-    d = BASE_B - BASE_A
-    say("    R3 '0x94d468 is an independent array' -> base delta %s = %d dwords, "
-        "index forms identical %d/13" % (hexa(d), d // 4, sum(1 for f in forms if f == (STRIDE, 1, 0))))
-    gate("R3", d == 0x20 and d < 4 * STRIDE and len(set(forms)) == 1,
+    seen = sorted(set(p["base"] for p in pairs))
+    d = seen[-1] - seen[0] if len(seen) > 1 else 0
+    say("    R3 '0x94d468 is an independent array' -> bases seen %s, delta %s = %d dwords, "
+        "index forms identical %d/13; 0x94d5dc inside the record: %s"
+        % (",".join(hexa(b) for b in seen), hexa(d), d // 4,
+           sum(1 for f in forms if f == (STRIDE, 1, 0)), RECLO <= 0x94D5DC < RECHI))
+    gate("R3", len(seen) == 2 and d == 0x20 and d < 4 * STRIDE and len(set(forms)) == 1 and
+         RECLO <= 0x94D5DC < RECHI,
          "R3 refuted: base+0x20 is slot +8 INSIDE the same 0x82f-dword block")
     sym = sum(1 for w in wrows if w["dirs"] == 2)
     say("    R4 'the pair is written one-way' -> %d/6 writers write both directions, "

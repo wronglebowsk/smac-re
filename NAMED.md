@@ -1555,18 +1555,17 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page: its flag widget is an INLINE +0x15a0 group of 13 checkboxes whose ids ARE the bits; 0x80000000 selects the record's SECOND dword. ev `evidence/m362_sibling.txt:97`
+## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |
 |---|---|---|
-| FUN_004db1b0 syncs 13 ids {8,10,4,2,1,1000,2000,20,2000000,400,40000} from 0x94d448 + {80000008,80002000} from 0x94d468; id==mask 11/11, id==mask\|0x80000000 2/2, high set == the 0x94d468 rows | `:9-20` | V MU1,2,3,18 |
-| all 13 blocks compute (fac*0x82f+tgt) by ONE identical 6-insn idiom; 0x82f dwords = 0x20bc B; 0x94d468 = base+0x20 = slot +8 of the SAME per-faction record | `:22-39` | V MU4,5 |
-| widget = inline sub-object dialog+0x15a0: 1 `lea`, 13 `mov ecx,edi`, tail = +0xf0 vtable call; fields 0xa1c/0xa20 only | `:41-46` | V MU7,8,6 |
-| builder FUN_004db480 adds the same 13 ids in the SAME order; 13 distinct label slots in 0x997b20 (label TEXT = OPEN: heap) | `:48-64` | V MU9,10,17 |
-| 4 toggle handlers: id class picks the dword 4/4, 8 writer sites; the two 4-arg writers are one-way and single-handler | `:66-74` | V MU11,12,19 |
-| 6 writers 0x5518f0/9c0/a20/c40/cf0/d70: 4 write (p1,p2)+(p2,p1), 2 one-way; primary base 3 A / 3 B | `:76-85` | V MU13,14 |
-| RIVALS refuted: not the 0x92befc pref block, not ordinals 1..13, not a separate array, not one-way for 4/6 | `:87-95` | V MU15,16 |
-| OPEN: the 13 label strings (0x997b20 heap, runtime); bit nouns (chain-2 lane); 0x551a20's third slot 0x94d5dc | - | lead |
-
+| FUN_004db1b0: ids {8,10,4,2,1,1000,2000,20,2000000,400,40000} <- 0x94d448 + {80000008,80002000} <- 0x94d468; id==mask 11/11, high 2/2 == B rows | `:9-20` | V MU1-3,18 |
+| 13/13 blocks: ONE 6-insn idiom = fac*0x82f+tgt; 12 slots all inside the 0x20bc-B record; 0x94d468 = +8 dwords | `:22-40` | V MU4,5,20 |
+| inline widget +0x15a0: 1 `lea`, 13 `mov ecx,edi`, tail `[eax+0xf0]`; fields 0xa1c/0xa20 only | `:42-47` | V MU6-8 |
+| builder: same 13 ids/order; 13 label slots, each an arg to 0x61482f(0x997b28,[0x997b20+off]); TEXT OPEN | `:49-66` | V MU9,10,17,23 |
+| 4 handlers: id class picks the dword 4/4; 8 writer sites; 2 one-way writers, 1 handler each | `:68-76` | V MU11,12,19 |
+| 6 writers: 4 both-direction, 2 one-way; 0/24 forms unresolved; primary 3 A / 3 B | `:78-88` | V MU13,14,21 |
+| RIVALS refuted: 0x92befc, ordinals, separate array, one-way 4/6 | `:90-98` | V MU15,16,1,22 |
+| OPEN: 13 label strings; bit NOUNS (chain-2); 0x551a20's 3rd slot | - | lead |
 ## M360 (s331-c3) — NOT a seventh page: 0x37/0x38/0x39 are A/V RADIO rows (+0x7aec: 8 built, 11 queried), 0x50 the seventh widget's 4th id; a miss resolves to bit<count>. ev `evidence/m360_orphans.txt:137`
 | claim | ev | conf |
 |---|---|---|

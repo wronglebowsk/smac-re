@@ -35,7 +35,8 @@ G2  index arithmetic, emulated per block
     12 0x4db3ee    0x82f      0x1        0x0   
     13 0x4db422    0x82f      0x1        0x0   
   G2a   PASS  all 13 blocks compute 0x82f*fac + 1*tgt + 0
-  G2b   PASS  the dword stride is 0x20bc bytes = the per-faction block size
+    record 0x94d448..0x94f504: the enclosing dialog touches 12 slots (12 in-record, 0 out)
+  G2b   PASS  12 distinct slots, ALL inside the one 0x20bc-byte record (0x82f dwords)
   G2c   PASS  one identical instruction sequence in 13/13 blocks (1 distinct)
 
 G3  the widget: an INLINE sub-object at dialog+0x15a0
@@ -62,6 +63,7 @@ G4  the builder's 13 add_item rows (FUN_004db480)
     13 0x4dba37    0x80002000 0x998918
   G4a   PASS  13 rows, ids and ORDER identical to the sync (13/13)
   G4b   PASS  13 distinct label slots in the 0x997b20 text object (13 distinct)
+  G4c   PASS  every row's slot is an argument to FUN_0061482f(0x997b28, [0x997b20+off], 0) (13/13)
 
 G5  the 4 toggle handlers -> writer pairs
     handler     id class  test base   writer sites            getter
@@ -81,6 +83,7 @@ G6  the 6 writers: base, op, directions
     0x551c40    0x94d468        0x94d468    clear+set p1>p2 p2>p1 p1>p2 p2>p1   4
     0x551cf0    0x94d448        0x94d448    clear+set p1>p2 p1>p2               1
     0x551d70    0x94d468        0x94d468    clear+set p1>p2 p1>p2               2
+  G6c   PASS  every index form resolves to a parameter (0 unknown of 24)
   G6a   PASS  4 writers build both (p1,p2)/(p2,p1) forms, 2 only one ([1, 1, 2, 2, 2, 2])
   G6b   PASS  primary (last-store) base splits 3 A / 3 B: 0x94d448,0x94d468,0x94d448,0x94d468,0x94d448,0x94d468
 
@@ -89,10 +92,10 @@ G7  RIVALS (each must FAIL on the numbers above)
   R1    PASS  R1 refuted: no 0x92befc/0x92bf00/0x92bf04 read in the window
     R2 'ids are row ordinals 1..13' -> sorted ids 0x1,0x2,0x4,0x8,0x10,0x20,0x400,0x1000,0x2000,0x40000,0x2000000,0x80000008,0x80002000; contiguous False
   R2    PASS  R2 refuted: 11 ids are single bits, gaps at 0x40/0x800/0x8000/0x100000
-    R3 '0x94d468 is an independent array' -> base delta 0x20 = 8 dwords, index forms identical 13/13
+    R3 '0x94d468 is an independent array' -> bases seen 0x94d448,0x94d468, delta 0x20 = 8 dwords, index forms identical 13/13; 0x94d5dc inside the record: True
   R3    PASS  R3 refuted: base+0x20 is slot +8 INSIDE the same 0x82f-dword block
     R4 'the pair is written one-way' -> 4/6 writers write both directions, the two one-way ones are the only writers the 3rd/4th handlers call
   R4    PASS  R4 refuted for 4 of 6 writers; asymmetry localised to 2
 
-PASS M362: 20/20 gates
-digest 3b30baa33ea67fcb
+PASS M362: 22/22 gates
+digest 18298ed8d31de144

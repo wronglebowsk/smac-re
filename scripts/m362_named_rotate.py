@@ -47,6 +47,9 @@ def main():
             report.append((head.strip(), "STUBBED", ""))
             continue
         blk, i, j = block_of(named, head)
+        if "docs/named-archive-m362-rows.md" in blk.splitlines()[0]:
+            report.append((head.strip(), "STUBBED", ""))
+            continue  # idempotent: a rotation stub is never rotated again
         sha = hashlib.sha1(blk.encode()).hexdigest()[:16]
         if not a.verify:
             arch = arch.rstrip("\n") + "\n\n<!-- %s sha1 %s len %d -->\n%s" % (

@@ -59,6 +59,14 @@ MUT = [
      "0x5518f0 writes the pair in BOTH directions; the second arm adds param_1"),
     ("MU18", [(0x4DB1E6, "call   0x6050d4", "call   0x6050d8")], "G1a",
      "13 set-by-id calls (not 12) carry the 13 rows"),
+    ("MU20", [(0x4DA87C, "mov    eax,DWORD PTR [edx*4+0x94d608]",
+               "mov    eax,DWORD PTR [edx*4+0x94f608]")], "G2b",
+     "every slot the enclosing dialog indexes for this record lies inside 0x94d448..0x94f504"),
+    ("MU22", [(0x4DB40D, "mov    eax,DWORD PTR [edx*4+0x94d468]",
+               "mov    eax,DWORD PTR [edx*4+0x94d4a8]")], "R3",
+     "0x94d468 is base+0x20 (slot +8), not an array 0x60 dwords away (rival R3 fails)"),
+    ("MU23", [(0x4DB8BA, "mov    ecx,0x997b28", "mov    ecx,0x997b2c")], "G4c",
+     "each label slot is resolved through the 0x997b28 text object (0x997b20 is the source table)"),
     ("MU19", [(0x4DAD8C, "call   0x551d70", "call   0x551a20")], "G5c",
      "the 4th handler's one-way writer is 0x551d70, distinct from every other handler's"),
 ]
@@ -66,11 +74,17 @@ MUT = [
 # tool-source mutants: (name, old, new, gate, claim) - a gate constant is flipped, never the
 # measurement, so the gate itself is shown to be load-bearing.
 SRC_MUT = [
-    ("MU17", """        for k in range(n - 1, max(0, n - 14), -1):
-            b = INS[k]
+    ("MU21", """    fs, anchor = block_info(body, n)
+    order = list(range(n - 1, fs - 1, -1))
+    if anchor is None:
+        order += list(range(fs - 1, -1, -1))
+    else:
+        order += list(range(anchor - 1, -1, -1))""",
+     """    order = list(range(n - 1, -1, -1))""", "G6c",
+     "def-use must skip the arm a jump skips: a plain backward scan leaves 0x551d70 arm 2 unresolved"),
+    ("MU17", """        for b in win14:
             if rid is None and b["op"] == "push" and imm(b["arg"]) is not None and imm(b["arg"]):""",
-     """        for k in range(max(0, n - 14), n):
-            b = INS[k]
+     """        for b in reversed(win14):
             if rid is None and b["op"] == "push" and imm(b["arg"]) is not None:""", "G4a",
      "the row parser scans BACKWARD from the call, so the id push outranks the item flag push"),
 ]

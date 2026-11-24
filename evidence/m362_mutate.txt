@@ -1,4 +1,4 @@
-baseline: 20 gates PASS, 0 FAIL
+baseline: 22 gates PASS, 0 FAIL
 MU1   KILLED G1b/R2 row 1's id is 0x8 (id==mask); a 0x9 id breaks id==mask and the single-bit count
 MU2   KILLED G1b  row 1's mask is 0x8, equal to its id
 MU3   KILLED G1c  id 0x80000008 reads the SECOND dword 0x94d468, so the high-bit set is the B-row set
@@ -16,9 +16,13 @@ MU14  KILLED G6b  0x551cf0's last store targets 0x94d448 (its primary base)
 MU15  KILLED R1   no sync row reads the preferences flag block 0x92befc.. (rival R1 fails)
 MU16  KILLED R4   0x5518f0 writes the pair in BOTH directions; the second arm adds param_1
 MU18  KILLED G1a  13 set-by-id calls (not 12) carry the 13 rows
+MU20  KILLED G2b  every slot the enclosing dialog indexes for this record lies inside 0x94d448..0x94f504
+MU22  KILLED R3   0x94d468 is base+0x20 (slot +8), not an array 0x60 dwords away (rival R3 fails)
+MU23  KILLED G4c  each label slot is resolved through the 0x997b28 text object (0x997b20 is the source table)
 MU19  KILLED G5c  the 4th handler's one-way writer is 0x551d70, distinct from every other handler's
+MU21  KILLED G6c  def-use must skip the arm a jump skips: a plain backward scan leaves 0x551d70 arm 2 unresolved
 MU17  KILLED G4a  the row parser scans BACKWARD from the call, so the id push outranks the item flag push
 
-scored: 19/19 killed, NO-OP none, MISSED none
-coverage: gates 20, named by a mutant 18 -> ['G1a', 'G1b', 'G1c', 'G2a', 'G2c', 'G3a', 'G3b', 'G3c', 'G4a', 'G4b', 'G5a', 'G5b', 'G5c', 'G6a', 'G6b', 'R1', 'R2', 'R4']
-unnamed gates: ['G2b', 'R3']
+scored: 23/23 killed, NO-OP none, MISSED none
+coverage: gates 22, named by a mutant 22 -> ['G1a', 'G1b', 'G1c', 'G2a', 'G2b', 'G2c', 'G3a', 'G3b', 'G3c', 'G4a', 'G4b', 'G4c', 'G5a', 'G5b', 'G5c', 'G6a', 'G6b', 'G6c', 'R1', 'R2', 'R3', 'R4']
+unnamed gates: []
