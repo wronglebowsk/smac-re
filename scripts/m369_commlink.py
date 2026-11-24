@@ -76,6 +76,40 @@ def last_test_before(ws, addr):
     return cand[-1] if cand else (None, "")
 
 
+def operands(t):
+    """(mnemonic, dest, src) with brackets respected; src None for one-operand insns."""
+    m = re.match(r"(\w+)\s+(.*)$", t)
+    if not m:
+        return t, "", None
+    mn, rest = m.group(1), m.group(2)
+    depth, cut = 0, None
+    for i, ch in enumerate(rest):
+        if ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth -= 1
+        elif ch == "," and depth == 0:
+            cut = i
+            break
+    if cut is None:
+        return mn, rest.strip(), None
+    return mn, rest[:cut].strip(), rest[cut + 1:].strip()
+
+
+def is_mem(s):
+    return s is not None and ("PTR [" in s or "PTR ds:" in s or s.startswith("ds:"))
+
+
+def relation_stores(ws):
+    """instructions whose DESTINATION is memory addressing a relations dword."""
+    out = []
+    for a, t in ws:
+        mn, dest, src = operands(t)
+        if mn in ("mov", "or", "and", "add", "xor") and is_mem(dest) and re.search(r"0x94d44[08]", dest):
+            out.append((a, t))
+    return out
+
+
 # --------------------------------------------------------------- shard index
 HDR = re.compile(r"^// ==== (\S+) @ (0x[0-9a-f]+) size=(\d+)")
 
@@ -191,15 +225,21 @@ def main():
     w8 = win(ins, *A8)
     p8 = [(a, t) for a, t in w8 if t.startswith("push") and push_imm(t) == 8]
     c60 = [(a, t) for a, t in w8 if call_tgt(t) == 0x426D60]
-    st8 = [(a, t) for a, t in w8 if re.match(r"mov .*0x94d44", t) or re.match(r"or .*0x94d44", t)
-           or re.match(r"and .*0x94d44", t)]
+    st8 = relation_stores(w8)
+    fac8 = []
+    for i, (a, t) in enumerate(w8):
+        if call_tgt(t) == 0x426D60:
+            back = w8[max(0, i - 5):i]
+            load = [x for x in back if re.search(r"mov +eax,DWORD PTR \[edx\+0xa2[48]\]", x[1])]
+            fac8.append((a, int(re.search(r"0xa2([48])", load[-1][1]).group(1), 16) if load else None))
     say("    push 0x8: %s" % ", ".join("%08x" % a for a, _ in p8))
     say("    call 0x426d60: %s" % ", ".join("%08x" % a for a, _ in c60))
-    say("    writes to 0x94d448/0x94d468 in the block: %d" % len(st8))
-    gate("G3a", len(p8) == 2 and len(c60) == 2,
-         "exactly 2 mask-8 reads (%d pushes, %d calls)" % (len(p8), len(c60)))
+    say("    each call's (fac) load displacement: %s" % ", ".join("%08x:0x%s" % (a, "?" if d is None else "%x" % (0xa20 + d)) for a, d in fac8))
+    say("    instructions in the block: %d | parsed STORES into 0x94d448/0x94d468: %d" % (len(w8), len(st8)))
+    gate("G3a", len(p8) == 2 and len(c60) == 2 and sorted(d for _, d in fac8) == [4, 8],
+         "two mask-8 asks, and their faction operands are 0xa24 and 0xa28 (one per direction)")
     gate("G3b", len(st8) == 0,
-         "the block STORES nothing into either relations dword (%d stores): 0x8 is tested here, not written" % len(st8))
+         "parsed store classification: 0 stores into either relations dword - 0x8 is tested here, not written")
 
     # ---------------------------------------------------------------- G4 polarity
     say("")
@@ -258,16 +298,31 @@ def main():
          "the 0x80000108 OR is gated by test bl,0x10 (%s) - NOT by test bl,0x7 as M364's row 184 read"
          % near[1])
     branch7 = [a for a, t in wa if 0x551A35 <= a < 0x551ABF and t.endswith("0x80000108")]
-    gate("G5b", len(branch7) == 0,
-         "the 0x7 branch never ORs 0x80000108 (%d): making peace clears 0x10/0x40/0x8000/0x100000 and does NOT set 0x8"
-         % len(branch7))
-    # mask 8 alone: 8 & each clear-branch test == 0 (masks READ from the bytes, not authored)
-    branch_masks = [int(re.search(r"0x([0-9a-f]+)$", t).group(1), 16) for _, t in tst
-                    if int(re.search(r"0x([0-9a-f]+)$", t).group(1), 16) in (0x7, 0x1, 0x10, 0x17)]
-    say("    clear-branch test masks: %s | 8 & each: %s"
-        % (" ".join("0x%x" % m for m in branch_masks), " ".join("0x%x" % (8 & m) for m in branch_masks)))
-    gate("G5c", sorted(branch_masks) == [0x1, 0x7, 0x10, 0x17] and all((8 & m) == 0 for m in branch_masks),
-         "mask 8 matches none of the four clear branches: setting it is a pure symmetric OR")
+    clears = [(a, t) for a, t in wa if re.match(r"and +edx,0x[0-9a-f]+", t)]
+    clear7 = [(a, int(t.split("0x")[-1], 16)) for a, t in clears if 0x551A35 <= a < 0x551AB7]
+    compl = 0xFFFFFFFF ^ clear7[0][1] if clear7 else 0
+    say("    `and edx,imm` in the 0x7 branch: %s -> complement 0x%x = %s"
+        % (", ".join("%08x/0x%x" % c for c in clear7), compl,
+           " ".join("0x%x" % (1 << b) for b in range(32) if compl >> b & 1)))
+    gate("G5b", len(branch7) == 0 and len(clear7) == 2 and compl == 0x118050,
+         "the 0x7 (peace) branch sets no bit 8 and its clear mask is exactly 0x10|0x40|0x8000|0x10000|0x100000 (%d ORs, %d clears)"
+         % (len(branch7), len(clear7)))
+    # mask 8 alone: enumerate EVERY branch test and EVERY clear immediate in the setter
+    all_tst = [(a, int(t.split("0x")[-1], 16)) for a, t in tst]
+    ands = [(a, int(t.split("0x")[-1], 16)) for a, t in clears]
+    last_store = max([a for a, t in wa if t.startswith("mov DWORD PTR [eax],edx")] or [0])
+    ui = [(a, t) for a, t in wa if t.startswith("test bl,0x1f")]
+    say("    every test bl,imm: %s" % " ".join("0x%x@%08x" % (m, a) for a, m in all_tst))
+    say("    every and edx,imm : %s (bit 8 preserved: %s)"
+        % (" ".join("0x%x@%08x" % (m, a) for a, m in ands),
+           all(m & 8 for _, m in ands)))
+    say("    last store 0x%08x | the 0x1f UI-refresh test at %s"
+        % (last_store, ", ".join("%08x" % a for a, _ in ui) or "none"))
+    gate("G5c", sorted(m for _, m in all_tst) == [0x1, 0x7, 0x10, 0x17, 0x1F]
+         and all(m & 8 for _, m in ands)
+         and len(ui) == 1 and ui[0][0] > last_store,
+         "all %d branch tests known, every and-mask preserves bit 8, and the 0x1f test sits after the last store: "
+         "setting 8 is a pure symmetric OR" % len(all_tst))
 
     # ---------------------------------------------------------------- G6 symmetric store
     say("")
@@ -308,8 +363,8 @@ def main():
     # ---------------------------------------------------------------- G8 byte verification
     say("")
     say("G8  the claim-critical sites are byte-verified: push <mask> -> call 0x551a20 in their own function")
-    pinned = {"FUN_00429950": 0x42999D, "FUN_004dadd0": 0x4DAE13,
-              "FUN_0056df40": 0x56F5AD, "FUN_00554d10": 0x554E88}
+    pinned = {"FUN_00429950": (0x42999D, 0x8), "FUN_004dadd0": (0x4DAE13, 0x8),
+              "FUN_0056df40": (0x56F5AD, 0x8), "FUN_00554d10": (0x554E88, 0x18)}
     ok_byte = 0
     for f, ln, fn, mk in m8:
         if fn not in funcs:
@@ -339,10 +394,12 @@ def main():
                     hit.append((a, pm[-1]))
         say("      %-16s @0x%06x -> %s" % (fn, fn_info["addr"],
                                            ", ".join("%08x/0x%x" % h for h in hit) or "none"))
-        if fn in pinned and any(a == pinned[fn] and (m & 8) for a, m in hit):
+        if fn in pinned and any(a == pinned[fn][0] and m == pinned[fn][1] for a, m in hit):
             ok_byte += 1
+        elif fn in pinned:
+            say("      %-16s PIN MISMATCH: want %08x/0x%x" % (fn, pinned[fn][0], pinned[fn][1]))
     gate("G8a", ok_byte == len(pinned),
-         "%d/%d claim-critical sites carry the exact push-immediate at the pinned address"
+         "%d/%d claim-critical sites carry the EXACT push-immediate at the pinned address"
          % (ok_byte, len(pinned)))
 
     # ---------------------------------------------------------------- G9 event semantics
@@ -355,17 +412,65 @@ def main():
     pod_goody = podtxt.count("GOODYPOD")
     pod_guard = re.search(r"\[\(uVar13 \* 0x82f \+ uVar9\) \* 4\] & 8\) == 0", podtxt)
     pod_call = re.search(r"FUN_00551a20\(uVar13,uVar9,8\);", podtxt)
+    # byte-level: the guard's test/jne, its distance to the call, and the pair it hands over
+    wpod = win(ins, pod["addr"], pod["addr"] + pod["size"] - 1) if pod else []
+    g = [(a, t) for a, t in wpod if t.startswith("test BYTE PTR") and "0x94d448],0x8" in t]
+    gcall = [(a, t) for a, t in wpod if call_tgt(t) == 0x551A20]
+    gj = []
+    if g:
+        after = [(a, t) for a, t in wpod if a > g[0][0]][:2]
+        gj = [(a, int(t.split("0x")[-1], 16)) for a, t in after if t.startswith(("jne", "je"))]
+    args_ok = False
+    if gcall:
+        back = [t for a, t in wpod if gcall[0][0] - 0x10 < a < gcall[0][0]]
+        args_ok = any(t.startswith("push 0x8") for t in back) and any(t == "push edi" for t in back) \
+            and any(t == "push ebx" for t in back)
     cnt_call = cntxt.count("CALLSCOUNCIL")
     cnt_loop = re.search(r"for \(local_c = 1; local_c < (\d+); local_c = local_c \+ 1\)", cntxt)
     cnt_inner = re.search(r"for \(local_8 = 1; local_8 < local_c;", cntxt)
-    say("    FUN_0056df40 GOODYPOD literals: %d | (rel&8)==0 guard before the set: %s | the set uses the tested pair: %s"
-        % (pod_goody, "yes" if pod_guard else "no", "yes" if pod_call else "no"))
-    say("    FUN_00429950 CALLSCOUNCIL literals: %d | outer loop bound: %s | inner loop: %s"
+    # source half: the setter call LINE must sit inside the outer loop's braces
+    lines_c = cntxt.split("\n")
+    hdr = next((i for i, l in enumerate(lines_c) if "local_c = 1; local_c <" in l), None)
+    call_line = next((i for i, l in enumerate(lines_c) if "FUN_00551a20(local_c,local_8,8)" in l), None)
+    inside = False
+    if hdr is not None and call_line is not None:
+        depth, i = 0, hdr
+        while i < len(lines_c):
+            depth += lines_c[i].count("{") - lines_c[i].count("}")
+            if i > hdr and depth <= 0:
+                break
+            i += 1
+        inside = hdr < call_line < i and len(lines_c) > i
+    say("    source: loop header line %s, setter call line %s, loop body ends %s -> call inside: %s"
+        % (hdr, call_line, "?" if not inside else "yes", "yes" if inside else "no"))
+    say("    FUN_0056df40 GOODYPOD: %d | guard test at %s -> jne %s | call at %s | guard->call gap 0x%x"
+        % (pod_goody, ", ".join("%08x" % a for a, _ in g),
+           ("%08x->%08x" % gj[0]) if gj else "none",
+           ", ".join("%08x" % a for a, _ in gcall),
+           (gcall[0][0] - g[0][0]) if g and gcall else 0))
+    say("    FUN_00429950 CALLSCOUNCIL: %d | outer loop bound: %s | inner loop: %s"
         % (cnt_call, cnt_loop.group(1) if cnt_loop else "?", "yes" if cnt_inner else "no"))
-    gate("G9a", pod_goody >= 2 and bool(pod_guard) and bool(pod_call),
-         "the pod handler only contacts a faction it has NOT met ((rel & 8)==0) and then sets 8 on that same pair - first contact")
-    gate("G9b", cnt_call >= 1 and bool(cnt_loop) and cnt_loop.group(1) == "8" and bool(cnt_inner),
-         "the council routine sets 8 for every ordered faction pair (1..7 x <outer) as the council convenes")
+    gate("G9a", pod_goody >= 2 and bool(pod_guard) and bool(pod_call)
+         and len(g) == 1 and len(gcall) == 1 and bool(gj) and gj[0][1] > gcall[0][0]
+         and gcall[0][0] - g[0][0] < 0x80 and args_ok,
+         "the pod's (rel&8)==0 test sits 0x%x bytes before the ONLY setter call and its jne jumps PAST it: "
+         "bit 8 is set only where it was clear - first contact" % (gcall[0][0] - g[0][0] if g and gcall else 0))
+    # council: the call rides inside both loops and hands over the two loop counters
+    wcn = win(ins, council["addr"], council["addr"] + council["size"] - 1) if council else []
+    ccn = [(a, t) for a, t in wcn if call_tgt(t) == 0x551A20]
+    before = [t for a, t in wcn if ccn and ccn[0][0] - 0x18 < a < ccn[0][0]]
+    bounds = [(a, t) for a, t in wcn if ccn and ccn[0][0] - 0x60 < a < ccn[0][0] and t.startswith("cmp")]
+    backs = [a for a, t in wcn if t.startswith("jmp") and ccn and a < ccn[0][0]]
+    loop_args = any(t.startswith("push 0x8") for t in before) and "push ecx" in before and "push edx" in before
+    say("    council call %s | arg pushes %s | loop cmps %s | loop-back jmps before the call: %d"
+        % (", ".join("%08x" % a for a, _ in ccn), before[-4:],
+           ", ".join("%08x %s" % (a, t) for a, t in bounds), len(backs)))
+    gate("G9b", cnt_call >= 1 and bool(cnt_loop) and cnt_loop.group(1) == "8" and bool(cnt_inner) and inside
+         and len(ccn) == 1 and loop_args
+         and any(t.startswith("cmp DWORD PTR [ebp-0x8],0x8") for _, t in bounds)
+         and any(t.startswith("cmp eax,DWORD PTR [ebp-0x8]") for _, t in bounds) and len(backs) >= 2,
+         "the council's setter call carries mask 8 inside BOTH loops (outer bound 8, inner < outer): "
+         "every pair gets the bit once, and the setter writes both directions")
 
     # ---------------------------------------------------------------- G10 war writer
     say("")
@@ -406,9 +511,10 @@ def main():
 
     say("")
     say("R4  RIVAL 'M364's block membership proves war' - refuted by the same guard on a non-war option")
-    gate("R4", len(p87) == 2 and len(st8) == 0,
-         "case 7 pairs the same two-direction mask-8 reads (%d) with zero stores; the guard is reachability"
-         % len(p87))
+    st7 = relation_stores(w7)
+    gate("R4", len(p87) == 2 and len(st7) == 0,
+         "case 7 pairs the same two-direction mask-8 reads (%d) with %d stores of its own; the guard is reachability"
+         % (len(p87), len(st7)))
 
     # ---------------------------------------------------------------- accept
     say("")

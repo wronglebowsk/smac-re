@@ -1659,12 +1659,13 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | ACCEPT `python3 -u scripts/m366_bitnouns.py` -> 29/29 `c36db3d154a5ea1b` x2; harness 32/32 | `evidence/m366_bitnouns.txt:597`, `evidence/m366_mutate.txt:33` | V MU0 |
 | INF: the noun WORD for 0x20 (inferred from the human branch + B-ladder + ending text); 0x80000000's role | - | INF |
 
-## M369 (s336-chain2, STATIC 23/23) — relations bit **0x8 = COMMLINK** (contact); M364's AT WAR **RETRACTED**. ACCEPT `python3 -u scripts/m369_commlink.py` -> **`PASS M369: 23/23`** `44ad5e4a811941fc` x2 (`evidence/m369_commlink.txt:135`); harness 32/32 (`evidence/m369_mutate.txt:40`).
+## M369 (s336-chain2, STATIC 23/23) — relations bit **0x8 = COMMLINK** (contact); M364's AT WAR **RETRACTED**. ACCEPT `python3 -u scripts/m369_commlink.py` -> **`PASS M369: 23/23`** `475fdceda961ef2d` x2 (`evidence/m369_commlink.txt:141`); harness 39/39 (`evidence/m369_mutate.txt:47`).
 | claim | ev | conf |
 |---|---|---|
 | builder row 1 = id 0x8 -> element 875 -> labels.txt:886 `Commlink`; 13/13 id->text (0x10 `Vendetta`, 0x1 `Pact`) | `:3-38` | V MU15,17,19-21,29 |
-| vendetta block (0x442cd3..0x442e42) READS mask 8 both ways and jumps FORWARD (0x442d40/0x442d5c->0x442d7d); 0 stores to either relations dword; case 7 runs the same guard for a non-war option | `:40-62` | V MU1-6 |
-| `FUN_00551a20`: `or ebx,0x80000108` is in the `test bl,0x10` branch (0x551abf->0x551b11), NOT 0x7 (M364 ev `:184` mislabel); peace clears only 0x10/0x40/0x8000/0x100000; mask 8 = pure symmetric OR (reload 0x551bea) | `:58-74` | V MU7-12 |
-| 10 explicit bit-8 writes, 8 fns, masks {8 x3,0x18,0x80000008,0x80000018,0x88000008 x4}; plain-8 = council 0x42999d, commit 0x4dae13, pod 0x56f5ad (byte-verified); pod only when `(rel&8)==0` | `:76-110` | V MU13,14,22-28 |
-| `FUN_005076d0` pushes 0x10 on both exits (0x507abc/0x507c6d), 0 push 0x8: war implies contact in the setter. RIVALS refuted: AT WAR, high-dword label, bookkeeping flag | `:112-131` | V MU13,14,17-19,27 |
-| INF: is 0x8 the AI's "can address" predicate inside the 0x18/0x88000008 war writes? | - | INF |
+| vendetta block (0x442cd3..0x442e42) READS mask 8 both ways — fac operands 0xa24/0xa28 — and jumps FORWARD (0x442d40/0x442d5c->0x442d7d); 0 parsed stores into either relations dword; case 7 runs the same guard for a non-war option | `:40-62` | V MU1-6,36,37 |
+| `FUN_00551a20`: `or ebx,0x80000108` is in the `test bl,0x10` branch (0x551abf->0x551b11), NOT 0x7 (M364 ev `:184` mislabel); the 0x7 peace branch clears exactly 0x10|0x40|0x8000|0x10000|0x100000; all 5 branch tests known, every and-mask keeps bit 8, mask 8 = symmetric OR (reload 0x551bea) | `:58-79` | V MU7-12,33,34 |
+| 10 explicit bit-8 writes, 8 fns, masks {8 x3,0x18,0x80000008,0x80000018,0x88000008 x4}; the 3 plain-8 writes (council 0x42999d, commit 0x4dae13, pod 0x56f5ad) carry the EXACT pinned mask; the pod's guard sits 0x48 B before its only setter call and its jne jumps PAST it; the council call rides both loops | `:80-115` | V MU22-28,30,32,35,38,39 |
+| `FUN_005076d0` pushes 0x10 on both exits (0x507abc/0x507c6d), 0 push 0x8: the war record carries 8 only via the setter's implication | `:117-121` | V MU13,14 |
+| RIVALS refuted: AT WAR (pod/council set it with war bits clear), high-dword label (0x80000008/0x80002000 = other texts), bookkeeping flag (row 1 is a page noun), case-8 membership (same guard on a non-war option) | `:123-140` | V MU13,16,18,20,37 |
+| INF: is 0x8 also the AI's "can address them" predicate inside the 0x18/0x88000008 war writes? | - | INF |

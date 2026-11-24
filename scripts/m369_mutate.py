@@ -58,6 +58,18 @@ TEXT_MUT = [
      "the declare path's setter call carries mask 0x10"),
     ("MU14", 0x507C6D, "push 0x10", "push 0x11", "G10a",
      "both exits of the declare path use mask 0x10"),
+    ("MU33", 0x551A88, "and edx,0xffee7faf", "and edx,0xffee7fae", "G5b",
+     "the peace branch's clear mask is exactly 0x10|0x40|0x8000|0x10000|0x100000"),
+    ("MU34", 0x551B17, "and edx,0xfaeef378", "and edx,0xfaeef370", "G5c",
+     "no and-mask in the setter clears bit 8 (0xfaeef378 keeps it)"),
+    ("MU35", 0x56F5A9, "push 0x8", "push 0x18", "G8a",
+     "the pod's pinned site carries the EXACT mask 8, not merely some bit-8 mask"),
+    ("MU36", 0x442D4B, "mov eax,DWORD PTR [edx+0xa28]", "mov eax,DWORD PTR [edx+0xa24]", "G3a",
+     "the two mask-8 asks use the two different faction operands (one per direction)"),
+    ("MU37", 0x442D83, "mov DWORD PTR [ebp-0x28],ecx", "or DWORD PTR ds:0x94d448,ecx", "G3b",
+     "the store classifier sees a relations write if one is planted"),
+    ("MU38", 0x56F56D, "jne 0x56f692", "jne 0x56f5a9", "G9a",
+     "the pod's guard jne jumps PAST the setter call (so the set happens only where the bit was clear)"),
 ]
 
 # (name, 0-based labels.txt line, replacement, gate, claim)
@@ -88,6 +100,8 @@ SRC_MUT = [
      "G9b", "the council loop sweeps all 7 rivals"),
     ("MU27", "shard_001.c", "FUN_00551a20(local_c,local_8,8);", "FUN_00551a20(local_c,local_8,0x10);", "G7b",
      "the council sets the CONTACT bit 8, not the war bit"),
+    ("MU39", "shard_001.c", "FUN_00551a20(local_c,local_8,8);\n    }\n  }\n", "\n  }\n  }\n", "G9b",
+     "the council's loop body actually calls the setter (a removed call reddens the source half of G9b)"),
     ("MU28", "shard_014.c", "s_GOODYPOD_00691820", "s_GOODPOD_00691820", "G9a",
      "the first-contact writer is the goody-pod handler"),
 ]
@@ -100,7 +114,7 @@ ALG_MUT = [
      "the census filter selects bit 8 out of the literal mask"),
     ("MU31", "ACCEPT_PC = 0x442D7D", "ACCEPT_PC = 0x442D40", "G4a",
      "the accept label is 0x442d7d"),
-    ("MU32", '"FUN_0056df40": 0x56F5AD', '"FUN_0056df40": 0x56F5AE', "G8a",
+    ("MU32", "(0x56F5AD, 0x8)", "(0x56F5AE, 0x8)", "G8a",
      "the pod's byte site is 0x56f5ad"),
     ("MU0", "NO-SUCH-TEXT-EVER", "x", "", "the NO-OP control: target absent, nothing may change"),
 ]

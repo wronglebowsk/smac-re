@@ -40,9 +40,10 @@ G2  id -> element -> labels.txt line (11+elem; line 10 is the count) -> text
 G3  the declare-vendetta case block (0x442cd3..0x442e42): mask-8 reads, no bit-8 stores
     push 0x8: 00442d26, 00442d42
     call 0x426d60: 00442d36, 00442d52
-    writes to 0x94d448/0x94d468 in the block: 0
-  G3a   PASS  exactly 2 mask-8 reads (2 pushes, 2 calls)
-  G3b   PASS  the block STORES nothing into either relations dword (0 stores): 0x8 is tested here, not written
+    each call's (fac) load displacement: 00442d36:0xa24, 00442d52:0xa28
+    instructions in the block: 114 | parsed STORES into 0x94d448/0x94d468: 0
+  G3a   PASS  two mask-8 asks, and their faction operands are 0xa24 and 0xa28 (one per direction)
+  G3b   PASS  parsed store classification: 0 stores into either relations dword - 0x8 is tested here, not written
 
 G4  the guard's polarity: a zero pair skips the candidate, a hit accepts it
     jne after each mask ask: 00442d40 -> 00442d7d, 00442d5c -> 00442d7d
@@ -65,9 +66,12 @@ G5  FUN_00551a20's byte-level implications: the OR 0x80000108 lives in the 0x10 
     or   00551b11  or ebx,0x80000108
     nearest test above the 0x80000108 OR: 00551abf test bl,0x10
   G5a   PASS  the 0x80000108 OR is gated by test bl,0x10 (test bl,0x10) - NOT by test bl,0x7 as M364's row 184 read
-  G5b   PASS  the 0x7 branch never ORs 0x80000108 (0): making peace clears 0x10/0x40/0x8000/0x100000 and does NOT set 0x8
-    clear-branch test masks: 0x7 0x1 0x10 0x17 | 8 & each: 0x0 0x0 0x0 0x0
-  G5c   PASS  mask 8 matches none of the four clear branches: setting it is a pure symmetric OR
+    `and edx,imm` in the 0x7 branch: 00551a88/0xffee7faf, 00551aaf/0xffee7faf -> complement 0x118050 = 0x10 0x40 0x8000 0x10000 0x100000
+  G5b   PASS  the 0x7 (peace) branch sets no bit 8 and its clear mask is exactly 0x10|0x40|0x8000|0x10000|0x100000 (0 ORs, 2 clears)
+    every test bl,imm: 0x7@00551a35 0x1@00551ab7 0x10@00551abf 0x17@00551b74 0x1f@00551c15
+    every and edx,imm : 0xffee7faf@00551a88 0xffee7faf@00551aaf 0xfaeef378@00551b17 0xfaeef378@00551b42 0xff7fffff@00551b98 0xff7fffff@00551bbf (bit 8 preserved: True)
+    last store 0x00551c0d | the 0x1f UI-refresh test at 00551c15
+  G5c   PASS  all 5 branch tests known, every and-mask preserves bit 8, and the 0x1f test sits after the last store: setting 8 is a pure symmetric OR
 
 G6  the setter writes BOTH directions: two ORs, the index pair swapped between them
     or edx,ebx: 00551be6, 00551c09 | stores through [eax]: 2 | index reload between the ORs: yes
@@ -101,13 +105,15 @@ G8  the claim-critical sites are byte-verified: push <mask> -> call 0x551a20 in 
       FUN_005551e0     @0x5551e0 -> 0055566e/0x88000008, 00555bb9/0x88000008
       FUN_005551e0     @0x5551e0 -> 0055566e/0x88000008, 00555bb9/0x88000008
       FUN_0056df40     @0x56df40 -> 0056f5ad/0x8
-  G8a   PASS  4/4 claim-critical sites carry the exact push-immediate at the pinned address
+  G8a   PASS  4/4 claim-critical sites carry the EXACT push-immediate at the pinned address
 
 G9  what the non-menu writers are: first contact (pod) and the council
-    FUN_0056df40 GOODYPOD literals: 2 | (rel&8)==0 guard before the set: yes | the set uses the tested pair: yes
-    FUN_00429950 CALLSCOUNCIL literals: 1 | outer loop bound: 8 | inner loop: yes
-  G9a   PASS  the pod handler only contacts a faction it has NOT met ((rel & 8)==0) and then sets 8 on that same pair - first contact
-  G9b   PASS  the council routine sets 8 for every ordered faction pair (1..7 x <outer) as the council convenes
+    source: loop header line 11, setter call line 13, loop body ends yes -> call inside: yes
+    FUN_0056df40 GOODYPOD: 2 | guard test at 0056f565 -> jne 0056f56d->0056f692 | call at 0056f5ad | guard->call gap 0x48
+    FUN_00429950 CALLSCOUNCIL: 1 | outer loop bound: 8 | inner loop: yes
+  G9a   PASS  the pod's (rel&8)==0 test sits 0x48 bytes before the ONLY setter call and its jne jumps PAST it: bit 8 is set only where it was clear - first contact
+    council call 0042999d | arg pushes ['mov ecx,DWORD PTR [ebp-0x4]', 'push ecx', 'mov edx,DWORD PTR [ebp-0x8]', 'push edx'] | loop cmps 00429973 cmp DWORD PTR [ebp-0x8],0x8, 0042998e cmp eax,DWORD PTR [ebp-0x8] | loop-back jmps before the call: 2
+  G9b   PASS  the council's setter call carries mask 8 inside BOTH loops (outer bound 8, inner < outer): every pair gets the bit once, and the setter writes both directions
 
 G10 the declare path FUN_005076d0 sets 0x10 and never names 8
     push 0x10: 00507abc, 00507c6d | push 0x8: 0 | calls to 0x551a20: 00507ac0, 00507c71
@@ -127,9 +133,9 @@ R3  RIVAL '0x8 is a bookkeeping met-flag with no page noun' - refuted
   R3    PASS  id 8 is builder row 1 - a page noun with its own label ('Commlink')
 
 R4  RIVAL 'M364's block membership proves war' - refuted by the same guard on a non-war option
-  R4    PASS  case 7 pairs the same two-direction mask-8 reads (2) with zero stores; the guard is reachability
+  R4    PASS  case 7 pairs the same two-direction mask-8 reads (2) with 0 stores of its own; the guard is reachability
 
 SUMMARY  23/23 gates
-DIGEST   44ad5e4a811941fc
+DIGEST   475fdceda961ef2d
 
-PASS M369: 23/23 gates digest 44ad5e4a811941fc
+PASS M369: 23/23 gates digest 475fdceda961ef2d
