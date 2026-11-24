@@ -1346,3 +1346,59 @@ DECLARED UNMODELED: which of the grant/copy call sites actually fired in the rec
 (the trace records no call stack - the attribution is family-level, not site-level); the
 role of `FUN_0059ce10`'s 11 literal-item sites; whether a facility completion ever stamps
 under a different rule (scenario grant, capture). No box time, no /proc, no gdb.
+
+**B35 - WHO CALLS THE GRANT FAMILY: the base record's `+0x8c` facility window is written at
+BIRTH by exactly two functions - the founder `FUN_004e47d0` (10 mapper grants) and the
+new-game setup `FUN_0059ce10` (11 literal-item grants through the set/clear API
+`FUN_004e44f0`) - and the recorded run says which of the two fires** (`sim/grantcall.py` =
+the run and its gates; s335 authors this rung, as B14-B34 did). B34 closed the completion
+leg and declared the attribution of the grant family unmodeled: which of its call sites
+fired in the recorded run, and what `FUN_0059ce10`'s 11 literal-item sites are. This rung
+answers "who calls" three ways, each independently falsifiable: the DIRECT call sites in
+the dump (resolved to host functions by address range, cross-checked against the index's
+own caller count), the ITEM SITES decoded from the pushes (item id, set/clear flag, base
+register) and the mapper `FUN_00507410`'s own arithmetic (byte = item>>3, mask =
+1<<(item&7), so item i is bit i), and the recorded BIRTHS - a base that first appears
+mid-run carries the bitmap its creator wrote, and a founder birth is ZERO-then-OR while an
+OR-only grant is not.
+
+`python3 -u -m sim.grantcall` must print `PASS B35: 11/11 gates` (and `python3 -u -m
+sim.selftest --b35` only relays, so the two entry points cannot print different text) with:
+**G1** the call census is the WHOLE dump (instruction count printed, digest pinned) and it
+finds exactly THREE direct `call`s into `0x4e47d0` (`0x4ccbdd`, `0x59d894`, `0x5a01f8`) and
+ONE into `0x59ce10` (`0x5a1579`); **G2** every site resolves to a host by address range and
+the host lists AGREE with the export's own `n_callers` (3 and 1), with zero unattributed
+sites - `FUN_004cca50`, `FUN_0059ce10`, `FUN_0059ec90` into the founder and `FUN_005a0fa0`
+into the new-game setup; **G3** `FUN_0059ce10`'s body holds exactly ELEVEN `call 0x4e44f0`
+sites, each decoded from its last three pushes as (item, base-register, set-flag), items in
+address order `[6,3,7,27,8,4,6,3,6,3,27]`, every set-flag `0x1` (a GRANT, never a clear);
+**G4** the founder holds exactly TEN `call 0x507410` mapper sites, items in address order
+`[1,3,6,7,3,6,7,26]` for the eight literal ones plus two computed (`eax`), so BOTH entries
+route through one mapper; **G5** the mapper's own body proves item i = bit i (the `sar 3` /
+`and 7` / `shl` trio over its 17 instructions) and the API's store is `[byte + base*0x130]`
+- the 304-byte record stride; **G6** the founder's bitmap init is a LEA-then-ZERO pair
+(`0x4e4a5d lea eax,[esi+0x95da9c]`, `0x4e4a63 xor ecx,ecx`, `0x4e4a65 mov DWORD PTR
+[eax],ecx`, `0x4e4a67 mov BYTE PTR [eax+0x4],cl` - FIVE bytes, through a register, so no
+`95da9c`-operand store grep can see it) and that zero precedes EVERY OR in the body, so a
+founder birth REPLACES the window while an API grant only ORs; **G7** on the recorded run
+exactly three bases first appear mid-run (idx 19 `[1]`, 20 `[]`, 21 `[1,3]`, at samples
+5/5/19) with their heads printed - the birth oracle; **G8** the two entries SCORE
+differently on those births: the founder's literal signature `{1,3,6,7,26}` covers 3/3
+(2 non-vacuous: `[1]` and `[1,3]`, 1 vacuous-empty), the new-game set `{3,4,6,7,8,27}`
+covers 1/3 and leaves bit 1 unexplained on BOTH non-vacuous rows - so the founder is the
+entry that fired in this run; **G9** mid-round is NOT a birth: the six recorded bitmap
+changes split 4 OR-shaped (prior bits preserved, adding 2/8/3/6) and 2 replacement-shaped
+(`[1]->[4]`, `[27]->[4]` - a loss, the COPY family B34 named), and none of the six passes
+the founder's zero-then-OR signature - the separator is the ZERO, not the bit identity,
+because bits 3 and 6 are inside the founder signature too; **G10** every anchor is a
+literal (site list, item tables, birth table, delta table, digests) and a SECOND pass over
+the dump and a SECOND fresh decode of the trace reproduce every digest, so a dump or
+decode drift reddens a gate instead of sliding by; **G11** the rivals FAIL on the printed
+numbers: "the 11-item new-game path made these births" scores 1/3, "no entry grants at
+birth" 1/3, and "the recorded gains are births" 0/6; each gate has a named mutant in
+`scripts/b35_mutate.py`.
+DECLARED UNMODELED: which of the founder's three call sites fired for each birth (the trace
+carries no call stack - the attribution is entry-level); what item 26 grants and why base
+20 was born empty while 19/21 got bit 1 (an empty birth falsifies "item 1 is
+unconditional" - the route that skipped it is OPEN); which mid-round caller of `0x4e44f0`
+(27 sites in 8 hosts) added bits 3 and 6 at r5/r7. No box time, no /proc, no gdb.
