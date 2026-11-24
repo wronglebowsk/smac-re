@@ -1,82 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-310-311.md` (2 sessions: Session 310-chain2, Session 311). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 312.
-
-## Session 312 (s312-chain1, REVIEW ROUND on PR #346 / M332, STATIC, zero box)
-The local Strata review posted 10 findings (3 P1, 7 P2), `evidence/ai_review/pr346_20261121_195950.md` (14,738/16,384 completion tokens, NOT truncated). Every one was triaged by **tightening the instrument, not the prose**: new gate **G9** (six sub-measurements), 4 new mutants MU18-MU21, new selftest row ST6. `python3 -u scripts/m332_difficulty_census.py` -> `PASS M332: 9/9 gates`, digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); `python3 -u scripts/m332_mutate.py` -> `PASS HARNESS 22/22` (20 scored + 1 NO-OP inert, 0 MISMATCH, 0 CRASH) digest(rows) `a9a944201849d026` (`evidence/m332_mutate.txt:23-25`); `--selftest` 6/6.
-- **RETRACTION (P1, fixed in place in `## M308`)**: "0x57c7b5 is a CO-STORE of the same eax (0x57c7b0, no intervening write)" was FALSE of the master cell — 0x57c7b0 *is* a store to `0x92bde8`, 5 bytes earlier in the same pair. What is true, and now READ by G9.3: the pair is adjacent, both `mov ds:cell,eax`, and there are 0 writes to eax since the `call 0x406720` at 0x57c7a2. A register-level law was written as a memory-level one.
-- **CORRECTION (P2)**: the "three independent views" number. The s311 Ghidra map MERGED both function bodies; the writer body contributes **0** exclusive name->field pairs, so the 7th three-way key was merge pollution. Honest count now: **6 three-way names, 6 fully agreeing** (`:68`). That proximity pairing also slips twice — 0x92bf10 keys `Time Controls`, 0x92bf0c keys `00000000` — now pinned by G7 instead of hidden.
-- **MEASURED, previously assumed**: API identity — argc-6 call count in FUN_0058e7f0 = **18** = Ghidra's 18 `GetPrivateProfileStringA` there, all through the one indirect callee `edi`; argc-4 through `edi` = **8** = Ghidra's 8 `WritePrivateProfileStringA` (G9.5). The 0x4ddcf1 edge = `call 0x5f1394`@0x4ddb53 + `test eax,eax`, 0 eax-writes before `jge 0x4ddcf1` (G9.2). cmp arms exactly {1,2,3,4} immediate + exactly {ebx}, ebx unique @0x4f9b5a (G9.1). All 6 copy windows: 0 register redefs AND 0 writes to the source cell (G9.4). Both array-end cmps sit in a loop with one `add reg,0xd4` above and one backward `jl` below (G9.6).
-- **NARROWED (P1)**: "no undisguised writer exists" -> no writer that *names* 0x985aec; a store through a runtime-computed register pointer is invisible to both scans (said in the G1 detail and the row).
-- **PITFALL**: adding a gate moves every pre-existing mutant that touches the same fact — MU1/2/3/7/8/13 all redden G9 too (each reason is a comment; declared sets updated, not the gates weakened). And `scripts/m332_named_rotate.py --verify` (new) exposed that the archive's recorded sha1 `4dc92495311e` was NOT reproducible once rotate2 appended to the same file: the hashed region has to stop at the `§rotation-2` marker.
-
-## Session 313 (s313-chain1, DOCS CAP SPLIT, zero box, zero measurement)
-
-- Ran FIRST because both docs were at the line: `NAMED.md` 246,504/250,000 (3,496 B headroom, UNDER the 5 KB trigger) and `NEXT_PROMPT.md` 11,986/12,000 (14 B — a milestone may not start on the doc it has to write into). Both moves are scripted + hash-asserted, not hand-edited.
-- Rotation: `python3 -u scripts/m333_named_rotate.py` moved `## M259-M261` (3,972 B, the oldest still-full pre-mutation-law block) VERBATIM to the NEW `docs/named-archive-m333-rows.md` and left a one-line-per-claim stub; `--verify` -> `PASS rotate-verify: NAMED stub cites sha1 f78e7ef04359, cites the archive, and the region re-hashes byte-exact` (region 3,972 B, re-read BOUNDED BY A TERMINATOR LINE, not to EOF — the s312 defect). NAMED 246,504 -> **244,756 B** (headroom 5,244, still thin: rotate again before the next block).
-- NEXT_PROMPT trim: `python3 -u scripts/m333_nextprompt_trim.py` moved region-A (the closed pick rows v/vi/vii/viii/x2/x3/x4 + the B27 row, 1,733 B, sha1 `8332dd50ba16`) and region-B (the result one-liner pointers, 508 B, sha1 `6f2ddbe32478`) VERBATIM into `docs/pick-archive.md` §trim-s313-chain1; `--verify` -> `PASS trim-verify: both regions re-hash byte-exact against the pointers in NEXT_PROMPT.md`. NEXT_PROMPT 11,986 -> **10,789 B**. The OPEN leads ((x1)/(x5)/(x6)) and (ix) were kept ON PURPOSE and the script asserts the tokens `0x984d48 / bit5 halves / 92bdf8 / 0x8f0090 / 0x5f1394 / (ix)` survive the trim — a cap split that hides the next pick is worse than the cap.
-- PITFALL: `%`-format arity — two of the appends raised `TypeError: not all arguments converted` (7 args / 6 specifiers). The rotate script died BEFORE writing, so no partial archive; the guard is the `assert` + the append-after-hash ordering.
-- Registry kept honest: `## M259-M261`'s retraction of M240's "two 22-byte map columns" AND M262's retraction of M260's "the ~140 KB views are not allocated" stay IN the stub, not only in the archive (AGENTS.md invariant).
-- **REVIEW ROUND #347** (local Strata, `evidence/ai_review/pr347_20261121_220218.md`, 10 findings, 15,042/16,384 tok, NOT truncated): **all 10 accepted, none dismissed — 9 were defects in the instruments, 1 in a shipped tool.** `--restub` + `--relabel` were added so the fix is PRODUCED by the scripts, not hand-typed. Re-measured after the last edit: rotate `PASS rotate-verify: stub cites :6 + sha1 f78e7ef04359, the region re-hashes byte-exact, the stub equals the STUB constant and no copy came back`; trim `PASS trim-verify: both regions re-hash byte-exact against the pointers in NEXT_PROMPT.md, both tags unique, every open-lead phrase still in the hot file`. NAMED 245,072 B (headroom 4,928 — STILL under the 5 KB trigger: rotate before the NEXT block), NEXT_PROMPT 11,355/12,000.
-  - F1 P1 ACCEPT: the `(ix)` survival assert read the WHOLE hot file while the sentence that explains (ix) had just been archived — a passing assert proving nothing. The hot text now carries `**NO STATIC PICKS LEFT** except **(ix)** (live-box, operator-GATED)` and the asserts name exact phrases (`MUST_KEEP`), so the trim can no longer pass on a file that lost the pick's meaning.
-  - F2 P1 ACCEPT: region-B was marker→EOF — exactly the hash-to-EOF class the PR claims to fix; now paragraph-bounded and it REFUSES to run if any non-whitespace follows the marker.
-  - F3/F10 ACCEPT: the stub cites the shipped byte-read (`evidence/m259_m261_census.txt:16-17` prints `immediates naming 0x224b8: 0; 4-byte LE pattern ... offset -1`; `:20-21` the 0x23bec-vs-stride compare; `:30` SUMMARY 14/14) instead of pointing at a bare filename.
-  - F4 ACCEPT: verify now pins `docs/named-archive-m333-rows.md:6` as a LINE the stub must cite and re-derives it, prints the FULL sha1, and asserts the stub is byte-identical to the STUB constant — re-wrapping the archive above the marker reddens verify.
-  - F5 ACCEPT: the M260 correction cites M262's own rows (`docs/named-archive-m332-rows.md` G2, `evidence/m262_m264_census.txt:24`).
-  - F6 ACCEPT: region-A holds the closed rows AND the superseded open-lead census; the tags and the hot pointer now say so, and the pointer states the archived census is superseded.
-  - F7 ACCEPT — a defect in SHIPPED tooling: `session_rotate.py`'s pointer said "read the archive only for questions before Session 297-chain2" while the archive holds Session 298 (numbers are per-chain; rotation cuts by file position). The wording now comes from one `index_line()` used by both the rotation and the new `--fix-index`, which re-derived the live pointer from the archive headers on disk: `(2 sessions: Session 298, Session 296-chain2) ... The split is by FILE POSITION, not by number`.
-  - F8 ACCEPT: `--restub` located the stub by a bare `## M259-M261` prefix (any table row could match); it now anchors on the unique line that is BOTH that header AND carries `§rotation-1`.
-  - F9 ACCEPT: rotate refused to append to an archive that already carried `§rotation-1` — a reverted NAMED edit plus a live archive used to double-archive a region that verify then blessed; now asserted on both sides, and verify counts copies.
-- PITFALL worth keeping: `%`-format arity. Two appends raised `TypeError: not all arguments converted` (7 args / 6 specifiers). Both died BEFORE the write, so no partial archive — the guard is ordering (hash in memory, then append, then re-read and compare), not luck.
-
-## Session 314 (s314-chain1, M333 CLOSED, STATIC zero box) — the feeder-slot NOUN and the CARRIED HALF-UNIT
-
-- Pick (x1) (feeder slots `0x984d48+48*item`, the OPEN row of `## M330` G10). ACCEPT `python3 -u scripts/m333_feeder_slot_census.py` -> **`PASS M333: 8/8 gates`** digest `b1ca12715e833cc7`, 2 runs byte-identical (`evidence/m333_feeder_slot_census.txt`); harness `python3 -u scripts/m333_mutate.py` -> **`PASS HARNESS 14/14`** digest `1d36c4eefd86391e`, `--selftest` 6/6 (`evidence/m333_mutate.txt`, `evidence/m333_mutate_selftest.txt`).
-- THE SLOT NOUN: a feeder slot is a FACILITY THE BASE HAS — the charge loop takes the cost from the stride-48 item table only when the item's bit is set in the 304-B base record at `base+0x8c` (G3). The loop VISITS ids 1..38 and CHARGES 1..34: the top `cmp esi,0x22 / jg` is a SKIP for 35..38, not the exit; the back-edge is the bottom `inc esi / cmp esi,0x27 / jl` (G1+G7).
-- THE BIT5 LAW: block+0 bit5 is a CARRIED HALF-UNIT dedicated to FUN_004f47f0 — read (shr5+and1), added to the cost, `sar 1` charges the quotient, the sum's PARITY is written back into the SAME bit5 (odd remainder survives the round). G5 def-use census: FUN_004f47f0 is the ONLY function image-wide that reads AND writes bit5 of a block+0 value; FUN_004dc390's `or ecx,0x20` is a DERIVED mirror dword (block+0 bits 30/29/20 -> bits 4/5/6) — rival R2 ("shared faction flag") dies on that distinction.
-- `ds:0x985ba0` is READ-ONLY in .text (2 loads, 0 stores image-wide) — the G6 gate asserts the measured fact (0 stores), not the wishful `>=1` the first draft carried; writer outside .text, noun INFERRED.
-- NEW FINDING (printed, not gated): a REMOVAL path inside the same loop (mapper `0x4f49b6`, bitmap bit-CLEAR `0x4f49e1`, 3 stores to `block+0x220`) — became pick (x7).
-- PITFALL (the fold-checker defect this milestone was created to fix): the linear backward value-walker answers `('const',48)` for the item-table read because it finds `mov esi,0x1` and never sees the loop-bottom `inc esi` — it OVER-PROVES `48*1`. The fold is now SHAPE-pinned (`lea r,[i+i*2]` + `shl r,4`, dest/base/index cross-checked against the bound test and the disabled-list cmp). A `value_of` PASS on a loop-carried counter is a PASS on an unmeasured state.
-- PITFALL: three regex classes burned rounds — `\b` after `]` never matches at end-of-string (`\[eax\+0x4\]\b`); the lea shape check must compare BASE==INDEX (not dest==base); and a broad `0x20`-anywhere filter inflates a "dedicated field" claim 1->18 (the immediate 0x20 is also the value 32 and a stride step — bit claims need def-use provenance, not text search).
-- DOCS: NAMED rotation-2 (`scripts/m333_named_rotate2.py`, M315 5,223 B -> `docs/named-archive-m333-rows.md:54` sha1 `c70cc525ecbd`, own terminator, both rotations verify byte-exact); NAMED 242,113 B (7,887 headroom) after adding `## M333`; NEXT_PROMPT 11,648 B (x1 answered, x7 opened, DOC CAP line re-measured). PITFALL: `§rotation-2` collides with m332-rows' older `§rotation-2` — verify filters on the archive filename too. PITFALL: patch-anchoring on a LINE PREFIX splices the tail of the matched line into the new block — anchor on whole lines.
-
-## Session 315 (s314-chain2, REVIEW ROUND on PR #348 / M333, STATIC, zero box)
-
-- All 10 findings ACCEPTED (3 P1 / 7 P2), none weakened — every fix ADDS a measurement, and each new tie got a mutant (MU11-MU14). Re-acceptance 8/8 digest `70376694feec5815` (pre-review `b1ca12715e833cc7`), 2 runs byte-identical; harness 18/18 digest `dee04978a5b5dd09`, `--selftest` 6/6.
-- The three P1s were the project's dominant class in new dress: a claim word ("image-wide") the scan did not cover (F1 — now ALL operand-text mentions of `0x985ba0`: 2 loads, 0 stores, no lea-absolute; the computed-address hole is STATED, noun INFERRED); constants asserted instead of parsed from bytes (F2 — G7 now reads both cmp immediates, `0x750` demoted to context); a shape-pin that checked the fold but never tied it to the read it explained (F3 — shl-dest == read-base, mutant MU14).
-- The P2s were all "counted but not connected": the tie rows (tested-bit -> mapper out-slots `[ebp-0x8]`/`[ebp-0xc]` MU12; `own_src`->`xor ebx,ebx`->`mov bl`->fold leaf MU13; `xor edx,edx`->`mov dl`->`cmp edx,ebx` MU11) turn existence proofs into identity proofs. The remaining identity `ebx`==charged-base owner is now stated INFERRED, not claimed.
-- F6: the def-walk stops at ADDRESS DISCONTINUITIES too, and the gate prints the measured gap per the M315 law: 2 of 168 block+0 sites (`51da8e`/`51da95`) sit in unclaimed regions.
-- PITFALL: an adjacency check ("immediately before") is too strict when the compiler interleaves (`shl ecx,0x4` sits between `xor edx,edx` and `mov dl,...`) — assert "no write to the register in between" instead.
-- PITFALL: a restub placeholder mapping inverted ARC_LINE/MARKLINE — verify's `cite == marker+2` assertion caught it on the first run. A verifier that pins the cite earns its keep; one that pins only the marker does not (F10).
-- rotate2 gained `--restub`; the pre-existing hardcoded ROOT in rotation-1 got the same derive-from-`__file__` fix (F8); both verifiers re-run green.
-
-## Session 316-chain2 (2026-11-23, M334 CLOSED, STATIC zero box) — the upkeep-FAILURE branch is a difficulty-gated AUTO-SELL
-
-- milestone/m334 (main 497d766). Pick (x7) = the REMOVAL path M333 printed but did not gate. `python3 -u scripts/m334_powershort_census.py` → **`PASS M334: 7/7 gates`** digest **5b5ece39af02baba**, 2 runs byte-identical (`evidence/m334_powershort_census.txt:56-57`, `_rerun.txt:56-57`); harness `python3 -u scripts/m334_mutate.py` → **`PASS HARNESS 45/45`** digest **a5a5091e533f7883** + coverage 10/10 items (`evidence/m334_mutate.txt:47-49`, `_rerun.txt` identical); `--selftest` **6/6** (`_selftest.txt:8`).
-- LAW: after `ENERGY -= cost` (0x4f4952) / `+300 += cost` (0x4f4962) through one derived 8380*owner fold, FUN_004f47f0 RE-READS ENERGY and tests vs 0 (`xor eax,eax`@0x4f4960 = the zero source, `jge`→next item). Negative side = 3-way dispatch: A `cmp [block+0x8],1` → `ENERGY:=0`@0x4f497f; B `cmp [base_rec+0x50], neg(item)` → `ENERGY:=0`@0x4f4999; C = the SELL: clear the item's bit in the CURRENT base's facility map (0x4f49e1), `ENERGY := FUN_004e40a0(owner,1,-1) × row[item]+12` @0x4f4a0b, `FUN_006265a2(1,row+0,-1,-1)`, `FUN_0048f100('POWERSHORT',0x10000,0xe,'genwarning_sm.pcx',0)`; loop CONTINUES (back-edge 0x4f4a3b→0x4f480b) ⇒ several facilities can go in one round.
-- **RETRACTION**: the s-era row `docs/named-archive-m32-m84e.md:268` said "refund = 0x4e40a0 × refund table 0x984d44" — the multiplication is right, the WORD is wrong: the store is a MOV with **0 reads of block+0x220** on that path (`:28-29`, `:40`) — an ASSIGNMENT, not a refund. Row patched in place; RIVAL1 + MU16 (turning it into `add` reddens G5+RIVAL1).
-- **NEW NOUN**: `block+0x8` = the faction's EFFECTIVE DIFFICULTY — 2 destination-named writers + **0** folded-pointer stores (60-step def walk, MU26 proves the scan): create 0x59eed6 stores `ds:0x985aec` for a human / imm 3 for the AI (gated `test dl,ds:0x985b10`), save-load 0x57ef57 stores a movsx byte through 2095*4=8380 ⇒ **difficulty < 2 never sells** (M332's difficulty mirror finally has a per-faction consumer).
-- PITFALL: an operand-text grep for an absolute VA misses stores through a FOLDED block pointer (`lea R,[k*4+0x94d430]` then `mov [R+8]`) — the census now runs both scans; PITFALL: the affine tracker's coefficient is `a` in `a*seed+b` (printed 0 once when `[1]` was read instead of `[0]`), and `shl` scales by `1<<imm`, not by the immediate.
-- OPEN: `row[item]+12` runtime value (the 39×48 table is .bss — no .text store names it) ⇒ the numeric ENERGY outcome; `base_rec+0x50` = queue head is INFERRED (archived live H :312; 51 .text sites read [R+0x50] with R:=ds:0x8f0d60 incl. 0x4f4994); FUN_004e40a0 = ECONOMIC FACTOR (archived H); why the price is assigned rather than added.
-
-**Review round, PR #350 (Strata, 10 findings: 4 P1 + 6 P2 — ALL accepted, 0 dismissed).** The same
-class as #345: prose that claimed more than the gate read. Every fix ADDS a measurement + a mutant:
-F1 mapper-item identity (`push esi` / `push ecx`←`[ebp-0x4]`, the slot the loop bottom writes from
-esi) → MU27/MU28; F2 the factor's args + owner-byte source → MU29/MU30; F3 the full cdecl arg lists
-of both announcement calls + the row+0 edx tie → MU31/MU32; F4 the human/AI gate
-(`mov al,ds:0x985b10` + `test dl,al` + `jne 0x59eed6`) is now measured and printed (`:17`) → MU33;
-F5 the "0 reads" window is now stated exactly (sell path AND from the negative test, both 0, `:29`);
-F6 a FOLDED-pointer read census (`folded_refs_to`, dest-normalized def walk) — 0 folded refs to
-block+0x220 in-fn and image-wide, with a **non-zero control**: 10 folded refs to block+0, so the
-scan is not vacuous (`:38`) → MU34; F7 the clamp stores' source register + 0 intervening eax writes
-(`:10`) → MU35; F8 fold→imul-base→dest→store-source dataflow (`:25-28`) → MU36/MU37; F9 the save/load
-fold is tied to the actual `[ecx*4+0x94d438]` store and its edx source (`:18`) → MU38; F10 the
-address-register write scan now normalizes partial regs and `xchg` (`:37`) → MU39. Re-measured at
-head: **7/7 digest `5b5ece39af02baba`** x2, **harness 45/45 `a5a5091e533f7883`**, ST 6/6. Two
-declared sets corrected to the MEASURED truth, not weakened: MU25 GREW to {G6,RIVAL3} (pinning the
-full memo arg list made it a G6 mutant too) and ME3 to {G4,G7,RIVAL2}. PITFALL: a mutant that
-empties a list crashed the printer (`load_fold[0]` on None) — a CRASH is a harness failure, so
-printers of measured values need the same None-guard as the gate.
+Older sessions: `docs/sessions/sessions-312-316.md` (5 sessions: Session 312, Session 313, Session 314, Session 315, Session 316-chain2). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 316-chain2 sidecar.
 
 ## Session 316-chain2 sidecar (2026-11-23) — M334 merged + evidence completion
 
@@ -596,6 +520,7 @@ whether a facility completion stamps at all.
   literal->0x997120 strcat triples, G5/G6 assert the edi/ebx roots, G9 gates XG and PRODUCE3, G11
   asserts the per-function distribution, G12 reads push 0x99a11c -> call 0x64c460 -> cmp eax,0x10,
   and the .rdata scan now reads the PE section table instead of hardcoded offsets.
+
 ## Session 326-chain2 (2026-11-24) — M349: M68/M69 `NEG_TYPE` ANSWERED (milestone/m349)
 - QUESTION: the queue stored **-3** for chooser entry 195 and **-6** for 196
   (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`) — not one sentinel.
@@ -648,6 +573,30 @@ whether a facility completion stamps at all.
 - **Docs:** NAMED 243,972 B (M314 4,399 B VERBATIM -> `docs/named-archive-m350-rows.md`, sha1
   `decdd34b`, `--verify` PASS). OPEN: who sets ds:0x6926ec.
 
+## Session 327 (2026-11-24) — B32: the UNIT leg RUN on the recorded trace (milestone/b32)
+
+- ACCEPT `python3 -u -m sim.unitoracle` -> `PASS B32: 10/10 gates`, rows `e6875c63c8c2f911`,
+  score `59b0b5e3647555b7`, leg `26d1c63c2861b182`, map `da981620c0e3ef18`
+  (`evidence/b32_unitoracle.txt:54`), two runs byte-identical (same file, re-run `diff` clean);
+  harness `python3 -u scripts/b32_mutate.py` -> `PASS HARNESS B32: 13/13` `155781675e5086a1`
+  (`evidence/b32_mutate.txt:16`).
+- B32 attaches M349's decode to B31's oracle. Heads `[321,-2,-8,2,-3,-6]` = 4 UNIT / 1 FACILITY /
+  1 BIGITEM (`:43`). Scored on the BEFORE-sample (pre-pop) head PER LEG: 4/4 unit heads gain
+  exactly the mapper bit (-2->bit2, -8->bit8, -3->bit3, -6->bit6); 0/2 facility-range heads do;
+  B31's bulk rule reproduces 0/6 on the same rows (`:25`, `:44`). B31's 0 was an undeclared
+  decode, not a refutation of the stamp.
+- The AFTER-sample (post-pop) head scores 0/6 (`:28`): the stamp reads the head BEFORE the pop,
+  so M344's spend->stamp->pop order now holds on all six recorded rows, not only B31's 2-deep
+  fixture.
+- Write replayed: before window OR mask == the recorded after window at 4/4 unit boundaries and
+  only the mapper byte moves (`:35-39`, `:47`). Virgin Soil: facility 2 predicts
+  `04 00 00 08 00`, the record holds `10 00 00 00 00`; head 321 maps to byte 40, off the 8-byte
+  map (1 refusal) (`:34`, `:37`, `:48`). The 2 losses sit on the 2 non-unit rows only (`:49`).
+- QUALIFIES `## B31` (its OPEN "unit-id decoding" is closed by M349 + this run) and `## B30`
+  (the facility setter stays UNVERIFIED and is now CONTRASTED: side-by-side unit completions DO
+  stamp). Pitfall: a new module's `HEAD_OFF` is dead code if it reads through `fa.head_of` - the
+  head-offset mutant scored green until the module unpacked its own constant.
+
 ## Session 328-chain3 (2026-11-24) — M352: the writeback — its target, the key matrix, and `ds:0x6926ec` RETRACTED
 
 - **ACCEPT** `python3 -u scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7 gates`**,
@@ -659,15 +608,15 @@ whether a facility completion stamps at all.
   the slot's own dword is a .rdata RVA naming the same function). 0 mem-indirect calls; 20 direct.
 - **WRITE keys = 13**: Prefs Format, Difficulty, Map Type, Top Menu, Faction, Preferences,
   More Preferences, Custom World (8 direct) + Semaphore/Announce/Rules/Customize/Time Controls
-  (5 via FUN_0058f030). 12 are backed by a cell loaded in the same block (11/11 scalars + the
-  7-dword array); `Prefs Format` is `__itoa(0xb)` — a hardcoded stamp, NOT a cell. **The persist
+  (5 via FUN_0058f030). 12 write blocks LOAD a block cell (11/11 scalars + the 7-dword array;
+  window presence, not value provenance); `Prefs Format` is `__itoa(0xb)` — a hardcoded stamp, NOT a cell. **The persist
   writes no cell it never read.**
 - **READ asymmetry (image-wide, total):** 5 `GetPrivateProfileStringA` refs in 5 fns (0x58e5a0,
   0x58e640, 0x58e6c0, 0x58e760, 0x58e7f0); 52 attributed sites -> 35 keys. 13/13 written keys are
   read (0 write-only). Read but written NOWHERE (33 write sites / 28 keys): **`Laptop`**
   (0x6926fc/0x692704; twins + 2 loader sites) and **`Language`** (0x69270c).
-- **RETRACTION (M350 OPEN "who sets ds:0x6926ec")**: nobody — it is not a variable. 0 stores in
-  .text (moffs + byte scan + register-copied RMW); 7 uses all `push 0x6926ec` in the lpKeyName
+- **RETRACTION (M350 OPEN "who sets ds:0x6926ec")**: nobody — it is not a variable. No store names the
+  VA (moffs/mem-dest forms) and nothing materialises it as data; 7 uses all `push 0x6926ec` in the lpKeyName
   slot (the 7 four-byte VA occurrences are all push imm32, so nothing even materialises
   the address as data); the VA holds the literal `Prefs Format` (0x6926e8 = the `"0"` default of the same call).
   M350's "first read takes its key pointer from ds:0x6926ec" restated: the read's KEY IS it.

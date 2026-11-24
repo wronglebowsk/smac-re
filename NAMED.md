@@ -918,17 +918,15 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | gates load-bearing: `scripts/m310_mutate.py` = 14/14, every mutant reddening its named check, the harness requiring the unmutated instrument to exit 0 and rejecting tracebacks | `evidence/m310_mutate.txt:17,18` | V |
 | OPEN: GOAL semantics and the token alphabet; WHY a negative priority is the invalidation trigger; what `this+0x1ddb4/1ddb8` hold; what consumes `ds:0x997120`; save-carry of the GOAL list | - | lead |
 
-## B30 (s321 BUILD, zero box) — the COMPLETION leg EXECUTABLE: a paid queue item becomes a facility the base HAS (`sim/composedfacility.py`; spine §B30; M310 rotated VERBATIM to `docs/named-archive-b30-rows.md:5`, sha1 `ca3caf3785c9d6e9`). ACCEPT `python3 -u -m sim.selftest --b30` -> **`PASS B30: 6/6 gates`** rows `234ab3d83a88dbea` print `29f408c79329a5a8` img `3a503c638ba45330` (`evidence/b30_facility_completion.txt:35-36`), 2 runs + relay identical; harness `python3 -u scripts/b30_mutate.py` -> **`PASS HARNESS B30: 10/10`** digest `76a481b5d8a7d8b0`, every gate G1-G6 reddened, NO-OP `[]`, ST 4/4, baseline tree green, no crash accepted (`evidence/b30_mutate.txt:12`).
+## B30 (ROTATED) - see `docs/named-archive-b32-rows.md` — spine §B30; ACCEPT `python3 -u -m sim.selftest --b30` `PASS B30: 6/6` `234ab3d83a88dbea`, harness 10/10 `76a481b5d8a7d8b0` (`evidence/b30_facility_completion.txt:35-36`).
 
-| claim | evidence | conf |
-|---|---|---|
-| the container's own queue drives the run: 18 base records, own player 3, 2 eligible (`1<=head<=31` AND inside the parsed charge window; heads 32..38 ineligible `[]`), target base 0 'University Base' item 2 = 'Children's Creche', rule delta 1 | `evidence/b30_facility_completion.txt:2`, `:22` | V MU6 |
-| the SETTER is the reader's inverse over the whole 32-id window (32/32 round-trip, 0 stray bits, id 39 REFUSED); the swapped-orientation rival lands on only 4/32 ids | `:23` | V MU1/MU2 |
-| the write is ONE byte: diff `[140]`, delta 4 = `1<<(item&7)`, inside `+0x8c..+0x8f` | `:24` | V MU1 |
-| writer round-trip: identity build byte-identical, file diff = 1 offset, reload owns `[1,2,8]`, shape/tail equal, 17/17 other records byte-identical, wrong-base rival misses THROUGH THE RELOAD | `:25-26` | V MU3/MU5 |
-| the bill moves by the DERIVED table under M46's disabled rule (0 -> 1, delta 1 == rule 1, 0 per-id mismatches), priced off the RELOADED record; the 'table value' rival differs at exactly `[8]`; G6 runs the instrument twice, so determinism is a gate | `:27` | V MU4/ME3/ME4 |
-| the completion ROUTINE that stamps the bit was ASSUMED (reader-inverse) in this rung - **QUALIFIED by `## M342`** (the setter is `FUN_004e44f0`'s inline `or` @`0x4f0ec0`, the pop `FUN_004ef5d0` a non-writer) **and by `## B31`**: the game's own run has NO positive completion case and one NEGATIVE at a facility-range head, so the assumption is UNVERIFIED against recorded bytes | `evidence/m342_completion_setter.txt:190` | V (M342) |
-| OPEN: every other real-completion effect (queue-pop order beyond B11, storage/mineral reset, messages); ids 39..71's shared-field question | - | lead |
+- CONTAINER-DRIVEN run (G1): 18 records, own player 3, 2 eligible, target 0 'University Base' item 2 — `evidence/b30_facility_completion.txt:2,22` — V MU6.
+- SETTER == reader inverse over the 32-id window (32/32 round-trip, id 39 refused); swapped rival 4/32 — `:23` — V MU1/MU2.
+- the write is ONE byte: diff `[140]`, delta 4, inside `+0x8c..+0x8f` — `:24` — V MU1.
+- writer round-trip: identity build byte-identical, 1 offset, reload `[1,2,8]`, 17/17 others — `:25-26` — V MU3/MU5.
+- the bill moves by the DERIVED table (delta 1, 0 mismatches); 'table value' rival differs at `[8]`; G6 runs it twice — `:27` — V MU4/ME3/ME4.
+- the stamper was ASSUMED here - QUALIFIED by `## M342` (inline `or` @0x4f0ec0) and by `## B31`/`## B32`: the recorded run has no facility-positive case, and the UNIT twin stamps 4/4 where the facility twin stamps 0/2 — `evidence/m342_completion_setter.txt:190`, `evidence/b32_unitoracle.txt:25` — V (M342/B32).
+- OPEN: other real-completion effects (pop order beyond B11, storage/mineral reset, messages); ids 39..71 — - — lead.
 
 ## B31 (s324 BUILD, zero box) — the game's own 10-boundary run is the COMPLETION ORACLE: 6 facility-bit gains / 2 losses, the rule "the queue head id is the bit that appeared" scores 0/6, and Korolev r0 replays to st 0 with NO stamp (`sim/facoracle.py`; spine §B31). ACCEPT `python3 -u -m sim.facoracle` -> **`PASS B31: 16/16 gates`**, rows `ce7688c0cb3b5f9d` oracle `7afda4dd49566fb4` score `9a4f2c466f3d18b7` img `fb0bc0caa186b766` (`evidence/b31_facoracle.txt:63`), 2 runs identical; harness `python3 -u scripts/b31_mutate.py` -> **`PASS HARNESS B31: 12/12`** digest `087e1d0228debbe9` (`evidence/b31_mutate.txt:14`). NAMED cap: B24 rotated VERBATIM to `docs/named-archive-b31-rows.md:5`, sha1 `6bb8d2c5c2114bbc6e333ff2665bda8c50cfa1d6`, `scripts/b31_named_rotate.py --verify` ok.
 
@@ -941,7 +939,7 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | pop-first (reading the head AFTER the pop) stamps the NEXT item: on the declared 2-deep fixture it writes 6, the measured order writes 2 — M344's spend→stamp→pop order is load-bearing | `evidence/b31_facoracle.txt:40` | V MU6 (G4d/G6c red) |
 | the writer carries an ARBITRARY bitmap including a LOSS of 8 (the OR-only setter cannot express it): 2-byte diff, reload `[1,4]`, identity build byte-identical, the other 17 records untouched | `evidence/b31_facoracle.txt:46` | V MU8 (write shifted → G5 red) |
 | QUALIFIES `## B30`: B30's setter was ASSUMED; this run measures no positive completion case and one recorded NEGATIVE at a facility-range head, so "a paid queue item becomes a facility" is UNVERIFIED against the game's own run | `evidence/b31_facoracle.txt:35-36` | V MU5 |
-| OPEN: the unit-id decoding that maps a queue head onto a bitmap id (M68/M69 `NEG_TYPE`); which recorded loss is a raze vs a record-identity change; whether a facility completion stamps at all | - | lead |
+| CLOSED by `## M349` + `## B32`: the unit-id decode is head<0 = negated TYPE and a unit completion stamps its mapper bit (4/4); STILL OPEN: a FACILITY completion stamps nothing on this run (0/2) and which loss is a raze vs an identity change | `evidence/b32_unitoracle.txt:25` | V (B32 MU3) |
 
 ## B22 (s273, BUILD 12/12, zero box; post-Greptile #286: one P1 arithmetic error retracted, the falsifier made load-bearing) - BOTH save record arrays grow in ONE writer call, and the CREATE leg demonstrably reads its ARGUMENTS out of the reloaded image (sim/composedgrowth.py)
 | claim | evidence | conf |
@@ -1524,6 +1522,16 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | recorded B31 heads ARE 321,-2,-8,2,-3,-6 (4 unit + 1 facility + 1 >=64); `>31` NOT unit-encoded | `:64-71` | V MU9,MU21 |
 | rivals DEAD: -(design-192) -> -4 vs trace -6 (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`), "-39 sentinel", logical shift | `:92-97` | V MU8,MU18,MU22 |
 | ACCEPT `scripts/m349_unit_id.py` `PASS M349: 13/13` `fa2d81797551dae5` x2; harness 22/22, 13/13 | `:101-102`, `evidence/m349_mutate.txt:30` | V MU0 |
+## B32 (s327 BUILD; ACCEPT `python3 -u -m sim.unitoracle` -> **`PASS B32: 10/10`** `e6875c63c8c2f911` x2 (`evidence/b32_unitoracle.txt:53-54`); harness **13/13** `155781675e5086a1` (`evidence/b32_mutate.txt:16`)) — the UNIT leg on the recorded trace: 4/4 unit heads stamp the mapper bit, 0/2 facility-range do, the post-pop head 0/6. NAMED cap: B30 rotated VERBATIM to `docs/named-archive-b32-rows.md:5`, sha1 `7a11114cc0b2ee78ef113acdb95260b5228cffa0`, `--verify` 7/7 (`evidence/b32_named_rotate.txt:9`). `:N` = a line of the ACCEPT evidence.
+
+| claim | evidence | conf |
+|---|---|---|
+| heads `[321,-2,-8,2,-3,-6]` = 4 UNIT / 1 FAC / 1 BIG; local decode == M349's 30-row `UNIVERSE` row-for-row | `:43` | V MU11 |
+| before-sample head PER LEG: 4/4 unit heads gain exactly the mapper bit (`-2`->2, `-8`->8, `-3`->3, `-6`->6); 0/2 facility; B31's bulk rule 0/6 | `:25`, `:44` | V MU3,MU7 |
+| the AFTER-sample head scores 0/6 -> the stamp reads the head BEFORE the pop (M344's order) | `:28`, `:45` | V MU5 |
+| before OR mask == the recorded after window at 4/4 unit boundaries; only the mapper byte moves | `:35-39`, `:47` | V MU6,MU13 |
+| facility side: 321 -> byte 40 (off the 8-byte map, 1 refusal); facility 2 at Virgin Soil predicts `04 00 00 08 00` vs recorded `10 00 00 00 00` | `:34`, `:37`, `:48` | V MU10 |
+| 2 losses, both on the 2 non-unit rows; each unit row's gain set is exactly its bit | `:49` | V MU9 |
 
 ## M352 (s328-c3, static; ACCEPT `scripts/m352_persist_writeback.py` -> **`PASS M352: 7/7`** `d553194a`, x2 `c8bbfda4` (`evidence/m352_x2.txt:4`); harness 13/13; `:N` = a line of `evidence/m352_persist_writeback.txt:1-140`)
 | claim | ev | conf |
