@@ -74,27 +74,21 @@ TABLE 0  the row list the modal resolves is TWO sections, appended in this order
       flags = 0x4960f0(i) | 0x10, 0x4960f0 in [0, 1, 2, 3]  ->  bit 0x20 ALWAYS clear  ->  return -i
   then 0x418b5x stores that return into ds:0x8f0d60 + 0x50 (the base record's queue slot 0)
 
-TABLE 3  the sign law, computed over the whole flag space
+TABLE 3  the sign law, computed over ALL 256 flag bytes (plus the reachable rows)
   0x4960f0 return immediates: [0, 1, 2, 3]  (from 5 sites)
-  flags 0x20 set?  item  ->  returned
-    0x10  no       3  ->  -3
-    0x10  no       6  ->  -6
-    0x11  no       3  ->  -3
-    0x11  no       6  ->  -6
-    0x12  no       3  ->  -3
-    0x12  no       6  ->  -6
-    0x13  no       3  ->  -3
-    0x13  no       6  ->  -6
-    0x20  yes      3  ->  +3
-    0x20  yes      6  ->  +6
-    0xa0  yes      3  ->  +3
-    0xa0  yes      6  ->  +6
-  unit flags (0x10|0..3) negative: 16/16 items
+  256 flag bytes: 128 with 0x20 clear, 128 with 0x20 set
+  of the 1024 (flag,item) samples: 528 returned -item, 520 returned +item
+    reachable flags 0x10  item 6 -> -6
+    reachable flags 0x13  item 6 -> -6
+    reachable flags 0x20  item 6 -> +6
+    reachable flags 0xa0  item 6 -> +6
 
 TABLE 4  rivals against the recorded heads
   recorded B31 heads: [321, -2, -8, 2, -3, -6]
   R1 'return is always -item'        -> recorded [321, -2, -8, 2, -3, -6] holds positives: dead=True
-  R2 'negative is -(design id - 192)' -> predicts 195->-3, 196->-4 ; recorded 195/196 -> -3/-6 : False
+  R2 'negative is -(design id - 192)', tested on the parsed trace pairs:
+    m68 item=195 cell=6 stored=-3  predicts -3  MATCH
+    m69 item=196 cell=2 stored=-6  predicts -4  MISMATCH
   R3 'the store site negates'        -> neg count in the store path = 0 : True
 
 GATES
@@ -108,12 +102,12 @@ ok     G7 the flags getter reads the row payload's +8, not the item at +4
 ok     G8 the chooser's return reaches base+0x50 only when the insert position is 0  0x41860a -> edi -> [ebp-0x10] -> [base+0x50]
 ok     G9 no negation between the chooser call and the store (0 negs); one in the modal  381-insn store path
 ok     G10 the row builder indexes the SAME type array M349's cost read uses  M349 cost base=0x984d44 stride=48 ; here base=0x984d44 stride=48
-ok     G11 every reachable unit flag value yields -item; a facility flag yields +item  unit flags [0, 1, 2, 3] -> all negative
+ok     G11 every flag byte with 0x20 clear yields -item, every one with it set yields +item, and the reachable unit flags are all in the clear set  528/512 samples negative, 520/512 positive
 ok     G12 R1/R2/R3 fail on the printed numbers  facility +2 ; 196 predicts -4 ; 0 negs at the store
-ok     G13 the selection cell is the ROW counter and rows are filtered, so cell != item  trace's own note present: True
+ok     G13 the selection cell is the ROW counter and rows are filtered, so cell != item  m68 verdict states the re-sort: True ; intent 195 vs stored -3
 ok     G14 the two sections compare the base queue slot against +item and against -i  [ebp-0x30] = ds:0x8f0d60 slot [sub+0xb68] @0x495566
 ok     G15 cand[k] = k for k<0x40 else owner*0x40|(k&0x3f): the >=64 entries are faction items  cand_n @0x9267e0, table @0x9267e4
 
 15/15 gates
-DIGEST c23a0d70f80d757e  universe=15 gates=15
+DIGEST 504c7342fb16273b  universe=15 gates=15
 PASS M351: 15/15 gates

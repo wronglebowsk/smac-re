@@ -668,7 +668,7 @@ whether a facility completion stamps at all.
   the trace's verdict says "the candidate array re-sorted between the read and the click". The
   cell is a ROW counter (sub+0xa818 -> sub+0xa774 @0x495b00) and rows are FILTERED (0x5a6e70,
   `jne` skip @0x495b69), so cell != item. -3/-6 stand as type ordinals; 195/196 does not.
-- ACCEPT `PASS M351: 15/15` `c23a0d70f80d757e`, x2 identical (`evidence/m351_x2.txt:2-4`,
-  sha1 `39c60a48`); harness 20/20 NO-OP ['MU20'] (`evidence/m351_mutate.txt:27`).
+- ACCEPT `PASS M351: 15/15` `504c7342fb16273b`, x2 identical (`evidence/m351_x2.txt:2-4`,
+  sha1 `6f53b29d`); harness 20/20 NO-OP ['MU20'] (`evidence/m351_mutate.txt:27`).
 - OPEN: section A = "designs" is INFERRED (trace names only); which B31 loss is a raze;
   whether a completion stamps.

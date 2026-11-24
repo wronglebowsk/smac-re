@@ -1525,11 +1525,12 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | recorded B31 heads ARE 321,-2,-8,2,-3,-6 (4 unit + 1 facility + 1 >=64); `>31` NOT unit-encoded | `:64-71` | V MU9,MU21 |
 | rivals DEAD: -(design-192) -> -4 vs trace -6 (`evidence/m68_key_run_attempt1.txt:12`, `evidence/m69_cursor2.jsonl:8`), "-39 sentinel", logical shift | `:92-97` | V MU8,MU18,MU22 |
 | ACCEPT `scripts/m349_unit_id.py` `PASS M349: 13/13` `fa2d81797551dae5` x2; harness 22/22, 13/13 | `:101-102`, `evidence/m349_mutate.txt:30` | V MU0 |
+
 ## M351 (s328-chain2, 15/15) — the CHOOSER producer: a unit row's item IS the negated TYPE ORDINAL
-| modal 0x496ad0: `and eax,0x20` @0x49772a, `neg eax` @0x49777c; item = row+4 (0x401940), flags = row+8 (0x495480) | `evidence/m351_type_producer.txt:70-76,101` | V MU1,MU2,MU10,MU11 |
-| rows: A idx<0x80 item=cand[idx]@0x9267e4, \|0x20 -> +item; B i=1..0x47 item=i flags=0x4960f0(i)\|0x10 -> -i; 0x4960f0 in {0,1,2,3} so 0x20 never set | `:70-75,78,110` | V MU5,MU8,MU9,MU17 |
-| i is the TYPE ORDINAL: 0x984d38+0x30*i name / 0x984d44 cost (= M349's) | `:73,113` | V MU4,MU5 |
-| chooser uses -i: afford 0x495c2f, queue-slot cmp 0x495e5c @0x495566; A cmps +item @0x495aef | `:114` | V MU15,MU19 |
-| 0x418b57 stores it to ds:0x8f0d60+0x50 on pos==0; 0 negs in 381 insns | `:108` | V MU12,MU13 |
-| RETRACTED: M68's "195 -> -3" is a STALE cell read (trace: "re-sorted between the read and the click"); cell = row counter @0x495b00 | `:115` | V MU14 |
-| ACCEPT 15/15 `c23a0d70f80d757e` x2; harness 20/20 | `:118-119` | V MU0 |
+| modal 0x496ad0: `and eax,0x20` @0x49772a, `neg eax` @0x49777c; item = row+4 (0x401940), flags = row+8 (0x495480) | `evidence/m351_type_producer.txt:95,100-101` | V MU1,MU2,MU10,MU11 |
+| rows: A idx<0x80 item=cand[idx]@0x9267e4 \|0x20 -> +item; B i=1..0x47 item=i flags=0x4960f0(i)\|0x10 -> -i; 0x4960f0 in {0,1,2,3} so 0x20 never set | `:97-99,109` | V MU5,MU8,MU9,MU17,MU18 |
+| i is the TYPE ORDINAL: 0x984d38+0x30*i name / 0x984d44 cost (= M349's) | `:97,104` | V MU4,MU5 |
+| chooser uses -i: afford 0x495c2f, queue-slot cmp 0x495e5c @0x495566; A cmps +item @0x495aef | `:108` | V MU15,MU19 |
+| 0x418b57 stores it to ds:0x8f0d60+0x50 on pos==0; 0 negs in 381 insns | `:102` | V MU12,MU13 |
+| RETRACTED: M68's "195 -> -3" is a STALE cell read (m68 verdict line parses "re-sorted"); cell = row counter @0x495b00 | `:107` | V MU14 |
+| ACCEPT 15/15 `504c7342fb16273b` x2; harness 20/20 | `:112-113` | V MU0 |

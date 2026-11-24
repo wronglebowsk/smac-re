@@ -121,12 +121,14 @@ def main():
             print("  %-5s BAD   exit %d reds %s" % (mid, rc, red))
             lines_out.append("%-5s BAD   exit %d reds %s  <- %s" % (mid, rc, red, why))
             continue
-        scored += 1
-        covered |= set(red)
         hit_ok = want in red
-        print("  %-5s %s  reds %-18s %s" % (mid, "ok   " if hit_ok else "OFF  ", ",".join(red), why))
-        lines_out.append("%-5s %s  reds %-18s %s" % (mid, "ok   " if hit_ok else "OFF  ",
-                                                     ",".join(red), why))
+        if hit_ok:
+            scored += 1
+            covered |= set(red)
+        print("  %-5s %s  reds %-18s expected %-4s %s"
+              % (mid, "ok   " if hit_ok else "BAD  ", ",".join(red), want, why))
+        lines_out.append("%-5s %s  reds %-18s expected %-4s %s"
+                         % (mid, "ok   " if hit_ok else "BAD  ", ",".join(red), want, why))
         if not hit_ok:
             missed.append((mid, "expected %s, reddened %s" % (want, red)))
     for mid, mode, want, why in MODEL:
@@ -137,12 +139,14 @@ def main():
             print("  %-5s BAD   model mutant exit %d reds %s" % (mid, rc, red))
             lines_out.append("%-5s BAD   model mutant exit %d reds %s" % (mid, rc, red))
             continue
-        scored += 1
-        covered |= set(red)
         hit_ok = want in red
-        print("  %-5s %s  reds %-18s %s" % (mid, "ok   " if hit_ok else "OFF  ", ",".join(red), why))
-        lines_out.append("%-5s %s  reds %-18s %s" % (mid, "ok   " if hit_ok else "OFF  ",
-                                                     ",".join(red), why))
+        if hit_ok:
+            scored += 1
+            covered |= set(red)
+        print("  %-5s %s  reds %-18s expected %-4s %s"
+              % (mid, "ok   " if hit_ok else "BAD  ", ",".join(red), want, why))
+        lines_out.append("%-5s %s  reds %-18s expected %-4s %s"
+                         % (mid, "ok   " if hit_ok else "BAD  ", ",".join(red), want, why))
         if not hit_ok:
             missed.append((mid, "expected %s, reddened %s" % (want, red)))
     # measured universe of gates, from a clean run
