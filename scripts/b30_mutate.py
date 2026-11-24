@@ -64,13 +64,13 @@ MUTANTS = [
      "    m[\"rival_constant\"] = [r for r in per_id if r[1] == table[r[0]]]",
      "the 'table value' rival scored on its AGREEMENTS (the disabled id vanishes)"),
     ("ME4", "sim/composedfacility.py",
-     "    m[\"bill_after\"] = bill(after)",
+     "    m[\"bill_after\"] = bill(reload_b)",
      "    m[\"bill_after\"] = bill(orig)",
      "the bill's AFTER side read off the UNCHANGED record (the delta is structurally 0)"),
     # ---- the NO-OP control ---------------------------------------------------------------
     ("MU9", "sim/composedfacility.py",
-     "ITEM_LO, ITEM_HI = 1, 38             # ids the completion may stamp (0 = none, 39+ = projects)",
-     "ITEM_LO, ITEM_HI = 1, 38             # ids the completion may stamp (0 = none; no-op control)",
+     "ITEM_LO, ITEM_HI = 1, 31             # the four PINNED bitmap bytes (ids 0..31); 32..38 are",
+     "ITEM_LO, ITEM_HI = 1, 31             # the four PINNED bitmap bytes (ids 0..31; no-op mutant); 32..38 are",
      "identity mutant: the tree must redden NOTHING"),
 ]
 
@@ -174,7 +174,17 @@ def main(argv=None):
     ids = set(a.only.split(",")) if a.only else None
     results, digests = [], []
     tmp = tempfile.mkdtemp(prefix="b30_mut_")
+    guards = []
     try:
+        # GUARD 0: an UNMUTATED tree must run green, or "a mutant reddens G<n>" measures nothing
+        base = os.path.join(tmp, "BASE")
+        build_tree(base, "sim/composedfacility.py",
+                   "ITEM_LO, ITEM_HI = 1, 31             # the four PINNED bitmap bytes (ids 0..31); 32..38 are",
+                   "ITEM_LO, ITEM_HI = 1, 31             # the four PINNED bitmap bytes (no-op baseline); 32..38 are")
+        bbad, _bok, brc, berr = run_tree(base)
+        if brc != 0 or bbad:
+            guards.append("the unmutated tree is not green (rc=%d, BAD %s)" % (brc, sorted(bbad)))
+        print("BASE unmutated tree rc=%d BAD %s" % (brc, sorted(bbad) or "none"))
         for (mid, target, old, new, why) in MUTANTS:
             if ids and mid not in ids:
                 continue
@@ -182,6 +192,10 @@ def main(argv=None):
             build_tree(dst, target, old, new)
             bad, ok, rc, err = run_tree(dst)
             results.append((mid, why, bad, rc, err))
+            if "Traceback" in (err or ""):
+                guards.append("%s CRASHED (a crash is not a reddened gate)" % mid)
+            if mid != "MU9" and not bad:
+                guards.append("%s reddened nothing and is not the declared NO-OP" % mid)
             digests.append(hashlib.sha256(("%s|%s" % (mid, ",".join(sorted(bad))))
                                           .encode()).hexdigest())
             print("%s reddens %s rc=%d %s" % (mid, sorted(bad) or "nothing", rc,
@@ -195,7 +209,7 @@ def main(argv=None):
                                               why))
         print("}")
         return 0
-    complaints = []
+    complaints = list(guards)
     for (mid, why, bad, rc, err) in results:
         if mid not in DECLARED:
             complaints.append("%s has no declared set" % mid)

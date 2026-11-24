@@ -37,7 +37,7 @@ STUB = """## M310 (s272, STATIC, zero box; mutation-tested 14/14) — `FUN_00470
 | invalidation law: negative prio scans j != i for the same (p1,p2) AND `kind[j] == kind[i]` (folds re-seeded, encoding is the arbiter); the `0xffff` store is the only WORD store to +0 and writes entry i (0x470d5c); +2 has no store | `:S6` | V |
 | post-store re-read (`movsx`+`test`/`jge 0x470d86`) skips negative kinds before the log tail | `:S6` | V |
 | log tail call order: `FUN_00403a40` -> `FUN_00407520` -> `FUN_00423c20(block)`+`FUN_00405220` -> `BYTE ds:0x997121 = 0` -> token appends x8 -> `FUN_004237f0(abs prio)` -> 2 vtable calls -> `FUN_004081b0(ds:0x997120, buf)`; 9 targets == index.csv | `:S9,S11` | V (buffer's consumer OPEN) |
-| kind->token map read from the PE BYTES (objdump misassembles both): dword table @0x470f8c = 8 handlers, 42-byte index @0x470fac behind `cmp [ebp-30],0x29 / ja`; tokens 0->'a',2->'d',3->'s',6->'n',8->'c',9->'f',41->'^'; kinds 1,4,5,7,10..40 + default share 0x470eb7 (pushes nothing) - the C's case list AGREES with the bytes | `:S12` | V |
+| kind->token map read from the PE BYTES (objdump misassembles both): dword table @0x470f8c = 8 handlers, 42-byte index @0x470fac behind `cmp [ebp-30],0x29 / ja`; tokens 0->'a',2->'d',3->'s',6->'n',8->'c',9->'f',41->'^'; kinds 1,4,5,7,10..40 + default share 0x470eb7 (pushes nothing) - the C's case list AGREES with the bytes | - (the source row carried NO cite) | INFERRED |
 | args are a (p1,p2) COORDINATE pair: 5 call sites, each forwarding 2 closed stack slots; **CORRECTED by M312: all 4 forwarder sites push arg4=0 into the 0x471050 tail guard, so the site-1 path never executes -- see ## M312** | `:S5` | V (coordinate system INFERRED) |
 | gates load-bearing: `scripts/m310_mutate.py` = 14/14, every mutant reddening its named check, the harness requiring the unmutated instrument to exit 0 and rejecting tracebacks | `evidence/m310_mutate.txt:17,18` | V |
 | OPEN: GOAL semantics and the token alphabet; WHY a negative priority is the invalidation trigger; what `this+0x1ddb4/1ddb8` hold; what consumes `ds:0x997120`; save-carry of the GOAL list | - | lead |"""
@@ -67,13 +67,19 @@ def verify():
     ok_absent = FULL_HEAD not in named
     ok_stub = STUB.splitlines()[0] in named and "sha1 `%s`" % EXPECT_SHA1[:16] in named
     ok_pointer = "docs/named-archive-b30-rows.md:5" in named
+    rows = lambda t: sum(1 for ln in t.splitlines()
+                         if ln.startswith("| ") and not ln.startswith("| claim")
+                         and not set(ln) <= set("|- "))
+    ok_rows = rows(reg) == rows(STUB)
     print("archive region %d B sha1 %s pinned %s -> %s"
           % (len(reg.encode()), sha1(reg.encode())[:16], EXPECT_SHA1[:16],
              "PASS" if ok_sha else "FAIL"))
     print("full block absent from NAMED -> %s" % ("PASS" if ok_absent else "FAIL"))
     print("stub present with the pin -> %s" % ("PASS" if ok_stub else "FAIL"))
     print("stub's cite resolves -> %s" % ("PASS" if ok_pointer else "FAIL"))
-    return 0 if (ok_sha and ok_absent and ok_stub and ok_pointer) else 1
+    print("stub projects one row per archived claim (%d/%d) -> %s"
+          % (rows(STUB), rows(reg), "PASS" if ok_rows else "FAIL"))
+    return 0 if (ok_sha and ok_absent and ok_stub and ok_pointer and ok_rows) else 1
 
 
 def main(argv):

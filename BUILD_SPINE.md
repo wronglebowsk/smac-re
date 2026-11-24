@@ -1119,10 +1119,12 @@ missing writer opens a census pick, declared below.
 `python3 -u -m sim.selftest --b30` only relays, so the two entry points cannot print different
 text) with: **G1** the completion is READ out of the container's own queue - all 18 base records
 are decoded (idx, name, owner, the `+0x50` head id, the ids the base already owns), the eligible
-set is `1 <= id <= 38 and id not owned`, and the target is the first eligible base of the save's
-OWN player; the printed count of eligible bases and the target triple are asserted, so a save
-whose queue changed changes the run, not just the commentary; **G2** the setter is the reader's
-INVERSE - for every one of the 39 ids, set-then-read through `sim.base.facilities` contains that
+set is `1 <= id <= 31` (the four PINNED bitmap bytes) AND inside the feeder's parsed charge window
+AND not owned - heads in 32..38 are ineligible and their count is printed and pinned (`[]` here);
+the target is the first eligible base of the save's OWN player, and the printed count of eligible
+bases and the target triple are asserted, so a save whose queue changed changes the run, not just
+the commentary; **G2** the setter is the reader's
+INVERSE - for every one of the 32 ids in the pinned window, set-then-read through `sim.base.facilities` contains that
 id and no other new bit lands in the 32-bit window, the SWAPPED-orientation rival (byte
 `item&7`, bit `item>>3`) is scored on the same loop and fails at a counted number of ids, and id
 39 is REFUSED by the guard (its byte `5` is outside the confirmed four-byte window); **G3** the
@@ -1136,13 +1138,14 @@ unchanged, and an identity build with no `base_writes` is byte-identical to the 
 (the hook is inert when unused; the rival that writes the WRONG base index fails the reload); **G5**
 the BILL moves by the measured rule, not a constant - the target base's `sim.feeder.charge_base`
 total on the reloaded bitmap minus the original equals
-`sim.economy.item_upkeep(B29 table, item, disabled)`, and the same delta is computed for ALL 39
-ids, where the "table value always" rival differs at exactly the disabled ids parsed out of the
+`sim.economy.item_upkeep(B29 table, item, disabled)` priced off the RELOADED record, and the same
+delta is computed for all 32 ids in the window, where the "table value" rival differs at exactly the disabled ids parsed out of the
 M46 archive row (`[8]` here) and nowhere else; **G6** rivals + determinism - the NO-WRITE rival
 ("a completion changes nothing") is scored across all 39 ids and ties only where the rule itself
 is 0, the `+0x4c` pending-count misread is scored as a wrong id, every scored rival fails on the
-printed numbers, and two passes give an identical rows digest, an identical written-image sha256
-and an identical printed-table digest, all three pinned to literals inside G6.
+printed numbers, and G6 RUNS THE INSTRUMENT TWICE in-process, requiring an identical rows digest,
+an identical written-image sha256 and an identical printed-table digest, all three pinned to
+literals as well.
 DECLARED UNMODELED: the game routine that SETS the bit (ASSUMED inverse - census pick); everything
 else a real completion does (the queue-pop order beyond B11's law, the minerals/storage reset,
 the message and the `0x45`-handler side effects); the bitmap bytes `+0x90..+0x93` (ids 32..63),

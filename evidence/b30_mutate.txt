@@ -1,3 +1,4 @@
+BASE unmutated tree rc=0 BAD none
 MU1 reddens ['G2', 'G3', 'G4', 'G5', 'G6'] rc=1 
 MU2 reddens ['G2', 'G6'] rc=1 
 MU3 reddens ['G4', 'G6'] rc=1 

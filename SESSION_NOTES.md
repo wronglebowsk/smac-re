@@ -418,9 +418,9 @@ printers of measured values need the same None-guard as the gate.
   exactly `[8]` (M46's disabled list), the no-write rival at 26 ids, the swapped-orientation
   setter lands on only 4/32 ids, id 39 is REFUSED.
 - ACCEPT `python3 -u -m sim.selftest --b30` -> **`PASS B30: 6/6`** rows `234ab3d83a88dbea`
-  print `f26ad69d86d0a319` img `3a503c638ba45330` (`evidence/b30_facility_completion.txt:35-36`),
+  print `29f408c79329a5a8` img `3a503c638ba45330` (`evidence/b30_facility_completion.txt:35-36`),
   2 runs + relay byte-identical. Harness `scripts/b30_mutate.py` -> **`10/10`**
-  `18aac65a6ac028f4` (`evidence/b30_mutate.txt`), every gate G1-G6 reddened, NO-OP `[]`, ST 4/4.
+  `76a481b5d8a7d8b0` (`evidence/b30_mutate.txt:12`), every gate G1-G6 reddened, NO-OP `[]`, ST 4/4, baseline tree green.
 - **ASSUMED / census pick:** the game routine that SETS the bit is not in this rung's evidence;
   the setter is the mapper's inverse (`FUN_00507410` = the one 39-bit splitter). G2 measures the
   bijection (32/32) that makes it the only candidate.

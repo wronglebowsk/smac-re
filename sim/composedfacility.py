@@ -39,11 +39,12 @@ FAC_OFF = sf.BASE_FAC_BYTES          # 0x8c, the four-byte completed-facility wi
 QUEUE_OFF = 0x50                     # the queue head id (M52b)
 PENDING_OFF = 0x4C                   # the pending count - the MISREAD rival's source
 FAC_BYTES = 4                        # the confirmed window width (sim.base.FAC_MAX / 8)
-ITEM_LO, ITEM_HI = 1, 38             # ids the completion may stamp (0 = none, 39+ = projects)
+ITEM_LO, ITEM_HI = 1, 31             # the four PINNED bitmap bytes (ids 0..31); 32..38 are
+                                     # outside the measured window and are REFUSED (BUILD_SPINE G1)
 
 # Pinned from the first real run; G6 asserts the run reproduces them.
 ANCHOR = "234ab3d83a88dbea"        # G6: digest of the (queue rows, write, bill) tuple
-PRINT_ANCHOR = "f26ad69d86d0a319"   # G6: digest of the printed table, the G6 line excluded
+PRINT_ANCHOR = "29f408c79329a5a8"   # G6: digest of the printed table, the G6 line excluded
 IMG_SHA = "3a503c638ba45330"       # G6: sha256 of the written container, first 16 hex
 
 
@@ -140,6 +141,9 @@ def measure(sav=SAV):
         owned = tuple(sob.facilities(rec))
         elig = ITEM_LO <= head <= ITEM_HI and head not in owned and lo <= head <= chg
         qrows.append((b["i"], b["name"], b["own4"], head, pend, owned, elig))
+    # heads a completion COULD have paid for but that fall outside the four pinned bytes: they are
+    # ineligible here by the law, so the count is printed and pinned rather than left implicit
+    m["outside"] = [r[3] for r in qrows if ITEM_HI < r[3] <= 38]
     m["qrows"] = qrows
     m["n_eligible"] = sum(1 for r in qrows if r[6])
     cand = [r for r in qrows if r[2] == m["own"] and r[6]]
@@ -158,7 +162,7 @@ def measure(sav=SAV):
     m["owned_before"] = tuple(sob.facilities(orig))
     m["owned_after"] = tuple(sob.facilities(set_facility(orig, item)))
 
-    # G2 - the setter is the reader's inverse, measured over the whole item range.  The loop
+    # G2 - the setter is the reader's inverse, measured over the whole PINNED window (ids 0..31).  The loop
     # runs on a REFERENCE record whose four-byte window is ZERO: an id the target base already
     # owns would otherwise mask a broken bit law (the first run's real defect), so the law is
     # measured on a state where every id is absent and the target record is checked separately.
@@ -226,8 +230,18 @@ def measure(sav=SAV):
     wimg = sow.build_image(sv, bases_override=ov,
                            base_writes=[(wrong, FAC_OFF + (item >> 3),
                                          after[FAC_OFF + (item >> 3)])])
-    wb = wimg[sv.bases_off + so.BASE_LEN * idx:sv.bases_off + so.BASE_LEN * (idx + 1)]
-    m["wrong_base_ok"] = item not in sob.facilities(wb)
+    tmp2 = tempfile.mkdtemp(prefix="b30w_")
+    try:
+        p2 = os.path.join(tmp2, "b30w.SAV")
+        with open(p2, "wb") as fh:
+            fh.write(wimg)
+        imw = so.parse(p2)
+    finally:
+        shutil.rmtree(tmp2, ignore_errors=True)
+    wb = lambda k: imw.data[imw.bases_off + so.BASE_LEN * k:
+                            imw.bases_off + so.BASE_LEN * (k + 1)]
+    m["wrong_base_ok"] = (item not in sob.facilities(wb(idx))
+                          and item in sob.facilities(wb(wrong)))
     # every OTHER base record in the written image is byte-identical to the original file: the
     # write touched one record and nothing else (the count is measured off the image, not assumed)
     m["other_recs_same"] = sum(
@@ -241,7 +255,12 @@ def measure(sav=SAV):
                               disabled, lo, chg, rng)[0]
 
     m["bill_before"] = bill(orig)
-    m["bill_after"] = bill(after)
+    # the AFTER side is read out of the RELOADED container (this is what connects G4 to G5: the
+    # writer/reload leg and the bill leg price the same bytes, not an in-memory mirror)
+    reload_b = im.data[im.bases_off + so.BASE_LEN * idx:
+                       im.bases_off + so.BASE_LEN * (idx + 1)]
+    m["bill_reload_same"] = (reload_b == after)
+    m["bill_after"] = bill(reload_b)
     m["bill_delta"] = m["bill_after"] - m["bill_before"]
     per_id = []
     for k in range(FAC_BYTES * 8):
@@ -274,8 +293,9 @@ def render(m):
         out.append("   %3d  %5d  %-24s  %4d  %4d  %-40s %s"
                    % (r[0], r[2], r[1][:24], r[3], r[4], str(list(r[5]))[:40],
                       "YES" if r[6] else "-"))
-    out.append("G1 target: base %d '%s' completes item %d = '%s'; rule delta = %d"
-               % (m["idx"], m["target"][1], m["item"], m["item_name"], m["rule"]))
+    out.append("G1 target: base %d '%s' completes item %d = '%s'; rule delta = %d; heads in "
+               "32..38 (outside the pinned window): %s"
+               % (m["idx"], m["target"][1], m["item"], m["item_name"], m["rule"], m["outside"]))
     out.append("G2 setter: %d/%d ids round-trip exactly, stray bits %d, bad %s; swapped rival "
                "lands on %d/%d ids (fails %d); id 39 refused %s"
                % (m["rt_ok"], FAC_BYTES * 8, m["other_bits"], m["rt_bad"], m["rival_hit"],
@@ -289,13 +309,16 @@ def render(m):
                   m["reload_same_shape"], m["wrong_base_ok"]))
     out.append("G4 records: %d of %d other base records byte-identical in the written image"
                % (m["other_recs_same"], m["sv"].n_bases - 1))
-    out.append("G5 bill: before %d after %d delta %d rule %d; per-id mismatches %s; "
+    out.append("G5 bill: before %d after %d (reloaded record == written record %s) delta %d "
+               "rule %d; per-id mismatches %s; "
                "'table value' rival differs at %s (rule-zero ids %s)"
-               % (m["bill_before"], m["bill_after"], m["bill_delta"], m["rule"], m["per_id_bad"],
-                  list(m["rival_constant_ids"]), list(m["rule_zero"])))
+               % (m["bill_before"], m["bill_after"], m["bill_reload_same"], m["bill_delta"],
+                  m["rule"], m["per_id_bad"], list(m["rival_constant_ids"]),
+                  list(m["rule_zero"])))
     out.append("G6 rivals: no-write fails at %d ids; +0x4c misread gives %d (wrong %s); "
-               "digest %s print %s" % (m["nowrite_fail"], m["misread_id"], m["misread_wrong"],
-                                       m["digest"], print_digest(out)))
+               "digest %s print %s"
+               % (m["nowrite_fail"], m["misread_id"], m["misread_wrong"],
+                  m["digest"], print_digest(out)))
     return out
 
 
@@ -311,8 +334,9 @@ def acceptance(m, results):
 
     gate("G1 the completion is READ out of the container's own queue",
          m["qrows"] and len(m["qrows"]) == m["sv"].n_bases and m["n_eligible"] == 2
-         and m["target"][2] == m["own"] and m["item"] == 2 and ITEM_LO <= m["item"] <= ITEM_HI
-         and m["item"] not in m["owned_before"])
+         and m["target"][2] == m["own"] and m["item"] == 2
+         and ITEM_LO <= m["item"] <= ITEM_HI and m["item"] not in m["owned_before"]
+         and m["outside"] == [])
     gate("G2 the setter is the reader's INVERSE over the whole window",
          m["ref_window_zero"] and m["rt_ok"] == FAC_BYTES * 8 and m["other_bits"] == 0
          and not m["rt_bad"]
@@ -328,7 +352,7 @@ def acceptance(m, results):
          and m["reload_owned"] == m["owned_after"] and m["reload_same_shape"]
          and m["wrong_base_ok"])
     gate("G5 the bill moves by the DERIVED rule, not a constant",
-         m["bill_delta"] == m["rule"] and not m["per_id_bad"]
+         m["bill_reload_same"] and m["bill_delta"] == m["rule"] and not m["per_id_bad"]
          and m["rival_constant_ids"] == tuple(sorted(m["disabled"]))
          and m["rule"] > 0)
     gate("G6 rivals fail on the printed numbers and the run is deterministic",
@@ -336,7 +360,7 @@ def acceptance(m, results):
          and m["rival_fail"] == 28 and m["rival_hit"] == 4
          and m["rival_constant_ids"] == (8,) and m["nowrite_fail"] == 26
          and m["misread_wrong"] and m["bill_delta"] == 1
-         and m["digest"] == ANCHOR and m["img_sha"] == IMG_SHA
+         and m["det"] and m["digest"] == ANCHOR and m["img_sha"] == IMG_SHA
          and print_digest(render(m)) == PRINT_ANCHOR)
 
 
@@ -346,6 +370,11 @@ def main(argv):
         print("B30: missing input %s" % sav)
         return 2
     m = measure(sav)
+    m2 = measure(sav)
+    # determinism is MEASURED here, not asserted in prose: two independent passes over the same
+    # bytes must agree on every digest the gates pin
+    m["det"] = (m2["digest"] == m["digest"] and m2["img_sha"] == m["img_sha"]
+                and print_digest(render(m2)) == print_digest(render(m)))
     table = render(m)
     for line in table:
         print(line)
