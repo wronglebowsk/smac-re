@@ -127,15 +127,28 @@ def main():
     sw = [(a, mn, ops) for a, mn, ops in ins if 0x551A20 <= a <= 0x551C32]
     seq = [t for t in sw if 0x551A42 <= t[0] <= 0x551A51]
     say("    FUN_00551a20 index sequence: %s" % " | ".join("%s %s" % (m, o) for _a, m, o in seq))
-    # emulate the arithmetic: eax=f1<<6; eax+=f1; edx=f1+eax*2; edx<<=4; edx-=f1; edx+=f2
-    f1, f2 = 7, 3
-    eax = f1 << 6
-    eax += f1
-    edx = f1 + eax * 2
-    edx <<= 4
-    edx -= f1
-    edx += f2
-    stride = (edx - f2) // f1
+    # the stride is EVALUATED off the parsed ops (two different (f1,f2) pairs), never hardcoded
+    def evalseq(f1, f2):
+        R = {"edi": f1, "esi": f2}
+        for _a, mn, ops in seq:
+            dst, src = ops.split(",")
+            if mn == "mov":
+                R[dst] = R[src]
+            elif mn == "shl":
+                R[dst] = (R[dst] << imm(ops)) & 0xFFFFFFFF
+            elif mn == "add":
+                R[dst] = (R[dst] + R[src]) & 0xFFFFFFFF
+            elif mn == "sub":
+                R[dst] = (R[dst] - R[src]) & 0xFFFFFFFF
+            elif mn == "lea":
+                m2 = re.match(r"\[(\w+)\+(\w+)\*(\d+)\]$", src)
+                R[dst] = (R[m2.group(1)] + R[m2.group(2)] * int(m2.group(3))) & 0xFFFFFFFF
+        return R["edx"]
+
+    e1, e2 = evalseq(7, 3), evalseq(5, 2)
+    stride = (e1 - 3) // 7
+    stride2 = (e2 - 2) // 5
+    opline = [mn for _a, mn, _o in seq]
     cshape = ""
     for fn in sorted(os.listdir(SHARDS)):
         if not fn.endswith(".c"):
@@ -147,10 +160,13 @@ def main():
                 break
         if cshape:
             break
-    say("    dump arithmetic: %d*f_a + f_b  (f1=7,f2=3 -> %d) | ghidra C multiplies by %s"
-        % (stride, edx, cshape or "<absent>"))
-    gate("G0a", stride == STRIDE_PIN and int(cshape, 16) == STRIDE_PIN,
-         "the pair stride is 0x82f dwords in BOTH the dump's shl/add/lea/shl/sub chain and the C")
+    say("    dump arithmetic: %d*f_a + f_b  (f1=7,f2=3 -> %d; f1=5,f2=2 -> %d) | ghidra C multiplies by %s"
+        % (stride, e1, e2, cshape or "<absent>"))
+    gate("G0a", stride == stride2 == STRIDE_PIN and int(cshape, 16) == STRIDE_PIN
+         and opline == ["mov", "shl", "add", "lea", "shl", "sub", "add"],
+         "the pair stride is 0x82f dwords: EVALUATED from the dump's parsed op sequence (two "
+         "distinct (f1,f2) pairs agree) and equal to the C's multiplier - a changed disassembly "
+         "moves it")
 
     # ---------------------------------------------------------------- T1 bit-31 sites
     say("")
@@ -177,20 +193,22 @@ def main():
                                  for k in range(max(j - 4, 0), j)):
                 touch.append((a, "store the cleared word"))
         elif mn == "push" and pushimm(ops) == BIT31:
-            tgt = 0
+            tgt, cat = 0, 0
             for k in range(order.index(a) + 1, order.index(a) + 5):
                 if by[order[k]][0] == "call":
-                    tgt = call_tgt_of(by[order[k]][1])
+                    tgt, cat = call_tgt_of(by[order[k]][1]), order[k]
                     break
-            touch.append((a, "ARM pending via setter 0x%06x" % tgt))
+            touch.append((a, "ARM pending via setter 0x%06x @0x%06x" % (tgt, cat)))
     for a, what in touch:
         say("    %06x  %-6s %-34s %s" % (a, by[a][0], by[a][1], what))
     say("    arms: %s" % " ".join("%06x" % a for a, _m, o in fwin
                                  if _m == "push" and pushimm(o) == BIT31))
     gate("G1a", [a for a, _w in touch] == [0x55573C, 0x555750, 0x555758, 0x55578A, 0x555792,
-                                           0x5558DA],
+                                           0x5558DA]
+         and dict(touch)[0x5558DA].endswith("setter 0x551a20 @0x5558e1"),
          "exactly 6 touch points: one READ, two 0x7fffffff CLEARS, the two stores that write "
-         "them (own+mirror), and one ARM push into the setter")
+         "them (own+mirror), and one ARM push -> setter 0x551a20 at 0x5558e1 (target and call "
+         "site both asserted)")
     clears = [(a, mn, ops) for a, mn, ops in fwin
               if mn == "and" and imm(ops) == 0x7FFFFFFF]
     say("    explicit 0x7fffffff clear masks: %s" % " ".join("%06x" % a for a, _m, _o in clears))
@@ -233,9 +251,10 @@ def main():
         say("      pre %08x -> post %08x  %-26s pending kept=%s"
             % (pre, post, why, bool(post & BIT31)))
     gate("G2a", je_tgt == "0x555809" and jne_tgt == "0x555809" and keep_mask == 0xFFFFDFFF
-         and clear_mask == 0x7FFFFFFF,
-         "both escapes land on the same scrub (0x555809 `and ah,0xdf` = clear bit13): the clear "
-         "is taken only when the word has bit31 AND NOT bit13")
+         and clear_mask == 0x7FFFFFFF and by[0x555747][1] == "ah,0x20"
+         and (0x20 << 8) == BIT13,
+         "both escapes land on the same scrub (0x555809 `and ah,0xdf`): the clear is taken only "
+         "when the word has bit31 AND NOT the bit the DUMP's `test ah,0x20`@0x555747 names (13)")
     gate("G2b", (res[(BIT31, 0)] & BIT31) == 0 and (res[(BIT31, BIT13)] & BIT31) == BIT31
          and (res[(BIT31, BIT13)] & BIT13) == 0 and res[(0, 0)] == 0x19
          and (res[(0, BIT13)] & BIT13) == 0,
@@ -257,9 +276,9 @@ def main():
     say("    non-word immediates (other fields / other bitfields): %d" % (len(b27) - len(w27)))
     gate("G3a", len(inwin) == 0,
          "ZERO bit-27 immediates inside FUN_005551e0: bit 27 is NOT a decision input of the pass")
-    gate("G3b", len(b27) == 56 and len(w27) == 5 and fns27 == ["FUN_00522b70", "FUN_00531df0",
-                                                              "FUN_00546800", "FUN_005525d0"],
-         "bit 27 IS a relations-word state bit - 5 `test` sites in 4 other functions %s"
+    gate("G3b", len(b27) == 56 and len(w27) == 5 and all(mn == "test" for _a, mn, _o in w27)
+         and fns27 == ["FUN_00522b70", "FUN_00531df0", "FUN_00546800", "FUN_005525d0"],
+         "bit 27 IS a relations-word state bit - 5 `test` READ sites in 4 other functions %s"
          % " ".join("%06x" % a for a, _m, _o in w27))
 
     # ---------------------------------------------------------------- T4 setter masks
@@ -291,8 +310,17 @@ def main():
          "setter can only raise it; the measured clear (if any) must live outside the setter")
     # and the mask literals really are the dump's bytes (no typo can survive)
     lit = {(a, imm(ops)) for a, mn, ops in ins if 0x551A20 <= a <= 0x551C32 and mn == "and"}
-    gate("G4c", {(0x551A88, R.PEACE_CLEAR), (0x551B17, R.WAR_CLEAR), (0x551B98, R.UNLOCK_CLEAR)} <= lit,
-         "the three clear masks used above are the DUMP's immediates (0xffee7faf/0xfaeef378/0xff7fffff)")
+    word_ands = {(a, v) for a, v in lit if v != 0xFE}
+    say("    every `and` in the setter: %d (%d word masks + `and al,0xfe`@0x551a62 on ds:0x7485b4)"
+        % (len(lit), len(word_ands)))
+    import collections
+    cnt = collections.Counter(v for _a, v in word_ands)
+    say("    word-mask and-immediates by value: %s"
+        % ", ".join("%08x x%d" % (v, n) for v, n in sorted(cnt.items())))
+    gate("G4c", cnt == collections.Counter({R.PEACE_CLEAR: 2, R.WAR_CLEAR: 2, R.UNLOCK_CLEAR: 2})
+         and all(v & BIT31 for _a, v in word_ands) and (0x551A62, 0xFE) in lit,
+         "STRUCTURAL, not sampled: the setter's SIX word-mask `and`s are exactly these three "
+         "immediates applied twice, all with bit 31 set - no request can clear pending through it")
 
     # ---------------------------------------------------------------- T5 write-site census
     say("")
@@ -359,14 +387,25 @@ def main():
     opaque = [a for a, k, v in classify if k == "opaque"]
     copies = [a for a, k, v in classify if k == "copy"]
     andreg = [a for a, k, v in classify if k == "and_reg"]
-    say("    stores %d | clear %d | keep %d (of which %d mask-free copies) | reg-mask %d | opaque %d"
+    # direct RMW and immediate stores are a DIFFERENT write shape - scanned, expected empty
+    rmw = [(a, mn, ops) for a, mn, ops in ins
+           if mn in ("and", "or", "xor", "bts", "btr", "btc")
+           and re.match(r"DWORD PTR \[[^\]]*0x94d448\]", ops)]
+    imst = [(a, mn, ops) for a, mn, ops in ins
+            if mn == "mov" and re.match(r"DWORD PTR \[[^\]]*0x94d448\],0x[0-9a-f]+$", ops)]
+    say("    RMW `and/or/xor [word],imm` forms: %d | `mov [word],imm32` forms: %d"
+        % (len(rmw), len(imst)))
+    say("    register stores %d | clear %d | nontrivial-keep %d (of which %d mask-free copies) | "
+        "reg-mask %d | opaque %d"
         % (len(classify), len(clearers), len(keepers), len(copies), len(andreg), len(opaque)))
     for a, k, v in classify:
         say("      %06x %-12s %-6s %s" % (a, fn_of(a), k, ("0x%08x" % v) if v is not None else "-"))
     say("    keepers' masks: %s" % ", ".join(sorted({"0x%08x" % v for _a, k, v in keepers if v})))
-    gate("G5a", len(classify) == 41 and [a for a, _k, _v in clearers] == [0x555758, 0x555792],
-         "exactly TWO of the 41 word stores can clear bit 31, both in FUN_005551e0's pass "
-         "(0x555758 own / 0x555792 mirror); every other mask has bit 31 set")
+    gate("G5a", len(classify) == 41 and len(rmw) == 0 and len(imst) == 0
+         and [a for a, _k, _v in clearers] == [0x555758, 0x555792],
+         "EVERY register store into the word (41) is classified, and the two other write SHAPES "
+         "(`and/or/xor [word],imm` and `mov [word],imm32`) are scanned and EMPTY - only the "
+         "pass's own 0x555758/0x555792 can clear bit 31")
     gate("G5b", len(keepers) == 33 and len(clearers) == 2 and len(andreg) == 3 and len(opaque) == 3
          and len(keepers) + len(clearers) + len(andreg) + len(opaque) == len(classify),
          "the partition closes: 33 keep / 2 literal clear / 3 caller-mask AND / 3 opaque, so no "
@@ -388,15 +427,19 @@ def main():
         for i, a in enumerate(order):
             mn, ops = by[a]
             if mn == "call" and ops == "0x%06x" % helper:
-                pushes = [(m, o) for m, o in (by[order[k]] for k in range(max(i - 5, 0), i))
-                          if m == "push"]
-                arg = pushes[-3][1] if len(pushes) >= 3 else "?"
-                flag = pushes[-4][1] if (helper == 0x551CF0 and len(pushes) >= 4) else "1"
-                census.append((helper, a, fn_of(a), arg, flag))
+                # walk the CONTIGUOUS push run that precedes the call (not a fixed window)
+                pushes, k = [], i - 1
+                while k >= 0 and by[order[k]][0] == "push" and len(pushes) < 8:
+                    pushes.append(by[order[k]][1])
+                    k -= 1
+                pushes.reverse()
+                arg = pushes[-3] if len(pushes) >= 3 else "?"
+                flag = pushes[-4] if (helper == 0x551CF0 and len(pushes) >= 4) else "1"
+                census.append((helper, a, fn_of(a), arg, flag, len(pushes)))
     say("    call sites: %s" % ", ".join(
         "%06x x%d" % (h, sum(1 for c in census if c[0] == h)) for h in (0x5518F0, 0x551CF0)))
     see31 = []
-    for h, a, fn, arg, flag in census:
+    for h, a, fn, arg, flag, n in census:
         if arg.startswith("0x") and int(arg, 16) & BIT31:
             if h == 0x5518F0 or flag == "0x0":
                 mode = "CLEAR"
@@ -407,16 +450,21 @@ def main():
             see31.append((a, fn, arg, mode))
             say("      %06x %-12s helper 0x%06x mask %s  %s  <- carries bit 31"
                 % (a, fn, h, arg, mode))
-    lit = sum(1 for _h, _a, _f, arg, _fl in census if arg.startswith("0x"))
+    lit = sum(1 for _h, _a, _f, arg, _fl, _n in census if arg.startswith("0x"))
+    run3 = sum(1 for c in census if c[5] >= 3)
+    gap = [c[1] for c in census if c[5] < 3]
+    say("    decoded (contiguous >=3-push run) %d/%d; UNDECODED %d - args live on a shared "
+        "setup path (after jmp/mov): %s"
+        % (run3, len(census), len(gap), " ".join("%06x" % a for a in gap)))
     say("    literal 3rd args %d | register/param args %d | bit-31-carrying args %d"
         % (lit, len(census) - lit, len(see31)))
-    gate("G5c", len(census) == 66 and lit == 37 and len(see31) == 2
+    gate("G5c", len(census) == 66 and lit == 35 and len(see31) == 2 and run3 == 46
          and see31[0][:4] == (0x59F176, "FUN_0059ec90", "0x9000ff48", "CLEAR")
          and see31[1][:3] == (0x4DA404, "FUN_004da2c0", "0xdd9bc3c0")
          and see31[1][3].startswith("FLAG-DEPENDENT") and notsite == [0x55196E],
-         "66 caller-mask call sites, 37 literal masks: exactly ONE mask clears bit 31 "
-         "(0x9000ff48 @0x59f176, elimination sweep) and ONE is flag-dependent (0xdd9bc3c0 "
-         "@0x4da404, flag = the caller's ebx) - left OPEN, not asserted away")
+         "66 call sites: 46 decode a contiguous >=3-push run (35 literal masks), 20 keep their "
+         "args on a shared path and are NOT claimed; among the decoded, ONE mask clears bit 31 "
+         "(0x9000ff48 @0x59f176) and ONE is flag-dependent (0xdd9bc3c0 @0x4da404)")
 
     # ---------------------------------------------------------------- T6 the lifecycle
     say("")

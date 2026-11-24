@@ -633,7 +633,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 ## Session 338-chain1 — M373: the pending-vendetta consumer (STATIC 19/19, zero box)
 
 - **ACCEPT**: `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19 gates
-  digest 162f8833a8a831f0` (`evidence/m373_pending_vendetta.txt:161`), rerun byte-identical.
+  digest 4fd02c603e36c69c` (`evidence/m373_pending_vendetta.txt:165`), rerun byte-identical.
 - **THE PICK'S PREMISE IS REFUTED.** `FUN_005551e0` (3,853 B, 1,167 insns) has **ZERO
   immediates of bit 27** (`:54`). Bit 27 is not a decision input there; the gate that
   actually governs the pending-vendetta pass is **bit 13 = 0x2000**.
@@ -653,8 +653,8 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   3 take a caller mask, 3 opaque. `draft claim retracted in-round`: I first read bit 27 as a
   one-write pulse; the executed replay shows it survives 0x80000008, 0x10 and 0x1 (`:139`).
 - **THE SECOND CLEARER** (`:124-130`): FUN_005518f0 (`not edx`@0x55196e then AND) clears the
-  caller's 3rd arg; FUN_00551cf0 does the same when its 4th arg is 0. 66 call sites, 37
-  literal masks, only TWO carry bit 31: `0x9000ff48`@0x59f176 = a CLEAR inside
+  caller's 3rd arg; FUN_00551cf0 does the same when its 4th arg is 0. 66 call sites, 46 decode a
+  contiguous >=3-push run / 35 literal (20 undecoded and disclosed), only TWO carry bit 31: `0x9000ff48`@0x59f176 = a CLEAR inside
   FUN_0059ec90 (faction-elimination sweep), and `0xdd9bc3c0`@0x4da404 whose flag is the
   caller's ebx (`pop ebx`@0x4da3a8) — **OPEN**, not asserted away.
 - **HARNESS** `python3 -u scripts/m373_mutate.py`: 16 mutants, each names its gate; MU11/MU12

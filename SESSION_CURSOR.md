@@ -1,1 +1,1 @@
-M373 | accept `python3 -u scripts/m373_pending_vendetta.py` -> PASS 19/19 `162f8833a8a831f0` (`evidence/m373_pending_vendetta.txt:161`) | PR pending | next: the OPEN shortlist (§THE PICK in NEXT_PROMPT.md) — B37 is the next BUILD rung, not this fire
+M373 | accept `python3 -u scripts/m373_pending_vendetta.py` -> PASS 19/19 `4fd02c603e36c69c` (`evidence/m373_pending_vendetta.txt:165`) | PR pending | next: the OPEN shortlist (§THE PICK in NEXT_PROMPT.md) — B37 is the next BUILD rung, not this fire

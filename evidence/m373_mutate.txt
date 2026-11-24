@@ -1,4 +1,4 @@
-=== python3 -u scripts/m373_mutate.py  (captured stdout, rc=0, 2026-11-24) ===
+=== python3 -u scripts/m373_mutate.py  (captured stdout, rc=0, 2026-11-24; after the #406 review hardening) ===
 M373 mutation harness - 16 mutants, 0 no-op []
   MU1   G1a   FAIL   the pass READS bit 31 (pending) as 0x80000000, not a neighbouring bit
   MU2   G2a   FAIL   the skip path scrubs bit 13 (`and ah,0xdf` = 0xffffdfff) - not a no-op
