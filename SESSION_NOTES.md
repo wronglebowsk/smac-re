@@ -742,3 +742,27 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **RETRACTED mid-fire**: FUN_00551cf0/0x551d70 are 4-arg and the 4th arg selects SET vs CLEAR;
   reading them as clear-writers inverts the 0x20 story (caught before the first commit).
 - **OPEN**: the noun WORD for 0x20; the role of 0x80000000 (set with 0x10).
+## Session 336-chain1 (2026-11-24) — M368: 0x2 = TREATY, 0x4 = TRUCE; the ladder is truce < treaty < pact, the classifier an ordered EQUALITY test
+
+- **ACCEPT** `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 28/28 gates` digest
+  `3b115185807f53fc`** (`evidence/m368_peace_ladder.txt:83`) x2;
+  `scripts/m368_mutate.py` -> **`RUN PASS 27 mutants, NO-OP []`**, 28/28 gates covered
+  (`evidence/m368_mutate.txt:31`). Zero box time.
+- **THE DISCRIMINATING AXIS (behaviour, not labels)**: FUN_005537d0's three peace sites push a bare
+  mask to the writer FUN_00551a20, and the block building each call posts a .data key first —
+  0x553c41/0x4 posts 0x691144 `ENEMYTRUCE` (`:35`), 0x553f10/0x2 posts 0x691150 `ENEMYTREATY`
+  (`:37`), 0x554165/0x1 posts none (`:39`). A swapped reading needs the keys swapped.
+- **LABELS** (`:56-66`): labels.txt element 643/644/645 = Truce/Treaty/Pact (control 866 =
+  `Diplomacy for`). Bit value runs AGAINST friendship (0x4 weakest), so behaviour had to pin it.
+- **ALGEBRA** (`:44-54`): `test bl,0x1 -> or ebx,0x2` (0x551abc, FUN_00551a20) is the only
+  pact->treaty upgrade in 781,429 insns (reverse: 0). A peace write `and 0xffee7faf` clears exactly
+  {0x10,0x40,0x8000,0x10000,0x100000} — ends war, spares every peace bit — and the war write
+  `and 0xfaeef378` clears {1,2,4,...}: exclusion both ways.
+- **CLASSIFIER QUALIFIED** (`:67-74`): FUN_005076d0 0x507975..0x50798f tests cl 0x1, then 0x2, then
+  0x4, each paired with the SAME mask on `[ebp-0xc]` (the other side's record), with no `cmp`/`jg`
+  in the window — an ordered EQUALITY classifier, not the numeric rank M366's phrasing suggested.
+  The WORD is retracted, the precedence is not: 0x1 > 0x2 > 0x4 stands.
+- **CENSUS** (`:13-27`): 169 writer call sites; bare peace masks reaching one are exactly {1,2,4}
+  (8 sites, 4 hosts).
+- **CAP**: NAMED 248,819 -> 244,904 B; M352/M353/M355 rotated verbatim (`m368_named_rotate --verify`).
+- **OPEN**: what FUN_0053f9f0 @0x53fcb3 (mask 0x2, no key) and FUN_00523b20 @0x523f4c (0x1) transact.

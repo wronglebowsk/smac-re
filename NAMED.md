@@ -1515,6 +1515,7 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | TEXT (13/13 pinned triples): 0x1 Pact, 0x2 Treaty, 0x4 Truce, 0x8 Commlink, 0x10 Vendetta, 0x20 I-want-revenge, 0x400 I-shall-betray, 0x1000 I-have-infiltrator, 0x2000 I-want-to-talk, 0x40000 I-am-atrocity-victim, 0x2000000 I-have-surrendered; high dw 0x80000008 Fight-to-the-death, 0x80002000 Fix-current-status-as-permanent; title `Diplomacy for` | `:73-87` | V MU11,17,19,23,27,28,29 |
 | RIVALS refuted: inline strings, no-shift map, ordinals, high=low alias, one page | `:90-101` | V MU20,21,22,23,24 |
 | QUALIFIED M364: bit 0x8's label = `Commlink`; AT WAR came off the vendetta case keys (contact-gate reading INF) | `:75` | OPEN |
+| ANCHORED by M368: 0x2 = Treaty and 0x4 = Truce also have BEHAVIOURAL keys (0x4 posts `ENEMYTRUCE`, 0x2 posts `ENEMYTREATY`) — see `## M368` | - | V |
 ## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |
 |---|---|---|
@@ -1649,3 +1650,15 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | RIVALS refuted: 0x10 as a peace bit (its set-rule clears 1/2/4); 0x10 == 0x20 (different clear side-effects); 0x10 == 0x8 (20 vs 37 bare, 0x8 settable alone, implication one-way); 0x20 == 0x40000 (18 vs 3 bare) | `:588-596` | V MU25-29 |
 | ACCEPT `python3 -u scripts/m366_bitnouns.py` -> 29/29 `c36db3d154a5ea1b` x2; harness 32/32 | `evidence/m366_bitnouns.txt:597`, `evidence/m366_mutate.txt:33` | V MU0 |
 | INF: the noun WORD for 0x20 (inferred from the human branch + B-ladder + ending text); 0x80000000's role | - | INF |
+
+## M368 (s336-chain1, STATIC 28/28) — relations bits 0x2 = TREATY, 0x4 = TRUCE (V); the peace ladder is truce < treaty < pact and FUN_005076d0's classifier is an ordered EQUALITY test, not a rank. ACCEPT `python3 -u scripts/m368_peace_ladder.py` -> **`PASS M368: 28/28`** `3b115185807f53fc` x2 (`evidence/m368_peace_ladder.txt:83`); harness 27/27 NO-OP `[]`, 28/28 gates covered (`evidence/m368_mutate.txt:31`). `:N` = line of that evidence.
+| claim | ev | conf |
+|---|---|---|
+| BEHAVIOUR is the discriminating axis: FUN_005537d0 pushes a bare mask to FUN_00551a20 and the block building each call posts a .data key first — 0x553c41/0x4 -> 0x691144 `ENEMYTRUCE`, 0x553f10/0x2 -> 0x691150 `ENEMYTREATY`, 0x554165/0x1 -> no key | `:35-39` | V MU7,8,9 |
+| LABELS: labels.txt element 643/644/645 -> lines 653/654/655 = Truce/Treaty/Pact (control 866 = `Diplomacy for`); bit value runs AGAINST friendship | `:56-66` | V MU15-19 |
+| pact IMPLIES treaty: `test bl,0x1 -> or ebx,0x2` (0x551abc, FUN_00551a20) is the only such upgrade in 781,429 insns; the reverse occurs 0x | `:44-47` | V MU10,11 |
+| war<->peace exclusion both ways: a peace write `and 0xffee7faf` clears exactly {0x10,0x40,0x8000,0x10000,0x100000} and spares all three peace bits; the war write `and 0xfaeef378` clears {1,2,4,...} | `:49-54` | V MU12,13,14 |
+| CLASSIFIER: 0x507975..0x50798f tests 0x1 then 0x2 then 0x4, each paired with the SAME mask on the other side; 0 cmp/jg in the window -> EQUALITY (M366's `rank` WORD retracted, its precedence stands) | `:67-74` | V MU20,21,22 |
+| census: 169 writer call sites; the bare peace masks reaching one are exactly {1,2,4} — 8 sites, 4 hosts (0x4dadd0/0x523b20/0x53f9f0/0x5537d0) | `:13-27` | V MU1-6 |
+| RIVALS refuted: swapped nouns, independent flags, label-text-only, numeric rank, war-unrelated | `:76-82` | V MU23-27 |
+| OPEN: what FUN_0053f9f0 @0x53fcb3 (mask 0x2, no key) and FUN_00523b20 @0x523f4c (mask 0x1) transact | - | lead |

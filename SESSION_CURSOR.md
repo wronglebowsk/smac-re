@@ -1,1 +1,1 @@
-B35 | accept `python3 -u -m sim.grantcall` -> PASS 11/11 `fa541d0a2445cacf` (`evidence/b35_grantcall.txt:113`), harness 18/18 (`evidence/b35_mutate.txt:20`) | PR #396 (merge pending) | next: BUILD B36 (track_mode) / analyse (x6) pref-block writers
+M368 | accept `python3 -u scripts/m368_peace_ladder.py` -> PASS 28/28 `3b115185807f53fc` (`evidence/m368_peace_ladder.txt:83`), harness 27/27 (`evidence/m368_mutate.txt:31`) | PR pending | next (chain-1): the two peace-writer hosts outside FUN_005537d0 — FUN_0053f9f0 @0x53fcb3 (mask 0x2) and FUN_00523b20 @0x523f4c (mask 0x1)

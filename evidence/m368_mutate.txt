@@ -1,0 +1,31 @@
+baseline rc=0 gates PASS=28
+MU1   rc=1 reddens G0a                                      target G0a       OK
+MU2   rc=1 reddens G0b                                      target G0b       OK
+MU3   rc=1 reddens G0c                                      target G0c       OK
+MU4   rc=1 reddens G1a                                      target G1a       OK
+MU5   rc=1 reddens G1b                                      target G1b       OK
+MU6   rc=1 reddens G1c                                      target G1c       OK
+MU7   rc=1 reddens G2-553c41,G2-553f10,G7a,G7c              target G2-553c41 OK
+MU8   rc=1 reddens G2-554165,G7a,G7c                        target G2-554165 OK
+MU9   rc=1 reddens G2x,G7a,G7c                              target G2x       OK
+MU10  rc=1 reddens G3a,G7b                                  target G3a       OK
+MU11  rc=1 reddens G3b,G7b                                  target G3b       OK
+MU12  rc=1 reddens G4a,G4c,G7e                              target G4a       OK
+MU13  rc=1 reddens G4b,G7e                                  target G4b       OK
+MU14  rc=1 reddens G4c,G7e                                  target G4c       OK
+MU15  rc=1 reddens G5a                                      target G5a       OK
+MU16  rc=1 reddens G5-1                                     target G5-1      OK
+MU17  rc=1 reddens G5-2                                     target G5-2      OK
+MU18  rc=1 reddens G5-4                                     target G5-4      OK
+MU19  rc=1 reddens G5b                                      target G5b       OK
+MU20  rc=1 reddens G6a,G7b,G7d                              target G6a       OK
+MU21  rc=1 reddens G6b,G7b,G7d                              target G6b       OK
+MU22  rc=1 reddens G6c,G7b,G7d                              target G6c       OK
+MU23  rc=1 reddens G7a                                      target G7a       OK
+MU24  rc=1 reddens G7b                                      target G7b       OK
+MU25  rc=1 reddens G7c                                      target G7c       OK
+MU26  rc=1 reddens G7d                                      target G7d       OK
+MU27  rc=1 reddens G7e                                      target G7e       OK
+
+gates covered 28/28; uncovered []
+RUN PASS 27 mutants, NO-OP []
