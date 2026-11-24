@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 11/11 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B31 + M54A-M346 (`## B31`, `## M346`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
+# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 11/11 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B31 + M54A-M348 (`## B31`, `## M348`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -23,15 +23,13 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B30 MERGED** (B26 #328, B27 #344, B28 #351, B29 #356, B30 s321; per-rung cmds `NAMED`
-§CHAIN-BUILDS, `## B25`-`## B30` govern; B26's ACCEPT+LAW at `docs/pick-archive.md` §trim-s308-chain1 (a)).
-**B30 = the COMPLETION leg** (`## B30`). **B31 MERGED = the recorded-run ORACLE** (`## B31`: 6 gains/2
-losses, head->bit 0/6, Korolev r0 spend 8+1-9=0 with NO stamp - so B30's setter is UNVERIFIED against
-the game's own run; 16/16 `ce7688c0cb3b5f9d`, harness 12/12 `087e1d0228debbe9`). **Next build B32**:
+box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B30 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B25`-`## B30` govern).
+**B30 = the COMPLETION leg**; **B31 MERGED = the recorded-run ORACLE** (6 gains/2 losses, head->bit
+0/6, so B30's setter is UNVERIFIED against the game's own run - `## B31`). **Next build B32**:
 author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
 decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
 
-  **DOC CAP (`wc -c` s325, post-M346): `NAMED.md` 247,825/250,000 = 2,175 B (M313 rotated VERBATIM to `docs/named-archive-m313-rows.md`, sha1 `b674876b9a743893`, `scripts/m346_named_rotate.py --verify`; B24/M340/M329 stand) - ROTATE if <5 KB. NEXT_PROMPT <=12,000.**
+  **DOC CAP (`wc -c` s326, post-M348): `NAMED.md` 248,866/250,000 = 1,134 B - ROTATE BEFORE ANY ADDITION (`scripts/m348_named_rotate.py --verify` PASS: B28 `bd196a95`, M343 `a7f9573e`, M345 `907d0705` VERBATIM). Archive names collide: check `docs/` first. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
@@ -64,12 +62,11 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   option is this OPEN-LEADS
   list, each with a NAMED question: (x1) ANSWERED by M333 — slot noun = a facility the base HAS
   (base+0x8c bit), bit5 of block+0 = a CARRIED HALF-UNIT exclusive to FUN_004f47f0;
-  (x5) the 'multi' label only (`92bdf8` = pref `Top Menu`);
-  (x6) ANSWERED by M335/M336/M340, M339 closed the callee; OPEN: other writers of the
-  0x92bde8..0x92bf14 pref block; (x9) CLOSED by M342+M344+M346: no API caller completes
+    (x6) OPEN: other writers of the 0x92bde8..0x92bf14 pref block; (x9) CLOSED by M342+M344+M346: no API caller completes
   production (inline `or` @`0x4f0ec0`) and the ALERT is the same block's 2 posts into the
-  10-slot `$`-token table (`## M346`; `0x985b10` REFUTED as its channel) - OPEN = which
-  .rdata template consumes slots 1/2; (x7) ANSWERED by M334 — the REMOVAL path is the difficulty-gated AUTO-SELL
+  10-slot text bank (`## M346`; `0x985b10` REFUTED) and (M348) consumed by the Script.txt
+  record `#PRODUCEXQ/G` - FUN_00636b1e is the Create Session dialog, NOT a drainer - OPEN =
+  who writes the numeric array 0x999fa4; (x7) ANSWERED by M334 — the REMOVAL path is the difficulty-gated AUTO-SELL
   (ENERGY ASSIGNED, not refunded; `ds:0x985ba0`'s WRITER outside .text is still OPEN);
   (x8) ANSWERED by M337 — the item table IS the +0x10 field of the 72-record array at `0x984d38`,
   row order = alpha `#FACILITIES` file order; B28's +300 parity covers ids 1..38 by construction.
@@ -124,6 +121,7 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar note:
 `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`, `--verify`); the per-id
 `NAMED ## <id>` blocks GOVERN.
+- M348 (s326) MERGED: slots 1/2 -> Script.txt `#PRODUCEXQ/G` (`$ITEM1`/`$NUM1`), key PRODUCEX+Q|G -> FUN_0048f100; .rdata 0 `$<` templates; M346 `drainer` RETRACTED. 12/12 `35afb622edfa6bdc`, harness 13/13. NEXT: writers of 0x999fa4.
 - M334-M340 (s316-s320, all MERGED): M334 = the 0x4f47f0 upkeep-FAILURE is a difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded) 7/7 5b5ece39af02baba, 45/45; M335 ladder = alpha #DIFF 6 rows @0x94d2ac, idx = ds:0x985aec 7/7 fb58bdc3307d6258, 20/20; M336 ds:0x8f0090 = PLAYER RECORD 1's difficulty byte, ONE unclamped reader 7/7 f4ca00c55c833539, 14/14; M337 item row order = alpha #FACILITIES (rec i = alpha i-1) 8/8 39d82f0771690e15, 13/13; M338 the last two #DIFF readers (loop counter / HoF rec +0x20) 8/8 1ae1563d47d0039e, 16/16; M339 0x5f1394 = the modal SCREEN RUNNER 7/7 d76a5e83770b77bb, 13/13; M340 a `Difficulty` pref >=6 is ADMITTED 7/7 1cc44d0146a8b419, 12/12. Per-id `NAMED ## <id>` GOVERN.
 M342 (x9) MERGED: +0x8c `or` x11, `and` x3; pop NON-writer. 7/7 2b88df5da5aeafe1, 9/9.
 - M339 MERGED: 0x5f1394 = the modal SCREEN RUNNER; return = the screen obj's +0xa40 cell; FUN_004ddaa0 writes it to ds:0x985aec + 8 faction blocks. 7/7 d76a5e83770b77bb, harness 13/13.

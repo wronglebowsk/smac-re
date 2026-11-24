@@ -477,7 +477,9 @@ say("")
 digest = hashlib.sha256("\n".join(OUT).encode()).hexdigest()
 say("RESULT %s: %d/%d gates  digest %s" % (
     "PASS" if not FAILS else "FAIL", npass, len(GATES), digest[:16]))
-os.makedirs(os.path.dirname(EVID), exist_ok=True)
-with open(EVID, "w") as f:
-    f.write("\n".join(OUT) + "\n")
+# a mutated run must never overwrite the acceptance evidence
+if not any(os.environ.get(k) for k in ("M348_PATCH_BIN", "M348_PATCH_INS", "M348_SCRIPT_EDIT")):
+    os.makedirs(os.path.dirname(EVID), exist_ok=True)
+    with open(EVID, "w") as f:
+        f.write("\n".join(OUT) + "\n")
 sys.exit(0 if not FAILS else 1)
