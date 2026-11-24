@@ -632,7 +632,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 ## Session 337-chain1 (2026-11-24) — B36: the faction-relations STATE MACHINE (10/10, 14 mutants, zero box)
 
-- **ACCEPT** `python3 -u -m sim.relations` -> **`PASS B36: 10/10 gates  digest b20f5818dee2d861`** (`evidence/b36_relations.txt:81`), rerun byte-identical; `--b36` relays it. **Harness** `python3 -u scripts/b36_mutate.py` -> `RUN PASS 14 mutants, NO-OP []` (`evidence/b36_mutate.txt:16`).
+- **ACCEPT** `python3 -u -m sim.relations` -> **`PASS B36: 10/10 gates  digest b20f5818dee2d861`** (`evidence/b36_relations.txt:82`), rerun byte-identical; `--b36` relays it. **Harness** `python3 -u scripts/b36_mutate.py` -> `RUN PASS 14 mutants, NO-OP []` (`evidence/b36_mutate.txt:16`).
 - **FUN_00551a20 EXTRACTED AND RUN**: 161 insns, 8 stores. SIX blocks - five `test bl` predicates (0x7/0x1/0x10/0x17/0x1f) on the CURRENT ebx plus an **unconditional tail OR** at 0x551bc7. Extracting that tail as gated was the first defect: contact (mask 8) became a no-op and 2,369/40,960 parity pairs split.
 - **TRANSITIONS** (`:39`): pact -> 0x3; truce after war -> 0x8000010c (commlink 0x8, 0x100 survive); war on 0x7|commlink -> 0x80000118; **combined 0x11 -> 0x8000011b** - the tail OR re-adds the upgraded mask AFTER the war clear. No action site sends a combined mask (M368 census), so it is REPRESENTABLE, not observed: declared, not gated.
 - **The ladder ACCUMULATES** (truce then treaty = 0x6), so "the current relation" is the CLASSIFIER's precedence (1 then 2 then 4, ordered EQUALITY) - executable now, 65,536/65,536 byte pairs agree with the dump chain.

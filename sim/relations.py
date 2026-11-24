@@ -203,6 +203,22 @@ def extract_program(win):
     return prog, stores
 
 
+def store_directions(win):
+    """(addr, base register) for every `mov DWORD PTR [...],edx` store: the nearest `mov eax,R`
+    above it names the index direction (edi = faction a, esi = faction b).  Both directions of a
+    word op must be present, or a one-sided writer would read as a symmetric transition."""
+    out = []
+    for i, (a, mn, ops) in enumerate(win):
+        if mn == "mov" and re.match(r"^DWORD PTR \[.+\],edx$", ops):
+            base = None
+            for j in range(i - 1, max(-1, i - 30), -1):
+                if win[j][1] == "mov" and re.match(r"^eax,(edi|esi)$", win[j][2]):
+                    base = win[j][2].split(",")[1]
+                    break
+            out.append((a, base))
+    return out
+
+
 def run_program(prog, wab, wba, mask):
     """Execute the extracted program on a symmetric pair.  Returns (post_ab, post_ba, eff)."""
     ebx = mask
@@ -405,9 +421,15 @@ def accept(quiet=False):
     win_d = sha16(win)
     win2_d = sha16(window(load(), FN_START, FN_END))
     stored_ops = sum(1 for b in prog for k, _i, _a in b["ops"] if k in ("and", "or_eff"))
+    dirs = store_directions(win)
+    bases = [d[1] for d in dirs]
+    pairs_ok = bases == ["edi", "esi"] * 4
+    print("  store directions in address order: %s -> %d/4 (edi=a then esi=b)"
+          % (" ".join("%s@%x" % (b, a) for a, b in dirs),
+             sum(1 for k in range(0, len(dirs) - 1, 2) if bases[k:k + 2] == ["edi", "esi"])))
     print("  stores: %d measured, %d stored ops (and/or_eff) - one store per op, the two mask "
           "upgrades store nothing" % (stores, stored_ops))
-    gate("G0", len(win) == 161 and stores == 8 and stores == stored_ops
+    gate("G0", len(win) == 161 and stores == 8 and stores == stored_ops and pairs_ok
          and all(by.get(a) == (mn, ops) for a, mn, ops in anchors) and win_d == win2_d,
          "161 insns, %d stores == the 8 stored ops (one per direction), 9/9 anchors byte-exact, "
          "window digest %s twice (%s)" % (stores, win_d, win_d == win2_d))

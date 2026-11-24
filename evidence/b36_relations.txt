@@ -9,6 +9,7 @@ dumping FUN_00551a20 @0x551a20..0x551c32: 161 insns, 8 dword stores into 0x94d44
     00551b74 test   bl,0x17  ok
     00551b98 and    edx,0xff7fffff  ok
     00551be6 or     edx,ebx  ok
+  store directions in address order: edi@551a8e esi@551ab5 edi@551b1d esi@551b4a edi@551b9e esi@551bc5 edi@551be8 esi@551c0d -> 4/4 (edi=a then esi=b)
   stores: 8 measured, 8 stored ops (and/or_eff) - one store per op, the two mask upgrades store nothing
 ok   G0 161 insns, 8 stores == the 8 stored ops (one per direction), 9/9 anchors byte-exact, window digest b20f5818dee2d861 twice (True)
 extracted rule program: 6 `test bl` blocks

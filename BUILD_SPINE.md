@@ -1430,7 +1430,8 @@ clears 0x800000; **G2** parity on 16 pre-states x 2,560 masks = 40,960 pairs, 0 
 **G4** a 16-event three-faction diplomatic transcript replayed step by step, every post-word
 equal to the program's and symmetric; **G5** on 40,976 transitions the pact write always
 carries treaty, a war-only write always leaves the ladder empty, and every step is symmetric
-and idempotent; **G6** FUN_005076d0's 0x507975..0x50798f chain walked as an interpreter agrees
+and idempotent; **G6** FUN_005076d0's chain (0x507975..0x5079a7 - the three ladder tests, the mismatch
+store and the scored inc) walked as an interpreter agrees
 with `Relations.classify` on all 65,536 (current, wanted) byte pairs, and pact+treaty does NOT
 satisfy a want of treaty - ordered EQUALITY, M368's law; **G7** the three peace hosts decode to
 (4, 0x691144)/(2, 0x691150)/(1, no poster) and the action layer maps pact->0x3,
