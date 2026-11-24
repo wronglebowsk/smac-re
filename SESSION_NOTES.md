@@ -598,11 +598,12 @@ whether a facility completion stamps at all.
 
 ## Session 333-chain1 (2026-11-24) — B34: a FACILITY completion stamps NOTHING (no writer on the leg; the recorded bytes falsify the stamp at 3 discriminating completions)
 
-`python3 -u -m sim.facstamp` -> **`PASS B34: 10/10 gates  5296fdad6d26caa3`** (`evidence/b34_facstamp.txt:97`,
+`python3 -u -m sim.facstamp` -> **`PASS B34: 10/10 gates  5296fdad6d26caa3`** (`evidence/b34_facstamp.txt:99`,
 re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Answer to B33's gap: nowhere.
-- **20 stores, M342's 11+9 reproduced** (`:15,:86`): API 2 (`4e4528`/`4e4546`), GRANT 11 in `FUN_004e47d0`,
-  SET 1 (`4f0ec0`), COPY 6 (2 in `FUN_0041cf20`, 3 in the unnamed `4f38bb`/`4f3ebc`/`4f3f4c` region, 1 in
-  `FUN_004f47f0`). COPY is the only family that can express a LOSS.
+- **21 stores, and M342's 20 is SHORT BY ONE** (`:14,:88`): all 194 bitmap references are classified
+  (11 direct + 183 address loads: 9 `lea`, 174 `mov`-imm, 10 feeding a store) -> API 2 / GRANT 11 /
+  SET 1 / COPY 7. The miss is the screen's byte COPY at `4f0d60` (`mov [esi+eax*1],dl`); M342's lea-window was too
+  short to reach it. COPY is the only LOSS-capable family.
 - **Leg is writer-free, measured**: pop `FUN_004ef5d0` 88 insns, 0 bitmap refs, 0 API calls; the base screen
   (its only caller) 0 API calls, its only bitmap store the unit-only OR. API hosts ∩ pop hosts = ∅ (`:87-88`).
 - **6 facility completions in the recorded run** (`:54-59`), not B31's 1: Korolev r0, Virgin Soil s1/s9 (head 2),

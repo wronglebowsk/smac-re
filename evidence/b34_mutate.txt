@@ -13,4 +13,4 @@ baseline green: 10/10 gates, no BAD
   MU12 PASS   reddens G10       the store-census digest unpinned: a family-shape drift would go unnoticed
   MU10 PASS   reddens G10,G2,G5 the bitmap filter dropped: every BYTE store in .text counted as a bitmap writer
   NOOP PASS   reddens []        identity tree - must redden nothing
-PASS HARNESS B34: 13/13 mutants redden exactly their declared sets, NO-OP [], script 116d23081d6f51e4
+PASS HARNESS B34: 13/13 mutants redden exactly their declared sets, NO-OP [], script c9b43904f9bcd028

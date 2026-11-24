@@ -11,14 +11,16 @@ TABLE 1 - the dump and the API's call graph
     FUN_00585720     size=22283  sites=1  
     FUN_0058fa40     size=23925  sites=1  
     FUN_0059ce10     size=5292   sites=11 
+  reference census: 194 instructions mention the four bitmap bytes = 11 direct stores + 183 address loads (lea=9, mov-imm=174); of the loads, 10 feed a store through the register and 173 feed reads
 
 TABLE 2 - every store into the bitmap word, by family
   API    2 sites
     004e4528 or   FUN_004e44f0
     004e4546 and  FUN_004e44f0
-  COPY   6 sites
+  COPY   7 sites
     0041d317 mov  FUN_0041cf20
     0041d34a mov  FUN_0041cf20
+    004f0d60 mov  FUN_004ef6d0
     004f38bb mov  HOLE
     004f3ebc mov  HOLE
     004f3f4c mov  HOLE
@@ -44,10 +46,10 @@ TABLE 3 - the COMPLETION LEG's own two pieces
   the screen calls the pop at 3 site(s); the screen's own API calls=0
 
 TABLE 4 - set arithmetic: the API's host set vs the pop's host set
-  |API hosts|=8  |pop hosts|=1  intersection={}
+  |API hosts|=8  |pop hosts|=1 (FUN_004ef6d0, 3 call sites)  intersection={}
 
 TABLE 5 - the COPY family (the only writer that can express a LOSS)
-  6 copy sites: 0041d317/FUN_0041cf20, 0041d34a/FUN_0041cf20, 004f38bb/HOLE, 004f3ebc/HOLE, 004f3f4c/HOLE, 004f49e1/FUN_004f47f0
+  7 copy sites: 0041d317/FUN_0041cf20, 0041d34a/FUN_0041cf20, 004f0d60/FUN_004ef6d0, 004f38bb/HOLE, 004f3ebc/HOLE, 004f3f4c/HOLE, 004f49e1/FUN_004f47f0
   0 clear sites: 
 
 TABLE 6 - the recorded run's PAID boundaries with a FACILITY head (0 < head < 0x40)
@@ -81,17 +83,17 @@ TABLE 9 - the model's COVERAGE (a model that explained the gains would be wrong)
   gains at paid boundaries explained by a completion: 0/5 (heads outside the window: 5)
   copy-signature boundaries (no pay, gain+loss): 1/1
 
-DIGESTS dump=5296fdad6d26caa3 stores=6e9336d6bc27b5c8 run=fd2750a58598b20f
+DIGESTS dump=5296fdad6d26caa3 stores=a29bedd3b83829df run=fd2750a58598b20f
 ok   G1 dump censused: 790695 insns, 48881 calls, API sites 27 in 8 hosts, digest 5296fdad6d26caa3
-ok   G2 families: API=2 GRANT=11 SET=1 COPY=6 CLEAR=0 total=20 digest 6e9336d6bc27b5c8
-ok   G3 the pop (88 insns) is writer-free (refs=0 api=0); the screen's API calls=0 and its ONLY bitmap store is the unit-only OR at 0x4f0ec0 (or); screen->pop=3
-ok   G4 API hosts and the pop's host are disjoint ({})
-ok   G5 the COPY family is pinned site by site: 2 in FUN_0041cf20, 3 in the unnamed region (4f38bb, 4f3ebc, 4f3f4c), 1 in FUN_004f47f0, 0 clears
+ok   G2 every bitmap reference is classified: 194 = 11 direct stores + 183 address loads (lea=9, mov-imm=174), of which 10 feed a register store; families: API=2 GRANT=11 SET=1 COPY=7 CLEAR=0 total=21 digest a29bedd3b83829df
+ok   G3 the pop (88 insns) is writer-free (refs=0 api=0); the screen's API calls=0 and its 2 bitmap stores 4f0d60/mov,4f0ec0/or sit in the unit spend block (before 0x4f0d94) and B33's stamp block (>= 0x4f0e90) respectively, both unit-only; screen->pop=3
+ok   G4 the pop's callers are MEASURED (FUN_004ef6d0, 3 sites); API hosts and the pop's host are disjoint ({})
+ok   G5 the COPY family is pinned site by site: 2 in FUN_0041cf20, 1 in the screen (0x4f0d60, M342's miss), 3 in the unnamed region (4f38bb, 4f3ebc, 4f3f4c), 1 in FUN_004f47f0, 0 clears
 ok   G6 facility completions 6 (discriminating 3), every one stamped nothing; the head-stamp rival 0/6
 ok   G7 gains at paid boundaries 5, all with an out-of-window head (5); copy signature 1
-ok   G8 the stamp rival is falsified ON BYTES at every discriminating completion: 3/6 differ; 3 vacuous (bit already set)
+ok   G8 the stamp rival is falsified ON BYTES at every discriminating completion: 3/6 differ by EXACTLY byte +0 (offsets [(0,)]); 3 vacuous rows differ by 0
 ok   G9 coverage printed: completions 6/6, gains explained by a completion 0/5
   second pass (fresh trace decode): 6 facility completions of 30 paid, digest fd2750a58598b20f
-ok   G10 anchors pinned: dump 5296fdad6d26caa3 stores 6e9336d6bc27b5c8 run fd2750a58598b20f; heads [1, 1, 1, 2, 2, 2]; fresh second pass fd2750a58598b20f == fd2750a58598b20f
+ok   G10 anchors pinned: dump 5296fdad6d26caa3 stores a29bedd3b83829df run fd2750a58598b20f; heads [1, 1, 1, 2, 2, 2]; fresh second pass fd2750a58598b20f == fd2750a58598b20f
 
 PASS B34: 10/10 gates  5296fdad6d26caa3

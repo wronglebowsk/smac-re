@@ -1310,16 +1310,19 @@ law on the 20-sample recorded run instead of asserting it.
 sim.selftest --b34` only relays, so the two entry points cannot print different text) with:
 **G1** the census is the WHOLE dump - instruction and `call` counts printed, the 27 call
 sites of the set/clear API resolved to 8 host functions by ADDRESS RANGE (Ghidra index),
-a digest pinned; **G2** the `+0x8c` stores split into exactly three families with counts
-and the 12 `and`-clears/`or`-sets/copies listed (the three families, not a prose list);
+a digest pinned; **G2** EVERY reference to the four bitmap bytes is classified (194 in this dump = 11 direct
+stores + 183 address loads, 9 `lea` and 174 `mov`-immediate, of which 10 feed a store through
+the register), so the census cannot be a `BYTE PTR`-only sample; the 21 stores then split into
+API 2 / GRANT 11 / SET 1 / COPY 7 with their addresses listed;
 **G3** the COMPLETION LEG is writer-free: the queue-pop `FUN_004ef5d0` has 0 references to
 `0x95da9c` and 0 API call sites, and the base screen `FUN_004ef6d0` - the pop's ONLY
-caller - has 0 API call sites too, so the two pieces the game runs on a completion contain
-no stamp; **G4** the API's host set and the pop's host set are DISJOINT (set arithmetic on
+caller, MEASURED from the call sites - has 0 API calls and exactly two bitmap stores
+(`4f0d60 mov`, `4f0ec0 or`), both inside the unit-only blocks B33 walked (the copy at
+`4f0d60` is M342's miss: its lea-window was shorter than the distance to the store); **G4** the API's host set and the pop's host set are DISJOINT (set arithmetic on
 the printed tables), so no function both pops and stamps; **G5** the COPY family (a `mov`
-of the bitmap word, the only writer that can express a LOSS) is exactly six sites: two in
-`FUN_0041cf20`, three in the unnamed `0x4f3xxx` region (`4f38bb`/`4f3ebc`/`4f3f4c`) and one
-in the charge routine `FUN_004f47f0`;
+of the bitmap word, the only writer that can express a LOSS) is exactly seven sites: two in
+`FUN_0041cf20`, one in the base screen (`4f0d60`), three in the unnamed `0x4f3xxx` region
+(`4f38bb`/`4f3ebc`/`4f3f4c`) and one in the charge routine `FUN_004f47f0`;
 **G6** on the recorded run, the paid boundaries with a FACILITY head (0 < head < 0x40)
 are printed with their before/after bitmaps - every one is UNCHANGED, so the completion
 model (delta `{}`) scores 6/6 and the "head stamps its bit" rival 0/6, and the run is

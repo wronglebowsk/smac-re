@@ -44,9 +44,10 @@ CHARGE = 0x4f47f0          # FUN_004f47f0 - the upkeep charge routine (reads the
 PRICE = fo.PRICE           # 9, B23's parity-verified fixture for the recorded run
 FAC_LO, FAC_HI = 1, 0x40
 SCREEN_NAME = "FUN_004ef6d0"  # the pop's only caller (M342 TABLE 4)
+UNIT_JE, STAMP_BLOCK = 0x4f0d94, 0x4f0e90   # B33 G4: `0x4f0d94 je 0x4f0e90` (the stamp block)
 
 ANCHOR = "5296fdad6d26caa3"  # pinned on the first real run (G1/G10)
-STORES_ANCHOR = "6e9336d6bc27b5c8"
+STORES_ANCHOR = "a29bedd3b83829df"
 RUN_ANCHOR = "fd2750a58598b20f"
 FAIL = []
 
@@ -97,45 +98,86 @@ def container(fns, starts, a):
 
 
 STORE_ANY = re.compile(r"^(mov|or|and|add|sub|xor)\s+BYTE PTR \[([^\]]*)\],")
-LEA_RE = re.compile(r"^lea\s+(\w+),\[([^\]]*0x95da9c[^\]]*)\]")
+MAT_RE = re.compile(r"^(lea|mov)\s+(\w+),\s*(?:([^,]*\[[^\]]*0x95da(9c|9d|9e|9f)[^\]]*\])|"
+                     r"(0x95da(9c|9d|9e|9f)))\s*$")
+REG_WRITE = re.compile(r"^(mov|lea|pop|xor|add|sub|imul|and|or|shl|shr|sar|neg|not|inc|dec|"
+                       r"movzx|movsx|cmov\w*)\s+(\w+)\b")
+BITMAP_RE = re.compile(r"0x95da(9c|9d|9e|9f)\b")
 
 
 def mem_touches_bitmap(operand):
     """True when the memory operand addresses one of the four bitmap bytes."""
-    m = re.search(r"0x(95da9c|95da9d|95da9e|95da9f)\b", operand)
-    return bool(m)
+    return bool(BITMAP_RE.search(operand))
 
 
 def census(ins, fns):
-    """Every store into the bitmap word: constant form + lea form resolved through its register."""
+    """Every store into the bitmap word, with a COMPLETE reference classification.
+
+    A store's address can reach the instruction two ways: written into the operand itself
+    (`mov BYTE PTR [esi+0x95da9c],cl`) or materialised into a register first and stored
+    through that register (`lea eax,[..0x95da9c]` / `mov eax,0x95da9c` then `or [eax],cl`).
+    This walks the dump ONCE, tracks which registers currently hold a bitmap byte offset,
+    invalidates a register on any write to it, and records a store only while the register
+    still holds the materialisation.  The materialisation KINDS are counted too, so a
+    store reached by a form this tracker does not model would show up as a reference that is
+    neither a direct store nor a materialisation (asserted in G2).
+    """
     starts = [f[0] for f in fns]
-    const = []
-    leas = []
+    const, leas, kinds = [], [], {"lea": 0, "mov-imm": 0}
+    holds = {}          # reg -> byte offset 0..3 of the bitmap word
     for i, (a, body) in enumerate(ins):
         m = STORE_ANY.match(body)
         if m and mem_touches_bitmap(m.group(2)):
             const.append((a, m.group(1), body, container(fns, starts, a)))
-        m = LEA_RE.match(body)
-        if m:
-            reg, op = m.group(1), m.group(2)
-            for a2, b2 in ins[i + 1:i + 14]:
-                ms = STORE_ANY.match(b2)
-                if ms and re.search(r"\[%s(\*|\+|])" % reg, b2):
-                    leas.append((a, a2, ms.group(1), b2, container(fns, starts, a2)))
+            continue
+        ms = STORE_ANY.match(body)
+        if ms:
+            for reg in list(holds):
+                if re.search(r"\[%s(\*|\+|])" % reg, body):
+                    leas.append((a, a, ms.group(1), body, container(fns, starts, a)))
                     break
-                if re.match(r"^(mov|lea|pop|xor|add|sub|imul|call|and|or)\s+%s\b" % reg, b2):
-                    break
-    return const, leas
+        mat = MAT_RE.match(body)
+        if mat:
+            kind, reg = mat.group(1), mat.group(2)
+            imm = mat.group(5)
+            if kind == "lea":
+                off = None
+                for k, name in enumerate(("9c", "9d", "9e", "9f")):
+                    if "0x95da%s" % name in body:
+                        off = k
+                kinds["lea"] += 1
+            else:
+                off = int(imm[-2:], 16) - 0x9c if imm else None
+                kinds["mov-imm"] += 1
+            if off is not None:
+                holds[reg] = off
+            continue
+        rw = REG_WRITE.match(body)
+        if rw:
+            holds.pop(rw.group(2), None)
+    # one store, one entry: two loads can hand the same register to the same store line
+    seen, ded = set(), []
+    for row in leas:
+        if row[1] in seen:
+            continue
+        seen.add(row[1])
+        ded.append(row)
+    return const, ded, kinds
 
 
-def api_sites(ins, fns):
+def call_sites(ins, fns, target):
+    """Every `call target` in the dump, each with the function that contains it."""
     starts = [f[0] for f in fns]
     out = []
     for a, body in ins:
         m = re.search(r"\bcall\s+0x([0-9a-f]+)", body)
-        if m and int(m.group(1), 16) == API:
+        if m and int(m.group(1), 16) == target:
             out.append((a, container(fns, starts, a)))
     return out
+
+
+def api_sites(ins, fns):
+    return call_sites(ins, fns, API)
 
 
 def body_of(ins, fns, start):
@@ -149,26 +191,29 @@ def body_of(ins, fns, start):
 
 
 def body_stores(body):
-    """Stores into the bitmap word inside ONE function body, resolving `lea`-form pointers.
+    """Stores into the bitmap word inside ONE function body, resolving address loads itself.
 
-    This is deliberately independent of `census`: G3 must not move when the global census
-    filter is mutated (review #389 P2), so the screen's own body is walked here.
+    Deliberately independent of `census`: G3 must not move when the global census filter is
+    mutated (review #389 P1), so this walks the slice with its own register tracking.
     """
-    out = []
-    for i, (a, b) in enumerate(body):
+    out, holds = [], {}
+    for a, b in body:
         m = STORE_ANY.match(b)
         if m and mem_touches_bitmap(m.group(2)):
             out.append((a, m.group(1)))
-        m = LEA_RE.match(b)
+            continue
         if m:
-            reg = m.group(1)
-            for a2, b2 in body[i + 1:i + 14]:
-                ms = STORE_ANY.match(b2)
-                if ms and re.search(r"\[%s(\*|\+|])" % reg, b2):
-                    out.append((a2, ms.group(1)))
+            for reg in list(holds):
+                if re.search(r"\[%s(\*|\+|])" % reg, b):
+                    out.append((a, m.group(1)))
                     break
-                if re.match(r"^(mov|lea|pop|xor|add|sub|imul|call|and|or)\s+%s\b" % reg, b2):
-                    break
+        mat = MAT_RE.match(b)
+        if mat:
+            holds[mat.group(2)] = 1
+            continue
+        rw = REG_WRITE.match(b)
+        if rw:
+            holds.pop(rw.group(2), None)
     return out
 
 
@@ -194,7 +239,7 @@ def main(argv=None):
     print("B34 - WHERE A FACILITY COMPLETION STAMPS +0x8c (campaign: base record +0x8c)")
     ins, fns, n_call = load_dump()
     starts = [f[0] for f in fns]
-    const, leas = census(ins, fns)
+    const, leas, kinds = census(ins, fns)
     sites = api_sites(ins, fns)
     hosts = {}
     for a, h in sites:
@@ -212,6 +257,15 @@ def main(argv=None):
     d1 = sha([("ins", len(ins)), ("calls", n_call), ("api", len(sites)),
               ("hosts", tuple(sorted(hosts.items())))])
 
+    refs = [(a, b) for a, b in ins if BITMAP_RE.search(b)]
+    direct = {a for a, _m, _b, _h in const}
+    mats = {x[1] for x in leas}
+    loads = len(refs) - len(direct)
+    print("  reference census: %d instructions mention the four bitmap bytes = %d direct stores + "
+          "%d address loads (%s); of the loads, %d feed a store through the register and %d feed reads"
+          % (len(refs), len(direct), loads,
+             ", ".join("%s=%d" % kv for kv in sorted(kinds.items())), len(mats), loads - len(mats)))
+
     print("\nTABLE 2 - every store into the bitmap word, by family")
     fams = {}
     for a, mnem, body, host in const:
@@ -223,7 +277,8 @@ def main(argv=None):
         print("  %-6s %d sites" % (k, len(rows)))
         for a, mnem, host in rows:
             print("    %08x %-4s %s" % (a, mnem, host))
-    d2 = sha([(k, tuple(sorted(v))) for k, v in sorted(fams.items())])
+    d2 = sha([(k, tuple(sorted(v))) for k, v in sorted(fams.items())]
+             + [("refs", len(refs), loads - len(mats)), ("kinds", tuple(sorted(kinds.items())))])
 
     print("\nTABLE 3 - the COMPLETION LEG's own two pieces")
     pop_body = body_of(ins, fns, POP)
@@ -242,10 +297,12 @@ def main(argv=None):
     scr_stores = body_stores(scr_body)
     print("\nTABLE 4 - set arithmetic: the API's host set vs the pop's host set")
     api_hosts = set(hosts)
-    pop_hosts = {SCREEN_NAME}  # the pop's only caller is the base screen (M342 TABLE 4)
+    pop_calls = call_sites(ins, fns, POP)
+    pop_hosts = {h[2] for _a, h in pop_calls}   # MEASURED from the dump, not asserted
     inter = api_hosts & pop_hosts
-    print("  |API hosts|=%d  |pop hosts|=%d  intersection=%s"
-          % (len(api_hosts), len(pop_hosts), sorted(inter) or "{}"))
+    print("  |API hosts|=%d  |pop hosts|=%d (%s, %d call sites)  intersection=%s"
+          % (len(api_hosts), len(pop_hosts), ",".join(sorted(pop_hosts)), len(pop_calls),
+             sorted(inter) or "{}"))
 
     print("\nTABLE 5 - the COPY family (the only writer that can express a LOSS)")
     copies = sorted(fams.get("COPY", []))
@@ -296,9 +353,13 @@ def main(argv=None):
 
     print("\nTABLE 8 - the stamp model replayed on the facility completions (bytes)")
     diffs = 0
+    per_row = []
     for si, ev, r, idx, name, hb, ha, stb, sta, g, l, p, rec, vac in fac_done:
         img, log = fo.transaction(p, stamp=True)
-        changed = sum(1 for k in range(fo.FAC_OFF, fo.FAC_OFF + fo.FAC_BYTES) if img[k] != rec[k])
+        offs = [k - fo.FAC_OFF for k in range(fo.FAC_OFF, fo.FAC_OFF + fo.FAC_BYTES)
+                if img[k] != rec[k]]
+        changed = len(offs)
+        per_row.append((changed, offs, vac))
         diffs += 1 if changed else 0
         print("  s%-2d %-18s model=%s recorded=%s differing bytes=%d (discriminating=%s) log=%s"
               % (si, name[:18], fmt_bits(sorted(fo.bits_of(img))),
@@ -321,31 +382,41 @@ def main(argv=None):
                and ANCHOR == d1,
                "dump censused: %d insns, %d calls, API sites %d in %d hosts, digest %s"
                % (len(ins), n_call, len(sites), len(hosts), d1))
-    ok &= gate("G2", len(fams.get("API", [])) == 2 and len(fams.get("GRANT", [])) == 11
-               and len(fams.get("SET", [])) == 1 and len(fams.get("COPY", [])) == 6
+    ok &= gate("G2", len(direct) == 11 and len(mats) == 10 and loads == sum(kinds.values())
+               and len(direct) + len(mats) == 21 and kinds.get("lea") == 9
+               and len(fams.get("API", [])) == 2 and len(fams.get("GRANT", [])) == 11
+               and len(fams.get("SET", [])) == 1 and len(fams.get("COPY", [])) == 7
                and len(fams.get("CLEAR", [])) == 0
-               and sum(len(v) for v in fams.values()) == 20,
-               "families: API=%d GRANT=%d SET=%d COPY=%d CLEAR=%d total=%d digest %s"
-               % (len(fams.get("API", [])), len(fams.get("GRANT", [])), len(fams.get("SET", [])),
+               and sum(len(v) for v in fams.values()) == 21,
+               "every bitmap reference is classified: %d = %d direct stores + %d address loads "
+               "(%s), of which %d feed a register store; families: API=%d GRANT=%d SET=%d COPY=%d "
+               "CLEAR=%d total=%d digest %s"
+               % (len(refs), len(direct), loads,
+                  ", ".join("%s=%d" % kv for kv in sorted(kinds.items())), len(mats),
+                  len(fams.get("API", [])), len(fams.get("GRANT", [])), len(fams.get("SET", [])),
                   len(fams.get("COPY", [])), len(fams.get("CLEAR", [])),
                   sum(len(v) for v in fams.values()), d2))
     ok &= gate("G3", pop_refs == 0 and pop_api == 0 and scr_api == 0 and scr_isa_caller >= 1
-               and scr_stores == [(0x4f0ec0, "or")] and len(pop_body) == 88,
-               "the pop (88 insns) is writer-free (refs=%d api=%d); the screen's API calls=%d and its ONLY "
-               "bitmap store is the unit-only OR at 0x%x (%s); screen->pop=%d"
-               % (pop_refs, pop_api, scr_api, scr_stores[0][0] if scr_stores else 0,
-                  scr_stores[0][1] if scr_stores else "-", scr_isa_caller))
-    ok &= gate("G4", not inter, "API hosts and the pop's host are disjoint (%s)" % (sorted(inter) or "{}"))
+               and scr_stores == [(0x4f0d60, "mov"), (0x4f0ec0, "or")] and len(pop_body) == 88
+               and scr_stores[0][0] < UNIT_JE and scr_stores[1][0] >= STAMP_BLOCK,
+               "the pop (88 insns) is writer-free (refs=%d api=%d); the screen's API calls=%d and its "
+               "%d bitmap stores %s sit in the unit spend block (before 0x%x) and B33's stamp block "
+               "(>= 0x%x) respectively, both unit-only; screen->pop=%d"
+               % (pop_refs, pop_api, scr_api, len(scr_stores),
+                  ",".join("%x/%s" % x for x in scr_stores), UNIT_JE, STAMP_BLOCK, scr_isa_caller))
+    ok &= gate("G4", pop_hosts == {SCREEN_NAME} and len(pop_calls) == 3 and not inter,
+               "the pop's callers are MEASURED (%s, %d sites); API hosts and the pop's host are "
+               "disjoint (%s)" % (",".join(sorted(pop_hosts)), len(pop_calls), sorted(inter) or "{}"))
     copy_hosts = {}
     for a, _m, h in copies:
         copy_hosts.setdefault(h, []).append(a)
     copy_shape = copy_hosts.get("FUN_0041cf20", []), copy_hosts.get("HOLE", []), \
         copy_hosts.get("FUN_004f47f0", [])
-    ok &= gate("G5", len(copies) == 6 and len(copy_shape[0]) == 2 and len(copy_shape[1]) == 3
+    ok &= gate("G5", len(copies) == 7 and len(copy_shape[0]) == 2 and len(copy_shape[1]) == 3
                and len(copy_shape[2]) == 1 and sorted(copy_shape[1]) == [0x4f38bb, 0x4f3ebc, 0x4f3f4c]
                and len(clears) == 0,
-               "the COPY family is pinned site by site: 2 in FUN_0041cf20, 3 in the unnamed region "
-               "(%s), 1 in FUN_004f47f0, %d clears"
+               "the COPY family is pinned site by site: 2 in FUN_0041cf20, 1 in the screen "
+               "(0x4f0d60, M342's miss), 3 in the unnamed region (%s), 1 in FUN_004f47f0, %d clears"
                % (", ".join("%x" % a for a in sorted(copy_shape[1])), len(clears)))
     ok &= gate("G6", len(fac_done) == 6 and len(nonvac) == 3
                and all(not x[9] and not x[10] for x in fac_done),
@@ -354,9 +425,13 @@ def main(argv=None):
     ok &= gate("G7", len(gain_at_paid) == 5 and len(gain_offwin) == 5 and len(gain_copy) == 1,
                "gains at paid boundaries %d, all with an out-of-window head (%d); copy signature %d"
                % (len(gain_at_paid), len(gain_offwin), len(gain_copy)))
-    ok &= gate("G8", diffs == len(nonvac) and diffs >= 1,
-               "the stamp rival is falsified ON BYTES at every discriminating completion: %d/%d differ; "
-               "%d vacuous (bit already set)" % (diffs, len(fac_done), len(fac_done) - len(nonvac)))
+    ok &= gate("G8", diffs == len(nonvac) and diffs >= 1
+               and all((c == 1 and o == [0]) for c, o, v in per_row if not v)
+               and all(c == 0 for c, _o, v in per_row if v),
+               "the stamp rival is falsified ON BYTES at every discriminating completion: %d/%d differ "
+               "by EXACTLY byte +0 (offsets %s); %d vacuous rows differ by 0"
+               % (diffs, len(fac_done), sorted({tuple(o) for c, o, v in per_row if not v}),
+                  len(fac_done) - len(nonvac)))
     ok &= gate("G9", cover_completion == len(fac_done) and len(gain_at_paid) == 5,
                "coverage printed: completions %d/%d, gains explained by a completion 0/5"
                % (cover_completion, len(fac_done)))
