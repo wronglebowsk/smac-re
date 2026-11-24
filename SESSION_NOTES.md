@@ -653,3 +653,29 @@ Review: 11 findings (6 real gate defects — 2 vacuous rivals, hardcoded 0x32, u
 unpinned extents, host guards not read from bytes) all fixed at head `1c0a06e1`, 12 mutants.
 Pitfall: the dump's store operand usually has NO displacement — the field is folded into a register
 by the preceding `lea`; a displacement grep alone reports zero stores for `0x551c40`/`0x551d70`.
+
+## Session 343-chain3 — M390: FUN_004dabb0 is DEAD-INF by every dispatch form a PE32 has; 0x551cf0's 4th arg is SET/CLEAR polarity
+
+- **ACCEPT** `python3 -u scripts/m390_entry_noun.py` -> **`PASS M390: 47/47`** `bafd75107d142bc4`
+  (`evidence/m390_entry_noun.txt:188`), twice byte-identical (`evidence/m390_twice.txt:3`);
+  harness **16/16 killed** (`evidence/m390_mutate.txt:36`); static, zero box.
+- **Q1, mechanism named**: `FUN_004dabb0` (122 B, 48 insns) has ZERO of every
+  entry mechanism - 0 `call` (`:79`), 0 `jmp`/`jcc` (`:80`), 0 branch into the body from
+  outside, 0 VA immediates, 0 stored dwords in 3,067,904 B (`:89`), 0 register-indirect
+  sites loading a family address (`:109`).
+  Predecessor is `ret 4` at 0x4dabad, prologue is the family signature (identical to the
+  CALLED sibling 0x4dac30) -> it is a real entry, not a mid-body landing pad.
+- **WHY THE CENSUS IS COMPLETE (new law)**: ImageBase 0x400000, `DllCharacteristics=0x0`
+  (no DYNAMIC_BASE), reloc dir `(0,0)` - never relocated, so any pointer holds the literal
+  dword. Control: live sibling **0x4dab90 IS stored once**, .rdata VA 0x677ff8, inside a
+  187-entry .text-pointer run (`:98`); 14,754 .text addresses stored image-wide.
+- **Q2 ANSWERED**: `FUN_00551cf0(a,b,mask,flag)` — `flag!=0` -> `or` the mask in (SET) and,
+  if mask has 0x40, stamp 0x94d4c8=0x32; `flag==0` -> `not`+`and` (CLEAR), no timer touch.
+  Single row `idx=a*0x82f+b`. Callers: 36 sites = 26 push 1, 6 push 0, 4 pass a runtime
+  register (`:158`); M385's gate corroborates (0x4dad05 bit-clear->push 1, 0x4dad30
+  bit-set->push 0). Noun = SET/CLEAR polarity, not "arm the timer".
+- **Retraction**: M385 grouped 0x4dabb0 with 0x4dacc0/0x4dac30; the field splits them -
+  0x4dabb0 writes 0x94d448, 0x4dac30 writes 0x94d468.
+- **OPEN**: an address built arithmetically (split immediates) is not excluded; no evidence.
+- **PITFALLS**: the linear dump covers data bytes (104 out-of-section absolute operands);
+  backward push collection yields `[arg1..arg4]` - arg4 is the LAST element.

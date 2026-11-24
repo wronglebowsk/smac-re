@@ -1,33 +1,28 @@
-# NEXT_PROMPT.md - footing (B38 s342 `e0bb2deb53ecb96c`; M376 s339 `f22d2b46cc7e9507`. STATE: B1-B38 + M54A-M381; (ix) box-GATED; (x) OPEN-LEADS; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (B38 s342 `e0bb2deb53ecb96c`; M376 s339 `f22d2b46cc7e9507`. STATE: B1-B38 + M54A-M390; (ix) box-GATED; (x) OPEN-LEADS; #180 pre-existing FAIL.)
 Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS, skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
-The main model is also Hermes' compressor; its summaries die on the output cap. **Whatever is not
-finished by ~150k tokens is not finished at all.** Counted in TOOL CALLS:
-- **0-6** brief, this file, notes tail, `accept_ready.py`. No shard reading "for background".
-- **6-30** the milestone, one variable at a time; **commit by call 15** (s187: call 25 = 167k, zero commits).
-- JSON only, no XML. A write over ~4 KB that drifts -> `missing path`: retry as pure JSON, never fragment. Branch +
-  skeleton commit BEFORE probing (s189).
-- **30-40** STOP: an ungreen acceptance IS the finding — number + blocker, merge nothing.
-- **40-50** closing order, TERSE (see CLOSING ORDER; the caps there bind).
-
-Survivability: cursor <=600 B before any >2-min step; never `rm`/`git checkout --`; doc writes patch/append.
-**Batch: 5 static per census script, 1 box — doc headroom is the cap.** Caps (BYTES, what `budget` prints): NEXT_PROMPT warn 12,000/fail 16,000 — CLOSE at <= 12,000; SKILL.md
-warn 55,000 (keep near 44 k, always-loaded under the 60 k ritual); SESSION_NOTES warn 110 k. Split rule: settled text
-VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budget`.
+Compression CANNOT be relied on: whatever is not done by ~150k tokens is not done. TOOL CALLS:
+**0-6** brief + this file + notes tail; **6-30** the milestone, **commit by call 15** (s187);
+**30-40** STOP (an ungreen acceptance IS the finding); **40-50** CLOSING ORDER, terse. JSON only,
+no XML; branch + skeleton commit BEFORE probing (s189). Survivability: cursor <=600 B before any
+>2-min step; never `rm`/`git checkout --`; doc writes patch/append. **Batch: 5 static per census
+script, 1 box.** Caps (what `budget` prints): NEXT_PROMPT warn 12,000/fail 16,000 - CLOSE under
+12,000; SKILL.md warn 55,000 (keep near 44 k); SESSION_NOTES warn 110 k. Split rule: settled text
+VERBATIM to a reference / `NAMED.md`; RULES + pointer stay.
 
 ## BUILD TRACK — every 4th fire builds (full text VERBATIM: `docs/pick-archive.md` §s194)
 
-`python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
-that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B38 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B34`-`## B38` govern).
+`python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ that rung
+from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, no box/`/proc`/gdb;
+PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B38 MERGED** (cmds `NAMED` §CHAIN-BUILDS).
 **B39**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
 **DOC CAP: NAMED 246,041/250,000 (3.9k free - ROTATE FIRST next fire; `b38_named_rotate.py` = pattern).**
 
 ## THE LEDGER
 
-Merged M54A-M327 + B0-B26 + hygiene #254-#280. UNMERGED: the six ids in `§trim-s202`, of which **M241 (#180, 2/5, documented FAIL, gates stand)** is live.
+Merged M54A-M327 + B0-B26 + #254-#280. UNMERGED: six ids in `§trim-s202`; **M241 (#180, 2/5, documented FAIL)** is live.
 Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NAMED.md`.
 
 ## THE INSTRUMENTS (run FIRST)
@@ -42,34 +37,34 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 ## THE PICK — index (detail: `docs/pick-archive.md`, `NAMED.md` §CHAIN-PICKS)
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md`; faction fields = `docs/field-atlas-faction.md`
-  (read §M297 first - the 0x94d104 phrasing is WRONG).
-- **ISOLATION (s254)**: if a fire is live (`ps` + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A`.
+  (§M297 first - the 0x94d104 phrasing is WRONG).
+- **ISOLATION (s254)**: if a fire is live (`ps`/`gh pr list`/`git status`), work only in your own
+  `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main`; NEVER `git add -A`.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
   Next (ANALYSE, static, zero box): **(a) the LAST peace writer `0x53fcb3` - B39 executed `0x523f4c`; `0x53fcb3` is `push 1; push 2; call 0x551d70`, i.e. `551d70(a,b,0x2,mode=1)` = SET 0x2 on word B**.
   ANSWERED: M227-M340,M344,M346 + B1-B39 (M241 FAIL 2/5 #180).
   CLOSED enumeration + pick rows + open-lead census VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
-  **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); the analysis-only option is the OPEN-LEADS
-  list, each with a NAMED question. STILL OPEN: (x6) other writers of the 0x92bde8..0x92bf14 pref
-  block (chain-3); `ds:0x985ba0`'s WRITER (M334). ANSWERED (do not re-derive): x1 M333, x7 M334, x8 M337, x9
-  M342+M344+M346+M348, `0x999fa4` M353. Lists live in NAMED ## M310-M368. READER LAWS still BIND:
-  every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
+  **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); else the OPEN-LEADS list, each with a
+  NAMED question. STILL OPEN: `ds:0x985ba0`'s WRITER (M334). ANSWERED (do not re-derive): x1 M333,
+  x7 M334, x8 M337, x9 M342+M344+M346+M348, `0x999fa4` M353, x6 M390. Lists in NAMED ## M310-M390.
+  READER LAWS still BIND: every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 
 ## LIVE FACTS / KIT
 
-- **BOX**: UP, last touch s258 (TracerPid 0, yama=0; `pgrep -x terran.exe`). RE-CHECK `accept_ready.py`:
-  credit 0 is d0-gated STRUCTURAL (walk/scan kinds run anyway); `sudo -n python3 scripts/smac_preflight.py`
-  before arming. **ptrace law (s211): restore yama PRE; harness stays uid 1000 — skill `wine-operations.md`.**
+- **BOX**: UP (s258; TracerPid 0, yama=0). RE-CHECK `accept_ready.py`; credit 0 is d0-gated
+  STRUCTURAL; `sudo -n python3 scripts/smac_preflight.py` before arming. **ptrace law (s211): restore
+  yama PRE; harness stays uid 1000 — skill `wine-operations.md`.**
 
 ## TRAPS — rules (FULL s241 text verbatim: `docs/pick-archive.md` §s242-traps; detail §trim-s205/§s198; laws: skill
 `instrument-laws.md` + `wine-pitfalls.md`)
 
 1. A `fired=` list is the MODEL's prediction, not events; a no-event is evidence only once the bp is CONFIRMED
    to exist there; a gate may only read a field the harness SETS. (FULL: pick-archive §s242-traps)
-2. Check the instrument before believing a no-event: deref-conditions silently never fire; a return-site bp
-   prints the OLD eax; ZERO CALLS can be the GAME - scan /proc for the vptr first. (FULL: §s242-traps)
-3. Register semantics live in the ENCODING (scaled vs byte addressing never compare equal; an RMW through a
-   COPIED register evades store-shape greps - a hw watchpoint on the FIELD answers "who writes it"). (FULL: §s242-traps)
+2. Check the instrument before believing a no-event: deref-conditions silently never fire; a return-site
+   bp prints the OLD eax; ZERO CALLS can be the GAME - scan /proc for the vptr. (FULL: §s242-traps)
+3. Register semantics live in the ENCODING (an RMW through a COPIED register evades store-shape greps -
+   a hw watchpoint on the FIELD answers "who writes it"). (FULL: §s242-traps)
 4-11. (VERBATIM `docs/pick-archive.md` §trim-s256: gdb printf/script + call-frame; >90 s census never
    foreground; a PASS on a non-discriminating shape is no PASS; hw-watchpoint read-back.)
 12-13. Both gdb-detach laws (a census can leave gdb ATTACHED; the turn driver returns rc=0 while AI
@@ -78,22 +73,17 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
    0x4efe60 attribute the sweep by its predecessor; list cursor read BEFORE seek = PREVIOUS cursor;
    dirty-tree start = stash/start/pop. `§trim-s245`: objdump UPPERCASE; ARM BEFORE ANY SCREEN; SIGUSR1/
    SIGPIPE `handle` tails; byte-field BIT OPS vs dword scans; a VALUE SAMPLER is NOT a STORE CENSUS.)
-24. **A PASSING ASSERTION IS NOT A GATE** — an assert that can pass on an UNMEASURED state is a defect, not a
-   gate; every gate needs a NAMED mutant that reddens it, and the fixes get mutated too. FULL text + the
-   `m308_mutate.py` 8/8 reference: `docs/pick-archive.md` §trim-s296 (a); worked defect list, skill mechanics:
-   §trim-s292 (b) at `docs/pick-archive.md:996`.
-## CLOSING ORDER (exactly — the kickoff carries the same list, and the full 7-step text lives
-VERBATIM at `docs/pick-archive.md` §trim-s269). Order: 1 `SESSION_CURSOR.md` (<=600 B) BEFORE the
-rest, in case of compression. 2 `## Session <N+1>` APPENDED to `SESSION_NOTES.md` (<=2 KB, numbers
-WITH the command that produced them). 3 the `<ID>` block in `NAMED.md` (<=1 KB) + patch IN PLACE any
-earlier block this round qualifies; every VERIFIED row names the mutation that reddens it
-(no mutant = INFERRED/OPEN, or pin it + mutate it before submit). 4 `NEXT_PROMPT.md` patched BY SECTION to <=12,000 B (budget's
-warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`diff -rq skill/
-~/.hermes/skills/smac-cvr-format/` then `rsync`). 6 `git add <explicit paths>` + commit, then
-`python3 scripts/gate.py --base main` GREEN + `python3 scripts/review_lint.py --id <id>` PASS.
-7 submit -> `python3 scripts/ai_review.py <n>` (Strata local review; Greptile if credits return) ->
-triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
-Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`); per-id `NAMED ## <id>` GOVERN.
+24. **A PASSING ASSERTION IS NOT A GATE** — an assert that can pass on an UNMEASURED state is a
+   defect; every gate needs a NAMED mutant that reddens it (fixes mutated too). FULL text + the
+   `m308_mutate.py` 8/8 reference: `docs/pick-archive.md` §trim-s296 (a), `:996`.
+## CLOSING ORDER — the kickoff carries the 7-step list, full text VERBATIM
+`docs/pick-archive.md` §trim-s269. Bind: 1 `SESSION_CURSOR.md` FIRST (<=600 B); 2 `## Session`
+APPENDED (<=2 KB, each number WITH its command); 3 `<ID>` block in `NAMED.md` (<=1 KB), patch
+earlier blocks IN PLACE, every VERIFIED row names its mutant; 4 `NEXT_PROMPT.md` BY SECTION to
+<=12,000 B, every addition paired with a deletion; 5 skill sync only if edited (`diff -rq` then
+`rsync`); 6 `git add <explicit paths>` + commit, gate GREEN + review_lint PASS; 7 submit ->
+`ai_review.py <n>` -> triage ALL findings in one reply, re-measure at head, merge ONLY on a
+verified PASS. Region-B pointers: §trim-s313-chain1 (sha1 `6f2ddbe32478`); per-id `NAMED` GOVERN.
 - M348 (s326) MERGED: slots 1/2 <- Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED.
 - B34 (s333) MERGED: a facility completion stamps NOTHING (21 stores: API 2/GRANT 11/SET 1/COPY 6; 6/6 unchanged). 10/10 `5296fdad6d26caa3`.
 
@@ -114,3 +104,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - B39 (s343-c1) MERGED: `sim/relapi.py` - four relation APIs, TWO words (A `0x94d448` / B `0x94d468`, 8 dwords apart, same 2095 row scale); `0x551c40` writes B both ways, the peace block `0x523f3c/4c/58` = `551a20(0x50)`+`551a20(0x1)`+`551c40(0x2000)`, `0x2000000` skips only when A-row bit0 is set. 12/12 `1c0a06e178521ef3`, 12 mutants. NEXT: `0x53fcb3`.
 
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
+- M390 (s343-c3): 0x4dabb0 DEAD-INF under every PE32 dispatch form (non-rebasable PE, 0 stored VA); 0x551cf0 arg4 = SET/CLEAR (26 one / 6 zero / 4 reg of 36). 47/47 `bafd75107d142bc4`, 16/16 mutants.
