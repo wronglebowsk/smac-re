@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (M358 MERGED s332 `1af1dcb6fc`; B34 s333 `5296fdad`; M363 s334 `66b923f06f4e8866`. STATE: B1-B34 + M54A-M363; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (B34 s333 `5296fdad`; M363 s334 `66b923f06f4e8866`; B35 s335 `fa541d0a2445cacf`. STATE: B1-B35 + M54A-M365; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
 Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS (grep only), skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
@@ -22,9 +22,9 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B34 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B30`-`## B34` govern).
-**B35**: author its rung in `BUILD_SPINE.md` BEFORE probing - who calls the grant family
-(`FUN_004e47d0`/`FUN_0059ce10`, 11 literal items, 1 caller `FUN_005a0fa0`)? **DOC CAP: NAMED 246,697/250,000.**
+box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B35 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B30`-`## B34` govern).
+**B36**: `track_mode.py` decides; the spine now ends at B35 (who calls the grant family). Author the
+next rung in `BUILD_SPINE.md` BEFORE probing. **DOC CAP: NAMED 241,596/250,000.**
 
 ## THE LEDGER
 
@@ -47,7 +47,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 - **Where things live:** map/terrain = `MAP_FORMAT.md`; faction fields =
   `docs/field-atlas-faction.md` (read §M297 first - the 0x94d104 phrasing is WRONG).
 - **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
-- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M340,M344,M346 + B1-B31 (M241 FAIL 2/5 #180).
+- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M340,M344,M346 + B1-B35 (M241 FAIL 2/5 #180).
   CLOSED enumeration + pick rows + open-lead census (v..x4, B27) VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
   NEVER bp mid-instruction (s213).
@@ -110,13 +110,11 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M358 (s332) MERGED: `0x98ad88` = 52 B (name[0x20], dword +0x20, bytes +0x24..2e, word +0x30, word +0x32); `0x9267e4` = 128 dwords, NOT 64-byte rows. 10/10 `1af1dcb6fcd4a4b6`, harness 15/16.
 - B34 (s333) MERGED: facility completions stamp NOTHING - 21 stores (API 2/GRANT 11/SET 1/COPY 6), pop+screen
   writer-free, 6 completions 6/6 unchanged, 3 discriminating falsified on bytes. 10/10 `5296fdad6d26caa3`, 11/11.
-- M357 (s330-c3): pref checkbox LABELS — 6 Script.txt sections -> 66 rows (id->cell bit, 1:1); Laptop delta = movies/interludes/SFX/monuments. 18/18 `095258c8b40d0e23`, harness 23/23.
 
-- M356 (s330-c2): +0x30 bit2 = state bit (11 setters, one XOR-toggler 0x4396f6); +0x24 chassis 0x92ae80, +0x25 weapons 0x92b950 (21x0x10), +0x26 armor 0x92fd18 (10x0x10). 17/17 `c1a2beb794cec9f8`, harness 27/27.
 - M359 (s332-chain2): +0x28 = CARRY CAPACITY (V, Mode 7=Transport gates it; TWO writers, M356 G14 retracted); +0x27 = reactor level (INF); +0x2a = PLAN (M354's "class" retracted). 14/14 `7d4a2d1356c9ff41`, harness 18/18. NEXT: #REACTORS=4 vs the 1..3 clamp.
-- M360 (s331-c3): the 4 row-less ids are NOT a seventh page - 0x37/0x38/0x39 are A/V radio rows (+0x7aec 8 built/11 queried, class 1/2/3 relabel ctrl 0x4e/0x4c/0x4d) and 0x50 is the seventh widget's 4th id (built 0x30, queried 0x50); a miss resolves to bit<count>, unwritten in A/V. 25/25 `eb9f07df920a75ab`, harness 23/23. NEXT: readers of the radio flags [0x14d6c]/[0x14220]/[0x158b8].
 - M362 (s333-c3): the 0x4db1xx sibling = the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits (11 from 0x94d448, 2 from 0x94d468 = slot +8; 0x80000000 selects it). 6 writers, 4 symmetric. 20/20 `3b30baa33ea67fcb`, harness 19/19. NEXT: the 13 label strings (0x997b20 heap); bit nouns.
 - M361 (s333-c2): A/V radio flags = widget+0xa18 of 4 rows (0x12cbc+k*0xb4c); readers 0x493ec0/0x492940/0x492030/0x4930e0; relabel ends in generic 0x5fa1e8; master never commits; propagation both ways. 38/38 `b92f1a61c041ae87`, harness 30/30. NEXT: what 0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 toggle.
 - M364 (s334-chain2): the relations bits have NOUNS — 0x1 = PACT, 0x8 = AT WAR (V: the end-pact and declare-vendetta case blocks ask those masks); the other 11 INF. 24/24 `f6d006d0281ac189`, harness 23/23. NEXT: 0x10 (37 asks, co-sets 0x8000|0x40) and 0x20 (18 asks, clears dword B's 0xc00).
 - M365 (s334-c3): 0x94d5dc = relations-record slot block+0x1ac (23 sites, 8W/15R): only 0 stored, 3 `++`, 1 `+=2*byte`; 0x94d5bc pairs 5/5; deadlines value+round/50+1, 4 cross-direction cmp. 22/22 `d1d567339ee8c5b2`, harness 26/26. NEXT: the 13 label strings (0x997b20 heap).
-- M366 (s335-chain2): 0x10 = AT WAR/vendetta in force (V: declare path FUN_00507ce0->FUN_005076d0 writes it on both exits, fires VENDETTAWARNING/INCITED; set-rule clears 1|2|4); 0x20 = the human-branch war record (INF: set via FUN_00551cf0(...,0x20,1), B-ladder 0x20->0x400->0x800, half of the 0x40020 harsh-ending test). 29/29 `c36db3d154a5ea1b`, harness 32/32. NEXT: the noun WORD for 0x20; role of 0x80000000.
+- B35 (s335): WHO calls the grant family - 3 sites into the founder (FUN_004cca50/FUN_0059ce10/FUN_0059ec90), 1 into the new-game setup (FUN_005a0fa0); 11 API grants `[6,3,7,27,8,4,6,3,6,3,27]` + 10 mapper grants `[1,3,6,7,3,6,7,26]`; births 3/3 founder vs 1/3 new-game; the record EXISTENCE, not the bit value, is the separator. 11/11 `fa541d0a2445cacf`, harness 18/18. NEXT BUILD B36.
+- M366 (s335-chain2): 0x10 = AT WAR/vendetta in force (V: the declare path FUN_00507ce0->FUN_005076d0 writes 0x10 on both exits, fires VENDETTAWARNING/INCITED; its set-rule clears 1|2|4); 0x20 = the human-branch war record (INF). 26/26 `bc58f707128a8b15`, harness 29/29. NEXT: the noun WORD for 0x20; role of 0x80000000.
