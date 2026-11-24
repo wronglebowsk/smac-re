@@ -203,19 +203,7 @@ Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`
 | deterministic: two runs -> byte-identical 67,790-B dump, sha256 3b62847494b252ad... | `evidence/b7_moveslice.txt:5` (`python3 -m sim.selftest --b7 ...` -> `PASS B7: 6/6 gates`) | V |
 | declared ASSUMED in the dump `smac-sim-move/1`: positions come from the save (load-restore not modeled - M106 kernel write); the gesture is applied to EVERY unit (the trace's 117-120 live in a different save); uniform 3 MP cost | dump `assumed` | ASSUMED (declared) |
 
-## M277 (s218, PASS 6/6) - the scaled read is the permanent block-0 view; M274 G2's spill landing is arithmetically dead
-
-| fact | evidence | status |
-|---|---|---|
-| the two read sites of +0x94eaa8 are fed by DIFFERENT frame slots: UNSCALED 0x558452 `mov ax,[edi+0x94eaa8]` with 0x55844b `edi=[ebp-0x18]` (the fold 8380*arg+2*region) = block arg's row; SCALED 0x5584aa `mov cx,[edi*2+0x94eaa8]` with 0x5584a5 `edi=[ebp-0x10]` (region counter) = NO block term | `scripts/m277_scaled_row_ownership.py` G1, `evidence/m277_scaled_row.txt` | V (bytes) |
-| the region-loop domain is i in [1,127] (init 1 at 0x557f9e, one in-loop store 0x558b22, tail `inc ecx; cmp ecx,0x80; jl 0x557fb8`) so the scaled byte offset range is [2,254] and the last byte touched is +255 | G3 | V (bytes) |
-| the sibling verdict array 0x94eba8 starts +256 past 0x94eaa8 (= slot index 128), so regions 94..127 land in +188..+255 = 68 B of rows 94..127 INSIDE the row's own cell, NEVER the sibling: **M274 G2's "reads the sibling's [0..66] band" is refuted** (that band is offsets 256..322, unreachable) - M274's own printed max 254 < 256 | G4 | V, CORRECTS M274 G2 |
-| live replay, 7/7 recorded SCALED events: 2*edi in [2,2] = block 0 for all while s18 = 2*s10+8380*cp walks blocks 1..7 with cp=1..7 - rival "scaled carries 8380*cp" refuted 7/7 | G5, `evidence/m273w3.gdblog` | V (live log, offline) |
-| image-wide referrer census of +0x94eaa8 = exactly 4 sites (0x51df61, 0x558452, 0x5584aa, 0x564ab1); the ONLY two WRITERS (`inc WORD`, `add WORD,0xfff6`) both evaluate to eax = 8380*block + 2*slot -> per-faction-block live row, and the auto-manager's scaled read is the only block-free accessor = permanent faction-0 view | G6 (m276 evaluator reused) | V (bytes) |
-| M278 REFINEMENT (s219): the permanent faction-0 view above is the **player-index-0 row** - the writers' block atoms are owner-player bytes (base+4 / unit+14, M43 identity) - AND it doubles as the landing cell for FUN_0051dcb0's unowned-tile clamp (-1 sentinel -> block 0, sign-test at 0x51df1d); it is NOT a neutral slot and NOT the player's slot (the recorded human is index 3). 0x94e8a8 (0x51df3d) still shares the same fold shape - the row family is wider than 0x94eaa8 (still OPEN) | `scripts/m278_block0_semantics.py` G1-G6, `evidence/m278_block0.txt` | V, block-0 question CLOSED by M278 |
-
-Acceptance: `python3 scripts/m277_scaled_row_ownership.py` -> `SUMMARY M277: 6/6 gates PASS`; zero box time.
-
+## M277 (s218, PASS 6/6) - the scaled read is the permanent block-0 view; M274 G2's spill landing is arithmetically dead — FULL rows VERBATIM at `docs/named-archive-m337-rows.md:8` (§rotation-1 marker at `:7`, s318-chain1 headroom rotation, sha1 `653c93cda817` — the region is bounded by its own terminator line, its line number AND the full digest re-asserted by `scripts/m337_named_rotate.py --verify`); this stub governs. Every row is V; the M278 refinement (the player-index-0 real row) is archived with them.
 ## M278 (s219, PASS 7/7) - block 0 is the player-index-0 real row AND the unowned fallback; no neutral/player slot
 
 | fact | evidence | status |
@@ -1354,3 +1342,14 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | RIVAL killed: "0x94d2ac is not the difficulty names" — section string + row count + iteration count agree | `:8` | V MU3,4,5,13 |
 | ACCEPT `7/7` digest `fb58bdc3307d6258` x2 (`:9-10`,`_rerun.txt`); harness `20/20` `6e0e05a8ffb388d8` incl. an ALGORITHM mutant (`--selftest` 3/3, `evidence/m335_mutate_selftest.txt:4`) | `evidence/m335_mutate.txt:22-23` | V |
 | OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x48678f / 0x57c606 | - | lead |
+
+## M337 (s318-chain1, x8, STATIC 8/8) — item table row order = alpha `#FACILITIES` FILE order (rec i = alpha row i-1)
+
+| fact | evidence | status |
+|---|---|---|
+| `0x984d48` = `0x984d38`+`0x10`: fold `esi*3<<4` + `[eax+0x984d48]` reads rec idx's upkeep | G6 `:86` MU5,6 | V |
+| loader 0x57a7ef..0x57a899 opens FACILITIES (0x691ccc, 0x5ea431) | G1 `:81` MU4 | V |
+| the same loop writes recs 1..71 (`esi=0x984d74`=rec1+0xc, +0x30, end `0x985ac4`=rec72+0xc), rec 0 untouched; 1 line-read + 1 record step per iter => k-th line -> rec k | G2/G4 `:82,:84` MU1,3 | V |
+| rec i == alpha row i-1: 6-vs-11 branch at rec 39 == alpha's first 11-token row (idx 38, alpha.txt:629) | G4 `:84` MU2 | V |
+| one token per comma (`0x5ea985`); stores `+00,+0c,+10,+14,+18,+04,+18,+1c,+2c,+24,+28,+20` — supersedes M53i's +0x20/+0x28 (swapped) | G5 `:85` MU7,8 | V |
+| "39" = consumers' bound (`cmp esi,0x27` @0x4f4a35), array ends rec 72; projects are this loop's (`jl` 0x57a866 skips 5 trailing stores) | G2/G7 `:82,:87` MU11,12 | V |
