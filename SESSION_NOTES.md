@@ -564,13 +564,13 @@ whether a facility completion stamps at all.
 - ANSWER (static, `python3 -u scripts/m349_unit_id.py`): `FUN_004ef6d0` decodes queue slot 0 at
   **0x4ef88b** — `cmp ecx,0xffffffda` (-38) -> sentinel handler; `jge 0x4efa2c` -> FACILITY leg
   (item = head); `neg ecx` @0x4ef89f -> **item = -head = the UNIT TYPE**. Type >= 39 -> a
-  second-table index (type-39); 34..37 -> the [ebp-0x20] band flag.
+  2nd-table index (type-39); 34..37 -> the [ebp-0x20] band flag.
 - Facility leg `cmp ebx,0x40 / jl 0x4efed1` -> id < 64 stamps; id >= 64 sets bit 2 @0x98adb8 and
   stamps only when that bit was previously clear.
 - ONE bitmap, two legs: mapper `FUN_00507410` derived from its 17 insns = masks 7/7, `sar 3`,
   `shl eax,cl` -> byte `(id+(id>>31&7))>>3`, mask `1<<(id&7)`; both sites index 0x95da9c with a
-  304 stride (unit leg ANDs @0x4ef97a, facility leg ORs @0x4f0ec0). A unit type 3 aliases facility
-  3's bit but can never write it. Unit cost = `imul [0x984d44 + 48*type]` (stride 0x30).
+  304 stride (unit leg ANDs @0x4ef97a, facility leg ORs @0x4f0ec0) - a unit type 3 aliases
+  facility 3's bit but never writes it. Unit cost = `imul [0x984d44 + 48*type]` (stride 0x30).
 - B31's recorded heads ARE 321,-2,-8,2,-3,-6 -> 4 unit types (2,8,3,6), 1 facility (2), 1 >=64.
   "Unit-encoded" is precise for the negatives; **`>31` heads are NOT unit ids**.
 - RETRACTIONS: M68's "(195-192) -> -3" is a coincidence (196 would give -4, the trace says -6);
