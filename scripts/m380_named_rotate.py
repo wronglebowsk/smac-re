@@ -43,6 +43,9 @@ def main():
         print(f"archive {got[:16]}... stub {want[:16]}... {'PASS' if want.startswith(got) or got.startswith(want) else 'FAIL'}")
         return 0 if (want.startswith(got) or got.startswith(want)) else 1
     body, pre, post = split_block(text)
+    if "--force" not in sys.argv and "FULL rows VERBATIM" in body and len(body) < 600:
+        print("already rotated (the head is the pointer stub); use --force to re-do")
+        return 0
     sha = hashlib.sha1(body.encode()).hexdigest()
     if os.path.exists(ARCHIVE) and open(ARCHIVE).read().split("\n\n", 1)[1] == body:
         print(f"already rotated, sha1 {sha}")

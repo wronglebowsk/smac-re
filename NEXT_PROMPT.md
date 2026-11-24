@@ -115,4 +115,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M376 (s339-chain2): `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix (11 effect keywords = the columns); bit-24 stores (category, choice) at rec +0x584/+0x58c; Future Society row never sampled. 29/29 `f22d2b46cc7e9507`, harness 33/33. NEXT: +0x594's reader / the 8th write 0x92a7fc.
 - M377 (s339-c3): 0x8000 rides the WAR stamp (0x8010@0x507d1a), 0x10000 the first-contact TRUCE (0x10004, rel&0x8==0); 0x53bbed = AI compare of the 0x94e48c scalars; M375's 1-reader claim RETRACTED. 8/8 `c9e99e3b7e9f0a31`.
 - OPEN LEADS: bit 13's noun (M373); 0x800/0x20000/0x400 nouns (B37); FUN_00552970 (0x552cec arm).
-- M380 (s340-c3): 0x94e48c = MIGHTY/MEEK strength scalar; hub 3 = TREATY validator @0x53bb90, refusal->0x540390 iff 0x92077c==3; 2/27 rewrites drop a stamp. 7/7 `5dfd436fe4093015`.
+- M380 (s340-c3): 0x94e48c = MIGHTY/MEEK scalar; hub 3 = TREATY validator @0x53bb90, refusal->0x540390 iff 0x92077c==3; 2/27 drop a stamp. 7/7 `5dfd436fe4093015`, 19/19 mutants.

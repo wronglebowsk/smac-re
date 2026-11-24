@@ -1,6 +1,8 @@
 G0  the field's address algebra - every 0x94e48c operand image-wide
   block base 0x94d430, stride 0x20bc B = 0x82f dwords; field offset in block = 0x105c (= 4188 B), relations row base 0x94d448
   arithmetic: 0x20bc/4 = 0x82f dwords; 0x1044 B past the row base = 0x411 dwords
+  measured multipliers at the 19 scaled sites: [2095] -> stride = [8380] B / [2095] dwords
+  block base 0x94d430 is M295's V constant (170 uses); field is block+0x105c, i.e. 0x1044 B past the relations row base 0x94d448
   operands 70: scaled [r*4+field] 19, block-relative [r+field] 51, absolute 0
   19 scaled sites carry the 2095 chain: 19 verified, 0 not
   reads 67, direct stores 3
@@ -10,9 +12,16 @@ G1  writers - the 3 direct stores and the reset runs around them
   store sites: 5566d5 5579ea 59efb1
     FUN_00556690: 0x5566d5 0x5579ea
     FUN_0059ec90: 0x59efb1
-  create run @0x59efb1 zeroes 6 consecutive dwords: +0x1054 +0x1058 +0x105c +0x1060 +0x1064 +0x1068
-  reset run  @0x5566d5 zeroes 8 consecutive dwords: +0x1054 +0x1058 +0x105c +0x1060 +0x1064 +0x1068 +0x106c +0x1070
-  accumulator @0x5579ea: field += ((V+i)*(X+6))/8 - sar eax,3 after cdq/and edx,7
+  create run @0x59efb1: 6 dwords, 6 provably ZEROING: +0x1054 +0x1058 +0x105c +0x1060 +0x1064 +0x1068
+  reset run  @0x5566d5: 8 dwords, 8 provably ZEROING: +0x1054 +0x1058 +0x105c +0x1060 +0x1064 +0x1068 +0x106c +0x1070
+    accumulator load  field              present
+    accumulator imul                     present
+    accumulator add                      present
+    accumulator cdq/and 7 (signed /8)    present
+    accumulator sar 3                    present
+    accumulator store field              present
+    accumulator add-then-store           present
+  => field += (V+i)*(X+6)/8 measured from that shape
   the dword ABOVE it, +0x1058 = 0x94e488, is the base counter (M282 V)
 ok  G1 the field is the 3rd dword of a contiguous per-faction stats run from +0x1054, zeroed at faction creation (6 dwords) and again in the 8-dword reset; one per-turn accumulator site adds to it
 
@@ -66,6 +75,7 @@ G4  the mode-3 arm - what FUN_00545c50 does with the branch it takes
     0x545d5c call  0x540390
     0x545d61 add   esp,0x8
     0x545d64 mov   DWORD PTR [ebp-0x5388],0x67164c
+  flag provenance: mov edx,ds:0x92077c / cmp edx,3 / sete al / mov edi,eax -> ok
   validator call 0x545d4a, abort call 0x545d5c, tests 2: eax,eax edi,edi
 ok  G4 mode 3 calls the TREATY validator with (a,b); the abort caller runs only when the validator returns 0 AND edi == (ds:0x92077c == 3); the other path falls into 0x545d64 (the SEH tail) and takes no action
   the edi test jumps to 0x545d64 = the SEH tail -> a refusal with 0x92077c != 3 takes NO action
@@ -73,37 +83,37 @@ ok  G4 mode 3 calls the TREATY validator with (a,b); the abort caller runs only 
 G5  erasure - can any of M377's 27 relations-dword rewrites be SHOWN to drop a stamp?
   direct stores to the relations dword 0x94d448: 27
   site    src   pre-value                       field? bit15 bit16  verdict
-  52b9c7 edx  mov edx,DWORD PTR [ebp-0x50]   mem    True  True   unknown (mem)
-  52b9d0 edx  mov edx,DWORD PTR [ebp-0x4c]   mem    True  True   unknown (mem)
-  551b1d edx  and edx,0xfaeef378             field  True  False  DROP 16
-  551d22 edx  or edx,ecx                     opaque True  True   unknown (opaque)
-  552cca edx  and edx,ecx                    opaque True  True   unknown (opaque)
-  552cd8 edx  and edx,ecx                    opaque True  True   unknown (opaque)
-  552ce6 eax  or al,0x40                     field  True  True   PRESERVE
-  552d6f edx  and edx,ecx                    opaque True  True   unknown (opaque)
-  552d7d edx  and edx,ecx                    opaque True  True   unknown (opaque)
-  5530c3 eax  and eax,0xfeeffffe             field  True  True   PRESERVE
-  55487f ecx  or ecx,0x40020                 field  True  True   PRESERVE
-  554d42 esi  or esi,0xc0020                 field  True  True   PRESERVE
-  5552d3 eax  and al,0xbf                    field  True  True   PRESERVE
-  555394 ecx  and ecx,0xfffdf3ff             field  True  True   PRESERVE
-  5553f3 edx  or edx,0x840                   field  True  True   PRESERVE
-  55540a eax  or eax,0x20000                 bb     True  True   unknown (bb)
-  555430 eax  and ah,0x7f                    field  False True   DROP 15
-  5556eb eax  or eax,0x840                   field  True  True   PRESERVE
-  555758 eax  and eax,0x7fffffff             field  True  True   PRESERVE
-  5557d9 ebx  and ebx,0xfbffffff             field  True  True   PRESERVE
-  55580f eax  and ah,0xdf                    bb     True  True   unknown (bb)
-  5558f5 ecx  and ecx,0xfbffffff             field  True  True   PRESERVE
-  555a45 eax  or ah,0x8                      field  True  True   PRESERVE
-  555a60 eax  or ah,0x8                      bb     True  True   unknown (bb)
-  555a6e eax  or ah,0x4                      bb     True  True   unknown (bb)
-  555f39 eax  and ah,0xfd                    field  True  True   PRESERVE
-  555f4b edx  and dh,0xfd                    field  True  True   PRESERVE
-  drop 0x551b1d (0x10000) <- and edx,0xfaeef378  @0x551b0b
-  drop 0x555430 (0x8000) <- and ah,0x7f  @0x555427
+  52b9c7 edx  mov edx,DWORD PTR [ebp-0x50]     mem    in   in   unknown (mem)
+  52b9d0 edx  mov edx,DWORD PTR [ebp-0x4c]     mem    in   in   unknown (mem)
+  551b1d edx  and edx,0xfaeef378               field  in   out  DROP 0x10000
+  551d22 edx  or edx,ecx                       field  in   in   PRESERVE
+  552cca edx  and edx,ecx                      field  unk  unk  unknown (field)
+  552cd8 edx  and edx,ecx                      field  unk  unk  unknown (field)
+  552ce6 eax  or al,0x40                       field  in   in   PRESERVE
+  552d6f edx  and edx,ecx                      field  unk  unk  unknown (field)
+  552d7d edx  and edx,ecx                      field  unk  unk  unknown (field)
+  5530c3 eax  and eax,0xfeeffffe               field  in   in   PRESERVE
+  55487f ecx  or ecx,0x40020                   field  in   in   PRESERVE
+  554d42 esi  or esi,0xc0020                   field  in   in   PRESERVE
+  5552d3 eax  and al,0xbf                      field  in   in   PRESERVE
+  555394 ecx  and ecx,0xfffdf3ff               field  in   in   PRESERVE
+  5553f3 edx  or edx,0x840                     field  in   in   PRESERVE
+  55540a eax  or eax,0x20000                   bb     in   in   unknown (bb)
+  555430 eax  and ah,0x7f                      field  out  in   DROP 0x8000
+  5556eb eax  or eax,0x840                     bb     in   in   unknown (bb)
+  555758 eax  and eax,0x7fffffff               bb     in   in   unknown (bb)
+  5557d9 ebx  and ebx,0xfbffffff               field  in   in   PRESERVE
+  55580f eax  and ah,0xdf                      bb     in   in   unknown (bb)
+  5558f5 ecx  and ecx,0xfbffffff               field  in   in   PRESERVE
+  555a45 eax  or ah,0x8                        bb     in   in   unknown (bb)
+  555a60 eax  or ah,0x8                        bb     in   in   unknown (bb)
+  555a6e eax  or ah,0x4                        bb     in   in   unknown (bb)
+  555f39 eax  and ah,0xfd                      bb     in   in   unknown (bb)
+  555f4b edx  and dh,0xfd                      field  in   in   PRESERVE
+  drop 0x551b1d (0x10000) <- and edx,0xfaeef378  @0x551b17
+  drop 0x555430 (0x8000) <- and ah,0x7f  @0x55542d
   M377's rule (shape algebra over the STORE alone) predicts 0 droppers; def-use finds 2
-ok  G5 2 of 27 rewrites PROVABLY clear a stamp bit: 0x551b1d masks OUT 0x10000 on the war path; 0x555430 masks OUT 0x8000 under a 0x985afc parity gate - M377's '0 provable clearer' is a shape-only bound and is RETRACTED as a claim about lineage
+ok  G5 exactly 2 of 27 rewrites PROVABLY clear a stamp bit, at the named sites: 0x551b1d masks OUT 0x10000 on the war path; 0x555430 masks OUT 0x8000 under a 0x985afc parity gate - M377's '0 provable clearer' is a shape-only bound and is RETRACTED as a claim about lineage
 
 G6  rivals - each measured against the tables above
   R1 4-byte per-faction array      killed  (19/19 scaled sites measure 2095*x)

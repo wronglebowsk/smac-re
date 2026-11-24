@@ -45,7 +45,17 @@ MUTANTS = [
     ("MU13", "G5", {"M380_ALGO": "5"},
      "expected 2 provable stamp droppers"),
     ("MU14", "G5", {"M380_ALGO": "6"},
-     "expected 2 provable stamp droppers"),
+     "store population is not 27"),
+    ("MU15", "G1", {"M380_PATCH": "0x5579e0|sar eax,0x2"},
+     "accumulator shape is incomplete"),
+    ("MU16", "G1", {"M380_PATCH": "0x59efb1|mov DWORD PTR [esi+0x94e48c],eax"},
+     "create run is not entirely ZEROING"),
+    ("MU17", "G4", {"M380_PATCH": "0x545cd4|mov edx,DWORD PTR ds:0x920780"},
+     "edi is not provably sete"),
+    ("MU18", "G0", {"M380_ALGO": "2"},
+     "emitted multiplier"),
+    ("MU19", "G2", {"M380_ALGO": "8"},
+     "do not decode to MIGHTY/MEEK"),
 ]
 
 

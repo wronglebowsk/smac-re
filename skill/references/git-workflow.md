@@ -231,6 +231,32 @@ the run appears on the new head within seconds. Only after the PR is MERGEABLE a
 a green run is it mergeable; a local gate is not a substitute, so leave it open and report the blocker
 if the run still does not appear.
 
+**Finishing a lane that stopped mid-merge (the parent's job, not the fire's).** Shared-doc conflicts in a
+parallel round are almost always ONE hunk per file (each lane appends its own block/line near the same
+anchor), so resolve them mechanically and verifiably rather than by hand:
+
+```bash
+cd <lane worktree> && git status --short --branch   # expect UU on NAMED/NEXT_PROMPT/SESSION_NOTES/CURSOR
+python3 - <<'PY'
+import re
+pat = re.compile(r"<<<<<<< HEAD\n(.*?)=======\n(.*?)>>>>>>> origin/main\n", re.S)
+for p in ["NAMED.md", "NEXT_PROMPT.md"]:
+    t = open(p, encoding="utf-8").read()
+    t2, n = pat.subn(lambda m: m.group(2).rstrip("\n") + "\n" + m.group(1), t)  # origin/main first, then HEAD
+    assert n == 1, (p, n)
+    open(p, "w", encoding="utf-8").write(t2)
+PY
+grep -c '<<<<<<<\|>>>>>>>' NAMED.md NEXT_PROMPT.md SESSION_NOTES.md   # every count must be 0
+python3 -u scripts/gate.py --base origin/main && python3 -u scripts/<id>_accept.py | tail -3
+```
+
+For `SESSION_CURSOR.md` (one line) write the newer milestone's line, not both. Then `git add` the docs
+**and any uncommitted instrument edit** (`git status` also shows ` M scripts/<id>_*.py` when the fire's
+review hardening never got committed — keep it only if the acceptance still prints the SAME digest),
+`git commit --no-edit`, push, wait for the run on the new head, `gh pr merge <n> --squash`. A round is
+finished when every one of its PRs reads MERGED; a lane whose fire exited `ok` at its call cap, with
+`CONFLICTING` and `no checks reported`, is unfinished work wearing a green session status.
+
 **In a linked worktree `milestone.py merge` lands the PR and then dies on its trailing
 `gh pr merge --delete-branch`** with `'main' is already used by worktree at <primary>`; the merge is
 server-side and final. Verify with `gh pr view <n> --json state,mergedAt,mergeCommit` and delete the

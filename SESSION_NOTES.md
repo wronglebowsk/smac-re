@@ -713,8 +713,8 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 ## Session 340-chain3 — M380: 0x94e48c is the MIGHTY/MEEK strength scalar; 2 of 27 rel rewrites DO drop a stamp
 
 - **ACCEPT** `python3 -u scripts/m380_diplo_power.py` -> **`PASS M380: 7/7`** `5dfd436fe4093015`
-  (`evidence/m380_diplo_power.txt:125`; re-run same, `evidence/m380_twice.txt` sha1
-  `8f4b440918a40c97`); `scripts/m380_mutate.py` **14/14 killed** (`evidence/m380_mutate.txt:18`).
+  (`evidence/m380_diplo_power.txt:135`; re-run same, `evidence/m380_twice.txt` sha1
+  `7455c8e2b5767fc9`); `scripts/m380_mutate.py` **19/19 killed** (`evidence/m380_mutate.txt:23`).
   All 3 M377 OPENs answered.
 - **NOUN (OPEN #1)**: per-faction dword at block+0x105c (70 operands, 67R/3W; stride 0x82f dwords,
   base 0x94d430). Its one two-faction compare picks a string: `cmp
@@ -729,7 +729,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   store (opaque source register), not lineage. Def-use behind the 27 finds **2 provable
   droppers**: 0x551b1d `and edx,0xfaeef378` clears **0x10000** on the war mask (load @0x551b0b);
   0x555430 `and ah,0x7f` clears **0x8000** under `(0x985afc&0xf)==2p+1` (load @0x555427). Both
-  RMW one pair dword, so the stamps are erasable. Other 25: 12 PRESERVE, 11 unknown.
+  RMW one pair dword, so the stamps are erasable. Other 25: 11 PRESERVE, 14 unknown.
 - **PITFALLS**: (1) `[reg*4+0x94e48c]` is NOT a 4-byte array — all 19 carry the ×2095 scaler
   across several registers; a per-register marker match fails 10/19.
   (2) only `and` clears bit 15 and `or` never does — an `ah` blind spot invents 3 droppers.

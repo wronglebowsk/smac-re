@@ -327,6 +327,18 @@ for i in REF:
     elif "ds:0x94e48c" in o.lower():
         n_abs += 1
 
+# the stride must be DERIVED from what the scalers actually compute, not asserted
+MEAS = sorted({list(e.values())[0] for e in SCALE_EXPR.values() if len(e) == 1})
+if ALGO == 2:
+    MEAS = [STRIDE_DW - 1]      # ALGO 2: trust the constant over the measurement
+say(f"  measured multipliers at the {n_scale} scaled sites: {MEAS}"
+    f" -> stride = {[m * 4 for m in MEAS]} B / {MEAS} dwords")
+if MEAS != [STRIDE_DW] or 4 * MEAS[0] != STRIDE_B:
+    bad(f"G0 the emitted multiplier {MEAS} disagrees with the claimed stride"
+        f" {STRIDE_DW}/{STRIDE_B:#x}")
+say(f"  block base {BLOCK:#x} is M295's V constant (170 uses); field is block+0x105c,"
+    f" i.e. 0x{FIELD - PAIR:x} B past the relations row base {PAIR:#x}")
+
 reads = sum(1 for i in REF if not mem_dest(i))
 writes = len(REF) - reads
 say(f"  operands {len(REF):d}: scaled [r*4+field] {n_scale}, block-relative [r+field]"
@@ -358,9 +370,36 @@ for i in W_STORES:
 for n, addrs in sorted(runs.items()):
     say(f"    {n}: " + " ".join(f"{a:#08x}" for a in addrs))
 
-# the create-time run: consecutive dword stores to block+0x1054.. as one group
-def run_over(addr, lo_off, hi_off, dword_step=4):
-    """stores of the SAME displacement base whose neighbours cover lo..hi of the block."""
+def provably_zero(st):
+    """Is the stored value provably 0 at this store?  (the run is only a ZEROING run
+    if the source register is zeroed: `xor r,r`, `mov r,0`, `sub r,r`, `and r,0`.)"""
+    rg = fam(src(st))
+    fn = fn_of(st["a"])
+    k = IDXBY[st["a"]] - 1
+    while k >= 0 and INS[k]["a"] >= fn[1]:
+        i = INS[k]
+        if i["mn"] == "jmp":
+            return False                       # the fall-through is not the only path
+        if i["mn"] == "call":
+            if rg in ("eax", "ecx", "edx"):
+                return False
+            k -= 1
+            continue
+        if fam(dst(i)) == rg and "[" not in dst(i).lower():
+            sv = src(i).strip().lower()
+            if i["mn"] == "mov" and sv in ("0x0", "0"):
+                return True
+            if i["mn"] in ("xor", "sub") and fam(sv) == rg:
+                return True
+            if i["mn"] == "and" and imms(sv) == [0]:
+                return True
+            return False
+        k -= 1
+    return False
+
+
+def run_over(addr, lo_off, hi_off):
+    """direct stores whose displacements cover lo..hi of the block, as a contiguous run."""
     k = IDXBY[addr]
     got = []
     for j in range(max(0, k - 12), min(len(INS), k + 12)):
@@ -369,17 +408,42 @@ def run_over(addr, lo_off, hi_off, dword_step=4):
             continue
         ds = displ_of(dst(i))
         if len(ds) == 1 and lo_off <= ds[0] - BLOCK <= hi_off:
-            got.append((i["a"], ds[0] - BLOCK))
+            got.append(i)
     return got
 
 
-created = run_over(0x59EFB1, 0x1054, 0x1070)
-reset = run_over(0x5566D5, 0x1054, 0x1070)
-say(f"  create run @0x59efb1 zeroes {len(created)} consecutive dwords: "
+created_st = run_over(0x59EFB1, 0x1054, 0x1070)
+reset_st = run_over(0x5566D5, 0x1054, 0x1070)
+created = [(i["a"], displ_of(dst(i))[0] - BLOCK) for i in created_st]
+reset = [(i["a"], displ_of(dst(i))[0] - BLOCK) for i in reset_st]
+created_zero = [i for i in created_st if provably_zero(i)]
+reset_zero = [i for i in reset_st if provably_zero(i)]
+say(f"  create run @0x59efb1: {len(created)} dwords, {len(created_zero)} provably ZEROING: "
     + " ".join(f"+{o:#x}" for _, o in created))
-say(f"  reset run  @0x5566d5 zeroes {len(reset)} consecutive dwords: "
+say(f"  reset run  @0x5566d5: {len(reset)} dwords, {len(reset_zero)} provably ZEROING: "
     + " ".join(f"+{o:#x}" for _, o in reset))
-say(f"  accumulator @0x5579ea: field += ((V+i)*(X+6))/8 - sar eax,3 after cdq/and edx,7")
+
+# the accumulator: assert the emitted shape, then state the formula it computes
+def window(lo, hi):
+    return [i for i in INS if lo <= i["a"] <= hi]
+
+
+ACC = window(0x5579C0, 0x5579F0)
+shape = {
+    "load  field": any(i["mn"] == "mov" and "0x94e48c" in dst(i).lower() for i in ACC),
+    "imul": any(i["mn"] == "imul" for i in ACC),
+    "add": any(i["mn"] == "add" for i in ACC),
+    "cdq/and 7 (signed /8)": (any(i["mn"] == "cdq" for i in ACC)
+                              and any(i["mn"] == "and" and imms(src(i)) == [7] for i in ACC)),
+    "sar 3": any(i["mn"] == "sar" and imms(src(i)) == [3] for i in ACC),
+    "store field": any(i["mn"] == "mov" and "0x94e48c" in dst(i).lower() for i in ACC),
+    "add-then-store": (any(i["mn"] == "add" and fam(dst(i)) == "edx" for i in ACC) and
+                       any(i["mn"] == "mov" and "0x94e48c" in dst(i).lower()
+                           and fam(src(i)) == "edx" for i in ACC)),
+}
+for kk, vv in shape.items():
+    say(f"    accumulator {kk:24s} {'present' if vv else 'MISSING'}")
+say("  => field += (V+i)*(X+6)/8 measured from that shape")
 say(f"  the dword ABOVE it, +0x1058 = {BLOCK + 0x1058:#x}, is the base counter (M282 V)")
 
 def contiguous(run):
@@ -394,6 +458,12 @@ if (FIELD - BLOCK) not in [o for _, o in created] or (FIELD - BLOCK) not in [o f
     bad("G1 the field is not inside the reset runs")
 if 0x1058 not in [o for _, o in created]:
     bad("G1 the reset run does not cover +0x1058 (the M282 base counter)")
+if len(created_zero) != len(created):
+    bad(f"G1 the create run is not entirely ZEROING ({len(created)-len(created_zero)} stores unproven)")
+if len(reset_zero) != len(reset):
+    bad(f"G1 the reset run is not entirely ZEROING ({len(reset)-len(reset_zero)} stores unproven)")
+if not all(shape.values()):
+    bad(f"G1 the accumulator shape is incomplete: {[k for k, v in shape.items() if not v]}")
 if not FAILS:
     say(f"ok  G1 the field is the 3rd dword of a contiguous per-faction stats run from"
         f" +0x1054, zeroed at faction creation ({len(created)} dwords) and again in the"
@@ -414,7 +484,12 @@ for i in following:
     nm = is_name(imms(i["ops"])[0]) if imms(i["ops"]) else None
     say(f"         {i['a']:#08x} {i['mn']:5s} {i['ops']}"
         + (f"   -> {nm!r}" if nm else ""))
-say(f"  literals: {MIGHTY:#x} = {is_name(MIGHTY)!r}, {MEEK:#x} = {is_name(MEEK)!r}")
+S_MIGHTY, S_MEEK = is_name(MIGHTY), is_name(MEEK)
+if ALGO == 8:
+    S_MIGHTY, S_MEEK = S_MEEK, S_MIGHTY   # ALGO 8: swap the two literals the code picks
+say(f"  literals: {MIGHTY:#x} = {S_MIGHTY!r}, {MEEK:#x} = {S_MEEK!r}")
+if S_MIGHTY != "MIGHTY" or S_MEEK != "MEEK":
+    bad(f"G2 the two literals do not decode to MIGHTY/MEEK: {S_MIGHTY!r} {S_MEEK!r}")
 # which branch goes to which string
 jle = [i for i in following if i["mn"] in ("jle", "jge", "jl", "jg", "jbe", "jae")]
 push_mighty = [i for i in following if imms(i["ops"]) and imms(i["ops"])[0] == MIGHTY]
@@ -544,6 +619,18 @@ v_call = [i for i in ecall if imms(i["ops"])[0] == VAL_TREATY]
 a_call = [i for i in ecall if imms(i["ops"])[0] == ABORT]
 tests = [i for i in arm if i["mn"] == "test"]
 tail = [i for i in arm if i["a"] == 0x545D64]
+# the flag must be built from ds:0x92077c compared to the immediate 3, then sete al -> edi
+prov_ok = (any(_x["mn"] == "mov" and "ds:0x92077c" in _x["ops"].lower()
+               for _x in INS[flag_cmp - 2:flag_cmp])
+           and INS[flag_cmp]["mn"] == "cmp" and imms(src(INS[flag_cmp])) == [3]
+           and any(x["mn"] == "sete" and x["ops"].strip().lower() == "al"
+                   for x in INS[flag_cmp + 1:flag_cmp + 3])
+           and any(x["mn"] == "mov" and fam(dst(x)) == "edi" and fam(src(x)) == "eax"
+                   for x in INS[flag_cmp + 2:flag_cmp + 5]))
+say(f"  flag provenance: mov edx,ds:0x92077c / cmp edx,3 / sete al / mov edi,eax ->"
+    f" {'ok' if prov_ok else 'MISMATCH'}")
+if not prov_ok:
+    bad("G4 edi is not provably sete(ds:0x92077c == 3)")
 if not v_call or not a_call:
     bad("G4 the mode-3 arm lacks the validator or the abort call")
     say(f"  validator calls {[hex(i['a']) for i in v_call]},"
@@ -583,108 +670,172 @@ if ALGO == 6:
     STORES = STORES[:1]
 
 
+STAMP_BITS = (("0x8000", 0x8000, "lo"), ("0x10000", 0x10000, "hi"))
+
+
+def _and_bit(state, bit, mask, byte_hi):
+    """apply `and r,imm` to one stamp bit -> new state.  `and ah,imm8` reaches bits 8-15
+    only (bit 15 = 0x80 of ah) and can never touch bit 16."""
+    if byte_hi:
+        if bit != 0x8000:
+            return state
+        return state if (mask & 0x80) else "out"
+    return state if (mask & bit) else "out"
+
+
 def lineage(store):
-    """Walk back from the store to the definition of its source register.
-    Returns (prov, keep_lo, keep_hi, path, stops_at)."""
+    """Sound backward def-use for the store's source register, per stamp bit.
+
+    States: 'in' (provably the field's bit), 'out' (provably 0), 'unk' (not provable).
+    Arithmetic (add/sub/inc/dec/shl/shr/sar/imul/not/neg) makes a bit 'unk' because a
+    carry or a shift can move it; `or` can only ever rescue a bit, never clear it; the
+    walk STOPS at any branch because the fall-through is then not the only path."""
     rg = fam(src(store))
-    lo, hi = True, True
+    st = {"lo": "in", "hi": "in"}
+    effects = []                      # collected backwards, replayed forwards
     path = []
-    k = IDXBY[store["a"]] - 1
+    base = None
     fn = fn_of(store["a"])
+    k = IDXBY[store["a"]] - 1
     while k >= 0 and INS[k]["a"] >= fn[1]:
         i = INS[k]
         m = i["mn"]
-        d = fam(dst(i))
-        if m == "jmp":
-            return ("bb", lo, hi, path, i["a"])
+        if m in ("jmp", "ret") or m in JCC:
+            base = ("bb", None)
+            break
         if m == "call":
-            # cdecl: ebx/esi/edi are callee-saved, eax/ecx/edx are not
             if rg in ("eax", "ecx", "edx"):
-                return ("call", lo, hi, path, i["a"])
+                base = ("call", None)
+                break
             k -= 1
             continue
-        if d == rg and "[" not in dst(i).lower() and m not in ("cmp", "test", "push"):
-            s = src(i).lower()
-            if m == "mov" and "[" in s:
-                ds = displ_of(s)
-                path.append((i["a"], f"{m} {i['ops']}"))
+        if m in ("lea", "pop", "xchg"):
+            if fam(dst(i)) == rg or (m == "pop" and fam(dst(i)) == rg):
+                base = (m, None)
+                break
+        elif fam(dst(i)) == rg and "[" not in dst(i).lower():
+            r = dst(i).lower()
+            byte_hi = r in ("ah", "bh", "ch", "dh")
+            byte_lo = r in ("al", "bl", "cl", "dl")
+            sv = src(i).lower()
+            if m == "mov" and "[" in sv:
+                ds = displ_of(sv)
+                path.append((i["a"], f"mov {i['ops']}"))
                 if ds and PAIR <= ds[0] <= PAIR + 3:
-                    return ("field", lo, hi, path, i["a"])
-                return ("mem", lo, hi, path, i["a"])
-            if m == "mov" and re.match(r'^0x[0-9a-f]+$', src(i).strip().lower()):
-                path.append((i["a"], f"{m} {i['ops']}"))
-                v = imms(src(i))[0]
-                return ("imm", bool(v & STAMP_LO), bool(v & STAMP_HI), path, i["a"])
-            if m == "xor" and fam(src(i)) == rg:
-                path.append((i["a"], f"{m} {i['ops']}"))
-                return ("zero", False, False, path, i["a"])
-            if m == "pop":
-                path.append((i["a"], f"{m} {i['ops']}"))
-                return ("stack", lo, hi, path, i["a"])
-            if m == "lea":
-                path.append((i["a"], f"{m} {i['ops']}"))
-                return ("addr", lo, hi, path, i["a"])
-            if m in ("and", "or") and "[" not in src(i):
-                # immediate mask / OR, possibly on an 8-bit register
-                path.append((i["a"], f"{m} {i['ops']}"))
-                r = dst(i).lower()
-                v = imms(src(i))
-                if not v:
-                    return ("opaque", lo, hi, path, i["a"])
-                v = v[0]
-                if r in ("ah", "bh", "ch", "dh"):
-                    if m == "and":
-                        lo = lo and bool(v & 0x80)
-                elif r in ("al", "bl", "cl", "dl"):
-                    pass                                  # low byte: stamps live above
+                    base = ("field", None)
                 else:
-                    if m == "and":
-                        lo = lo and bool(v & STAMP_LO)
-                        hi = hi and bool(v & STAMP_HI)
-                    # OR cannot clear
+                    base = ("mem", None)
+                break
+            if m == "mov":
+                v = imms(sv)
+                if not v:
+                    effects.append(("copy", None))
+                else:
+                    effects.append(("set", v[0]))
+                path.append((i["a"], f"mov {i['ops']}"))
                 k -= 1
                 continue
-            if m in ("add", "sub", "inc", "dec", "imul", "not", "neg", "shl", "shr", "sar"):
+            if m == "xor" and fam(sv) == rg:
+                effects.append(("zero", None))
+                path.append((i["a"], f"xor {i['ops']}"))
+                k -= 1
+                continue
+            if m in ("and", "or", "xor") and "[" not in sv:
+                v = imms(sv)
+                effects.append((m, (v[0] if v else None, byte_hi, byte_lo, r)))
                 path.append((i["a"], f"{m} {i['ops']}"))
                 k -= 1
                 continue
-            return ("other", lo, hi, path, i["a"])
+            if m in ("add", "sub", "inc", "dec", "imul", "not", "neg",
+                     "shl", "shr", "sar", "rol", "ror", "adc", "sbb"):
+                effects.append(("arith", None))
+                path.append((i["a"], f"{m} {i['ops']}"))
+                k -= 1
+                continue
+            effects.append(("other", None))
+            path.append((i["a"], f"{m} {i['ops']}"))
+            k -= 1
+            continue
         k -= 1
-    return ("eof", lo, hi, path, None)
+    if base is None:
+        base = ("eof", None)
+    # replay the register's own ops in program order (effects were collected backwards)
+    for kind, arg in reversed(effects):
+        if kind == "arith" or kind == "copy" or kind == "other":
+            st["lo"] = st["hi"] = "unk"
+        elif kind == "zero":
+            st["lo"] = st["hi"] = "out"
+        elif kind == "set":
+            st["lo"] = "in" if arg & 0x8000 else "out"
+            st["hi"] = "in" if arg & 0x10000 else "out"
+        elif kind == "and":
+            if arg[0] is None:
+                st["lo"] = st["hi"] = "unk"
+            else:
+                mask, bh, bl, _r = arg
+                if not bl:
+                    st["lo"] = _and_bit(st["lo"], 0x8000, mask, bh)
+                    st["hi"] = _and_bit(st["hi"], 0x10000, mask, bh)
+        elif kind == "or":
+            if arg[0] is None:
+                for b in ("lo", "hi"):
+                    st[b] = "unk" if st[b] == "out" else st[b]
+            else:
+                mask, bh, bl, _r = arg
+                if not bl:
+                    if (bh and mask & 0x80) or (not bh and mask & 0x8000):
+                        st["lo"] = "in"
+                    if (not bh and mask & 0x10000):
+                        st["hi"] = "in"
+                    # `or ah,imm8` cannot reach bit 16
+        elif kind == "xor":
+            if arg[0] is None:
+                st["lo"] = st["hi"] = "unk"
+            else:
+                mask, bh, bl, _r = arg
+                if not bl:
+                    if (not bh and mask & 0x8000) or (bh and mask & 0x80):
+                        st["lo"] = {"in": "out", "out": "in"}.get(st["lo"], "unk")
+                    if not bh and mask & 0x10000:
+                        st["hi"] = {"in": "out", "out": "in"}.get(st["hi"], "unk")
+                    # `xor ah,imm8` cannot reach bit 16
+    return base[0], st["lo"], st["hi"], path, (path[0][0] if path else None)
 
 
 DROP = []
 for st in STORES:
     prov, lo, hi, path, at = lineage(st)
-    v = "PRESERVE" if (prov == "field" and lo and hi) else ""
-    if not v:
-        if prov == "field":
-            v = ("DROP " + ("15" if not lo else "") + ("16" if not hi else "")).strip()
-            DROP.append((st["a"], "0x8000" if not lo else "0x10000"))
-        elif prov == "zero":
-            v = "DROP 15 16 (zeroed)"
-            DROP.append((st["a"], "0x8000+0x10000"))
-        else:
-            v = f"unknown ({prov})"
-    say(f"  {st['a']:06x} {fam(src(st)):4s} {path[0][1] if path else '-':30s}"
-        f" {prov:6s} {str(lo):5s} {str(hi):5s}  {v}")
+    if lo == "out" or hi == "out":
+        bits = " ".join(b for b, stt in (("0x8000", lo), ("0x10000", hi)) if stt == "out")
+        v = f"DROP {bits}"
+        DROP.append((st["a"], bits))
+    elif prov == "field" and lo == "in" and hi == "in":
+        v = "PRESERVE"
+    else:
+        v = f"unknown ({prov})"
+    say(f"  {st['a']:06x} {fam(src(st)):4s} {(path[0][1] if path else '-'):32s}"
+        f" {prov:6s} {lo:4s} {hi:4s} {v}")
 
-# the two droppers must be read-modify-writes of the SAME dword
-for a, bit in DROP:
+for a, bits in DROP:
     st = INS[IDXBY[a]]
     prov, lo, hi, path, at = lineage(st)
-    say(f"  drop {a:#08x} ({bit}) <- {path[0][1]}  @{at:#08x}")
+    say(f"  drop {a:#08x} ({bits}) <- {path[0][1] if path else '-'}  @{at and hex(at)}")
 
 say(f"  M377's rule (shape algebra over the STORE alone) predicts 0 droppers;"
     f" def-use finds {len(DROP)}")
+EXPECT = {0x551B1D: "0x10000", 0x555430: "0x8000"}
 if ALGO == 5:
     DROP = []
-if len(DROP) != 2:
+if len(STORES) != 27:
+    bad(f"G5 the relations-dword store population is not 27, got {len(STORES)}")
+elif len(DROP) != 2:
     bad(f"G5 expected 2 provable stamp droppers, got {len(DROP)}: {DROP}")
+elif {(a, b) for a, b in DROP} != set(EXPECT.items()):
+    bad(f"G5 the droppers are not the named sites/bits: got {DROP}, want {EXPECT}")
 else:
-    say(f"ok  G5 {len(DROP)} of {len(STORES)} rewrites PROVABLY clear a stamp bit:"
-        " 0x551b1d masks OUT 0x10000 on the war path; 0x555430 masks OUT 0x8000"
-        " under a 0x985afc parity gate - M377's '0 provable clearer' is a"
+    say(f"ok  G5 exactly {len(DROP)} of {len(STORES)} rewrites PROVABLY clear a stamp bit,"
+        " at the named sites: 0x551b1d masks OUT 0x10000 on the war path; 0x555430 masks"
+        " OUT 0x8000 under a 0x985afc parity gate - M377's '0 provable clearer' is a"
         " shape-only bound and is RETRACTED as a claim about lineage")
 say("")
 
