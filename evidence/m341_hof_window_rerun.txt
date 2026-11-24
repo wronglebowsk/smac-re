@@ -1,0 +1,53 @@
+== M341 hall-of-fame record-window law: index = 5*n - 5 + s ==
+G1 SITE A 0x449793/0x449796 window (2 insns):
+   0x449793 lea ecx,[eax+ebx*4]
+   0x449796 lea ecx,[ebx+ecx*1-0x5]
+   affine law: eax + ebx*5 + const*-5
+   normalised: index = 5*n -5 + s
+G2 SITE A inputs:
+   0x44970f mov ebx <- DWORD PTR [esi+0x59f4]
+   0x449715 mov eax <- DWORD PTR [esi+0xa918]
+   page spill 0x449725 -> [ebp-0x24]: 1   slot spill 0x449728 -> [ebp-0x18]: 1   slot reload 0x44978d: 1   other ebx defs: 0
+G3 SITE C 0x44b5a1..0x44b5d6 insert-shift (4 insns):
+   0x44b5a7 lea eax,[edi+esi*4]
+   0x44b5aa lea ecx,[esi+eax*1]
+   0x44b5ad lea edx,[ecx-0x5]
+   0x44b5b9 add ecx,0xfffffffc
+   src law: edi + esi*5 + const*-5 ; dst = src +1 -> delta 1
+G4 SITE B 0x44af95..0x44afa8 install (2 insns):
+   0x44af9b lea edx,[edx+eax*4]
+   0x44af9e lea esi,[eax+edx*1-0x5]
+   n cell: 0x44aed9 ['DWORD PTR [esi+0xa4c],eax'] ; probe seed: 0x4 ; loop tail: ['0x44af43'] ; insert-shift k immediates: ['0x0', '0x1', '0x2', '0x3']
+   affine law: eax*5 + edx + const*-5 ; slot rows measured: 5 (indices 0..4)
+G5 ZERO-INIT census (the loop that defines the buffer):
+   0x44b6ac base=0x983a10 stride=0x8c inner=5 term=0x984d34
+   0x44b7b0 base=0x983a10 stride=0x8c inner=5 term=0x984d34
+   0x44b812 base=0x983a10 stride=0x8c inner=5 term=0x984d34
+   0x44b8c9 base=0x983a10 stride=0x8c inner=5 term=0x984d34
+   0x44b90f base=0x983a10 stride=0x8c inner=5 term=0x984d34
+   distinct shapes: 1 ; sites measured: 5 (declared 5)
+   extent (0x984d34-0x983a10)=0x1324 = 35*0x8c = 7*0x2bc
+   pages = 0x1324 / (0x8c*5) = 7 ; grid {1..7}x{0..4}: 35 cells, indices 0..34, first 0x983a10, one past last 0x984d34
+   duplicate indices: 0 ; index 35 (page 8) -> 0x984d34 (== terminator: True)
+G6 0x59f4 census: direct ['0x44970f'] ; indexed-form (other array) 12 hits
+   cmp/test on ebx between load and use: 0
+G7 column probes on record+1: [('0x449915', 'al', '0x1'), ('0x449985', 'ebx', '0x2'), ('0x4499f1', 'ebx', '0x4'), ('0x449a5c', 'ebx', '0x8'), ('0x449ac8', 'ebx', '0x10'), ('0x449b34', 'ebx', '0x20')]
+   ebx definitions in the probe run: [('0x449982', 'mov', 'ebx,DWORD PTR [ebp-0x1c]')]
+RIVALS:
+   R1 0-based page (5n+s): hi=39 out-of-buffer=[35, 36, 37, 38, 39] -> DEAD
+   R2 6 rows/page: grid cells=36 hi=35 over=True -> DEAD
+   R3 flat list: three sites decode to 5n+s (G1/G3/G4) and the insert-shift is k<=3 -> DEAD
+   R4 base 0x983984: one-past-last 0x984ca8 != 0x984d34 -> DEAD
+PASS G1 SITE A law = 5*page + slot - 5
+PASS G2 inputs = [obj+0x59f4] (page) and [obj+0xa918] (slot)
+PASS G3 insert-shift src=5n+k-5 dst=5n+k-4 (delta +1)
+PASS G4 SITE B law = 5*[obj+0xa4c] + slot - 5; k in 0..3
+PASS G5 35 = 7*5 records; 7 pages cover 0..34; page 8 = terminator
+PASS G6 no direct 0x59f4 store/clamp in .text (page bound OPEN)
+PASS G7 six bit probes = columns of ONE record, not rows
+PASS R1 0-based page DEAD
+PASS R2 six rows/page DEAD
+PASS R4 base 0x983984 DEAD
+table_sha256=630b7aff8ba1687c
+digest=c9baf9f6ef0521ce gates=10 pass=10
+PASS M341: 10/10 gates

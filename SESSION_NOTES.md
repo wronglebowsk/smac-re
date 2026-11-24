@@ -416,3 +416,29 @@ printers of measured values need the same None-guard as the gate.
   `07cec1770614`, `m339_named_rotate.py --verify`): 249,287 -> 243,834 -> 246,196.
 - PITFALL: objdump prints `[ebp-0x4]` and `DWORD PTR [ebp-0x4]` alike; long immediates
   leave 3 trailing bytes on their own line (14 gaps) — normalise both.
+
+## Session 321-chain2 (2026-11-24) — pick (1): the HoF record-window page arithmetic
+
+- **ANSWER:** the 0x983a10 record index is `5*n - 5 + s` at THREE .text sites:
+  SITE A 0x449793/96 (n=[obj+0x59f4] @0x44970f, s=[obj+0xa918] @0x449715), SITE B
+  0x44af9b/9e (n=[obj+0xa4c] <- ds:0x91b5b4 @0x44aed9, s from the 5-probe rank
+  scan), SITE C 0x44b5a7..b9 insert-shift (src 5n+k-5 -> dst 5n+k-4, k in 0..3).
+- **BOUND:** five zero-init/fault sites all measure base 0x983a10, stride 0x8c,
+  inner 5, term 0x984d34 => 0x1324 = 35*0x8c = 7*0x2bc; {1..7}x{0..4} is a
+  bijection onto 0..34 and index 35 lands ON the terminator: the buffer is
+  7 blocks x 5 rows, not a flat 35-list.
+- **NO CLAMP:** the only direct 0x59f4 ref in 790,695 insns is the load 0x44970f
+  (12 other hits are `[reg+reg*4+0x59f4]`, a different array); 0 cmp/test on ebx
+  between the load and the lea => the page's legality is its writer's job, and no
+  named .text store to it exists (OPEN).
+- **6 IS NOT ROWS:** the six `test BYTE[rec+1],{1,2,4,8,0x10,0x20}` probes are
+  COLUMNS of the one record in [ebp-0x1c] (ebx reloaded once, 0x449982).
+- ACCEPT `m341_hof_window.py` -> **`PASS M341: 10/10`** `c9baf9f6ef0521ce`, two
+  runs diff-identical (`evidence/m341_hof_window.txt:41-53`); `m341_mutate.py`
+  **14/14** `ea5c77bf6ba5c0c0`, ST 4/4 (`evidence/m341_mutate.txt:17`), baseline
+  re-run = the NO-OP control.
+- NAMED: `## M338` rotated VERBATIM to `docs/named-archive-m341-rows.md:5`
+  (sha1 `b82cddad74c8`, `m341_named_rotate.py --verify`): 246,635 -> 245,663 B.
+- PITFALL: decode chains must track EVERY lea destination — SITE B is a
+  two-register chain (edx=slot+4n, then esi=n+edx-5) and SITE C's source lands
+  in edx, not ecx; a one-register chain silently drops the 5n term.

@@ -156,29 +156,39 @@ def fmt(aff):
     return " + ".join(parts).replace("+ -", "- ")
 
 
-def site_a(step=5, const=-5, page="ebx", slot="eax"):
-    """Affine decode of 0x449793..0x449796 with the measured coefficients."""
-    ins = window(0x449793, 0x449796)
-    law = {}
+def chain(lo, hi):
+    """Decode a run of `lea <reg>,<expr>` instructions read from the image,
+    keeping every destination's affine value so a two-register chain
+    (SITE B: edx = slot+4n, then esi = n+edx-5) resolves."""
+    env = {}
+    ins = window(lo, hi)
     for a, mn, ops in ins:
         d, s = split_ops(ops)
-        assert mn == "lea", (hex(a), mn)
-        if d == "ecx" and not law:
-            law = affine(s)
-        else:
-            law = affine(s, {"ecx": law})
-    # apply the measured (or mutated) coefficient shape
-    got = {}
-    for k, v in law.items():
-        if k == page:
-            got[k] = step
-        elif k == slot:
-            got[k] = v
-        elif k == "#":
-            got[k] = const
-        else:
-            got[k] = v
-    return got, ins
+        if mn == "lea":
+            env[d] = affine(s, env)
+    return env, ins
+
+
+def site_a():
+    env, ins = chain(0x449793, 0x449796)
+    return env.get("ecx", {}), ins
+
+
+def site_b():
+    env, ins = chain(0x44AF9B, 0x44AF9E)
+    return env.get("esi", {}), ins
+
+
+def site_c():
+    """The insert-shift: edx = 5n+k-5 (src), add ecx,<imm> (dst) on the same
+    5n+k value -- dst - src is the row shift."""
+    env, ins = chain(0x44B5A7, 0x44B5AD)
+    add = [i for i in window(0x44B5AF, 0x44B5BC) if i[1] == "add"
+           and split_ops(i[2])[0] == "ecx"]
+    imm = int(split_ops(add[0][2])[1], 0) if add else 0
+    if imm > 0x7FFFFFFF:
+        imm -= 0x100000000
+    return env.get("edx", {}), imm, ins + add
 
 
 def cover(step=5, const=-5, pages=PAGES, rows=ROWS):
@@ -209,6 +219,35 @@ def byte_hits(disp, pat):
         inner = m.group(1)
         (indexed if "*" in inner.split(disp)[0] else direct).append(a)
     return direct, indexed
+
+
+ZERO_INIT = [0x44B6AC, 0x44B7B0, 0x44B812, 0x44B8C9, 0x44B90F]
+
+
+def init_cells():
+    """Measure the zero-init / read-fault loop that DEFINES the buffer:
+    mov eax,<base> ; mov ecx,<inner> ; loop { mov BYTE [eax],0 ; add eax,<stride>
+    ; dec ecx ; jne } ; cmp eax,<term> ; jl.  Returns one dict per site."""
+    sites = []
+    for start in ZERO_INIT:
+        w = window(start, start + 0x1A)
+        if not w:
+            continue
+        base = inner = stride = term = None
+        for a, mn, ops in w:
+            d, s = split_ops(ops)
+            if mn == "mov" and d == "eax" and re.match(r"^0x[0-9a-f]+$", s):
+                base = int(s, 0)
+            elif mn == "mov" and d == "ecx" and re.match(r"^0x[0-9a-f]+$", s):
+                inner = int(s, 0)
+            elif mn == "add" and d == "eax" and re.match(r"^0x[0-9a-f]+$", s):
+                stride = int(s, 0)
+            elif mn == "cmp" and d == "eax" and re.match(r"^0x[0-9a-f]+$", s):
+                term = int(s, 0)
+        if None not in (base, inner, stride, term):
+            sites.append(dict(site=start, base=base, inner=inner,
+                              stride=stride, term=term))
+    return sites
 
 
 def main():
@@ -263,23 +302,20 @@ def main():
     rows.append(("G2 inputs = [obj+0x59f4] (page) and [obj+0xa918] (slot)", g2))
 
     # ---------------- G3 SITE C insert-shift ----------------
-    c = window(0x44b5a1, 0x44b5d6)
+    law_c, dst_signed, c = site_c()
     say("G3 SITE C 0x44b5a1..0x44b5d6 insert-shift (%d insns):" % len(c))
     for a, mn, ops in c[:8]:
         say("   0x%x %s %s" % (a, mn, ops))
-    # decode: ecx = 5n+k ; src = ecx-5 ; dst = ecx-4
-    got_src = affine("[ecx-0x5]", {})
-    dst_add = [i for i in c if i[0] == 0x44B5B9]
-    dst_imm = int(split_ops(dst_add[0][2])[1], 0) if dst_add else 0
-    dst_signed = dst_imm - 0x100000000 if dst_imm > 0x7FFFFFFF else dst_imm
-    say("   src = ecx-0x5 ; dst = ecx%+d (0x%x)" % (dst_signed, dst_imm))
-    two_bases = [i[0] for i in c if i[1] == "lea" and "0x983a10" in i[2]]
-    g3 = (got_src == {"ecx": 1, "#": -5} and dst_signed == -4
+    say("   src law: %s ; dst = src %+d -> delta %d"
+        % (fmt(law_c), dst_signed - (-5), (dst_signed - (-5))))
+    two_bases = [i[0] for i in window(0x44B5BF, 0x44B5D8)
+                 if i[1] == "lea" and "0x983a10" in i[2]]
+    g3 = (law_c == {"esi": 5, "edi": 1, "#": -5} and dst_signed == -4
           and len(two_bases) == 2 and (dst_signed - (-5)) == 1)
     rows.append(("G3 insert-shift src=5n+k-5 dst=5n+k-4 (delta +1)", g3))
 
     # ---------------- G4 SITE B ----------------
-    b = window(0x44af95, 0x44afa8)
+    law_b, b = site_b()
     say("G4 SITE B 0x44af95..0x44afa8 install (%d insns):" % len(b))
     for a, mn, ops in b:
         say("   0x%x %s %s" % (a, mn, ops))
@@ -298,7 +334,6 @@ def main():
         " insert-shift k immediates: %s"
         % ([i[2] for i in eax_src], seed,
            [hex(i[0]) for i in tail], ["0x%x" % k for k in kvals]))
-    law_b = affine("[eax+edx*1-0x5]", {"edx": {"edx": 1, "eax": 4}})
     say("   affine law: %s ; slot rows measured: %d (indices 0..%d)"
         % (fmt(law_b), rows_n, seed))
     g4 = (law_b == {"eax": 5, "edx": 1, "#": -5} and "0x91b5b4" in
@@ -308,23 +343,38 @@ def main():
     rows.append(("G4 SITE B law = 5*[obj+0xa4c] + slot - 5; k in 0..3", g4))
 
     # ---------------- G5 extent / bound ----------------
-    pages = (TERM - BASE) // (STRIDE * rows_n) if rows_n else 0
-    idx, lo, hi, first, last = bounds(step, const, pages, rows_n)
-    say("G5 EXTENT: (0x%x-0x%x)=0x%x = %d*0x8c = %d*0x2bc"
-        % (TERM, BASE, TERM - BASE, (TERM - BASE) // STRIDE,
-           (TERM - BASE) // 0x2BC))
-    say("   pages = 0x1324 / (0x8c*%d) = %d ; grid {%d..%d}x{0..%d}: %d cells,"
+    ext = init_cells()
+    say("G5 ZERO-INIT census (the loop that defines the buffer):")
+    for s in ext:
+        say("   0x%x base=0x%x stride=0x%x inner=%d term=0x%x"
+            % (s["site"], s["base"], s["stride"], s["inner"], s["term"]))
+    shapes = {(s["base"], s["stride"], s["inner"], s["term"]) for s in ext}
+    say("   distinct shapes: %d ; sites measured: %d (declared %d)"
+        % (len(shapes), len(ext), len(ZERO_INIT)))
+    if shapes:
+        base, stride, inner, term = list(shapes)[0]
+    else:
+        base, stride, inner, term = BASE, STRIDE, 0, TERM
+    pages = (term - base) // (stride * rows_n) if rows_n else 0
+    idx, lo, hi, first, last = bounds(step, const, pages, rows_n, base, stride)
+    say("   extent (0x%x-0x%x)=0x%x = %d*0x8c = %d*0x2bc"
+        % (term, base, term - base, (term - base) // stride,
+           (term - base) // 0x2BC))
+    say("   pages = 0x%x / (0x%x*%d) = %d ; grid {%d..%d}x{0..%d}: %d cells,"
         " indices %d..%d, first 0x%x, one past last 0x%x"
-        % (rows_n, pages, 1, pages, rows_n - 1, len(idx), lo, hi, first, last))
+        % (term - base, stride, rows_n, pages, 1, pages, rows_n - 1, len(idx),
+           lo, hi, first, last))
     say("   duplicate indices: %d ; index %d (page %d) -> 0x%x (== terminator:"
-        " %s)" % (len([k for k, v in idx.items() if len(v) > 1]), pages * rows_n,
-                  pages + 1, BASE + pages * rows_n * STRIDE,
-                  BASE + pages * rows_n * STRIDE == TERM))
-    g5 = ((TERM - BASE) == pages * rows_n * STRIDE == 7 * 0x2BC
+        " %s)" % (len([k for k, v in idx.items() if len(v) > 1]),
+                  pages * rows_n, pages + 1, base + pages * rows_n * stride,
+                  base + pages * rows_n * stride == term))
+    g5 = (shapes == {(0x983A10, 0x8C, 5, 0x984D34)}
+          and inner == rows_n
+          and (term - base) == pages * rows_n * stride == 7 * 0x2BC
           and pages * rows_n == 35 and len(idx) == 35
           and lo == 0 and hi == 34
           and not [k for k, v in idx.items() if len(v) > 1]
-          and BASE + pages * rows_n * STRIDE == TERM)
+          and base + pages * rows_n * stride == term)
     rows.append(("G5 35 = 7*5 records; 7 pages cover 0..34; page 8 = terminator",
                  g5))
 
@@ -373,12 +423,12 @@ def main():
            "DEAD" if r2_over else "ALIVE"))
     say("   R3 flat list: three sites decode to 5n+s (G1/G3/G4) and the"
         " insert-shift is k<=3 -> DEAD")
-    r4_last = 0x983984 + 34 * STRIDE + STRIDE
+    r4_last = 0x983984 + 34 * stride + stride
     say("   R4 base 0x983984: one-past-last 0x%x != 0x%x -> %s"
-        % (r4_last, TERM, "DEAD" if r4_last != TERM else "ALIVE"))
+        % (r4_last, term, "DEAD" if r4_last != term else "ALIVE"))
     r1d = bool(r1_bad)
     r2d = r2_over
-    r4d = r4_last != TERM
+    r4d = r4_last != term
     rows.append(("R1 0-based page DEAD", r1d))
     rows.append(("R2 six rows/page DEAD", r2d))
     rows.append(("R4 base 0x983984 DEAD", r4d))
