@@ -711,3 +711,26 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   silently. (2) a `mov` to memory must route to the slot store BEFORE the register branch.
   (3) `or r,reg` preserves an IN bit but turns a provable 0 into unknown. (4) seed every
   register UNKNOWN at entry, or a join inherits another path's value.
+
+## Session 342-chain4 — M386: +0x94d820 is the X of a per-faction coordinate PAIR (+0x94d824 = Y), not a deadline/counter
+
+- **ACCEPT** `python3 -u scripts/m386_marker_pair.py` -> **`PASS M386: 49/49`** `59589b3a42bc1caa`
+  (`evidence/m386_marker_pair.txt:137`), 2 re-runs byte-identical (`evidence/m386_twice.txt:2`); `scripts/m386_mutate.py` **12/12 killed** (`evidence/m386_mutate.txt:16`). Static only, zero box.
+- **ANSWER**: the field is the X half of a (x,y) PAIR stored at `0x94d448 + 0x20bc*f + 0x3d8` (Y at +0x3dc).
+  6 writers move the halves together: 5 write -1 to BOTH (`or reg,-1`), 1 copies a UNIT x,y (0x558e0c/12 <-
+  `movsx [..+0x95da10]`/`[..+0x95da12]`, stride 0x130); 1 lone X=-1 (0x55fce0) disables the marker (`:35-50`).
+- **READERS = MAP ARITHMETIC** (`:65-74`): 0x557d29-4d computes `(Y*ds:0x692184 + (X>>1))*11*4+3` and reads
+  byte +3 of the 0x2c tile array 0x92ae14; FUN_004e34f0 bounds-checks x/y against ds:0x92a378/0x92a37c (inlined
+  at 0x557a69/75).
+- **R1 DEADLINE refuted** (`:101-105`): 0 RMW on either half, 0 loads meeting ds:0x985afc within 6 insns. The
+  REAL per-turn cell +0x80 (0x94d4c8) is load/dec/store 5 insns away (0x5552b6-c3) - the field is not that cell.
+- **R2 COUNTER / R3 SCALAR refuted** (`:112`): 0 inc/dec/add on the field; 0 absolute `ds:0x94d820` forms; all 54
+  references are [base+0x94d820/824].
+- **M378 CORRECTION**: the guard's base at 0x5553a4 is `ebx = 0x20bc*esi`, the PARTNER row (`:90`), and every
+  route in passes that def - jge 0x5553ac tests the partner's marker X, not the pair's. 0x20000 stays an
+  OUTSTANDING request INFERRED (0 readers, `:117`).
+- **INFERRED**: the marker = the faction's "unit-of-interest" tile (best unit by distance 0x8f0d34; the HUD
+  highlights the unit standing there; 0x5a5776 clears it there). Which unit, and why the arm reads the PARTNER's
+  marker, stay OPEN.
+- **NAMED**: rotated settled `## M342` VERBATIM to `docs/named-archive-m342-rows.md` (`m386_named_rotate.py
+  --verify` PASS, 9 rows == 9 bullets).

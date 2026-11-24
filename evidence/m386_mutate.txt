@@ -1,0 +1,16 @@
+M386 mutation harness - 12 mutants against scripts/m386_marker_pair.py
+id    mutation                                                       rc   want verdict
+MU1   0x55fce0 clear-sentinel: X=-1 -> 0                             1    G2   KILLED
+MU2   0x558e12 unit-Y store retargeted to the wrong dword            1    G1   KILLED
+MU3   0x557d43 tile stride x5 -> x3                                  1    G3   KILLED
+MU4   0x55531d guard base 131*esi -> 66*esi                          1    G4   KILLED
+MU5   0x557cf6 X load -> RMW add                                     1    G1   KILLED
+MU6   0x557d0b `test eax,eax` -> compare against the turn counter    1    G5   KILLED
+MU7   0x5553e7 treaty AND no longer clears 0x20000                   1    G7   KILLED
+MU8   ALGO1: guard base read as a faction id (stride 4)              1    G4   KILLED
+MU9   0x4e3501 callee bounds-check Y -> X bound                      1    G3   KILLED
+MU10  0x558dfe unit-X load -> +0x95da14                              1    G2   KILLED
+MU11  0x5a5786 sentinel -1 -> -2 on the clear pair                   1    G2   KILLED
+MU12  0x557a5f base-relative load -> absolute ds form                1    G6   KILLED
+
+PASS m386_mutate: 12/12 killed
