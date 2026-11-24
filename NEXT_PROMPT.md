@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B34 s333 `5296fdad`; M363 s334 `66b923f06f4e8866`; B35 s335 `fa541d0a2445cacf`. STATE: B1-B36 + M54A-M370; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (B36 s337 `b20f5818dee2d861`; M373 s338 `4fd02c603e36c69c`. STATE: B1-B36 + M54A-M373; (ix) box-GATED; (x) OPEN-LEADS; #180 pre-existing FAIL.)
 Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS (grep only), skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
@@ -22,9 +22,8 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B36 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B34`-`## B36` govern).
-**B37**: `track_mode.py` decides; the spine now ends at B36 (relations modelled as a state machine).
-Author the next rung in `BUILD_SPINE.md` BEFORE probing. **DOC CAP: NAMED 245,388/250,000 (4.6 KB
-— rotate a settled block before the next block).**
+**B37**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
+**DOC CAP: NAMED 245,047/250,000 (4,953 B — rotate a settled block first).**
 
 ## THE LEDGER
 
@@ -37,10 +36,8 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
    base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm**.
 2. Writer/flag chain (BOX ONLY) - VERBATIM `docs/pick-archive.md` §trim-s295 (b): m94/m97/m100/m102/m103
    + m92/m95/m98/m117, `--predict` = model table.
-3. Static-first kit (zero box time): `field_census.py` (a global's shape from its addressing form + index math),
-   `name_global.py` (every reader/writer + containment), `m118_flag_never_set.py` (gate satisfiability: test sites, OR
-   immediates, register bit ops, save-carry), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]` (objdump window;
-   import as a module), `evidence.py audit|budget|prune|log`.
+3. Static-first kit (zero box time): `field_census.py`, `name_global.py`, `m118_flag_never_set.py`
+   (gate satisfiability), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]`, `evidence.py audit|budget|prune`.
 
 ## THE PICK — index (detail: `docs/pick-archive.md`, `NAMED.md` §CHAIN-PICKS)
 
@@ -103,17 +100,17 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M348 (s326) MERGED: slots 1/2 <- Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED. 12/12 `a3d46c017673526a`.
 - B34 (s333) MERGED: a facility completion stamps NOTHING (21 stores: API 2/GRANT 11/SET 1/COPY 6; 6/6 unchanged). 10/10 `5296fdad6d26caa3`.
 
-- M361 (s333-c2): A/V radio flags = widget+0xa18 of 4 rows (0x12cbc+k*0xb4c); readers 0x493ec0/0x492940/0x492030/0x4930e0; relabel ends in generic 0x5fa1e8; master never commits; propagation both ways. 38/38 `b92f1a61c041ae87`, harness 30/30. NEXT: what 0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 toggle.
-- M364 (s334-chain2): the relations bits have NOUNS — 0x1 = PACT, 0x8 = AT WAR (V: the end-pact and declare-vendetta case blocks ask those masks); the other 11 INF. 24/24 `f6d006d0281ac189`, harness 23/23. NEXT: 0x10 (37 asks, co-sets 0x8000|0x40) and 0x20 (18 asks, clears dword B's 0xc00).
-- M365 (s334-c3): 0x94d5dc = relations-record slot block+0x1ac (23 sites, 8W/15R): only 0 stored, 3 `++`, 1 `+=2*byte`; 0x94d5bc pairs 5/5; deadlines value+round/50+1, 4 cross-direction cmp. 22/22 `d1d567339ee8c5b2`, harness 26/26.
-- B35 (s335): WHO calls the grant family - 3 sites into the founder (FUN_004cca50/FUN_0059ce10/FUN_0059ec90), 1 into the new-game setup (FUN_005a0fa0); 11 API grants `[6,3,7,27,8,4,6,3,6,3,27]` + 10 mapper grants `[1,3,6,7,3,6,7,26]`; births 3/3 founder vs 1/3 new-game; the record EXISTENCE, not the bit value, is the separator. 11/11 `fa541d0a2445cacf`, harness 18/18. NEXT BUILD B36.
+- M361 (s333-c2) / M364 (s334-c2): A/V radio flags = widget+0xa18 of 4 rows (readers 0x493ec0/0x492940/0x492030/0x4930e0), 38/38; relations nouns 0x1/0x8 (the 0x8 reading RETRACTED by M369), 24/24. Rows in NAMED.
+- M365 (s334-c3): 0x94d5dc = relations-record slot block+0x1ac (23 sites, 8W/15R); 0x94d5bc pairs 5/5. 22/22 `d1d567339ee8c5b2`, harness 26/26. Row in NAMED.
+- B35 (s335): WHO calls the grant family - 3 sites into the founder (FUN_004cca50/FUN_0059ce10/FUN_0059ec90), 1 into the new-game setup (FUN_005a0fa0); the record EXISTENCE, not the bit value, separates them. 11/11 `fa541d0a2445cacf`, harness 18/18.
 - M368 (s336-chain1): 0x2 = TREATY, 0x4 = TRUCE — behaviour keys `ENEMYTRUCE`/`ENEMYTREATY` on the mask writes; truce<treaty<pact (pact IMPLIES treaty); FUN_005076d0's classifier is ordered EQUALITY. 34/34 `6f4b692777cc3549`, harness 32/32. NEXT: the two other peace hosts (0x53fcb3 / 0x523f4c).
-- M367 (s335-c3): the 13 labels = `labels.txt` lines (element=off/4, line=10+element): 1/2/4/0x10 = Pact/Treaty/Truce/Vendetta, 8 = Commlink, 8 more stance strings, 2 high-dw; title `Diplomacy for`. 27/27 `a48d5dd630542166`, harness 30/30. NEXT: bit 8's noun (Commlink vs M364 AT WAR).
-- M366 (s335-chain2): 0x10 = AT WAR/vendetta in force (V: the declare path FUN_00507ce0->FUN_005076d0 writes 0x10 on both exits, fires VENDETTAWARNING/INCITED; its set-rule clears 1|2|4); 0x20 = the human-branch war record (INF). 26/26 `bc58f707128a8b15`, harness 29/29. NEXT: the noun WORD for 0x20; role of 0x80000000.
+- M367 (s335-c3): the 13 labels = `labels.txt` lines; 1/2/4/0x10 = Pact/Treaty/Truce/Vendetta, 8 = Commlink (bit 8's noun SETTLED by M369). 27/27 `a48d5dd630542166`, harness 30/30.
+- M366 (s335-chain2): 0x10 = AT WAR/vendetta in force (V: the declare path FUN_00507ce0->FUN_005076d0 writes 0x10 on both exits, fires VENDETTAWARNING/INCITED; its set-rule clears 1|2|4); 0x20 = the human-branch war record (INF). 26/26. NEXT: 0x20's noun.
 - M369 (s336-chain2): relations bit 0x8 = COMMLINK (contact), M364's AT WAR RETRACTED — the vendetta block only TESTS 8 both ways as a guard; the war bit is 0x10; the pod (rel&8==0) and the council sweep set 8 alone. 23/23 `475fdceda961ef2d`, harness 39/39. NEXT: 0x2/0x4 (chain 1).
 - M370 (s336-c3) MERGED: pref block 0x92bde8..0x92bf14 = 11 cells/43 stores/14 fns; two-sided INI names; 32 non-loader writers mirror 0x985a**; sweep 0x92bf18..0x92bf30. 16/16, harness 22/22.
 
 - B36 (s337-chain1) MERGED: FUN_00551a20 EXTRACTED AND RUN - 5 `test bl` blocks on the CURRENT ebx + an UNCONDITIONAL tail OR; pact=0x3, truce-after-war=0x8000010c, war=0x80000118, combined 0x11=0x8000011b; the ladder ACCUMULATES so the state is the classifier's precedence (1>2>4 EQUALITY). 10/10 `b20f5818dee2d861`, harness 11/11. NEXT BUILD B37.
 - M371 (s337-chain2): the war-initiation hosts' 0x8 = COMMLINK — `or ebx,0x80000108`@0x551b11 puts contact into every 0x10 request (16 war-alone vs 4 pure-contact callers, peace keeps 8). 18/18 `4e82206112fe63ad`, harness 27/27, twice-byte-identical. NEXT: 0x88000008 bits 27/31.
+- M373 (s338-chain1) MERGED: the PENDING-VENDETTA consumer — FUN_005551e0 clears 0x80000000 both ways (0x555750/0x55578a) ONLY when bit 13 (0x2000) is clear; the skip path scrubs bit 13 (`and ah,0xdf`@0x555809) = a one-shot protector. **bit 27 does NOT gate the pass** — sticky, set only by 0x88000008, read by 4 other fns. Second clearer: caller-mask erasers FUN_005518f0/FUN_00551cf0; only `0x9000ff48`@0x59f176 carries bit 31 (OPEN: 0xdd9bc3c0@0x4da404 flag, 20 undecoded sites). 19/19 `4fd02c603e36c69c`, harness 16/16. NEXT: bit 13's noun.
 - M372 (s337-c3) MERGED: 0x92bf0c = BIT-STRING slot, not packed: the flag=1 writer emits base-2 (min width 8) == the shipped `Semaphore=00000000`; all 4 in-game stores `x&0x1800000` (bits stay 23/24); the name is the INI key only; bit23 read 0x59ef11+0x5a1446, bit24 0x5a1150; 0x92bdf0 unreachable (0 address dwords). 8/8 `b699a30c05573575`, harness 20/20. NEXT: the nouns of those two bits (0x99aa38 bits 16/17).
 - M374 (s338-c2): Semaphore bits 23/24 = RULES record bits 16/17 = the `#RULES` tail items - "Randomize faction leader personalities" (bit23: five-field rand + pairing arm) and "Randomize faction leader social agendas" (bit24: 12-slot assignment); 18-bit word = 16 Rules-cell bits + 2; INI Semaphore=00000000. 23/23 `705bd8cd7ed3f705`, harness 20/20. NEXT: the 12-slot table's identity (0x92babc window).

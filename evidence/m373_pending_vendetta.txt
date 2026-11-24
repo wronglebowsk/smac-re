@@ -1,0 +1,165 @@
+M373  the pending-vendetta consumer  (text=scratch/m574/text.txt)
+      781429 instructions; FUN_005551e0 0x5551e0..0x5560ec (3853 B); word = 0x94d448, stride 0x82f
+
+T0  FIELD SHAPE - the pair index, decoded twice
+    FUN_00551a20 index sequence: mov eax,edi | shl eax,0x6 | add eax,edi | lea edx,[edi+eax*2] | shl edx,0x4 | sub edx,edi | add edx,esi
+    dump arithmetic: 2095*f_a + f_b  (f1=7,f2=3 -> 14668; f1=5,f2=2 -> 10477) | ghidra C multiplies by 0x82f
+  G0a  PASS  the pair stride is 0x82f dwords: EVALUATED from the dump's parsed op sequence (two distinct (f1,f2) pairs agree) and equal to the C's multiplier - a changed disassembly moves it
+
+T1  THE PENDING BIT'S TOUCH POINTS INSIDE FUN_005551e0 (whole function, 1167 insns)
+    immediates that CARRY bit 31 (and-masks keep it too - context, not the gate):
+      18 sites 555207 55538c 5553c8 5553e7 555667 5556e1 55573c 5557d3 5557e1 5558c9 5558cb 5558da 5558ef 5558fd 555bb2 555cfc 555d90 556029
+    55573c  test   eax,0x80000000                     READ pending?
+    555750  and    eax,0x7fffffff                     CLEAR mask 0x7fffffff
+    555758  mov    DWORD PTR [edi+0x94d448],eax       store the cleared word
+    55578a  and    ecx,0x7fffffff                     CLEAR mask 0x7fffffff
+    555792  mov    DWORD PTR [eax],ecx                store the cleared word
+    5558da  push   0x80000000                         ARM pending via setter 0x551a20 @0x5558e1
+    arms: 5558da
+  G1a  PASS  exactly 6 touch points: one READ, two 0x7fffffff CLEARS, the two stores that write them (own+mirror), and one ARM push -> setter 0x551a20 at 0x5558e1 (target and call site both asserted)
+    explicit 0x7fffffff clear masks: 555750 55578a
+  G1b  PASS  the pass clears the pending bit in BOTH directions, nowhere else in the function
+
+T2  THE GUARD LADDER AROUND THE CLEAR - walked, then EXECUTED
+    555736  mov    eax,DWORD PTR [edi+0x94d448]
+    55573c  test   eax,0x80000000
+    555741  je     0x555809
+    555747  test   ah,0x20
+    55574a  jne    0x555809
+    555750  and    eax,0x7fffffff
+    555755  mov    edx,DWORD PTR [ebp+0x8]
+    555758  mov    DWORD PTR [edi+0x94d448],eax
+    555809  and    ah,0xdf
+    55580f  mov    DWORD PTR [edi+0x94d448],eax
+    555834  and    ah,0xdf
+    555837  mov    DWORD PTR [ebx],eax
+    clear mask 0x7fffffff | skip path first insn 0x555809 `ah,0xdf` -> keep mask 0xffffdfff | targets 0x555809 0x555809
+    executed 4-row truth table (pending=bit31, exception=bit13):
+      pre 00000019 -> post 00000019  no pending, scrub bit13    pending kept=False
+      pre 00002019 -> post 00000019  no pending, scrub bit13    pending kept=False
+      pre 80000019 -> post 00000019  CLEAR pending              pending kept=False
+      pre 80002019 -> post 80000019  keep pending, clear bit13  pending kept=True
+  G2a  PASS  both escapes land on the same scrub (0x555809 `and ah,0xdf`): the clear is taken only when the word has bit31 AND NOT the bit the DUMP's `test ah,0x20`@0x555747 names (13)
+  G2b  PASS  the 4-row table is a real state machine: bit13 is a ONE-SHOT PROTECTOR of the pending bit (kept this pass, scrubbed immediately), not a duplicate of it
+
+T3  BIT 27 (0x08000000) - the pick's candidate gate.  Whole-.text census of the EXACT imm.
+    sites with immediate 0x08000000: 56 total | 5 name the relations word | 0 in FUN_005551e0
+      5230f0 FUN_00522b70   test   DWORD PTR [ecx*4+0x94d448],0x8000000
+      532a2c FUN_00531df0   test   DWORD PTR [ecx+0x94d448],0x8000000
+      54687b FUN_00546800   test   DWORD PTR [eax+0x94d448],0x8000000
+      5526ce FUN_005525d0   test   DWORD PTR [esi+0x94d448],0x8000000
+      55278f FUN_005525d0   test   DWORD PTR [esi+0x94d448],0x8000000
+    word-form readers live in: FUN_00522b70, FUN_00531df0, FUN_00546800, FUN_005525d0
+    non-word immediates (other fields / other bitfields): 51
+  G3a  PASS  ZERO bit-27 immediates inside FUN_005551e0: bit 27 is NOT a decision input of the pass
+  G3b  PASS  bit 27 IS a relations-word state bit - 5 `test` READ sites in 4 other functions 5230f0 532a2c 54687b 5526ce 55278f
+
+T4  WHAT THE SETTER DOES TO BITS 31/27 - masks applied in write order (B36's model)
+    mask 0x80000000 -> fresh word 80000000 | from all-ones ffffffff  bit31=1 bit27=1  cleared: []
+    mask 0x88000008 -> fresh word 88000008 | from all-ones ffffffff  bit31=1 bit27=1  cleared: []
+    mask 0x80000008 -> fresh word 80000008 | from all-ones ffffffff  bit31=1 bit27=1  cleared: []
+    mask 0x80000018 -> fresh word 80000118 | from all-ones fa6ef378  bit31=1 bit27=1  cleared: []
+    mask 0x00000018 -> fresh word 80000118 | from all-ones fa6ef378  bit31=1 bit27=1  cleared: []
+    mask 0x00000010 -> fresh word 80000118 | from all-ones fa6ef378  bit31=1 bit27=1  cleared: []
+    mask 0x00008010 -> fresh word 80008118 | from all-ones fa6ef378  bit31=1 bit27=1  cleared: []
+    mask 0x00000050 -> fresh word 80000158 | from all-ones fa6ef378  bit31=1 bit27=1  cleared: []
+    mask 0x00000001 -> fresh word 00000003 | from all-ones ff6e7faf  bit31=1 bit27=1  cleared: []
+    mask 0x00000002 -> fresh word 00000002 | from all-ones ff6e7faf  bit31=1 bit27=1  cleared: []
+    mask 0x00000004 -> fresh word 00000004 | from all-ones ff6e7faf  bit31=1 bit27=1  cleared: []
+    mask 0x00000008 -> fresh word 00000008 | from all-ones ffffffff  bit31=1 bit27=1  cleared: []
+    mask 0x00000003 -> fresh word 00000003 | from all-ones ff6e7faf  bit31=1 bit27=1  cleared: []
+    mask 0x00000011 -> fresh word 8000011b | from all-ones fa6e733b  bit31=1 bit27=1  cleared: []
+  G4a  PASS  NO setter mask clears bit 31 - the pending bit survives every diplomacy write (peace, pact, truce, treaty, war, contact)
+  G4b  PASS  bit 27 is SET by exactly one request mask (0x88000008) and CLEARED by none - the setter can only raise it; the measured clear (if any) must live outside the setter
+    every `and` in the setter: 7 (6 word masks + `and al,0xfe`@0x551a62 on ds:0x7485b4)
+    word-mask and-immediates by value: faeef378 x2, ff7fffff x2, ffee7faf x2
+  G4c  PASS  STRUCTURAL, not sampled: the setter's SIX word-mask `and`s are exactly these three immediates applied twice, all with bit 31 set - no request can clear pending through it
+
+T5  EVERY WRITE TO THE WORD (41 stores) - which ones can CLEAR bit 31?
+    RMW `and/or/xor [word],imm` forms: 0 | `mov [word],imm32` forms: 0
+    register stores 41 | clear 2 | nontrivial-keep 33 (of which 10 mask-free copies) | reg-mask 3 | opaque 3
+      52b9c7 FUN_0052a720 copy   -
+      52b9d0 FUN_0052a720 copy   -
+      55198a FUN_005518f0 and_reg -
+      5519af FUN_005518f0 and_reg -
+      551a8e FUN_00551a20 and    0xffee7faf
+      551ab5 FUN_00551a20 and    0xffee7faf
+      551b1d FUN_00551a20 and    0xfaeef378
+      551b4a FUN_00551a20 and    0xfaeef378
+      551b9e FUN_00551a20 and    0xff7fffff
+      551bc5 FUN_00551a20 and    0xff7fffff
+      551be8 FUN_00551a20 or_reg -
+      551c0d FUN_00551a20 or_reg -
+      551d22 FUN_00551cf0 or_reg -
+      551d62 FUN_00551cf0 and_reg -
+      552cca FUN_00552970 and    0xffffffdf
+      552cd8 FUN_00552970 and    0xffffffdf
+      552ce6 FUN_00552970 copy   -
+      552d6f FUN_00552970 and    0xffffffdf
+      552d7d FUN_00552970 and    0xffffffdf
+      5530c3 FUN_00552f10 and    0xfeeffffe
+      5530e8 FUN_00552f10 and    0xfeeffffe
+      55487f FUN_00554850 or     0x00040020
+      554d42 FUN_00554d10 or     0x000c0020
+      5552d3 FUN_005551e0 copy   -
+      555394 FUN_005551e0 and    0xfffdf3ff
+      5553f3 FUN_005551e0 or     0x00000840
+      55540a FUN_005551e0 or     0x00020000
+      555430 FUN_005551e0 copy   -
+      555458 FUN_005551e0 copy   -
+      5556eb FUN_005551e0 or     0x00000840
+      555758 FUN_005551e0 and    0x7fffffff
+      555792 FUN_005551e0 and    0x7fffffff
+      5557d9 FUN_005551e0 and    0xfbffffff
+      55580f FUN_005551e0 opaque -
+      555837 FUN_005551e0 copy   -
+      5558f5 FUN_005551e0 and    0xfbffffff
+      555a45 FUN_005551e0 copy   -
+      555a60 FUN_005551e0 copy   -
+      555a6e FUN_005551e0 opaque -
+      555f39 FUN_005551e0 opaque -
+      555f4b FUN_005551e0 copy   -
+    keepers' masks: 0x00000840, 0x00020000, 0x00040020, 0x000c0020, 0xfaeef378, 0xfbffffff, 0xfeeffffe, 0xff7fffff, 0xffee7faf, 0xfffdf3ff, 0xffffffdf
+  G5a  PASS  EVERY register store into the word (41) is classified, and the two other write SHAPES (`and/or/xor [word],imm` and `mov [word],imm32`) are scanned and EMPTY - only the pass's own 0x555758/0x555792 can clear bit 31
+  G5b  PASS  the partition closes: 33 keep / 2 literal clear / 3 caller-mask AND / 3 opaque, so no store is silently dropped or double-counted
+
+T5b THE SECOND CLEARER FAMILY - two helpers erase a CALLER-supplied mask
+    FUN_005518f0: `not edx` at 55196e then AND -> clears the 3rd argument (both directions)
+    FUN_00551cf0: 4th arg != 0 -> OR mask (0x551d1d); 4th arg == 0 -> `not ecx` at 551d50, AND -> clears the 3rd argument (one direction per call)
+    call sites: 5518f0 x30, 551cf0 x36
+      59f176 FUN_0059ec90 helper 0x5518f0 mask 0x9000ff48  CLEAR  <- carries bit 31
+      4da404 FUN_004da2c0 helper 0x551cf0 mask 0xdd9bc3c0  FLAG-DEPENDENT(ebx)  <- carries bit 31
+    decoded (contiguous >=3-push run) 46/66; UNDECODED 20 - args live on a shared setup path (after jmp/mov): 533a21 5357fa 53bafc 53c904 53ec2a 53efb9 53f6ff 547311 5473c0 547435 547a0a 547bdd 547e7a 547fa2 548574 548647 548a0b 548e5c 41b2d2 552d83
+    literal 3rd args 35 | register/param args 31 | bit-31-carrying args 2
+  G5c  PASS  66 call sites: 46 decode a contiguous >=3-push run (35 literal masks), 20 keep their args on a shared path and are NOT claimed; among the decoded, ONE mask clears bit 31 (0x9000ff48 @0x59f176) and ONE is flag-dependent (0xdd9bc3c0 @0x4da404)
+
+T6  LIFECYCLE, EXECUTED - bit 31 is the LATCH the pass consumes; bit 27 is STICKY
+    arm 0x88000008 (0x555667)      word 88000008  bit31=1 bit27=1 ladder=[]
+    second request 0x80000008      word 88000008  bit31=1 bit27=1 ladder=[]
+    war write 0x10                 word 88000118  bit31=1 bit27=1 ladder=[]
+    pact write 0x1                 word 8800010b  bit31=1 bit27=1 ladder=[0,1]
+    pass over a word with pending, bit13 clear: 80000018 -> 00000018 (CLEAR pending)
+    pass over a word with pending, bit13 SET:   80002018 -> 80000018 (keep pending, clear bit13)
+  G6a  PASS  bit 27 survives a second request, a war write and a pact write: sticky, never cleared by the setter - while bit 31 rides along untouched until the PASS consumes it
+  G6b  PASS  the consumer: pending is cleared by the pass unless the arm carried bit13, and the exception is spent in the same pass
+
+T7  RIVALS - each predicts a number the tables above already printed
+    R1 'bit 27 gates the decision pass'            predicts >=1 bit-27 imm in the window
+       measured: 0 (G3a)  -> DEAD
+  R1   PASS  RIVAL DEAD: bit 27 has no read in FUN_005551e0; it is a WRITE-side marker carried by 0x88000008, read by 4 other functions
+    R2 'the pass clears pending unconditionally'   predicts 0 branch sites between the
+       test 0x55573c and the clear 0x555750; measured: 2 (0x555741/0x55574a) plus table
+       row (31,13) keeping the bit -> DEAD
+  R2   PASS  RIVAL DEAD: the clear is conditional, and one branch KEEPS the pending bit
+    R3 'the 0x2000 guard is the 0x20 AI flag'      predicts the al-form test at 0x5556a7
+       is the same predicate; measured: `test al,0x20` tests bit 5 and branches to
+       0x5556e1 (the 0x840 write), the pending guard uses `test ah,0x20` = bit 13 -> DEAD
+  R3   PASS  RIVAL DEAD: byte-register arithmetic differs - al 0x20 is bit 5, ah 0x20 is bit 13, and the two guards have different targets
+    R4 '0x80000000 is a sign bit / not a field member' predicts the field's other masks
+       clear it; measured: 33 of 41 stores keep bit 31 (G5a) -> DEAD
+  R4   PASS  RIVAL DEAD: bit 31 is a named member with exactly one literal cleaner pair, not a sign bit
+
+SUMMARY  19/19 gates
+DIGEST   4fd02c603e36c69c
+
+PASS M373: 19/19 gates digest 4fd02c603e36c69c  (evidence evidence/m373_pending_vendetta.txt)

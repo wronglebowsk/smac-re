@@ -1,0 +1,21 @@
+=== python3 -u scripts/m373_mutate.py  (captured stdout, rc=0, 2026-11-24; after the #406 review hardening) ===
+M373 mutation harness - 16 mutants, 0 no-op []
+  MU1   G1a   FAIL   the pass READS bit 31 (pending) as 0x80000000, not a neighbouring bit
+  MU2   G2a   FAIL   the skip path scrubs bit 13 (`and ah,0xdf` = 0xffffdfff) - not a no-op
+  MU3   G2a   FAIL   both escapes of the pending test land on the SAME scrub block at 0x555809
+  MU4   R3    FAIL   the pending protector is bit 13 (ah), not bit 5 (al)
+  MU5   G1a   FAIL   the ARM push carries bit 31 (the pending mask) through FUN_00551a20
+  MU6   G5a   FAIL   0x555758 stores the CLEARED word back into the relations dword (own direction)
+  MU7   G5b   FAIL   FUN_005518f0's AND takes the CALLER's mask, not a literal
+  MU8   G3b   FAIL   bit 27 is read off the relations word at 0x5230f0 as 0x08000000
+  MU9   G5c   FAIL   the elimination sweep's mask carries bit 31 (0x9000ff48)
+  MU10  G5c   FAIL   the flag-dependent call's mask (0xdd9bc3c0) carries bit 31
+  MU11  G4c   FAIL   the war clear mask KEEPS bit 31 (0xfaeef378) - pending survives a war write
+  MU12  G4c   FAIL   the peace clear mask KEEPS bit 31 (0xffee7faf)
+  MU13  G1b   FAIL   the mirror clear uses the same 0x7fffffff mask
+  MU14  G5a   FAIL   the setter's store really writes the relations dword (store census sensitivity)
+  MU15  G2b   FAIL   the protector bit is 0x2000 (bit 13), not 0x20 (bit 5)
+  MU16  G2b   FAIL   the guard tests the pending bit 31, not bit 27
+
+RUN PASS 16 mutants, NO-OP []
+rc=0

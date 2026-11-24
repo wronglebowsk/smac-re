@@ -1677,3 +1677,12 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | bit23: 0x59ef11 five rand fields + 0x5a1446 pairing arm; bit24: 0x5a1150 12-slot assignment (stride 0x59c, 8 factions) | `:29-41` | V MU7-MU10 MU16 MU17 |
 | script keys are PE strings RULES/AIEDITOR/AIEDITOR2/SCENRULES; FUN_004dc5f0 pushes RULES @0x4dc6fb | `:43-49` | V MU18 |
 | OPEN: the 12 slots' identity (SE-choice/agenda grid, INF); bit position 23/24 cause | - | INF |
+## M373 (s338-chain1, STATIC 19/19) — the PENDING-VENDETTA consumer: FUN_005551e0 clears 0x80000000 under a bit-13 exception; **bit 27 is not a gate there** (the pick's premise refuted). ACCEPT `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19` `4fd02c603e36c69c` x2 (`evidence/m373_pending_vendetta.txt:165`); harness 16/16 (`evidence/m373_mutate.txt:20`). `:N` = a line of the evidence.
+| claim | ev | conf |
+|---|---|---|
+| CONSUMER: 6 bit-31 touch points — READ 0x55573c, CLEAR 0x555750 + store 0x555758 (own), CLEAR 0x55578a + store 0x555792 (mirror), ARM `push 0x80000000`@0x5558da -> setter 0x551a20 @0x5558e1 (target AND call site asserted) | `:12-19` | V MU1,5,13,14 |
+| GUARD: conditional — `je 0x555809`@0x555741 (not pending) and `jne 0x555809`@0x55574a (bit13 set) both reach `and ah,0xdf`@0x555809, a ONE-SHOT protector that scrubs bit 13 in the same pass | `:35-43` | V MU2,3,15,16 |
+| BIT 27: ZERO immediates inside the pass; 5 word-form `test` reads in 4 fns (0x5230f0/0x532a2c/0x54687b/0x5526ce+0x55278f); STICKY — set only by request mask 0x88000008, cleared by no setter mask | `:48-55,73` | V MU8 |
+| STORES: 41 register stores (+0 `and/or/xor [word],imm`, +0 `mov [word],imm32` shapes) — 33 cannot clear bit 31, the ONLY 2 literal clears are the pass's own, 3 caller-mask, 3 opaque; G4c ties the sim's 3 masks to the dump's bytes | `:76-121` | V MU6,7,11,12 |
+| SECOND CLEARER: FUN_005518f0 (`not edx`) / FUN_00551cf0 (4th arg 0) clear a CALLER mask — 66 sites, 46 with a contiguous >=3-push run / 35 literal (20 undecoded, disclosed); `0x9000ff48`@0x59f176 (FUN_0059ec90 sweep) is the only LITERAL mask carrying bit 31 | `:124-132` | V MU9 |
+| UNRESOLVED: the noun of bit 13 (0x2000); 0xdd9bc3c0@0x4da404 (flag = caller's ebx) and the 20 undecoded call sites could clear bit 31; which live event fires the ARM | `:132` | OPEN MU10 |
