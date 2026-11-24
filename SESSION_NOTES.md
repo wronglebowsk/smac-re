@@ -712,3 +712,29 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (V, INF noun); 0x40 = 'SET TREATY' + 50-tick window (V, INF noun); 0x100000 = eviction
   grievance (INF); 0x8000/0x10000 = war/truce companions (OPEN). **OPEN**: 0x53bbed's role;
   0x5526b3 / 0x507d21 hosts; 0x4da404's 4th arg.
+## Session 339-chain2 — M376: the 0x92babc "12 slots" are alpha `#SOCIO`'s SE-effect matrix
+
+- **ACCEPT** `python3 -u scripts/m376_socio_grid.py` -> **`PASS M376: 27/27`** `0d23d4d394dde133`
+  (`evidence/m376_socio_grid.txt:105`; re-run identical, `evidence/m376_twice.txt`, sha1
+  `09c186c4e0cabfe5`); `scripts/m376_mutate.py` **24/24 killed, cov G1-G4**
+  (`evidence/m376_mutate.txt:27`). Static only, zero box.
+- **GEOMETRY** (a tiny insn emulator over 0x5a11ca..f3): cell = `0x92babc + 0xd4*a + 0x2c*b`;
+  cell = **11 dwords**; 4 rows / 4 cells; row header 0x24 (name, 4 tech, 4 names).
+- **SOURCE** `FUN_0057a070` parses alpha.txt `#SOCIO` (line 746 = the 11 keywords
+  ECONOMY..RESEARCH, 748 = 4 categories, 749-764 = 16 choices): keywords -> 0x9270c0
+  (0x68 B, count 0x927538, capacity 11), row names -> 0x92ba98+0xd4*o, the +/- tokens ->
+  0x92babc. Column i = `strcmp(token,0x9270c0+i*0x68)`, count ADDED.
+- **CONSUMER** (M374's bit24): unique (a,b) per faction in a 12-dword registry (`3a+b`), then
+  the first weight > 0; stores category/choice at record **+0x584/+0x58c** (+ first-positive
+  at +0x594). Derived: `0x9280b8-0x927590 = 0xB28 = 1*0x59c + 0x58c`, cross-checked against
+  the reader's own 0x927b14/0x927b1c.
+- **READER** 0x4a66d9 prints the pair: `[0x92ba98+d*0xd4]` category name,
+  `[0x92baac+d*0xd4+e*4]` choice name (row+0x14), both appended — the agenda is TEXT.
+- **NEGATIVES**: 0x92babc is BSS (raw .data ends 0x6a9000) => parser-built, not a .data table;
+  rows 0..2 only, so Future Society (row 3) can never be an agenda; the 8th write 0x92a7fc is
+  0x58c past the 8-record block end 0x92a270 (OPEN: 9-slot intent vs slack).
+- **PITFALL**: per-faction field arrays are written `record[1] + field_off + i*0x59c`, so a
+  "+0x584" field appears as the literal 0x927b14; 0x9280b8 looks like a base but is
+  record[1]+0x58c. Do not read those literals as record bases.
+- Rotated `## M286` VERBATIM -> `docs/named-archive-m376-rows.md` (sha1 `25eb67cd987ee782`)
+  for the NAMED cap; `scripts/m376_named_rotate.py --verify` PASS.

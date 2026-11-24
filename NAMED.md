@@ -1671,16 +1671,16 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | bit23: 0x59ef11 five rand fields + 0x5a1446 pairing arm; bit24: 0x5a1150 12-slot assignment (stride 0x59c, 8 factions) | `:29-41` | V MU7-MU10 MU16 MU17 |
 | script keys are PE strings RULES/AIEDITOR/AIEDITOR2/SCENRULES; FUN_004dc5f0 pushes RULES @0x4dc6fb | `:43-49` | V MU18 |
 | OPEN: the 12 slots' identity (SE-choice/agenda grid, INF); bit position 23/24 cause | - | INF |
-## M376 (s339-c2, STATIC 27/27) — the `0x92babc` grid IS alpha.txt `#SOCIO`: a 4x4x11 SOCIAL-ENGINEERING effect matrix; the bit-24 "12 slots" are 11 effect columns + a 12-dword used-pair registry. ACCEPT `python3 -u scripts/m376_socio_grid.py` -> **`PASS M376: 27/27`** `0d23d4d394dde133` (`evidence/m376_socio_grid.txt:105`, re-run byte-identical); harness **24/24** (`evidence/m376_mutate.txt:27`). `:N` = an acceptance line.
+## M376 (s339-c2, STATIC 27/27) — `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix; bit-24's "12 slots" = 11 effect columns + a 12-dword used-pair registry. ACCEPT `scripts/m376_socio_grid.py` -> **`PASS M376: 27/27`** `0d23d4d394dde133` (`evidence/m376_socio_grid.txt:105`, x2); harness **24/24** (`evidence/m376_mutate.txt:27`). `:N` = acceptance line.
 | claim | ev | conf |
 |---|---|---|
-| GEOMETRY (emulated from the 0x5a11ca..f3 chain): cell = `0x92babc + 0xd4*a + 0x2c*b`; cell = **11 dwords** (copy `mov ecx,0xb`@0x52b822, scan `cmp eax,0xb`@0x5a1203, zero @0x57ab94); rows 4 = `0x350/0xd4`, cells/row 4 = `0xb0/0x2c`; row header 0x24 = 9 dwords (+0 name, +4..10 tech x4, +0x14..20 name x4) | `:14-31` | V MU1-MU8 |
-| SOURCE: `FUN_0057a070` reads alpha `#SOCIO` — 11 keywords (ECONOMY..RESEARCH) into 0x9270c0 (0x68 B, count 0x927538), 4 category names, 16 choice lines; column i = `strcmp(token,0x9270c0+i*0x68)` and the token's +/- count is **ADDED** (`inc/dec ecx`@0x57abd2/d6, `add eax,ecx`@0x57abf8) | `:31-41` | V MU10-MU12 |
-| COMPUTED from the file: 16 cells, **4 EMPTY** = choice 0 of each row (Frontier/Simple/Survival/None); all 12 others have a first POSITIVE column (Police State -> SUPPORT) | `:35-41` | V MU11 MU12 ALGO1 |
-| CONSUMER bit24: 12-dword registry indexed `3a+b`, a=`rand%3`, b=`rand%3+1`, scan first weight `>0`; 8 records x 0x59c; stores category/+0x584, choice/+0x58c, first-positive/+0x594 (`0x9280b8-0x927590 = 0xB28 = 1*0x59c+0x58c`) | `:42-56` | V MU13-MU20 |
-| READER 0x4a66d9: +0x584 -> `[0x92ba98+d*0xd4]` category NAME, +0x58c -> `[0x92baac+d*0xd4+e*4]` choice NAME (row+0x14), both appended to one buffer -> the agenda pair is TEXT | `:65-68` | V MU22-MU24 |
-| RIVALS that FAIL: 0x92babc is BSS (not initialized .data) `:70`; 11 columns != 7 #FACTIONS `:72`; cell stride 0x2c = 11 dwords, not 12 `:74`; Future Society (row 3) is NEVER sampled `:75` | `:70-75` | V |
-| OPEN/INF: why only rows 0..2 are sampled (INF: an agenda is Politics/Economics/Values only); the **8th write 0x92a7fc** lands 0x58c past the 8-record block 0x92a270 (9-slot intent vs slack); whether +0x594 is consumed anywhere | `:55-56` | OPEN |
+| GEOMETRY (emu of 0x5a11ca..f3): `0x92babc + 0xd4*a + 0x2c*b`; cell = 11 dwords (@0x52b822/0x5a1203/0x57ab94); 4 rows `0x350/0xd4`, 4 cells `0xb0/0x2c`; header 0x24 | `:14-31` | V MU1-MU8 |
+| SOURCE FUN_0057a070 = alpha `#SOCIO`: 11 keywords -> 0x9270c0 (0x68 B, count 0x927538), 4 categories, 16 choices; col i = `strcmp(token,0x9270c0+i*0x68)`, +/- count ADDED (@0x57abd2/d6, 0x57abf8) | `:31-41` | V MU10-MU12 |
+| COMPUTED: 4 EMPTY cells = choice 0 (Frontier/Simple/Survival/None); the other 12 each have a first POSITIVE column (Police State -> SUPPORT) | `:35-41` | V MU11 MU12 ALGO1 |
+| CONSUMER bit24: registry idx `3a+b`, a=`rand%3`, b=`rand%3+1`, first `>0`; 8 rec x 0x59c; +0x584 cat / +0x58c choice / +0x594 first-positive (`0x9280b8-0x927590=0xB28=1*0x59c+0x58c`) | `:42-56` | V MU13-MU20 |
+| READER 0x4a66d9: cat -> `[0x92ba98+d*0xd4]` NAME, choice -> `[0x92baac+d*0xd4+e*4]` NAME (row+0x14), both appended | `:65-68` | V MU22-MU24 |
+| RIVALS FAIL: BSS not .data `:70`; 11 cols != 7 #FACTIONS `:72`; 0x2c = 11 dwords `:74`; row 3 never sampled `:75` | `:70-75` | V |
+| OPEN: rows 0..2 only; 8th write 0x92a7fc is 0x58c past block end 0x92a270; +0x594 use | `:55-56` | OPEN |
 ## M373 (s338-chain1, STATIC 19/19) — the PENDING-VENDETTA consumer: FUN_005551e0 clears 0x80000000 under a bit-13 exception; **bit 27 is not a gate there** (the pick's premise refuted). ACCEPT `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19` `4fd02c603e36c69c` x2 (`evidence/m373_pending_vendetta.txt:165`); harness 16/16 (`evidence/m373_mutate.txt:20`). `:N` = a line of the evidence.
 | claim | ev | conf |
 |---|---|---|
