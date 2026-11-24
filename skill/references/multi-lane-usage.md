@@ -29,10 +29,18 @@ fired manually on a paused schedule so per-round deltas are clean:
 |---|---|
 | 2 | +1.7 to +5.7 pp (early rounds) |
 | 3 | +0.3 to +2.1 pp, collapsing toward +0.3 in later rounds |
+| 6 (fresh worktrees) | +3.0 pp in the first ~13-min round |
 
 - **Three lanes are ~1.5x the work for far less than 1.5x the meter**, because the lanes re-read the same
   repo docs and the prompt cache absorbs most of it. Late-round deltas near +0.3 pp are cache hit, not
   idleness — the fires still landed full milestones (80-150 API calls, 800-1850 s each).
+- **The collapse is a property of the CACHE, not the lane count.** Three lanes that had been running for
+  hours on the same footing docs had fallen to +0.3 pp per round; adding three NEW worktrees and firing six
+  lanes put the next round at +3.0 pp. The extra point is not "six lanes are expensive" — it is the new
+  worktrees paying for fresh prefixes while the old ones were re-reading a saturated cache. So do not budget
+  more lanes as "burn proportional to lanes", and do not read a low delta as idle lanes; re-measure against
+  fresh worktrees to tell whether the batch is cache-bound or work-bound. Extra lanes also cost one more
+  `NAMED.md` block to merge per round, which is the real ceiling.
 - **A big `$` estimate does not mean a big plan hit.** Measured inversion: a round costing $0.0539 (243k
   output tokens) moved Today +1.66 pp, while a $0.0440 round (138k out) moved +3.37 pp. The plan meter tracks
   prompt/cache VOLUME, so it rewards short, cache-warm fires and punishes long fresh contexts.

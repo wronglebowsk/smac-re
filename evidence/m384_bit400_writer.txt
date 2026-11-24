@@ -1,0 +1,280 @@
+M384 who SETS 0x400 in the faction-pair dword (field = DWORD [pair*4+0x94d448])
+
+G0  parse
+  insns=781429  refs(+0x94d448)=653  refs(+0x94d449)=5
+  ok   G0 insn count 781429 — 781429
+  ok   G0 field refs 653 — 653
+  ok   G0 byte refs 5 — 5
+  ok   G0 every +0x94d449 ref is a read — ['test BYTE ', 'test BYTE ', 'test BYTE ', 'test BYTE ', 'test BYTE ']
+
+G1  absolute-displacement writes to [..+0x94d448]: 27
+  mnemonics: {'mov': 27}
+  ok   G1 27 direct stores — 27
+  ok   G1 every direct store is a whole-dword mov — {'mov': 27}
+  ok   G1 zero and/or/xor/add at the direct displacement
+
+G2  stores through a lea-derived pair pointer: 15
+  0x55198a   DWORD PTR [esi]        <- edi
+  0x5519af   DWORD PTR [eax]        <- ecx
+  0x551a8e   DWORD PTR [eax]        <- edx
+  0x551ab5   DWORD PTR [eax]        <- edx
+  0x551b4a   DWORD PTR [eax]        <- edx
+  0x551b9e   DWORD PTR [eax]        <- edx
+  0x551bc5   DWORD PTR [eax]        <- edx
+  0x551be8   DWORD PTR [eax]        <- edx
+  0x551c0d   DWORD PTR [eax]        <- edx
+  0x551d62   DWORD PTR [eax]        <- edx
+  0x5530e8   DWORD PTR [eax]        <- ecx
+  0x5534b1   DWORD PTR [eax]        <- ecx
+  0x555458   DWORD PTR [eax]        <- edx
+  0x555792   DWORD PTR [eax]        <- ecx
+  0x555837   DWORD PTR [ebx]        <- eax
+  ok   G2 15 pointer stores — 15
+  ok   G2 pointer stores are disjoint from the direct set
+
+G3  pair-write census + value classification (CFG backward dataflow)
+  0x52b9c7   DWORD PTR [eax+0x94d448]   <- edx  OPAQUE    clr=0x0          set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [ebp-0x50]
+  0x52b9d0   DWORD PTR [ecx+0x94d448]   <- edx  OPAQUE    clr=0x0          set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [ebp-0x4c]
+  0x55198a   DWORD PTR [esi]            <- edi  COMPUTED  clr=0x0          set=0x0       arith=0x0      paths=1 and edi,edx
+  0x5519af   DWORD PTR [eax]            <- ecx  COMPUTED  clr=0x0          set=0x0       arith=0x0      paths=1 and ecx,edx
+  0x551a8e   DWORD PTR [eax]            <- edx  SELF_RMW  clr=0xffee7faf   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [edx*4+0x94d448]
+  0x551ab5   DWORD PTR [eax]            <- edx  SELF_RMW  clr=0xffee7faf   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [edx*4+0x94d448]
+  0x551b1d   DWORD PTR [eax+0x94d448]   <- edx  SELF_RMW  clr=0xfaeef378   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [eax+0x94d448]
+  0x551b4a   DWORD PTR [eax]            <- edx  SELF_RMW  clr=0xfaeef378   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [edx*4+0x94d448]
+  0x551b9e   DWORD PTR [eax]            <- edx  SELF_RMW  clr=0xff7fffff   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [edx*4+0x94d448]
+  0x551bc5   DWORD PTR [eax]            <- edx  SELF_RMW  clr=0xff7fffff   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [edx*4+0x94d448]
+  0x551be8   DWORD PTR [eax]            <- edx  PARAM_OR  clr=0x0          set=0x0       arith=0x0      paths=1 or edx,ebx
+  0x551c0d   DWORD PTR [eax]            <- edx  PARAM_OR  clr=0x0          set=0x0       arith=0x0      paths=1 or edx,ebx
+  0x551d22   DWORD PTR [eax+0x94d448]   <- edx  PARAM_OR  clr=0x0          set=0x0       arith=0x0      paths=1 or edx,ecx
+  0x551d62   DWORD PTR [eax]            <- edx  COMPUTED  clr=0x0          set=0x0       arith=0x0      paths=1 and edx,ecx
+  0x552cca   DWORD PTR [ebx+0x94d448]   <- edx  COMPUTED  clr=0x0          set=0x0       arith=0x0      paths=1 and edx,ecx
+  0x552cd8   DWORD PTR [eax+0x94d448]   <- edx  COMPUTED  clr=0x0          set=0x0       arith=0x0      paths=1 and edx,ecx
+  0x552ce6   DWORD PTR [ebx+0x94d448]   <- eax  SELF_RMW  clr=0x0          set=0x40      arith=0x0      paths=1 mov eax,DWORD PTR [ebx+0x94d448]
+  0x552d6f   DWORD PTR [eax+0x94d448]   <- edx  COMPUTED  clr=0x0          set=0x0       arith=0x0      paths=1 and edx,ecx
+  0x552d7d   DWORD PTR [ebx+0x94d448]   <- edx  COMPUTED  clr=0x0          set=0x0       arith=0x0      paths=1 and edx,ecx
+  0x5530c3   DWORD PTR [ebx*4+0x94d448] <- eax  SELF_RMW  clr=0xfeeffffe   set=0x0       arith=0x0      paths=1 mov eax,DWORD PTR [ebx*4+0x94d448]
+  0x5530e8   DWORD PTR [eax]            <- ecx  SELF_RMW  clr=0xfeeffffe   set=0x0       arith=0x0      paths=1 mov ecx,DWORD PTR [edx*4+0x94d448]
+  0x5534b1   DWORD PTR [eax]            <- ecx  SELF_RMW  clr=0x0          set=0x400     arith=0x0      paths=1 mov ecx,DWORD PTR [eax]
+  0x55487f   DWORD PTR [eax+0x94d448]   <- ecx  SELF_RMW  clr=0x0          set=0x40020   arith=0x0      paths=1 mov ecx,DWORD PTR [eax+0x94d448]
+  0x554d42   DWORD PTR [eax+0x94d448]   <- esi  SELF_RMW  clr=0x0          set=0xc0020   arith=0x0      paths=1 mov esi,DWORD PTR [eax+0x94d448]
+  0x5552d3   DWORD PTR [edi+0x94d448]   <- eax  SELF_RMW  clr=0xffffffbf   set=0x0       arith=0x0      paths=1 mov eax,DWORD PTR [edi+0x94d448]
+  0x555394   DWORD PTR [edi+0x94d448]   <- ecx  SELF_RMW  clr=0xfffdf3ff   set=0x0       arith=0x0      paths=1 mov ecx,DWORD PTR [edi+0x94d448]
+  0x5553f3   DWORD PTR [edi+0x94d448]   <- edx  SELF_RMW  clr=0xfffdfbff   set=0x840     arith=0x0      paths=1 mov edx,DWORD PTR [edi+0x94d448]
+  0x55540a   DWORD PTR [edi+0x94d448]   <- eax  SELF_RMW  clr=0x0          set=0x20000   arith=0x0      paths=1 mov eax,DWORD PTR [edi+0x94d448]
+  0x555430   DWORD PTR [edi+0x94d448]   <- eax  SELF_RMW  clr=0xffff7f00   set=0x0       arith=0x0      paths=1 mov eax,DWORD PTR [edi+0x94d448]
+  0x555458   DWORD PTR [eax]            <- edx  SELF_RMW  clr=0xffff7f00   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [edx*4+0x94d448]
+  0x5556eb   DWORD PTR [edi+0x94d448]   <- eax  SELF_RMW  clr=0xfffdfbff   set=0x840     arith=0x0      paths=3 mov eax,DWORD PTR [edi+0x94d448] mov eax,DWORD PTR
+  0x555758   DWORD PTR [edi+0x94d448]   <- eax  SELF_RMW  clr=0x7fffffff   set=0x0       arith=0x0      paths=1 mov eax,DWORD PTR [edi+0x94d448]
+  0x555792   DWORD PTR [eax]            <- ecx  SELF_RMW  clr=0x7fffffff   set=0x0       arith=0x0      paths=1 mov ecx,DWORD PTR [ecx*4+0x94d448]
+  0x5557d9   DWORD PTR [edi+0x94d448]   <- ebx  SELF_RMW  clr=0xfbffffff   set=0x0       arith=0x0      paths=1 mov ebx,DWORD PTR [edi+0x94d448]
+  0x55580f   DWORD PTR [edi+0x94d448]   <- eax  SELF_RMW  clr=0xffffdf00   set=0x0       arith=0x0      paths=2 mov eax,DWORD PTR [edi+0x94d448] mov eax,DWORD PTR
+  0x555837   DWORD PTR [ebx]            <- eax  SELF_RMW  clr=0xffffdf00   set=0x0       arith=0x0      paths=1 mov eax,DWORD PTR [edx*4+0x94d448]
+  0x5558f5   DWORD PTR [edi+0x94d448]   <- ecx  SELF_RMW  clr=0xfbffffff   set=0x0       arith=0x0      paths=1 mov ecx,DWORD PTR [edi+0x94d448]
+  0x555a45   DWORD PTR [ebx+0x94d448]   <- eax  SELF_RMW  clr=0x0          set=0x800     arith=0x0      paths=1 mov eax,DWORD PTR [ebx+0x94d448]
+  0x555a60   DWORD PTR [ebx+0x94d448]   <- eax  SELF_RMW  clr=0x0          set=0x800     arith=0x0      paths=1 mov eax,DWORD PTR [ebx+0x94d448]
+  0x555a6e   DWORD PTR [ebx+0x94d448]   <- eax  SELF_RMW  clr=0x0          set=0x400     arith=0x0      paths=1 mov eax,DWORD PTR [ebx+0x94d448]
+  0x555f39   DWORD PTR [ecx+0x94d448]   <- eax  SELF_RMW  clr=0xfffffd00   set=0x0       arith=0x0      paths=5 mov eax,DWORD PTR [ecx+0x94d448] mov eax,DWORD PTR
+  0x555f4b   DWORD PTR [eax+0x94d448]   <- edx  SELF_RMW  clr=0xfffffd00   set=0x0       arith=0x0      paths=1 mov edx,DWORD PTR [eax+0x94d448]
+  classes: {'OPAQUE': 2, 'COMPUTED': 7, 'SELF_RMW': 30, 'PARAM_OR': 3}
+  ok   G3 42 pair writes — 42
+  hardcoded 0x400 setters: 2 ['0x5534b1', '0x555a6e']
+  parameterised OR writers: 3 ['0x551be8', '0x551c0d', '0x551d22']
+  ok   G3 exactly 2 hardcoded 0x400 setters (0x5534b1, 0x555a6e) — ['0x5534b1', '0x555a6e']
+  ok   G3 both OR exactly 0x400 into a field-derived value — ['0x400', '0x400']
+  ok   G3 the two hardcoded setters sit in FUN_00553350 and FUN_005551e0 — ['FUN_00553350', 'FUN_005551e0']
+  ok   G3 exactly 3 parameterised OR writers — ['0x551be8', '0x551c0d', '0x551d22']
+  ok   G3 they sit in FUN_00551a20 (x2) and FUN_00551cf0 (x1) — ['FUN_00551a20', 'FUN_00551a20', 'FUN_00551cf0']
+  FUN_00551a20 clear arms: 0x551b1d clr=0xfaeef378, 0x551b4a clr=0xfaeef378
+  ok   G3 FUN_00551a20's clear arm ANDs 0xfaeef378, whose bit 10 is CLEAR (0x400 wiped) — ['0xfaeef378', '0xfaeef378']
+  ok   G3 the only OPAQUE pair writes are M383's two stack-copy slots — ['0x52b9c7', '0x52b9d0']
+
+G4  mask-argument census of the parameterised writers (arg2 = mask)
+  call sites: 106
+  0x41b2d2   -> FUN_00551cf0 mask=0x400    0x400 imm                        flag=0x1
+  0x42999d   -> FUN_00551a20 mask=0x8      0x8   imm                        flag=None
+  0x4ccbcf   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x4cd6f6   -> FUN_00551cf0 mask=0x400    0x400 imm                        flag=0x1
+  0x4da3eb   -> FUN_00551cf0 mask=0x2043c20 0x2043c20 imm                        flag=ebx
+  0x4da404   -> FUN_00551cf0 mask=0xdd9bc3c0 0xdd9bc3c0 imm                        flag=ebx
+  0x4dabf3   -> FUN_00551a20 mask=edi      -     arg0                       flag=None
+  0x4dad05   -> FUN_00551cf0 mask=edi      -     arg0                       flag=0x1
+  0x4dad30   -> FUN_00551cf0 mask=edi      -     opaque                     flag=0x0
+  0x4dae13   -> FUN_00551a20 mask=0x8      0x8   imm                        flag=None
+  0x4dae77   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x4daedd   -> FUN_00551a20 mask=ebx      -     opaque                     flag=None
+  0x4daf41   -> FUN_00551a20 mask=ebx      -     opaque                     flag=None
+  0x4dafa3   -> FUN_00551a20 mask=0x1      0x1   imm                        flag=None
+  0x4db02d   -> FUN_00551cf0 mask=edi      -     opaque                     flag=0x0
+  0x4db08d   -> FUN_00551cf0 mask=edi      -     opaque                     flag=0x0
+  0x4db101   -> FUN_00551a20 mask=0x1      0x1   imm                        flag=None
+  0x4db11b   -> FUN_00551cf0 mask=0xc20    0xc20 imm                        flag=0x0
+  0x4db165   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x503944   -> FUN_00551a20 mask=0x2000   0x2000 imm                        flag=None
+  0x506cf8   -> FUN_00551a20 mask=0x2000   0x2000 imm                        flag=None
+  0x507653   -> FUN_00551a20 mask=0x80000018 0x80000018 imm                        flag=None
+  0x50765e   -> FUN_00551cf0 mask=0x40     0x40  imm                        flag=0x1
+  0x507aad   -> FUN_00551cf0 mask=0x20     0x20  imm                        flag=0x1
+  0x507ac0   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x507c52   -> FUN_00551cf0 mask=0x20     0x20  imm                        flag=0x1
+  0x507c71   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x507caf   -> FUN_00551cf0 mask=0x40     0x40  imm                        flag=0x1
+  0x507d21   -> FUN_00551a20 mask=0x8010   0x8010 imm                        flag=None
+  0x508004   -> FUN_00551a20 mask=0x2000   0x2000 imm                        flag=None
+  0x508050   -> FUN_00551a20 mask=0x2000   0x2000 imm                        flag=None
+  0x519bb5   -> FUN_00551cf0 mask=0xc00    0xc00 imm                        flag=0x0
+  0x523df6   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x523e5d   -> FUN_00551a20 mask=0x43     0x43  imm                        flag=None
+  0x523e83   -> FUN_00551cf0 mask=0x2000000 0x2000000 imm                        flag=0x1
+  0x523f3c   -> FUN_00551a20 mask=0x50     0x50  imm                        flag=None
+  0x523f4c   -> FUN_00551a20 mask=0x1      0x1   imm                        flag=None
+  0x52e3ef   -> FUN_00551a20 mask=eax      -     opaque                     flag=None
+  0x52e5a7   -> FUN_00551cf0 mask=ecx      -     opaque                     flag=eax
+  0x5306a0   -> FUN_00551a20 mask=eax      -     arg2                       flag=None
+  0x530786   -> FUN_00551cf0 mask=edx      -     arg2                       flag=ecx
+  0x533eb0   -> FUN_00551a20 mask=0x1000001 0x1000001 imm                        flag=None
+  0x5341d2   -> FUN_00551a20 mask=0x1000202 0x1000202 imm                        flag=None
+  0x5344ff   -> FUN_00551a20 mask=0x204    0x204 imm                        flag=None
+  0x534d08   -> FUN_00551cf0 mask=0x4000   0x4000 imm                        flag=0x1
+  0x538dab   -> FUN_00551a20 mask=0x1000000 0x1000000 imm                        flag=None
+  0x53aebc   -> FUN_00551cf0 mask=0x2000000 0x2000000 imm                        flag=0x1
+  0x53bb47   -> FUN_00551cf0 mask=0x40     0x40  imm                        flag=0x1
+  0x53dfbc   -> FUN_00551a20 mask=0x80000018 0x80000018 imm                        flag=None
+  0x53dff8   -> FUN_00551cf0 mask=0x40     0x40  imm                        flag=0x1
+  0x53e043   -> FUN_00551cf0 mask=0x80     0x80  imm                        flag=0x1
+  0x53e328   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x53e373   -> FUN_00551cf0 mask=0x20     0x20  imm                        flag=0x1
+  0x53fcc4   -> FUN_00551cf0 mask=0x100000 0x100000 imm                        flag=0x1
+  0x53fda3   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x54048e   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x541213   -> FUN_00551cf0 mask=0x20     0x20  imm                        flag=0x1
+  0x541293   -> FUN_00551a20 mask=0x4      0x4   imm                        flag=None
+  0x541555   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x542c50   -> FUN_00551cf0 mask=0x4000000 0x4000000 imm                        flag=0x1
+  0x542c8c   -> FUN_00551cf0 mask=0x40     0x40  imm                        flag=0x0
+  0x5470d6   -> FUN_00551cf0 mask=0x400    0x400 imm                        flag=0x1
+  0x547b92   -> FUN_00551a20 mask=0x800000 0x800000 imm                        flag=None
+  0x547f59   -> FUN_00551a20 mask=0x800000 0x800000 imm                        flag=None
+  0x548521   -> FUN_00551a20 mask=0x800000 0x800000 imm                        flag=None
+  0x54860b   -> FUN_00551a20 mask=0x1000000 0x1000000 imm                        flag=None
+  0x54898d   -> FUN_00551cf0 mask=0x10000000 0x10000000 imm                        flag=0x1
+  0x5489d1   -> FUN_00551a20 mask=0x1000000 0x1000000 imm                        flag=None
+  0x548a9e   -> FUN_00551a20 mask=0x8000008 0x8000008 imm                        flag=None
+  0x548d98   -> FUN_00551cf0 mask=0x10000000 0x10000000 imm                        flag=0x1
+  0x548e20   -> FUN_00551a20 mask=0x1000000 0x1000000 imm                        flag=None
+  0x548eeb   -> FUN_00551a20 mask=0x8000008 0x8000008 imm                        flag=None
+  0x54f3cf   -> FUN_00551a20 mask=0x88000008 0x88000008 imm                        flag=None
+  0x5526ba   -> FUN_00551a20 mask=0x10004  0x10004 imm                        flag=None
+  0x552c36   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x552d83   -> FUN_00551cf0 mask=0x40     0x40  imm                        flag=0x1
+  0x5533db   -> FUN_00551a20 mask=0x2000   0x2000 imm                        flag=None
+  0x55346f   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x55349f   -> FUN_00551a20 mask=0x2000   0x2000 imm                        flag=None
+  0x553c41   -> FUN_00551a20 mask=0x4      0x4   imm                        flag=None
+  0x553f10   -> FUN_00551a20 mask=0x2      0x2   imm                        flag=None
+  0x554165   -> FUN_00551a20 mask=0x1      0x1   imm                        flag=None
+  0x554389   -> FUN_00551a20 mask=0x80000008 0x80000008 imm                        flag=None
+  0x5543c6   -> FUN_00551a20 mask=0x40000000 0x40000000 imm                        flag=None
+  0x554426   -> FUN_00551a20 mask=0x88000008 0x88000008 imm                        flag=None
+  0x554453   -> FUN_00551a20 mask=0x40000000 0x40000000 imm                        flag=None
+  0x554aa2   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x554ac6   -> FUN_00551a20 mask=0x400000 0x400000 imm                        flag=None
+  0x554e88   -> FUN_00551a20 mask=0x18     0x18  imm                        flag=None
+  0x55539a   -> FUN_00551a20 mask=0x2000   0x2000 imm                        flag=None
+  0x55566e   -> FUN_00551a20 mask=0x88000008 0x88000008 imm                        flag=None
+  0x5558e1   -> FUN_00551a20 mask=0x80000000 0x80000000 imm                        flag=None
+  0x555bb9   -> FUN_00551a20 mask=0x88000008 0x88000008 imm                        flag=None
+  0x56f5ad   -> FUN_00551a20 mask=0x8      0x8   imm                        flag=None
+  0x5902b4   -> FUN_00551cf0 mask=0x1000   0x1000 imm                        flag=0x1
+  0x594cf7   -> FUN_00551cf0 mask=0x420    0x420 imm                        flag=0x1
+  0x594d76   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x594f69   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x595318   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x595363   -> FUN_00551a20 mask=0x58     0x58  imm                        flag=None
+  0x595371   -> FUN_00551cf0 mask=0x20     0x20  imm                        flag=0x1
+  0x59562a   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x59577f   -> FUN_00551a20 mask=0x10     0x10  imm                        flag=None
+  0x59aef0   -> FUN_00551cf0 mask=0x400    0x400 imm                        flag=0x1
+  0x5a0b9c   -> FUN_00551cf0 mask=0x2030   0x2030 imm                        flag=0x1
+  0x5a7c0a   -> FUN_00551a20 mask=0x8      0x8   imm                        flag=None
+  resolved masks: 95, passthrough: 4, opaque: 7
+  masks carrying 0x400 with the SET flag: 5
+  0x41b2d2   FUN_00551cf0 mask=0x400 (imm) flag=0x1
+  0x4cd6f6   FUN_00551cf0 mask=0x400 (imm) flag=0x1
+  0x5470d6   FUN_00551cf0 mask=0x400 (imm) flag=0x1
+  0x594cf7   FUN_00551cf0 mask=0x420 (imm) flag=0x1
+  0x59aef0   FUN_00551cf0 mask=0x400 (imm) flag=0x1
+  ok   G4 mask resolution is 95 resolved / 4 passthrough / 7 opaque — (95, 4, 7)
+  ok   G4 106 mask-API call sites (70 + 36) — 106
+  ok   G4 exactly 5 callers set 0x400 through the API — 5
+  ok   G4 the five are 0x41b2d2 0x4cd6f6 0x5470d6 0x594cf7 0x59aef0 — ['0x41b2d2', '0x4cd6f6', '0x5470d6', '0x594cf7', '0x59aef0']
+  masks carrying 0x400 with the CLEAR flag: 2 ['0x4db11b', '0x519bb5']
+  ok   G4 the two clearers are 0x4db11b (mask 0xc20) and 0x519bb5 (mask 0xc00) — [('0x4db11b', '0xc20'), ('0x519bb5', '0xc00')]
+  ok   G4 FUN_00551a20 takes mask=arg2 (`mov ebx,[ebp+0x10]`) and ORs it (`or edx,ebx`) — arg2 -> ebx -> or
+  ok   G4 FUN_00551a20 also ORs the fixed 0x80000108 into the mask before the store — or ebx,0x80000108
+  ok   G4 FUN_00551cf0 takes mask=arg2 (ecx) and flag=arg3 ([ebp+0x14], tested to branch) — arg2 -> ecx -> or; arg3 -> the branch
+  opaque mask registers (unresolved, OPEN): 7
+    0x4dad30   edi opaque
+    0x4daedd   ebx opaque
+    0x4daf41   ebx opaque
+    0x4db02d   edi opaque
+    0x4db08d   edi opaque
+    0x52e3ef   eax opaque
+    0x52e5a7   ecx opaque
+
+G5  the SETTER SET (bit 0x400 introduced into the pair dword)
+  0x41b2d2   mask API           FUN_00551cf0(owner, other, 0x400, set=1)       FUN_0041b110
+  0x4cd6f6   mask API           FUN_00551cf0(owner, other, 0x400, set=1)       FUN_004cce50
+  0x5470d6   mask API           FUN_00551cf0(owner, other, 0x400, set=1)       FUN_00546800
+  0x5534ae   or imm             hardcoded or-immediate                         FUN_00553350
+  0x555a6b   or imm             hardcoded or-immediate                         FUN_005551e0
+  0x594cf7   mask API           FUN_00551cf0(owner, other, 0x420, set=1)       FUN_0058fa40
+  0x59aef0   mask API           FUN_00551cf0(owner, other, 0x400, set=1)       FUN_0059aa00
+  total 7 sites in 7 functions
+  ok   G5 seven setter sites, one per function — 7 sites / 7 fns
+
+G5b the 0x555a6e gate
+  0x555a45   mov DWORD PTR [ebx+0x94d448],eax
+  0x555a4b   jmp 0x555bc1
+  0x555a50   test ah,0xc
+  0x555a53   jne 0x555bc1
+  0x555a59   test al,0x20
+  0x555a5b   je 0x555a6b
+  0x555a5d   or ah,0x8
+  0x555a60   mov DWORD PTR [ebx+0x94d448],eax
+  0x555a66   jmp 0x555bc1
+  0x555a6b   or ah,0x4
+  0x555a6e   mov DWORD PTR [ebx+0x94d448],eax
+  0x555a74   jmp 0x555bc1
+  0x555a79   test al,0x2
+  ok   G5 0x555a6b is `or ah,0x4` (bit 10 in the high byte) — or ah,0x4
+  ok   G5 it stores the same register straight back to the pair field — mov DWORD PTR [ebx+0x94d448],eax
+  preceding 11: je 0x555a50 / or ah,0x8 / mov DWORD PTR [ebx+0x94d448],eax / jmp 0x555bc1 / test ah,0xc / jne 0x555bc1 / test al,0x20 / je 0x555a6b / or ah,0x8 / mov DWORD PTR [ebx+0x94d448],eax / jmp 0x555bc1
+  ok   G5 1. the pair test is `test ah,0xc` (0x400|0x800) — ['je 0x555a50', 'or ah,0x8', 'mov DWORD PTR [ebx+0x94d448],eax', 'jmp 0x555bc1', 'test ah,0xc', 'jne 0x555bc1']
+  ok   G5 2. if either bit is already set the jne skips the setter — jne 0x555bc1
+  ok   G5 3. bit 5 present -> the 0x800 arm runs instead (je 0x555a5d) — ['or ah,0x8', 'mov DWORD PTR [ebx+0x94d448],eax', 'jmp 0x555bc1']
+  --
+  0x55349f   call 0x551a20
+  0x5534a4   add esp,0xc
+  0x5534a7   pop edi
+  0x5534a8   pop esi
+  0x5534a9   pop ebx
+  0x5534aa   pop ebp
+  0x5534ab   ret
+  0x5534ac   mov ecx,DWORD PTR [eax]
+  0x5534ae   or ch,0x4
+  0x5534b1   mov DWORD PTR [eax],ecx
+  0x5534b3   pop edi
+  ok   G5 0x5534ae is `or ch,0x4` then a store through the pointer — or ch,0x4 / mov DWORD PTR [eax],ecx
+  ok   G5 that pointer is the 2095 fold of the pair array, built in the same function — lea eax,[ecx*4+0x94d448]
+
+G6  rivals
+  ok   R1 'no writer exists, 0x400 is dead' — refuted: 7 setter sites
+  ok   R2 'the 0x840 OR at 0x5553ed sets 0x400' — refuted: 0x840 & 0x400 == 0
+  ok   R3 'or dh,0x4 at 0x5546f2 writes the pair' — refuted: it stores to [esi-0x6] — mov DWORD PTR [esi-0x6],edx
+  ok   R4 'or esi,0x400 at 0x519f0d writes the pair' — refuted: it stores ds:0x95da44
+  ok   R5 'the writers are greppable at the field displacement' — refuted: 0 and/or/xor at [..+0x94d448]; 5 of the 7 setters are mask-API callers
+
+G7  digest of the 42-row pair-write table = 2c2e226fe292f0f6
+  ok   G7 digest pinned — 2c2e226fe292f0f6
+
+PASS M384: 39/39

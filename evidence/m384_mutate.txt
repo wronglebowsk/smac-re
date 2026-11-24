@@ -1,0 +1,26 @@
+baseline: rc=0 PASS M384: 39/39
+MU1   KILLED     555a6b|or ah,0x8                                           G3 exactly 2 hardcoded 0x400 setters
+MU2   KILLED     5534ae|or ch,0x8                                           G3 exactly 2 hardcoded 0x400 setters
+MU3   KILLED     5534ae|or ch,0x40                                          G3 both OR exactly 0x400
+MU4   KILLED     41b2c8|push 0x800                                          G4 the five are
+MU5   KILLED     594cf0|push 0x20                                           G4 the five are
+MU6   KILLED     4db11b|push 0x400                                          G4 the two clearers are
+MU7   KILLED     551d1d|or edx,0x800                                        G3 exactly 3 parameterised OR writers
+MU8   KILLED     555394|and DWORD PTR [edi+0x94d448],ecx                    G1 every direct store is a whole-dword mov
+MU9   KILLED     555a38|mov eax,DWORD PTR [ebx]                             G3 the only OPAQUE pair writes
+MU10  KILLED     55336d|lea eax,[ecx*4+0x94d44c]                            G2 15 pointer stores
+MU11  KILLED     553374|mov DWORD PTR [ebp+0xc],eax                         G2 15 pointer stores
+MU12  KILLED     555a50|test ah,0x4                                         G5 1. the pair test
+MU13  KILLED     555a5b|je 0x555a5d                                         G5 3. bit 5 present
+MU14  KILLED     ALGO=15                                                    G2 15 pointer stores
+MU15  KILLED     ALGO=16                                                    G4 the five are
+MU16  KILLED     ALGO=10                                                    G3 both OR exactly 0x400
+MU17  KILLED     555a6e|or DWORD PTR [ebx+0x94d448],eax                     G1 zero and/or/xor/add at the direct displacement
+MU18  KILLED     ALGO=12                                                    G2 15 pointer stores
+MU19  KILLED     555a6e|mov DWORD PTR [ebx+0x94d44c],eax                    G3 42 pair writes
+MU21  KILLED     551b11|or ebx,0x80000100                                   G4 FUN_00551a20 also ORs the fixed 0x80000108
+MU22  KILLED     551d1d|or edx,esi                                          G4 FUN_00551cf0 takes mask=arg2
+MU23  KILLED     519bae|push 0xc10                                          G4 the two clearers are
+MU20  KILLED     551b17|and edx,0xffffffff                                  G3 FUN_00551a20's clear arm ANDs 0xfaeef378
+
+M384 mutation: 23/23 killed, baseline green
