@@ -1,0 +1,18 @@
+id    rc   gate that must redden                                verdict
+MU1   1    G1 seed imm                                          KILLED
+MU2   1    G1 stride                                            KILLED
+MU3   1    G1 loop starts at 1                                  KILLED
+MU4   1    G1 7 records walked                                  KILLED
+MU5   1    G1 loop starts at 1                                  KILLED
+MU6   1    G4 choice modulus is 3                               KILLED
+MU7   1    G4 choice is b+1                                     KILLED
+MU8   1    G3 commit never writes the block                     KILLED
+MU9   1    G3 grid stride                                       KILLED
+MU10  1    G3 commit store base is the grid                     KILLED
+MU11  1    G2 (b) block stores are the 2 rec+0 stores           KILLED
+MU12  1    G2 (d) the only slot0 seed is skip-guarded           KILLED
+MU13  1    G2 (a) none of them sits in a record context         KILLED
+MU14  1    G1 block size imm                                    KILLED
+MU15  1    G1 slot0 pair = 0x927b14/0x927b1c                    KILLED
+
+HARNESS 15/15 killed

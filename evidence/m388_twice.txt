@@ -1,0 +1,3 @@
+M388 twice: cmp a fresh run against the committed acceptance
+IDENTICAL
+6d0abf10650fa3b17e69a5644672adef8e62135d  evidence/m388_agenda_slot0.txt
