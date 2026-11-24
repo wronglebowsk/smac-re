@@ -1,6 +1,31 @@
 
 
-Older sessions: `docs/sessions/sessions-317-318.md` (4 sessions: Session 317, Session 317-chain2, Session 318-chain1, Session 318-chain2). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 319-chain2.
+Older sessions: `docs/sessions/sessions-317-318.md` (3 sessions: Session 317, Session 317-chain2, Session 318-chain1). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 318-chain2.
+
+## Session 318-chain2 (2026-11-24) — M336: ds:0x8f0090 = difficulty byte of PLAYER RECORD 1; one UNCLAMPED #DIFF reader
+
+- **ANSWER (pick (x6)):** record 1, byte +2 of an 8-record array at FRAME `0x8eff18`, stride
+  `0x176` (end `0x8f0ac8`; rec-1 ptr `0x8f008e`). The ADDRESS census finds ONE reader: `movsx edx,BYTE [ecx+0x8eff1a]` at **0x486788** (FUN_004865c0), ecx = 0x176*(k+1), k =
+  `[ebp-0x8]` (0x4865dc/5f5/77c), bound `BYTE ds:0x8f0c10` (4 at
+  reset, 0x4e2444) => k=0 is row 0, address == TARGET; the byte feeds `[b*4+0x94d2ac]` (0x48678f)
+  (0 gap).
+- **6 write sites, 3 forms:** direct 0x48884d; record-indexed 0x487e87/0x525b83 (const=target-1
+  rec); walk +2 0x4e24a2/0x525cb9/0x525d28. Sources 0x8f0c11 x3 + lit 0 -- M332's "1 ref, 1
+  write" was form-limited.
+- **INDEX 6 ADMISSIBLE:** all 6 writers of 0x8f0c11 store unclamped values (pref copies 0x488828/0x484efe, int->byte, literals 2/1); the only clamp on any read is 0x486f30
+  `FUN_00423af0(diff,0,6)`, INCLUSIVE (jl/jge/jle), arg = its own register =>
+  clamp(6,0,6)=6 => `[6*4+0x94d2ac]` = **0x94d2c4**, the loader's END pointer. OPEN: does FUN_0058e7f0
+  (INI reader) admit >=6?
+- ACCEPT `python3 -u scripts/m336_cell090_consumer.py` -> **PASS M336: 7/7**, digest
+  `f4ca00c55c833539`, 2 runs diff-identical (sha256 bfd16dae81b25723); `python3 -u
+  scripts/m336_mutate.py` -> **HARNESS 14/14** `3ec4dd172c69e165`, `--selftest` 4/4.
+- **REVIEW (PR #355: 3 P1/7 P2) — 10 accepted, 0 dismissed.** v1's census saw one address form;
+  rebuilt as an ADDRESS census (per-block linear-expression eval: base=const+sum(coeff*sym); a site
+  counts only if const is field+2 mod stride and all coeffs are stride multiples; unresolved bases
+  print as residue, and "only reader" needs residue@+2 EMPTY). New: MU9 algorithm, MU11 walk step,
+  MU12 table base, MU13 chain slot, MU14 SECOND alias load INSERTED; the digest hashes PASS bits.
+- PITFALL: displacement-keyed censuses miss strength-reduced forms; an O(n) replay per site needs
+  a bisect index (180 s).
 
 ## Session 319-chain2 (2026-11-24) — M338: the last two #DIFF readers' index provenance
 
@@ -638,3 +663,35 @@ whether a facility completion stamps at all.
   `aa685936`/`22154fba`, `scripts/m357_named_rotate.py --verify` PASS).
 - **OPEN**: ids 0x37/0x38/0x39/0x50; bits no dialog row writes (A 4,6,10,11,13,26;
   B 1,14,25-31).
+## Session 330 (2026-11-24) — B33: the OR at `0x4f0ec0` is UNIT-ONLY — the facility leg spends and never stamps
+
+- **ACCEPT** `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** `b89b9e6bd940e8d3`
+  (`evidence/b33_facilityleg.txt:65`), rerun byte-identical; relay `--b33` identical;
+  `scripts/b33_mutate.py` 11/11 (`evidence/b33_mutate.txt:13`).
+- **CENSUS** FUN_004ef6d0 = 3,164 insns, 12,298 B CONTIGUOUS (lengths summed), `0x4ef6d0..0x4f26da`
+  == Ghidra `size=12298` read from `ghidra_out/index.csv`; CFG 3,482 edges, 0 external, 0 indirect.
+  Fixture: `scripts/b33_extract.py --check` (objdump wrap lines folded into lengths).
+- **REACH** entry + unit branch `0x4ef8a4` reach the stamp block `0x4f0e90` (3,045 insns);
+  facility branch `0x4efa2c` reaches 886 and does NOT.
+- **DOOR** `preds(0x4f0e90)={0x4f0d94}`, `preds(0x4f0ca1)={0x4f0b80}`, `0x4f0b80` = `jg` on
+  `[ebp-0x30]`; that local is written at ONE site, `0x4ef8a4` (unit branch), never facility-reached.
+- **SPEND** facility `0x4efed8/db/dd` (`[ecx+0x40]`), unit `0x4f0ca1/a4/a6` (`[edx+0x40]`).
+- **SCORE** recorded: 4/4 unit heads gain the mapper bit, 0/2 facility-range; Virgin Soil head 2,
+  bitmap `00000008..` -> `10000000..` (bit 2 absent, 4 gained, 27 lost), `st` 2 -> 0.
+- **RIVALS** shared-OR 4/6 windows (predicts `0400000800000000`), off-map refusal 1/6, after-pop 0/6.
+- **RETRACTION (declared gap)** B32's "why a facility head does not stamp" is ANSWERED: the `jg`.
+- **PROTOCOL** `scripts/b33_named_rotate.py` rotated `## M333` VERBATIM (sha1 `be87f76187588fde
+  4268db6355ba93f44eacc0cd`, 26 tokens) to `docs/named-archive-b33-rows.md`.
+- **REVIEW (#381, 7 findings)**: all fixed - MU11 reddens G6; G1 sums byte lengths and reads
+  Ghidra's size; G2 pins 3,482 edges; G3 pins the three sets as nested; G4 reads the local from the
+  census; G11 asserts the `cmp ebx,0x40`/`jl` split; the parser folds wrapped bytes and marks
+  indirect calls `ind`; cites repointed (`:65`).
+- **MERGED** #381 as `8cb969b` (squash) after the #381 triage; CI gate pass.
+- **OPEN** facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the `0x98adb8` row; loss 27.
+
+## Session 331 (docs, 2026-11-24) — record the B33 merge; no new milestone taken
+
+- B33 merged as `8cb969b` (#381 squash) on a GREEN verdict after the local review triage; the
+  cursor said "PR pending" when it was committed pre-merge, which would send the next fire looking
+  for an open PR - it now records the squash hash.
+- Archived the #381 review artifacts under `evidence/ai_review/` (they were untracked).

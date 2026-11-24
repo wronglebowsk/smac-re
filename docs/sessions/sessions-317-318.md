@@ -73,28 +73,3 @@ the chain onward lives here; without this line the older archives are orphans (s
   tokens and re-syncs per row (`0x5ea448` -> fgets).
 - Chain 2 owns `milestone/m336` (wt-chain2); NAMED rotation = M277 ->
   `docs/named-archive-m337-rows.md:8` (sha1 `653c93cda817`, pinned in `m337_named_rotate.py`).
-
-## Session 318-chain2 (2026-11-24) — M336: ds:0x8f0090 = difficulty byte of PLAYER RECORD 1; one UNCLAMPED #DIFF reader
-
-- **ANSWER (pick (x6)):** record 1, byte +2 of an 8-record array at FRAME `0x8eff18`, stride
-  `0x176` (end `0x8f0ac8`; rec-1 ptr `0x8f008e`). The ADDRESS census finds ONE reader: `movsx edx,BYTE [ecx+0x8eff1a]` at **0x486788** (FUN_004865c0), ecx = 0x176*(k+1), k =
-  `[ebp-0x8]` (0x4865dc/5f5/77c), bound `BYTE ds:0x8f0c10` (4 at
-  reset, 0x4e2444) => k=0 is row 0, address == TARGET; the byte feeds `[b*4+0x94d2ac]` (0x48678f)
-  (0 gap).
-- **6 write sites, 3 forms:** direct 0x48884d; record-indexed 0x487e87/0x525b83 (const=target-1
-  rec); walk +2 0x4e24a2/0x525cb9/0x525d28. Sources 0x8f0c11 x3 + lit 0 -- M332's "1 ref, 1
-  write" was form-limited.
-- **INDEX 6 ADMISSIBLE:** all 6 writers of 0x8f0c11 store unclamped values (pref copies 0x488828/0x484efe, int->byte, literals 2/1); the only clamp on any read is 0x486f30
-  `FUN_00423af0(diff,0,6)`, INCLUSIVE (jl/jge/jle), arg = its own register =>
-  clamp(6,0,6)=6 => `[6*4+0x94d2ac]` = **0x94d2c4**, the loader's END pointer. OPEN: does FUN_0058e7f0
-  (INI reader) admit >=6?
-- ACCEPT `python3 -u scripts/m336_cell090_consumer.py` -> **PASS M336: 7/7**, digest
-  `f4ca00c55c833539`, 2 runs diff-identical (sha256 bfd16dae81b25723); `python3 -u
-  scripts/m336_mutate.py` -> **HARNESS 14/14** `3ec4dd172c69e165`, `--selftest` 4/4.
-- **REVIEW (PR #355: 3 P1/7 P2) — 10 accepted, 0 dismissed.** v1's census saw one address form;
-  rebuilt as an ADDRESS census (per-block linear-expression eval: base=const+sum(coeff*sym); a site
-  counts only if const is field+2 mod stride and all coeffs are stride multiples; unresolved bases
-  print as residue, and "only reader" needs residue@+2 EMPTY). New: MU9 algorithm, MU11 walk step,
-  MU12 table base, MU13 chain slot, MU14 SECOND alias load INSERTED; the digest hashes PASS bits.
-- PITFALL: displacement-keyed censuses miss strength-reduced forms; an O(n) replay per site needs
-  a bisect index (180 s).
