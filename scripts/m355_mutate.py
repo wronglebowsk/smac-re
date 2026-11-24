@@ -12,6 +12,7 @@ Two lever types, both exercised:
       3 = the 6-arg push roles are rotated by one (key read as default)
       4 = `sbb R,R` is ignored (the -1/0 selector collapses)
       5 = the getter dispatch store is not looked ahead (field map blind)
+      6 = the parser law is read from the base-16 sibling (0x62876b) instead of 0x628720
 
 Each mutant must turn the NAMED gate RED. A mutant that leaves the run green is a
 harness failure, not a pass. NO-OP controls must stay green.
@@ -58,6 +59,22 @@ MUTANTS = [
      "ALGO 4: the -1/0 selector is ignored -> the two masks collapse into one"),
     ("MU16", {"M355_ALGO": "5"}, "G5",
      "ALGO 5: dispatch store look-ahead disabled -> the field map goes blind"),
+    ("MU17", {"M355_PATCH": "0x493b37|call   0x58e6c0"}, "G5",
+     "one getter-A dispatch becomes getter B (the declared 11-field order breaks)"),
+    ("MU18", {"M355_PATCH": "0x58eae6|push   0x200"}, "G1",
+     "the Preferences read's size arg moves off 0x100"),
+    ("MU19", {"M355_PATCH": "0x58e64e|mov    BYTE PTR ds:0x997121,0x0"}, "G1",
+     "getter A zeroes 0x997121 instead of the lpDefault buffer 0x997120"),
+    ("MU20", {"M355_PATCH": "0x58ea04|mov    esi,ebx"}, "G2",
+     "the Laptop read's return no longer lands in the mask register (causal link broken)"),
+    ("MU21", {"M355_PATCH": "0x58ea21|jge    0x58ea10"}, "G3",
+     "the Difficulty branch jumps BACKWARD past the or (the or is no longer guarded)"),
+    ("MU22", {"M355_PATCH": "0x58ea33|shl    edx,0x1"}, "G4",
+     "the emit loop shifts by a constant, not by the counter (the walk law breaks)"),
+    ("MU23", {"M355_PATCH": "0x49246f|mov    ds:0x92bf04,eax"}, "G5",
+     "the More Preferences store lands on 0x92bf04, not 0x92bf00 (cited site moves)"),
+    ("MU24", {"M355_ALGO": "6"}, "G4",
+     "ALGO 6: the parser law is read from the base-16 sibling 0x62876b -> G4b's law is false"),
 ]
 
 NO_OP = [{}, {"M355_ALGO": ""}]
@@ -82,7 +99,7 @@ def gate_state(out, gate):
 
 def main():
     fails = []
-    print("== M355 mutation harness (16 mutants + 2 no-op controls) ==")
+    print("== M355 mutation harness (%d mutants + 2 no-op controls) ==" % len(MUTANTS))
     for name, env, gate, why in MUTANTS:
         rc, out = run(env)
         st = gate_state(out, gate)

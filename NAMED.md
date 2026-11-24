@@ -1527,11 +1527,11 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | rivals R1 vtable / R2 write-only / R3 read==write / R4 mutable pointer all refuted | `:133-140` | V MU1,MU13 |
 | ~~OPEN: what `Laptop` selects (masks @0x58ea12/0x58eb2b)~~ ANSWERED by `## M355`: the DEFAULT bit-vectors of `Preferences`/`More Preferences`; twins return 0x3a7168/0x327168 | `:97` | V (M355) |
 
-## M355 (s329-chain3, 7/7) — `Laptop` = the DEFAULT bit-vectors of `Preferences`/`More Preferences`
-| `Laptop` = 4 read sites, 2 VAs both "Laptop" (0x58e9f3/0x58eb0c loader, 0x58e688/0x58e708 getters); `neg`/`sbb` -> 0/-1; absent==0 | `evidence/m355_laptop_masks.txt:17,27` | V MU5,MU14 |
-| masks from the `and`/`add` immediates: Preferences 0xbbe1dd96/0xa3e1dd16, More Preferences 0x3a7168/0x327168; getter == loader | `:31-37` | V MU1,MU8,MU10 |
-| `Laptop`!=0 CLEARS Preferences {7,27,28} and More Preferences {19}; nothing added | `:41-44` | V MU15 |
-| default = '1'/'0' over bits 31..0 (leading zeros >bit 8 dropped), re-parsed by 0x628720 `v=v*2+(c-'0')` | `:63-69` | V MU12,MU13 |
-| `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only | `:51-52` | V MU2,MU3 |
-| APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (5+5 sites 0x493b0b..) | `:86,90` | V MU6,MU7,MU9,MU11,MU16 |
-| OPEN: the option NAME of each set bit; another path re-deriving those cells | - | lead |
+## M355 (s329-c3, 7/7) — `Laptop` = the DEFAULT bit-vectors of `Preferences`/`More Preferences`
+| `Laptop` = 4 read sites, 2 VAs (0x58e9f3/0x58eb0c loader, 0x58e688/0x58e708 getters); `neg`/`sbb` -> 0/-1; absent==0 | `evidence/m355_laptop_masks.txt:17,31` | V MU5,MU14,MU19 |
+| masks from the `and`/`add` immediates: Preferences 0xbbe1dd96/0xa3e1dd16, More Preferences 0x3a7168/0x327168; reg = the read's atoi return | `:43,50` | V MU1,MU8,MU10,MU20 |
+| `Laptop`!=0 CLEARS Preferences {7,27,28}, More Preferences {19}; nothing added | `:48-51` | V MU15 |
+| default = '1'/'0' over bits 31..0 (leading zeros >8 dropped), re-parsed by 0x628720 `v=v*2+(c-'0')` | `:66-77` | V MU12,MU13,MU22,MU24 |
+| `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
+| APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
+| OPEN: bit->option NAMES; other re-derivers | - | lead |

@@ -10,7 +10,7 @@ The archived block keeps every byte (sha1 recorded in both files).  The stub is
 MECHANICAL, not authored: one line per top-level bullet of the archived block,
 its text = that bullet's first line cut at 110 chars.
 
-    python3 scripts/m355_named_rotate.py            # rotate (idempotent)
+    python3 scripts/m355_named_rotate.py            # rotate; a 2nd run is a no-op + verify
     python3 scripts/m355_named_rotate.py --verify   # sha1 + row-count check
 """
 import argparse
@@ -60,6 +60,10 @@ def sha(b):
 
 def rotate():
     text = open(NAMED).read()
+    if "## M293 (STUB" in text:
+        # idempotency guard: a second run must NOT re-archive the stub
+        print("## M293 already rotated (stub present) - nothing rewritten")
+        return verify()
     blk, i, j = block_of(text)
     body = blk.rstrip("\n") + "\n"
     h = sha(body)

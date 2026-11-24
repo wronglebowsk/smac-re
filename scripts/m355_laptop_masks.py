@@ -374,11 +374,23 @@ row("Laptop push sites", len(lap), " ".join(hex(a) for a, _ in lap), "VAs",
 row("literals", "0x6926fc=" + str(cstr(0x6926FC)), "0x692704=" + str(cstr(0x692704)))
 in_loader = [a for a, _ in lap if ext[LOADER][1] <= a < ext[LOADER][1] + ext[LOADER][2]]
 in_get = [a for a, _ in lap if a < ext[LOADER][1]]
+
+
+def in_fn(a, f):
+    nm, st, z = ext[f]
+    return st <= a < st + z
+
+
+hitA = [a for a in in_get if in_fn(a, GETTER_A)]
+hitB = [a for a in in_get if in_fn(a, GETTER_B)]
 row("Laptop sites in loader", len(in_loader), " ".join(hex(a) for a in in_loader))
-row("Laptop sites in the two getters", len(in_get), " ".join(hex(a) for a in in_get))
+row("Laptop sites in GETTER_A / GETTER_B", len(hitA), [hex(x) for x in hitA],
+    len(hitB), [hex(x) for x in hitB])
 chk("G1a", len(lap) == 4 and len(in_loader) == 2 and len(in_get) == 2 and
+    len(hitA) == 1 and len(hitB) == 1 and len(hitA) + len(hitB) == len(in_get) and
     {v for _, v in lap} == {0x6926FC, 0x692704},
-    "image-wide `Laptop` literal pushes = 4 (2 loader + 2 getters), 2 distinct VAs, both 'Laptop'")
+    "image-wide `Laptop` literal pushes = 4: 2 in FUN_0058e7f0 and 1 inside EACH of "
+    "FUN_0058e640 / FUN_0058e6c0 (no other function pushes it); 2 VAs, both 'Laptop'")
 
 ROLES = ["app", "key", "default", "out", "size", "file"]
 ALGO = os.environ.get("M355_ALGO", "")
@@ -403,11 +415,27 @@ for site in API_CALLS:
             disp.append("%s=?%s" % (role, v))
             keys_ok = False
     row(hex(site), *disp)
+    by = {r: vals[n] for n, r in enumerate(roles)}
     ki = roles.index("key")
     kname = cstr(vals[ki][1]) if vals[ki][0] == "imm" else None
     if kname != KEYS[site]:
         keys_ok = False
         row("  !! key mismatch", site, kname, KEYS[site])
+
+    def gstr(role):
+        k, v = by[role]
+        return cstr(dword(v)) if k == "global" and dword(v) else None
+
+    app_s, file_s = gstr("app"), gstr("file")
+    role_ok = (by["out"] == ("global", OUT) and by["size"] == ("imm", 0x100)
+               and app_s == "Alpha Centauri"
+               and file_s == ".\\Alpha Centauri.Ini"
+               and by["default"] == (("imm", 0x6926E8) if site == 0x58EBBE
+                                     else ("imm", BUF)))
+    row("  roles", "app", app_s, "file", file_s, "out", by["out"], "size", by["size"],
+        "default", by["default"], "OK" if role_ok else "MISMATCH")
+    if not role_ok:
+        keys_ok = False
 chk("G1b", keys_ok, "4 API sites' nearest-first 6-push windows resolve app/file/key/default/out/size; "
     "the key arg of 0x58eaf7='Preferences' and of 0x58ec0d='More Preferences'")
 
@@ -433,14 +461,19 @@ for g in (gA, gB):
             continue
         ps = pushes_before(POS[a], 6)
         vals = [push_value(p) for p in ps]
+        zero = [i["a"] for i in g if i["op"] == "mov"
+                and i["arg"].startswith("BYTE PTR ds:0x997120,0x0")]
+        before = [z for z in zero if z < a]
         new_default.append((hex(a), [d[1] for d in vals],
-                            any(i["op"] == "mov" and i["arg"].startswith("BYTE PTR ds:0x997120") for i in g)))
-row("getter default arg", [(a, hex(v[2]) if isinstance(v[2], int) else v[2], z)
-                           for a, v, z in new_default])
+                            bool(before), before[-1] if before else None))
+row("getter default arg", [(a, hex(v[2]) if isinstance(v[2], int) else v[2], z,
+                            hex(y) if y else "-")
+                           for a, v, z, y in new_default])
 chk("G1d", len(new_default) == 2 and all(v[2] == 0x997120 and z
-                                          for a, v, z in new_default),
-    "both getters push the zeroed buffer 0x997120 as lpDefault (+ `mov BYTE PTR ds:0x997120,0x0`), "
-    "so an ABSENT key and an explicit 0 take the same path")
+                                         for a, v, z, y in new_default),
+    "both getters push the zeroed buffer 0x997120 as lpDefault AND zero it "
+    "(`mov BYTE PTR ds:0x997120,0x0`) at an address BEFORE the call, so an ABSENT key and "
+    "an explicit 0 take the same path")
 
 # =============================== G2 ===============================
 print("\n-- G2  mask arithmetic from the encodings --")
@@ -457,6 +490,44 @@ chk("G2a", all(v[5] and v[2] and v[3] for v in M.values()),
     "all 4 windows carry the neg/sbb(-1/0) + and + add idiom with explicit immediates")
 chk("G2b", M["loaderA"][2:4] == M["getterA"][2:4] and M["loaderB"][2:4] == M["getterB"][2:4],
     "getter A/B immediates == loader A/B immediates (the two sides compute the SAME mask)")
+
+# ---- G2e: the CAUSAL link read -> atoi -> neg/sbb -> and/add -> (loader) test ----
+def read_to_mask(name):
+    ws = win(WIN[name])
+    reg = M[name][4]
+    if name.startswith("loader"):
+        reads = [i["a"] for i in ws if i["op"] == "call" and i["arg"].strip() == "0x58e760"]
+        if not reads:
+            return ("no read call", None)
+        a = reads[0]
+        nxt = INS[POS[a] + 1]
+        m = re.fullmatch(r"([a-z]{3}),eax", nxt["arg"])
+        link = ("mov %s,eax" % reg) if (m and m.group(1) == reg) else None
+        return (link, a)
+    atois = [i["a"] for i in ws if i["op"] == "call" and i["arg"].strip() == "0x64c460"]
+    if not atois:
+        return ("no atoi", None)
+    a = atois[0]
+    for k in (1, 2, 3):
+        nxt = INS[POS[a] + k]
+        if nxt["op"] == "neg":
+            return (nxt["arg"].strip() if nxt["arg"].strip() == reg else None, a)
+    return (None, a)
+
+causal = {n: read_to_mask(n) for n in M}
+row("causal link", {k: v[0] for k, v in causal.items()})
+# the register the emit loop tests must be the mask register
+test_reg = {}
+for nm, w in (("loaderA", "emitA"), ("loaderB", "emitB")):
+    t = [i["arg"] for i in win(WIN[w]) if i["op"] == "test"]
+    test_reg[nm] = t[0].split(",")[0].strip() if t else None
+row("emit test register", test_reg)
+chk("G2e", causal["loaderA"][0] == "mov esi,eax" and causal["getterA"][0] == "eax" and
+    causal["getterB"][0] == "eax" and test_reg["loaderA"] == M["loaderA"][4] and
+    test_reg["loaderB"] == M["loaderB"][4],
+    "each window's `neg`/`sbb`/`and`/`add` register IS the register that received the "
+    "`Laptop` read's atoi result (loader: `mov esi,eax` after call 0x58e760; getters: "
+    "`neg eax` right after call 0x64c460) and it is the register the emit loop tests")
 
 A0, A1 = M["loaderA"][0], M["loaderA"][1]
 B0, B1 = M["loaderB"][0], M["loaderB"][1]
@@ -492,9 +563,23 @@ if ga["orimm"]:
 row("gate bit", hex(or_bit or 0), "bit", bits(or_bit or 0))
 gate_cmp = int(ga["cmp_imm"][0][1].split(",")[1], 16) if ga["cmp_imm"] else None
 row("gate threshold", hex(gate_cmp) if gate_cmp is not None else "none")
-chk("G3a", ga["load"] and gate_cmp == 0x2 and ga["jcc"] and
+# control flow: the jcc must sit between the cmp and the `or`, and jump PAST the or
+geo = None
+if ga["cmp_imm"] and ga["orimm"] and ga["jcc"]:
+    ca = ga["cmp_imm"][0][0]
+    oa = ga["orimm"][0][0]
+    jc = [x for x in ga["jcc"] if x[0] > ca]
+    if jc:
+        ja, jt = jc[0]
+        m = re.search(r"0x([0-9a-f]+)", jt)
+        tgt = int(m.group(1), 16) if m else None
+        geo = (ca < ja < oa and tgt is not None and oa < tgt and not jt.startswith("jmp"))
+        row("gate geometry", "cmp", hex(ca), "jcc", hex(ja), jt, "or", hex(oa),
+            "guarded" if geo else "NOT guarded")
+chk("G3a", ga["load"] and gate_cmp == 0x2 and ga["jcc"] and bool(geo) and
     (or_bit is not None and bits(or_bit) == [5]),
-    "A: a load of ds:0x92bde8 -> `cmp eax,0x2` + a jcc + `or esi,0x20` (bit 5)")
+    "A: a load of ds:0x92bde8 -> `cmp eax,0x2` -> a CONDITIONAL jcc that jumps PAST the "
+    "`or esi,0x20` (bit 5), i.e. the or runs only on the fall-through (Difficulty<2)")
 chk("G3b", len(gb["load"]) == 0 and not gb["orimm"],
     "B (More Preferences) holds 0 references to ds:0x92bde8 and no OR immediate: no difficulty gate")
 A0g, A1g = A0 | 0x20, A1 | 0x20
@@ -528,17 +613,44 @@ def emit_decode(ws):
         if i["op"] == "test":
             testreg = i["arg"]
     return start, tier, one, zero, shift, testreg
+def loop_law(ws, maskreg):
+    """The loop must: shift a 1 by the COUNTER (cl), test the MASK reg, dec the counter,
+    and jump back (jns) to the loop head -- i.e. walk bits start..0, not 0..start."""
+    shl = [i for i in ws if i["op"] == "shl"]
+    test = [i for i in ws if i["op"] == "test"]
+    dec = [i for i in ws if i["op"] == "dec"]
+    jns = [i for i in ws if i["op"] == "jns"]
+    out = {"shl": shl[0]["arg"] if shl else None,
+           "test": test[0]["arg"] if test else None,
+           "dec": dec[0]["arg"] if dec else None,
+           "jns": jns[0]["t"] if jns else None}
+    out["ok"] = bool(shl and test and dec and jns) and \
+        re.fullmatch(r"edx,cl", out["shl"] or "") is not None and \
+        (out["test"] or "").split(",")[0].strip() == maskreg and \
+        (out["dec"] or "").strip() in ("ecx", "ebx") and \
+        re.search(r"0x([0-9a-f]+)", out["jns"] or "") is not None
+    if out["ok"]:
+        tgt = int(re.search(r"0x([0-9a-f]+)", out["jns"]).group(1), 16)
+        head = min(i["a"] for i in ws if i["op"] in ("shl", "test"))
+        out["head"] = hex(head)
+        out["ok"] = tgt <= head
+    return out
 da, db = emit_decode(ea), emit_decode(eb)
-row("emitA decode", da)
-row("emitB decode", db)
+la, lb = loop_law(ea, M["loaderA"][4]), loop_law(eb, M["loaderB"][4])
+row("emitA decode", da, la)
+row("emitB decode", db, lb)
 chk("G4a", da[:4] == (0x1F, 0x8, "1", "0") and db[:4] == (0x1F, 0x8, "1", "0") and
-    da[4] and db[4],
-    "both loops: start bit 0x1f, suppression threshold 0x8, chars '1'/'0', mask tested via shl+test")
+    da[4] and db[4] and la["ok"] and lb["ok"],
+    "both loops: start bit 0x1f, suppression `cmp <counter>,0x8`, chars '1'/'0', `shl edx,cl` "
+    "off the COUNTER, `test <mask>,edx` on the mask register, `dec <counter>` + backward `jns` "
+    "to the head = a downward walk over bits 31..0")
 
-# parser 0x628720 decoded from BYTES
-po = va2off(PARSER)
+# parser 0x628720 decoded from BYTES (ALGO 6 reads the base-16 sibling 0x62876b instead:
+# the classifier law itself is the thing under test)
+PARSER_VA = 0x62876B if algo == "6" else PARSER
+po = va2off(PARSER_VA)
 pb = PE[po:po + 0x60]
-row("parser 0x628720 bytes head", pb[:24].hex(" "))
+row("parser bytes head", hex(PARSER_VA), pb[:24].hex(" "))
 p_cmp30 = b"\x83\xf9\x30" in pb
 p_cmp31 = b"\x83\xf8\x31" in pb
 p_shl1 = b"\xd1\xe1" in pb
@@ -585,21 +697,31 @@ sets_ok = (len(CALLERS[GETTER_A]) == 5 and len(CALLERS[GETTER_B]) == 5 and
                [x[0] for x in disp_rows]))
 chk("G5a", sets_ok, "getter A 5 sites, getter B 5 sites, ALL 11 dispatches inside 0x493b0b..0x493b79")
 FIELD = {}
+ORDER = []
 for a, g, op, arg, k in disp_rows:
     m = re.search(r"\[esi\+0x([0-9a-f]+)\]", arg)
     if m and op == "mov":
         FIELD[int(m.group(1), 16)] = g
+        ORDER.append((int(m.group(1), 16), g))
 row("field map", {hex(k): hex(v) for k, v in sorted(FIELD.items())})
-chk("G5b", FIELD.get(0xA30) == GETTER_A and FIELD.get(0xA34) == GETTER_B and
-    FIELD.get(0xA48) == GETTER_C and FIELD.get(0xA58) == GETTER_B,
-    "decoded store order: +0xa30<-getterA, +0xa34<-getterB, +0xa48<-getterC(0x3c3a9), "
-    "then A/B alternating on +0xa38,+0xa3c,+0xa40,+0xa44,+0xa4c,+0xa50,+0xa54, +0xa58<-B")
+# DECLARED order (measured once, then asserted in both directions)
+DECL = [(0xA30, GETTER_A), (0xA34, GETTER_B), (0xA38, GETTER_A), (0xA3C, GETTER_B),
+        (0xA40, GETTER_A), (0xA44, GETTER_B), (0xA4C, GETTER_A), (0xA50, GETTER_B),
+        (0xA48, GETTER_C), (0xA54, GETTER_A), (0xA58, GETTER_B)]
+row("store order measured", [(hex(a), hex(g)) for a, g in ORDER])
+row("store order declared", [(hex(a), hex(g)) for a, g in DECL])
+chk("G5b", ORDER == DECL and len(FIELD) == 11 and
+    sorted(ORDER) == sorted(DECL),
+    "all 11 dispatch sites match the declared order both ways: +0xa30/+0xa38/+0xa40/+0xa4c/+0xa54 <- "
+    "getterA, +0xa34/+0xa3c/+0xa44/+0xa50/+0xa58 <- getterB, +0xa48 <- getterC (0x3c3a9)")
 
 # OR dataflow over the APPLY window: registers + [esi+disp] cells (accumulators)
 regs = {r: frozenset() for r in ("eax", "ebx", "ecx", "edx", "esi", "edi")}
 fields = {}
 final = {}
+final_site = {}
 for i in win(WIN["applyOR"]):
+    a = i["a"]
     op, arg = i["op"], i["arg"]
     if op == "mov" and "," in arg:
         dst, src = [x.strip() for x in arg.split(",", 1)]
@@ -612,21 +734,25 @@ for i in win(WIN["applyOR"]):
             regs[dst] = fields.get(d, frozenset({d}))
         elif dst.startswith("ds:0x"):
             final[int(dst[5:], 16)] = regs.get(src, frozenset())
+            final_site[int(dst[5:], 16)] = a
         elif dst in regs:
             regs[dst] = regs.get(src, frozenset()) if src in regs else frozenset()
     elif op == "or" and "," in arg:
         dst, src = [x.strip() for x in arg.split(",", 1)]
         if dst in regs:
             regs[dst] = regs[dst] | regs.get(src, frozenset())
-row("APPLY final stores", {hex(k): sorted(hex(x) for x in v) for k, v in final.items()})
+row("APPLY final stores", {hex(k): (sorted(hex(x) for x in v), "@" + hex(final_site[k]))
+                           for k, v in final.items()})
 P = final.get(CELL_PREF, frozenset())
 Q = final.get(CELL_MORE, frozenset())
 row("Preferences  <-", hex(CELL_PREF), sorted(hex(x) for x in P))
 row("MorePrefs    <-", hex(CELL_MORE), sorted(hex(x) for x in Q))
 chk("G5c", bool(P) and bool(Q) and 0xA30 in P and 0xA34 in Q and
-    0xA30 not in Q and 0xA34 not in P,
-    "APPLY: ds:0x92befc <- OR incl. the getter-A field +0xa30; ds:0x92bf00 <- OR incl. "
-    "the getter-B field +0xa34 (disjoint)")
+    0xA30 not in Q and 0xA34 not in P and
+    final_site.get(CELL_PREF) == 0x492464 and final_site.get(CELL_MORE) == 0x49246F,
+    "APPLY: the store at 0x492464 writes ds:0x92befc from an OR incl. the getter-A field "
+    "+0xa30 and the store at 0x49246f writes ds:0x92bf00 from an OR incl. the getter-B field "
+    "+0xa34 (disjoint sets; the OR chain is measured by dataflow, not by name)")
 
 # =============================== G6 ===============================
 print("\n-- G6  rivals (each must FAIL on the printed numbers) --")
