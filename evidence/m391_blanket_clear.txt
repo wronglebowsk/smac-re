@@ -1,0 +1,134 @@
+M391 what `and 0xfaeef378` means for the 0xc00 cluster (field = DWORD [pair*4+0x94d448])
+laws: ALGO=0 PATCH=''
+
+G0 parse / pins
+  ok   G0.1 .text dump parses (>300k instructions) - 781429 insns
+  ok   G0.2 FUN_00551a20 body bounds from index.csv - 0x551a20..0x551c31 (161 insns)
+  ok   G0.3 FUN_00551cf0 body bounds - 0x551cf0 (41 insns)
+  ok   G0.4 entry instruction is `push ebp`
+  ok   G0.5 the 0xfaeef378 immediate occurs exactly twice in the whole binary
+  ok   G0.6 both occurrences are inside FUN_00551a20
+
+G1 field-exact AND census: the pair dword vs its +0x20 sibling
+  addr       instruction                imm        clears(0xc00) fn
+  00551a88 and edx,0xffee7faf         ffee7faf {}         FUN_00551a20
+  00551aaf and edx,0xffee7faf         ffee7faf {}         FUN_00551a20
+  00551b17 and edx,0xfaeef378         faeef378 {400,800}  FUN_00551a20
+  00551b42 and edx,0xfaeef378         faeef378 {400,800}  FUN_00551a20
+  00551b98 and edx,0xff7fffff         ff7fffff {}         FUN_00551a20
+  00551bbf and edx,0xff7fffff         ff7fffff {}         FUN_00551a20
+  sibling +0x94d468 ANDs found inside the FUN_00551a20 body: 0
+  sibling ANDs in FUN_00551c40: 2 ['00551c72 and esi,0xffffffbf', '00551c96 and esi,0xffffffbf']
+  ok   G1.1 the pair-dword ANDs in FUN_00551a20 number 6 (3 masks x 2 rows) - 6
+  ok   G1.2 exactly 3 distinct mask immediates - faeef378 ff7fffff ffee7faf
+  ok   G1.3 no +0x94d468 AND is counted as a pair clear - 0
+  ok   G1.4 the sibling field's 2 ANDs sit in FUN_00551c40 (0x551c72 / 0x551c96)
+  ok   G1.5 all 6 pair ANDs are 0x94d448 register RMWs (none at the displacement)
+  ok   G1.6 the global `and al,0xfe` (0x7485b4) is not a pair clear
+
+G2 gating: which mask-argument bit each arm is conditional on
+  00551a88 <= 00551a35 test bl,0x7
+  00551b17 <= 00551abf test bl,0x10
+  00551b42 <= 00551abf test bl,0x10
+  00551b98 <= 00551b74 test bl,0x17
+  gate mask bits: ['07', '10', '10', '17']
+  ok   G2.1 the 0xffee7faf clears sit under a `test bl,0x7` guard - 7
+  ok   G2.2 the 0xfaeef378 clears sit under a `test bl,0x10` guard (the WAR arm) - 16 16
+  ok   G2.3 the 0xff7fffff clears sit under a `test bl,0x17` guard - 23
+  ok   G2.4 the WAR-bit arm is entered only by fall-through of the je at 0x551ac2
+  ok   G2.5 dominance is load-bearing (skipping it must change G2)
+
+G3 the population of 0xc00 CLEAR instructions on the pair dword
+  pair writes: 27 direct-displacement + 15 through a tagged pointer = 42
+  and@       instruction                imm        clears     stored at (fn)
+  00551b17 and edx,0xfaeef378         faeef378 {400,800}  00551b1d FUN_00551a20
+  00551b42 and edx,0xfaeef378         faeef378 {400,800}  00551b4a FUN_00551a20
+  0055538c and ecx,0xfffdf3ff         fffdf3ff {400,800}  00555394 FUN_005551e0
+  005553e7 and edx,0xfffdfbff         fffdfbff {400}      005553f3 FUN_005551e0
+  005556e1 and eax,0xfffdfbff         fffdfbff {400}      005556eb FUN_005551e0
+  bit 10 (0x400) clearers: 5 instructions ['00551b17', '00551b42', '0055538c', '005553e7', '005556e1']
+  bit 11 (0x800) clearers: 3 instructions ['00551b17', '00551b42', '0055538c']
+  functions carrying a bit-10 clear: ['FUN_00551a20', 'FUN_005551e0']
+  ok   G3.1 the pair-write population is 42 (27 direct + 15 pointer)
+  ok   G3.2 bit 10 is cleared by exactly 5 instructions - ['00551b17', '00551b42', '0055538c', '005553e7', '005556e1']
+  ok   G3.3 bit 11 is cleared by exactly 3 instructions - ['00551b17', '00551b42', '0055538c']
+  ok   G3.4 the bit-10 clearers span 2 functions - ['FUN_00551a20', 'FUN_005551e0']
+  ok   G3.5 the blanket 0xfaeef378 is only 2 of the 5 bit-10 clearers
+  ok   G3.6 the targeted 0xfffdf3ff / 0xfffdfbff are 3 of them, in FUN_005551e0
+
+G4 routing: every API call site with the mask argument resolved
+  FUN_00551a20 (set half): 70 calls, 65 masks resolve, 0 carry 0xc00
+  FUN_00551cf0 (set/clear half): 36 calls, 30 masks resolve
+    mask&0xc00 with set=1: ['0041b2d2 mask=00000400', '004cd6f6 mask=00000400', '005470d6 mask=00000400', '00594cf7 mask=00000420', '0059aef0 mask=00000400']
+    mask&0xc00 with set=0: ['004db11b mask=00000c20', '00519bb5 mask=00000c00']
+    mask OPAQUE with set=0 (residual): ['004dad30', '004db02d', '004db08d']
+  ok   G4.1 the set half has 70 call sites - 70
+  ok   G4.2 the set/clear half has 36 call sites - 36
+  ok   G4.3 NO resolved mask passed to FUN_00551a20 carries 0x400 or 0x800 - 0 of 65
+  ok   G4.4 exactly 2 call sites clear 0xc00, both through FUN_00551cf0 - ['004db11b', '00519bb5']
+  ok   G4.5 the 5 setter sites pass 0xc00 with set=1 through the same half - ['0041b2d2', '004cd6f6', '005470d6', '00594cf7', '0059aef0']
+  ok   G4.6 residual OPEN: opaque set=0 masks at 3 sites - ['004dad30', '004db02d', '004db08d']
+    WAR-arm callers (mask&0x10): 24 of 65 resolved
+  ok   G4.7 the WAR arm fires on 24 resolved call sites and none of them carries 0xc00 - 24 sites, 0 with 0xc00
+
+G5 bit-by-bit survival of the blanket sequence
+  bit 0xffee7faf 0xfaeef378 0xff7fffff WAR-net   known noun (INFERRED where noted)
+  0   -          CLEAR      -          CLEAR     
+  1   -          CLEAR      -          CLEAR     TREATY
+  2   -          CLEAR      -          CLEAR     TRUCE
+  3   -          -          -          -         COMMLINK
+  4   CLEAR      -          -          CLEAR     WAR
+  5   -          -          -          -         
+  6   CLEAR      -          -          CLEAR     SET-TREATY
+  7   -          CLEAR      -          CLEAR     
+  8   -          -          -          -         
+  9   -          -          -          -         
+  10  -          CLEAR      -          CLEAR     0xc00/bit10
+  11  -          CLEAR      -          CLEAR     0xc00/bit11
+  12  -          -          -          -         
+  13  -          -          -          -         PEACE
+  14  -          -          -          -         
+  15  CLEAR      -          -          CLEAR     war-companion
+  16  CLEAR      CLEAR      -          CLEAR     first-contact-truce
+  17  -          -          -          -         outstanding-request
+  18  -          -          -          -         
+  19  -          -          -          -         
+  20  CLEAR      CLEAR      -          CLEAR     
+  21  -          -          -          -         
+  22  -          -          -          -         
+  23  -          -          CLEAR      CLEAR     TREATY-ON
+  WAR-write survivor mask   = fa6e7328
+  treaty-write survivor mask= ff6e7faf
+  API stamp 0x80000108 & WAR-net = 80000108 (survives: True)
+  ok   G5.1 bit 10 is CLEARED by 0xfaeef378 and PRESERVED by the other two
+  ok   G5.2 bit 11 is CLEARED by 0xfaeef378 and PRESERVED by the other two
+  ok   G5.3 the 0xfaeef378 clear carries 10 bits, only 2 belong to 0xc00
+  ok   G5.4 WAR-net clears 0xc00 (bits 10,11) unconditionally
+  ok   G5.5 treaty-net preserves 0xc00 - ff6e7faf
+  ok   G5.6 COMMLINK 0x8 / PEACE 0x2000 / 0x20000 / bit31 survive the AND sequence
+  ok   G5.7 TREATY 0x2 / TRUCE 0x4 / SET-TREATY 0x40 / 0x8000 / 0x10000 / TREATY-ON 0x800000 are cleared
+  ok   G5.8 the API's own 0x80000108 stamp survives its own AND
+  ok   G5.9 the stamp OR (0x551b11) precedes the AND and the mask restores come after (0x551be6)
+  ok   G5.10 WAR 0x10 is cleared by the treaty-stage AND and restored only by the final `or edx,ebx`
+  vector 0x80000f18 + mask 0x10 (WAR)          -> 80000318
+  vector 0x80000f18 + mask 0x04 (TRUCE)        -> 80000f0c
+  vector 0x80000f18 + mask 0x11 (TRUCE+WAR)    -> 80000319
+  ok   G5.11 a WAR write on 0x80000f18 yields 0x80000318 (0xc00 and the treaty family gone) - 80000318
+  ok   G5.12 a TRUCE write on the same value yields 0x80000f0c (0xc00 SURVIVES) - 80000f0c
+  ok   G5.13 a combined 0x11 write yields 0x80000319: the mask restore, not the OR order, keeps 0x10 - 80000319
+
+G6 rivals
+  ok   R1 'every 0xc00 clear is the one 0xfaeef378 instruction' -> REFUTED - bit10 5 sites, bit11 3 sites
+  ok   R2 'the blanket is unconditional for every call' -> REFUTED (WAR-arm only)
+  ok   R3 'the blanket is a targeted 0xc00 mask' -> REFUTED (10 bits, 2 in 0xc00)
+  ok   R4 'an immediate grep finds every 0xc00 clear' -> REFUTED (the only 0xc00-mask clears are not+and)
+  ok   R5 'a WAR write can keep 0xc00 if its mask carries it' -> VACUOUS (0 of 65 masks)
+  ok   R6 'the clear runs after the stamp OR, so it eats the stamp' -> REFUTED
+
+G7 digest
+  tables digest 76148839fd85b66e (computed twice, equal=True)
+  ok   G7.1 digest is stable across two computations
+  ok   G7.2 digest matches the pin - 76148839fd85b66e vs 76148839fd85b66e
+
+RESULT
+PASS M391: 51/51 gates digest 76148839fd85b66e

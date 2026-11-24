@@ -1657,3 +1657,16 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | 106 callers, 95 masks resolve: 5 set 0x400 (0x41b2d2 0x4cd6f6 0x5470d6 0x59aef0; 0x594cf7 0x420), 2 clear (0x4db11b 0xc20, 0x519bb5 0xc00) | `:199` `:210` | V MU4 MU5 MU6 MU15 |
 | FUN_00551a20: one arm ANDs `0xfaeef378` (~0x05110c87 carries bit 10 -> wipes 0x400), then ORs `mask\|0x80000108` | `:87` | V MU20 |
 | OPEN: 7 runtime mask args (0x4dadxx, `[ebx+0x18]`), 4 passthrough; FUN_004dacc0 is a caller-mask SET/CLEAR gate whose 0x400 caller is M385 `:55` (8th setter, behind the arg) | `:215` | OPEN |
+| CORRECTION (M391): NOT "one arm" — the pair dword takes **3 masks x 2 rows** = 6 ANDs (0x551a88/af 0xffee7faf, 0x551b17/42 0xfaeef378, 0x551b98/bf 0xff7fffff), each gated on a different mask-arg bit (0x7 / 0x10 / 0x17); only the 0x10 arm clears 0xc00 | M391 `:12-40` | V M1 M8 M11 M12 |
+
+## M391 (s343-c4, STATIC 51/51) — `and 0xfaeef378` is not a blanket and not the 0xc00 clear: 3 gated masks x 2 rows, and the explicit clears use the other API half. `scripts/m391_blanket_clear.py` -> **`PASS M391: 51/51`** `76148839fd85b66e` (`evidence/m391_blanket_clear.txt:134`, `cmp`-identical `evidence/m391_twice.txt:134`), 12 mutants MU1-MU12 (`evidence/m391_mutate.txt:18`). `:N` = acceptance line.
+
+| claim | ev | conf/mutant |
+|---|---|---|
+| FUN_00551a20 holds 6 pair-dword ANDs = 3 masks x 2 rows (owner/partner); the +0x94d468 sibling's 2 ANDs are in FUN_00551c40, not here | `:12-28` | V M1 MU12 |
+| arms gated on the MASK ARG: 0x7 -> 0xffee7faf (clears 4,6,15,16,20), 0x10 -> 0xfaeef378 (clears 0,1,2,7,10,11,16,20,24,26), 0x17 -> 0xff7fffff (bit23) | `:29-40` | V M8 MU11 |
+| 0xc00 clear population on the pair = **5 instructions / 2 functions**: 0x551b17 0x551b42 (0xfaeef378) + 0x55538c (0xfffdf3ff, both bits) + 0x5553e7 0x5556e1 (0xfffdfbff, bit10 only) in FUN_005551e0; bit11 = 3 | `:41-58` | V M2 M9 MU10 |
+| explicit 0xc00 clears are **not** the blanket: both are `FUN_00551cf0(...,set=0)` calls — 0x4db11b mask 0xc20, 0x519bb5 mask 0xc00 — a `not`+`and reg,reg` (zero immediates) | `:59-73` | V MU5 |
+| 0 of 65 resolved masks to FUN_00551a20 carry 0xc00, so all 24 WAR-arm callers drop 0xc00; the 5 setters pass 0xc00 through FUN_00551cf0 | `:59-73` | V MU5 |
+| survival: WAR net `0xfa6e7328`; a TRUCE write preserves 0xc00 (`0xff6e7faf`); vectors (0x80000f18,0x10)->0x80000318, (,0x4)->0x80000f0c, (,0x11)->0x80000319; final `or edx,ebx` restores every mask bit and 0x80000108 survives its own AND | `:74-119` | V M3 M6 MU7 |
+| OPEN: 3 opaque set=0 masks to FUN_00551cf0 (0x4dad30/0x4db02d/0x4db08d) could still name 0xc00; nouns of 0x400/0x800 unchanged (INF) | `:73` | OPEN |
