@@ -1,53 +1,6 @@
 
 
-Older sessions: `docs/sessions/sessions-320-321.md` (3 sessions: Session 320-chain2, Session 321-chain2, Session 321-chain1). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 322-chain2.
-
-## Session 322-chain2 (2026-11-24) — M341 merge land (PR #361)
-
-- **UNBLOCKED, MERGED:** the "zero CI runs" blocker was the PR, not the workflow —
-  GitHub schedules no `pull_request` run while `mergeable_state=dirty`. `git merge origin/main`
-  (a0aa8fc, #362's 34 restored NAMED blocks) kept BOTH 321 sections and auto-merged
-  NAMED/NEXT_PROMPT; one conflict (SESSION_NOTES, both appended at EOF) resolved keep-both.
-- **VERIFIED at the branch head `179fef5`:** `gate.py --base origin/main` -> `GATE GREEN` (11 passes,
-  1 branch-name warning — the documented `milestone/M341` vs `milestone/<id>` warn line, noise);
-  `review_lint --id M341` -> PASS (8 V rows); `m341_hof_window.py` -> `PASS M341: 11/11 gates`,
-  `digest=1cfdea39295dadce`, `table_sha256=b5820ac99801f8c4`, stdout byte-identical to
-  `evidence/m341_hof_window.txt:45-58` (gates `:1-44`, harness `evidence/m341_mutate.txt:21`);
-  `git diff 446958b 179fef5 -- scripts/m341_* evidence/m341_*` empty (same instrument bytes
-  as the measured head). NOTE both printed names are **truncated sha256** — `m341_hof_window.py:520,524`
-  take `.hexdigest()[:16]`, so "sha256" here means the first 16 hex of it, not a 64-char digest.
-- **CI:** `gate` PASS 18 s, run 45324343569 (job 138210194052) on 179fef5 — the first run for a
-  head newer than 03:38Z. The squash commit's tree IS the gated tree:
-  `git rev-parse 179fef5^{tree} 185c394^{tree}` -> both `702938a3f8bef770f822c2c0e2db157deeb12276`.
-  Merged `--squash` as **185c394**.
-- **MAIN CHECK** (`git show origin/main:NAMED.md | grep -c '^## '` / `grep -c '^## M341'` / `wc -c`):
-  NAMED 111 blocks (110 pre-merge + `## M341`), 248,127 B, `## M338` stub intact, no block lost
-  (`comm -23` of main's block titles vs the merged file -> empty).
-- PITFALL: `milestone.py merge` ends with `gh pr merge --delete-branch`, which dies on
-  `'main' is already used by worktree at /home/paul/reverse/smac` — the merge itself SUCCEEDS
-  server-side; verify with `gh pr view <n> --json mergeCommit,mergedAt` and leave the branch
-  (older milestone/* branches linger anyway).
-- **ABSENCE CLAIM is a LEAD, not a gate result:** `0x59f4 has NO named writer` is NAMED M341's
-  OPEN row (kind `lead`, no mutant); the V half — "the only direct ref in 781,379 insns is the load
-  0x44970f, 12 indexed hits are a different array" — names MU8. Byte-identity above is asserted
-  against the committed file (`diff <(...) evidence/m341_hof_window.txt` -> empty), so it is
-  reproducible from the repo, not from a transcript.
-
-## Session 322-chain1 (2026-11-24) — M342: pick (x9) the COMPLETION SETTER, answered statically (milestone/m342)
-- **Answer:** the `base+0x8c` bit is SET by `or` through mapper `FUN_00507410`'s mask at exactly **11 addresses** (`4e4528` = the API `FUN_004e44f0`, `4f0ec0` = base screen `FUN_004ef6d0`, `4f3ebc`/`4f3f4c` = regions the Ghidra index does not name, + `FUN_004e47d0`'s 7); CLEAR = 3 `and` (`4e4546`, `4f38bb`, `4f49e1` — the last inside the charge routine `FUN_004f47f0`).
-- **Accept:** `python3 -u scripts/m342_completion_setter.py` -> `PASS M342: 7/7 gates`, digest `2b88df5da5aeafe1` (`evidence/m342_completion_setter.txt:200`), PASS `:218`, 2 runs byte-identical. Harness `scripts/m342_mutate.py` -> `PASS HARNESS M342: 9/9`, NO-OP `[]`, baseline green (`evidence/m342_mutate.txt:2,:12`).
-- **Writer census (the pick's question):** the field has exactly 2 idioms — 11 direct constant-form stores in exactly 2 indexed functions, and 9 pointer-form `lea` sites, 9/9 resolved to a store through that register (2 copy / 4 `or` / 3 `and`) (`:86`). The API `FUN_004e44f0(item, base, set)` is a 92-B set/clear: `or BYTE PTR [eax],cl` @`0x4e4528`, `and` @`0x4e4546`, index = mapper out1 `[ebp+0x8]`, mask = out2 `[ebp-0x4]`, 27 call sites in 8 functions (16 set=1 / 7 set=0 / 4 variable).
-- **The pop is a NON-writer:** `FUN_004ef5d0` (244 B) shifts slots (`0x4ef62c`), decrements pending (`0x4ef642`) and calls only `0x5a73f0`/`0x5a6e70`/`0x446250`/`0x473760`; 0 refs to the bitmap, 0 API calls, 3 callers all in `FUN_004ef6d0`. So B30's completion leg does not stamp the bit — the stamp belongs to whoever CALLS the API. OPEN next: which of the 27 sites is the production-completion call.
-- **PITFALL (field arithmetic):** the array base is `0x95da10`, NOT `0x95da14` — `0x95da14` is the OWNER byte (+4). Reading the base as 0x95da14 makes the bitmap look like +0x88, a 4-byte error no count catches; G1 DERIVES the base from the owner site (MU1 reddens it).
-- **PITFALL (RMW through a pointer):** `or BYTE PTR [..+0x95da9c]` only catches the *constant-form* stores; the pointer-form ones are `lea r,[base+0x95da9c]` then `or cl,dl; mov [r],cl`, so a store-mnemonic census counts them as copies. G2 classifies by the RMW in the 4 instructions before the store; MU8 turns that off and reddens G2.
-- **NAMED headroom:** 248,127 B (1,873 under cap) -> M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5` (sha1 `ccee72a56f16b4b4`, `scripts/m342_named_rotate.py --verify` PASS, idempotent) -> 241,089 B before this block.
-
-## Session 323-chain1 (2026-11-24) — M344: the COMPLETION CALLER (milestone/m344)
-- **Answer:** NO API caller completes production. The `base+0x8c` stamp for a finished item is the **inline `or` at `0x4f0ec0`** inside `FUN_004ef6d0` (the base screen), in the same block that spends the base's `+0x40` counter by `edi` (`0x4f0ca4/6`) and then reads the item-table row `[edi*48+0x984d38]` (`0x4f0f6f`) and **pops the queue 0x86 bytes later** at `0x4f0f46` (`push ds:0x68cbb0`). `edi`/`[ebp-0x30]` = the completed item, `esi`/`ds:0x68cbb0` = the current base, 304-fold `0x4f0eaa-0x4f0eb6`.
-- **Accept:** `python3 -u scripts/m344_completion_caller.py` -> `PASS M344: 8/8 gates`, digest `034bf0e1a1606d2c` (`evidence/m344_completion_caller.txt:148`), 2 runs byte-identical. Harness `python3 -u scripts/m344_mutate.py` -> `PASS HARNESS M344: 10/10`, NO-OP `[]`, gates G1-G8 all covered (`evidence/m344_mutate.txt:14`).
-- **The 27 sites, resolved:** every item argument resolves (0 unresolved) to imm 18 / callret 3 / clamped 2 / loopctr 2 / param 2; **0/27 take the item from the queue window `+0x4c..+0x77`**, and **0 of the 8 caller functions calls the pop** (`:74-80`). The four set=1 sites with a REGISTER item are exactly `0x41c6f8` (call-ret from the modal runner `0x5f1394` + a bitmap pre-read = toggle), `0x41d8fc` (loop counter under the `0x5a6e70` predicate), `0x508c85`/`0x508cee` (the `1..0x26` clamp of a type-2 entry). Rivals RIV1-RIV3 all FAIL on printed numbers (`:84-88`).
-- **RETRACTION (M342 row):** M342's "16 set=1 / 7 set=0 / 4 variable" is **16/8/3** — its 6-instruction push window stops one push short at `0x40dd3c`, where the `push 0x0` sits 7 instructions back (`:36-38`). G1 now gates both the re-derived split and that single divergence row.
-- **PITFALL:** arg order is `push set; push base; push item; call` — the ITEM is the push NEAREST the call (M342's mapping). A "reversed to program order" reconstruction silently reads the set flag as the item.
+Older sessions: `docs/sessions/sessions-322-323.md` (3 sessions: Session 322-chain2, Session 322-chain1, Session 323-chain1). The split is by FILE POSITION, not by number — a moved id can be numerically newer than the first kept one, so grep the archive for an id before deciding it is still hot. The hot file starts at Session 323-chain2.
 
 ## Session 323-chain2 (2026-11-24) — M343: the `[obj+0xa40]` writer (M339's last OPEN)
 
@@ -622,6 +575,7 @@ whether a facility completion stamps at all.
 - **ROTATION**: `scripts/m362_named_rotate.py` moved M250-M254/M277/M326/M246 VERBATIM to
   `docs/named-archive-m362-rows.md` (sha1 4/4, 2nd run a no-op); NAMED 246,262 B.
 - **OPEN**: the 13 labels (0x997b20 heap); bit NOUNS (chain-2 lane); 0x94d5dc.
+
 ## Session 333-chain1 (2026-11-24) — B34: a FACILITY completion stamps NOTHING (no writer on the leg; the recorded bytes falsify the stamp at 3 discriminating completions)
 
 `python3 -u -m sim.facstamp` -> **`PASS B34: 10/10 gates  5296fdad6d26caa3`** (`evidence/b34_facstamp.txt:99`,
@@ -698,3 +652,40 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
   maximum, G5b, G1c and G6a's residual mnemonic all got named mutants (MU18/19/20 added); G7c now tests
   the rival ON THE KEYS; named_rotate's --verify matches stub headers by text, and the selector refuses
   blocks that are themselves stubs (two such picks were undone and replaced).
+## Session 334-chain1 (2026-11-24) — M363: the four A/V audio callees touch the MIXER ONLY (0 pref-cell sites in the closure, 6 in the handler)
+
+- **ACCEPT** `python3 -u scripts/m363_audio_callees.py` -> **`PASS  M363: 18/18 gates`
+  `66b923f06f4e8866`** (`evidence/m363_audio_callees.txt:132`), rerun byte-identical;
+  `scripts/m363_mutate.py` -> **`RUN PASS 20 mutants, NO-OP []`** (`evidence/m363_mutate.txt:38`).
+- **ANSWER**: the four are mixer methods, not preference toggles. Their bodies hold ZERO
+  absolute data operands and their 8-function closure (them + 0x4b9330/0x4b9370/0x4b9460/
+  0x4b94a0) holds ZERO too; the cells have 121 sites/61 fns (0x985ab8) and 99/33 (0x985abc)
+  across .text with 0 in the closure (`:11-53`).
+- **SHAPE**: 0x4b8a60 = voice-slot START (byte flag slot+0x24 <- 1, play via buffer vtable
+  +0x8c), 0x4b8af0 = STOP (flag <- 0, +0x14); index*0x18, bound `cmp [ebp+0x8],0xf`
+  (16 slots), buffer ptr slot+0x2c (`:81-86`). 0x4b87f0/0x4b8820 = ONE guarded vtable call
+  each into slot 0x60/0x64 of `[this+0x14]` (`:88-91`); no import-form call in the closure.
+- **`this` = 0x8a7920** at all 6 handler sites (static sound object), 12 call sites total:
+  6 in FUN_00493ff0, 6 in 5 mixer internals (`:64-79`). The cells are written by the HANDLER:
+  6 sites, master-off = load both, `and ch,0xf3` / `and ah,0xbf`, store both (`:55-62`).
+- **JUMP TABLE 0x4941ec** (image): 0x4b->0x494154 (master), 0x4c->0x494068, 0x4d->0x49400e,
+  0x4e->0x4940c3. start/stop pair with the turn-ON/OFF row store (`mov edi,0x1` vs
+  `xor ebx,ebx`) 4/4 (`:108-114`); the 0x4e row (flag 0x158b8) is NOT wired to the audio
+  object — it calls 0x446490 + two vtable slots (`:116`).
+- **QUALIFIED**: M361's "audio on/off (INFERRED)" — measured start/stop + enable/disable over
+  a 16-slot voice table, no preference state anywhere in the leg.
+- **Pitfall**: an `indirect_calls()` filter that keeps only `DWORD PTR [` makes an
+  import-form gate unable to fail — MU12 found it (the closure gate was green on a state it
+  could not see).
+- NAMED: `## B27` rotated VERBATIM (docs/named-archive-b27-rows.md, sha1 `c327508bcd76`,
+  `--verify` 10/10 claims), 247,217 -> 244,834 B; NEXT_PROMPT trimmed to the 12,000 fail.
+- **Review #392 round (10 findings, 4 P1, all FIXED in place, no threshold moved)**: G2/G4's
+  data window is now 0x800000..0xbfffff as the prose says and `absdata()` no longer drops
+  memory-indirect call forms; G5's function count EXCLUDES the no-function sentinel (61/33, was
+  62/34); G8 walks back to the first ecx KILL (12 insns, stops at a call) instead of 6; G9 pins
+  the exact imul/lea register multisets; G10 requires the `,0x0` compare AND a branch PAST the
+  call; G12 pins all four jump-table dwords (found by a new image mutant); G13's per-case
+  store/load counts are ANDed in instead of overwritten; G13b pins the whole 0x4e call list.
+  Four mutants added (MU17/G3, MU18/G9c, MU19/G13b, MU21/G12) — 20/20 RED, `[]`; the rival
+  gate R is reddened by MU1. Digest moved `00277b42` -> `66b923f0` (measurement changed, answer
+  unchanged).
