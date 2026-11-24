@@ -472,3 +472,23 @@ printers of measured values need the same None-guard as the gate.
 - PITFALL: a cross-record check must compare each record to ITS OWN original bytes (my first G3
   compared every other record to the target's and read 0/17 — a false red); and a digest must
   never hash a placeholder line appended for context, or it can never be re-pinned.
+
+## Session 322-chain2 (2026-11-24) — M341 merge land (PR #361)
+
+- **UNBLOCKED, MERGED:** the "zero CI runs" blocker was the PR, not the workflow —
+  GitHub schedules no `pull_request` run while `mergeable_state=dirty`. `git merge origin/main`
+  (a0aa8fc, #362's 34 restored NAMED blocks) kept BOTH 321 sections and auto-merged
+  NAMED/NEXT_PROMPT; one conflict (SESSION_NOTES, both appended at EOF) resolved keep-both.
+- **VERIFIED at the merge head `179fef5`:** `gate.py --base origin/main` -> `GATE GREEN` (11 passes,
+  1 branch-name warning); `review_lint --id M341` -> PASS (8 V rows); `m341_hof_window.py`
+  -> `PASS M341: 11/11 gates`, `digest=1cfdea39295dadce`, `table_sha256=b5820ac99801f8c4`,
+  stdout byte-identical to `evidence/m341_hof_window.txt`; `git diff 446958b 179fef5 --
+  scripts/m341_* evidence/m341_*` empty (same instrument bytes as the measured head).
+- **CI:** `gate` PASS 18 s, run 45324343569 (job 138210194052) on 179fef5 — the first run for a
+  head newer than 03:38Z; merged `--squash` as **185c394**.
+- **MAIN CHECK:** NAMED 111 blocks (110 pre-merge + `## M341`), 248,127 B, `## M338` stub intact,
+  no restored block lost.
+- PITFALL: `milestone.py merge` ends with `gh pr merge --delete-branch`, which dies on
+  `'main' is already used by worktree at /home/paul/reverse/smac` — the merge itself SUCCEEDS
+  server-side; verify with `gh pr view <n> --json mergeCommit,mergedAt` and leave the branch
+  (older milestone/* branches linger anyway).
