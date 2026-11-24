@@ -205,7 +205,7 @@ def main():
         line = "  +0x%02x n=%3d w=%-3s acc=%-24s fns=%2d rows<=%3d %-18s %s" % (
             off, d["n"], "".join(sorted(x or "?" for x in d["w"])),
             ",".join("%s:%d" % kv for kv in sorted(d["acc"].items())),
-            len(d["fns"]), max(d["rowids"]), FIELD[off], d["s"])
+            len(d["fns"]), max(d["rowids"]), FIELD.get(off, "?UNMAPPED"), d["s"])
         tbl.append(line)
         print(line)
 
@@ -362,4 +362,27 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import io
+
+    _out = sys.stdout
+
+    class _Tee(io.TextIOBase):
+        def __init__(self):
+            self.buf = []
+
+        def write(self, x):
+            _out.write(x)
+            self.buf.append(x)
+            return len(x)
+
+        def flush(self):
+            _out.flush()
+
+    _t = _Tee()
+    sys.stdout = _t
+    _rc = main()
+    sys.stdout = _out
+    if not PATCH and "--probe" not in sys.argv:
+        with open(os.path.join(ROOT, "evidence", "m358_row_layout.txt"), "w") as f:
+            f.write("".join(_t.buf))
+    sys.exit(_rc)
