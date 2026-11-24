@@ -1,9 +1,8 @@
-# SESSION CURSOR — s320-chain1 / M340
-ID: M340 (STATIC) — FUN_0058e7f0 ADMITS a `Difficulty` pref >=6: no bound in the
-read->parse->store chain; index 6 -> `0x94d2c4`, one dword past the six-row ladder.
-ACCEPT: `python3 -u scripts/m340_pref_admission.py` -> `PASS M340: 7/7`
-rows `277483c12bd5cc44` (`evidence/m340_pref_admission.txt:60-71`); harness 9/9
-`b25e0bc3a09693f5` (`evidence/m340_mutate.txt:13`).
-MERGED? branch `milestone/m340`.
-NEXT: ANALYSIS — 0x94d2c4's runtime dword is box-GATED; static: 0x92bde8..0x92bf14
-co-writers. M332 rotated -> `docs/named-archive-m340-rows.md:5`.
+# CURSOR s321-chain1 / B30
+ID: B30 (BUILD) - the COMPLETION leg: a queue item becomes a facility; the inverse setter
+writes ONE byte at base+0x8c, the writer carries it, the reload reads it, and B29's table
+reprices the bill under M46's disabled rule.
+ACCEPT `python3 -u -m sim.selftest --b30` -> PASS B30: 6/6 rows 234ab3d83a88dbea img
+3a503c638ba45330 (`evidence/b30_facility_completion.txt:35`); harness 10/10 76a481b5d8a7d8b0.
+MERGED? milestone/b30. NEXT: B31 UNAUTHORED; static lead = the SETTER routine.
+NAMED 246,098 -> next fire ROTATES; M310 VERBATIM docs/named-archive-b30-rows.md:5.

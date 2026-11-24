@@ -1703,6 +1703,19 @@ def run_b29(sav_path, results):
     return sit.main([sav_path])
 
 
+def run_b30(sav_path, results):
+    """Rung B30: the COMPLETION leg - a paid queue item becomes a facility the base HAS; the
+    reader's inverse writes ONE bitmap byte through the writer, the RELOAD reads it back, and
+    B29's DERIVED table reprices the round bill under M46's disabled-list rule.  All claims are
+    the module's - sim/composedfacility.py authors them, so --b30 and
+    `python3 -m sim.composedfacility` cannot print different text."""
+    import os as _os
+    from . import composedfacility as scpf
+    if not _os.path.exists(sav_path):
+        return fail("B30: missing input: %s" % sav_path)
+    return scpf.main([sav_path])
+
+
 def run_b28(sav_path, results):
     """Rung B28: FUN_004f47f0's per-item upkeep charge, EXECUTABLE - the loop runs on the
     save's own base records, the price-path gate is read out of the container, and the carried
@@ -1893,6 +1906,9 @@ def main(argv=None):
     ap.add_argument("--b28", nargs="*", metavar="ARG",
                     help="rung B28: the UPKEEP FEEDER executable, the carried half-unit "
                          "persisted through the writer (defaults: <SAV>)")
+    ap.add_argument("--b30", nargs="*", metavar="ARG",
+                    help="rung B30: the COMPLETION leg - the queue item stamped into the "
+                         "base's +0x8c bitmap, carried through the writer (defaults: <SAV>)")
     ap.add_argument("--b25", nargs="*", metavar="ARG",
                     help="rung B25: the MOVE leg made PERSISTENT - the press reads its "
                          "start tile out of the container and the moved tiles go back "
@@ -1987,6 +2003,9 @@ def main(argv=None):
     if args.b28 is not None:
         sav = args.b28[0] if args.b28 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         return run_b28(sav, results)
+    if args.b30 is not None:
+        sav = args.b30[0] if args.b30 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
+        return run_b30(sav, results)
     if args.b25 is not None:
         sav = args.b25[0] if args.b25 else os.path.join(REPO, "programs", "saves", "m54b_clean.SAV")
         mp = args.b25[1] if len(args.b25) > 1 else os.path.join(
