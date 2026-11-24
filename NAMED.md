@@ -46,6 +46,15 @@
 | commit 0x4b2570: `[eax+ecx*4+0x94d658]` <- `[esi+edx*4+0xcf8]`, eax=f*0x20bc; 1 grid dword, 1 at +0x20, 0 in the block; handlers 0x4b5530/0x4b55d0 | `:139` | V MU8-10 MU16 MU17 |
 | choice = rand%3+1 (1..3); 9 +0x58c loads: 5 0-tested, 3 name-pushed, 1 vs +0x590 => slot0 (0,0) = no agenda | `:148-149` | V MU6 MU7 |
 | OPEN: slot 0's owner; 0x2ce0 is pushed to the save/load helpers (4x) | `:110` | OPEN |
+## M393 (31/31) — pair 2 (+0x588/+0x590) has NO producer; 2 of 3 reads dead under `pair2==(0,0)`. `PASS 31/31` `72f86628daea0dd9` (`evidence/m393_pair2.txt:106`); 19/19 (`evidence/m393_mutate.txt:22`).
+| claim | ev | conf/mutant |
+|---|---|---|
+| stride from two scorer sites (`0x522dd3..de`,`0x522e62..6d`) = 0x59c; anchors 927b14/18/1c/20; slot0 0x927590; 0x2ce0=8*stride | `:19-26` | V MU15-16 |
+| 0 stores on cat2/choice2, 4 censuses (disp32 incl. RMW / per-function folded / string / seeds), 64,779 stores; ctrl = 6 first-pair stores | `:27-50,68` | V MU1-3 MU12 MU19 |
+| block inside `.data` but past its file-backed end 0x6a9000 => loader-zero | `:13-14` | V MU4 |
+| only byte writer = save/load mover FUN_00596540 (fread->[ebp+8]), args (file,1,0x2ce0,0x927590); 20 sites | `:72-77` | V MU2 MU10-11 |
+| 8 refs, all mov/cmp, 0 stores; picker skip needs choice 0 but `and ecx,3` zero-skips; scorer needs a NONZERO cell == 0; mirror `A.pair1==(0,0)` FIRES via slot 0 | `:78-104` | V MU5-9 MU13-14 MU17-18 |
+
 ## Not yet named (candidates, ranked by `COVERAGE.md`)
 - `0x5f6de9` — 305 callers, 550 B, 118 insns, no string literals
 - `0x483470` — 292 callers, 556 B, 141 insns, no string literals
@@ -1065,21 +1074,8 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 | REVIEW #309 (5 P2 accepted): per-push arg trace + clobber-stop (old trace mis-decoded n6's p2/prio); M250 full-insn pin; C5 measured not constant-compare; per-pid harness copy + finally; path:line cites. MU17-MU23 gate the fixes | `evidence/m317_mutate.txt:17-25` | V |
 | OPEN: kind game-words a/d/s/n/c (consumer side); 30/31 mission bytes; 692184 (map-width candidate, INFERRED from the y*W+x/2 tile fold @5567ce-5567e4); multi-base pick fold | - | lead |
 
-## M316 (s286, STATIC, zero box) - pick (iii) OPEN-ANSWERED: `FUN_0056d350` = `AddGoal(block, kind, prio, p1, p2, owner)`; the GOAL list is a per-faction 75x16 B array at 0x94ee28+block*0x20bc — FULL-LENGTH ROWS VERBATIM at `docs/named-archive-m316-rows.md` (moved by `scripts/m327_named_rotate.py`, sha1 `d3dffc67fcb5`); this stub governs and keeps one line per claim
+## M316 (s286) — FULL rows VERBATIM at `docs/named-archive-m393-m316-rows.md` (sha1 `35d77e68a4d7e961e64a8f51f66c2fdc2a02c496`, 3408 B) — `FUN_0056d350` = the A/I pair; this stub governs.
 
-| claim (short) | evidence | conf / mutant |
-|---|---|---|
-| RECORD LAW: one 75-entry GOAL list per 0x20bc block, entry 16 B (+0 kind WORD signed, -1 = free/killed; +2 prio; +4 p1; +8 p2; +0C owner); absolute write-set 0x56d44b/55/5f/69/70 + M310's kill 0x470d5c; ALL four scan bounds `cmp ...,0x4b` (0x470c16, 0x470cc8, 0x56d3b9, 0x56d436) | A1 `:3`, A2 `:4`, A2b `:5`, A3 `:6`, A5 `:9` | V |
-| INSERT LAW (50 sites, 12 owners, digest 8ace40ec97032541): scan for the (kind,p1,p2) triple; a hit goes to the MAX-PRIO tail (`mov WORD PTR [ecx],ax` 0x56d41c) — duplicates never add a record | A5/A5b `:10`, A11 `:1`, A6/A6b `:11,12` | V (A6b digest-pinned after PC10 exposed it) |
-| EVICTION LAW: free or prio<new are candidates; score free=1000 (0x56d3e6), prio<1=100+prio (0x56d425), else 20-prio (0x56d3fb); MAX wins → NEGATIVE prio evicts before any ordinary goal; no victim → goal silently rejected (iVar2=-1) | A4/A4b `:7,8`, A2 `:4` | V (mechanism) / INFERRED (intent) |
-| WRITE-SET: 6 absolute stores + 9 pointer-relative GOAL stores — max-update 0x56d41c; knockout helper FUN_0056d690 (0x56d6be/0x56d6c8, sole caller 0x559e8e); block-initializer FUN_0056d710 (fills all 75, sole caller 0x59ed4f); remover FUN_0056d780 (12 sites, triple scan 0x56d844/4e/58, kill 0x56d860 — read off the dump, not gated) | A1 `:3`, A11 `:1` | V |
-| SITE TWIN ARRAY at 0x94f2d8, same 16 B shape: initializer second loop 0x56d75b-68, remover kills the twin (0x56d82e/33); 7 relative SITE stores file-wide | A11b `:2` | V (writes) / OPEN (what a SITE is) |
-| READERS: FUN_0056d5d0 (15 callers), FUN_0056d780 (12); the engine FUN_00556690 holds 35 of the 65 band refs and is the only reader of +0C owner; called from 0x52094f + 0x59dd43 | A8 `:16`, A9 `:17` | V / ANSWERED by M317 |
-| BAD-GOAL ASSERTION: `(p1^p2)&1` (0x56d35e/60) + debug bit 0x1000 of ds:0x985ae8 (`test ah,0x10` 0x56d369) → formatter on "Bad GOAL" (0x6914fc, PE); "Bad SITE" 12 B later | A7 `:14`, A7b `:15` | V (bytes) / INFERRED (why parity) |
-| KIND CENSUS: immediate kinds {0,2,3,6,7,8,9,11,16,25,41}; all 7 tokened kinds ('a','d','s','n','c','f','^') have immediate producers; 2 sites compute kind at runtime; all 37 immediate prios in {1,2,4,5}, 13 reg-form | A6c `:13`, A10 `:18` | V (census) / INFERRED (nouns) |
-| WHAT A GOAL IS: a per-faction AI claim record in a 75-deep list, one entry point enforcing uniqueness by (kind,p1,p2) and a fixed reclaim order; negative prio = evict-first tombstone, register-form only | all rows; M310 | V / INFERRED (game nouns) |
-| ACCEPTANCE `python3 -u scripts/m316_addgoal.py` → **18/18**, digest **dcc6ce82fc98aec4** (`evidence/m316_addgoal.txt:19`); `scripts/m316_mutate.py` → **32/32 (19 expectation + 13 CODE via M316_PATCH), zero BAD** (`evidence/m316_mutate.txt:34`); honest retargets + PC10's decoration catch in the full rows | `evidence/m316_addgoal.txt`, `evidence/m316_mutate.txt` | V |
-| OPEN: which game word each tokened kind is; save-carry of 0x94ee28..+0x4b0 per block; why 31 kinds have no immediate producer | - | lead |
 
 ## M315 (s284, STATIC, zero box; mutation-tested 29/29 post-review) - pick (ii) CLOSED: `ds:0x68cbb4` is the REFRESH MEMO of the record-selection chain - "the index the refresh pair has already run for" - not a second cursor, and M311's 19 unexplained writers all close. FULL-LENGTH ROWS VERBATIM at `docs/named-archive-m333-rows.md:56` (§rotation-2 marker at `:54`, s314 headroom rotation, sha1 `c70cc525ecbd` — the region is bounded by its own terminator line, its line number AND full digest re-asserted by `scripts/m333_named_rotate2.py --verify`); this stub governs.
 - THE FIELD + PARTITION LAW: the 22 stores split 12 fed by the index or a caller slot (each followed by the refresh pair `call 0x4e8d60` + `call 0x4e78e0`) vs 10 `-1` sentinel clears with ZERO calls to either callee in the next 60 instructions (A2+A3, exact 12-element distance list); NO independent value ever enters — 8x `mov r,ds:0x68cbb0` + 4x caller slot, totals sum to exactly 22 (A2b+A9; proven CODE mutants PC1/PC2 rewrite those instructions).

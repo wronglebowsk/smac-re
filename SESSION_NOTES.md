@@ -749,3 +749,30 @@ by the preceding `lea`; a displacement grep alone reports zero stores for `0x551
   walk explicit edges. (2) a write to `ax` IS a write to eax. (3) `ret 0x1c` makes M387's "arg7" the
   6th stack dword — key on push position.
 - **NEXT**: the record's +0x10 writer, then the 0x1101/0x4101 record class.
+## Session 342-chain6b — M393: the second agenda pair (+0x588/+0x590) has NO producer; two of its three reads are dead under the measured invariant
+
+- **ACCEPT** `python3 -u scripts/m393_pair2_writer.py` -> **`PASS M393: 31/31`** `72f86628daea0dd9`
+  (`evidence/m393_pair2.txt:106`), x2 identical (`evidence/m393_twice.txt:106`); **19/19**
+  (`evidence/m393_mutate.txt:22`); static, zero box.
+- **GEOMETRY**: stride 0x59c read at TWO scorer sites (`0x522dd3..de`, `0x522e62..6d`, `:19-26`);
+  anchors `0x927b14/18/1c/20`; slot0 `0x927590`; `0x2ce0` = 8*stride.
+- **NO PRODUCER, four censuses**: disp32 incl. every RMW op (`:27-29`: 0 at 0x588/0x590, 2 in-block
+  at `+0`); per-function offset-folded tracker, reset at 10,227 function starts (`:32-49`), whose 6
+  CONTROL hits are the randomizer's own first-pair stores (`0x5a1180/83/85`, `0x5a11d1/d4`,
+  `0x5a120a`) and whose pair hits are **0**; string ops `rep stos/movs` **0** (`:50`); the 12
+  window candidates (`:51-65`) all in functions with 0 in-block references; pair pointer seeds **0**
+  (`:68`). 64,779 stores classified.
+- **IMAGE** (`:13-14`): block inside `.data`'s virtual extent, past its file-backed end (0x6a9000)
+  -> loader-zero, no static init. **ONLY BYTE WRITER = TRANSPORT** (`:72-77`): `FUN_00596540`
+  de-obfuscates `fread` (`0x596578`) into `[ebp+0x8]`; args (file, 1, 0x2ce0, 0x927590); 20
+  writer-shape sites enumerated, 0 on the pair -> **producers 0**.
+- **READS**: 8 refs, 4 per field, all mov/cmp, 0 stores (`:78-88`). Under `pair2==(0,0)` the picker's
+  `candidate==pair2` skip needs a comparable choice 0 (`and ecx,3` zero-skips) and the scorer's match
+  needs a NONZERO grid cell equal to `choice2==0` - both impossible (`:97-99`); the mirror branch
+  `A.pair1==B.pair2` reduces to `A.pair1==(0,0)`, and slot 0's first pair IS unset, so it FIRES
+  (`:100-104`) - the one live read. Reserved field: its unset 0 is a VALID category.
+- **PITFALLS**: (1) a `NONSTORE` list that contains `add/or/and/inc/rep` hides RMW and string stores -
+  classify by destination, reads only. (2) seed `mov reg,imm` ABSOLUTELY (what makes `[edi-8]`
+  visible) but reset per function; exclude `ebp/esp` bases (8 `esp+1388` false positives).
+  (3) `disp==0x588` cannot see `0x927b18` - key on the AGGREGATE address.
+- **NEXT**: the masked-agenda reader set (which callers reach slot 0), or `+0x594`'s readers.

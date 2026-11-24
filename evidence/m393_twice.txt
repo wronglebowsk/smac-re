@@ -1,0 +1,106 @@
+G0  exe sha1                a889fd11be2fc4cc421fd669dde3eeda93584f90
+G0  disassembly sha1        02d578095222031ea4c84c1eb7406e20edcc5361  (40900318 B, 781429 instructions)
+G0  image base              0x400000
+G0  section .text     VA 0x00401000  file-backed 0x00671000  vsize-end 0x006703f4
+G0  section .rdata    VA 0x00671000  file-backed 0x00689000  vsize-end 0x006885b3
+G0  section .data     VA 0x00689000  file-backed 0x006a9000  vsize-end 0x0099f284
+G0  section           VA 0x009a0000  file-backed 0x009a2000  vsize-end 0x009a1658
+G0  section UVA_DATA  VA 0x009a2000  file-backed 0x009a7000  vsize-end 0x009a6ac8
+G0  section _SELFMOD  VA 0x009a7000  file-backed 0x009ac000  vsize-end 0x009ab15d
+G0  section .rsrc     VA 0x009ac000  file-backed 0x009b2000  vsize-end 0x009b1c58
+G0  section .reloc    VA 0x009b2000  file-backed 0x009e4000  vsize-end 0x009e340e
+G0  .data raw/file-backed end 0x6a9000  virtual end 0x99f284  block 0x927590..0x92a270
+G0  block inside .data virtual extent  True (VA 0x689000..0x99f284)
+G0  block past .data file-backed end   True
+G1  reader cat1    @0x522de1  mov    edx,DWORD PTR [eax+0x927b14]
+G1  reader cat2    @0x522e23  mov    ecx,DWORD PTR [eax+0x927b18]
+G1  reader choice1 @0x522e07  cmp    ecx,DWORD PTR [eax+0x927b1c]
+G1  reader choice2 @0x522e49  cmp    ecx,DWORD PTR [eax+0x927b20]
+G1  field anchors           ['0x927b14', '0x927b18', '0x927b1c', '0x927b20']
+G1  site A 0x522dd3..de     ['522dd3:lea', '522dd6:lea', '522dd9:shl', '522ddc:sub', '522dde:shl']
+G1  site B 0x522e62..6d     ['522e62:lea', '522e65:lea', '522e68:shl', '522e6b:sub', '522e6d:shl']
+G1  site A / site B value   0x59c / 0x59c
+G1  slot0 cat2 / choice2    0x927b18 / 0x927b20
+G1  7 more slots, last      0x92a25c / 0x92a264
+G1  slot0 base              0x927590  (block push @0x596ea9)
+G1  block size push @0x596ea4 0x2ce0  == 8*stride True
+G2  stores classified (mov + all RMW, any op) 64779
+G2  stores with disp 0x588/0x590        0
+G2  stores with disp32 inside the block  2
+G2     0x4dd996 mov    DWORD PTR [esi+0x927590],eax          -> slot off 0x0
+G2     0x57efe4 mov    DWORD PTR [esi+0x927590],ecx          -> slot off 0x0
+G3  per-function delta resets 10227 (register scope, not a global walk)
+G3  offset-folded absolute hits in block 8
+G3     0x4dd996 mov    DWORD PTR [esi+0x927590],eax        esi+0x0 -> slot 0 +0x0
+G3     0x57efe4 mov    DWORD PTR [esi+0x927590],ecx        esi+0x0 -> slot 0 +0x0
+G3     0x5a1180 mov    DWORD PTR [edi-0x8],eax             edi+0x9280b8 -> slot 1 +0x584
+G3     0x5a1183 mov    DWORD PTR [edi],esi                 edi+0x9280b8 -> slot 1 +0x58c
+G3     0x5a1185 mov    DWORD PTR [edi+0x8],eax             edi+0x9280b8 -> slot 1 +0x594
+G3     0x5a11d1 mov    DWORD PTR [edi-0x8],esi             edi+0x9280b8 -> slot 1 +0x584
+G3     0x5a11d4 mov    DWORD PTR [edi],edx                 edi+0x9280b8 -> slot 1 +0x58c
+G3     0x5a120a mov    DWORD PTR [edi+0x8],eax             edi+0x9280b8 -> slot 1 +0x594
+G3    of those on +0x584/+0x58c/+0x594 (ctrl) 6
+G3       ctrl 0x5a1180 slot 1 +0x584
+G3       ctrl 0x5a1183 slot 1 +0x58c
+G3       ctrl 0x5a1185 slot 1 +0x594
+G3       ctrl 0x5a11d1 slot 1 +0x584
+G3       ctrl 0x5a11d4 slot 1 +0x58c
+G3       ctrl 0x5a120a slot 1 +0x594
+G3    of those on any slot's cat2/choice2 0
+G3  string stores (rep stos/movs) into the block 0
+G3  aggregate-disp stores in [0x580,0x59c) 12
+G3     0x579372 mov    DWORD PTR [esi+0x580],eax           base=esi delta=0 agg=0x580
+G3     0x5bee99 mov    DWORD PTR [ecx+0x584],0x0           base=ecx delta=0 agg=0x584
+G3     0x5bf0d0 mov    BYTE PTR [edx+0x580],0x0            base=edx delta=0 agg=0x580
+G3     0x5bf440 mov    BYTE PTR [edx+0x580],0x0            base=edx delta=0 agg=0x580
+G3     0x5bf5cd mov    DWORD PTR [edx+0x584],0x0           base=edx delta=0 agg=0x584
+G3     0x5c6173 mov    DWORD PTR [edx+0x584],eax           base=edx delta=0 agg=0x584
+G3     0x5c9cb8 mov    BYTE PTR [eax+0x580],cl             base=eax delta=0 agg=0x580
+G3     0x63e5f1 mov    DWORD PTR [eax+0x598],0x0           base=eax delta=0 agg=0x598
+G3     0x63e923 mov    DWORD PTR [edx+0x598],0x0           base=edx delta=0 agg=0x598
+G3     0x63eb2e mov    DWORD PTR [ecx+0x598],0x0           base=ecx delta=0 agg=0x598
+G3     0x63f11d mov    DWORD PTR [ecx+0x598],edx           base=ecx delta=0 agg=0x598
+G3     0x63f538 mov    DWORD PTR [ecx+0x598],edx           base=ecx delta=0 agg=0x598
+G3    of those at aggregate disp 0x588/0x590 0
+G3  window candidates' owners  {"0x5791c0": 0, "0x5bee2f": 0, "0x5bf262": 0, "0x5c60b6": 0, "0x5c9932": 0, "0x63e4ef": 0, "0x63e748": 0, "0x63e9f4": 0, "0x63ed70": 0}
+G4  immediate refs into block 1913  by op [('mov', 1055), ('lea', 794), ('add', 40), ('cmp', 14), ('push', 5), ('test', 3), ('sub', 2)]
+G4    pushes  [('0x596ea9', '0x927590'), ('0x596ec8', '0x927590'), ('0x5a12a5', '0x927914'), ('0x5a12ca', '0x927874'), ('0x5a12ef', '0x927894')]
+G4    pointer seeds on a pair address 0
+G5  loader FUN_00596540 store @0x5965de  mov    BYTE PTR [edi],al
+G5    its destination                   mov    edi,DWORD PTR [ebp+0x8]
+G5    its file read @0x596578           call   0x64cc00
+G5  transfer calls @0x596ecf/0x596ed6  call   0x64c9a0  /  call   0x64cc00
+G5  transfer calls @0x596eb0/0x596eb7  call   0x596470  /  call   0x596540
+G5  transfer args  @0x596ebe..0x596ec8  push   esi | push   0x1 | push   0x2ce0 | push   0x927590 (file, count, size, addr)
+G5  union of every writer-shape site   20  (0x4dd996 0x579372 0x57efe4 0x5a1180 0x5a1183 0x5a1185 0x5a11d1 0x5a11d4 0x5a120a 0x5bee99 0x5bf0d0 0x5bf440 0x5bf5cd 0x5c6173)
+G5  sites writing the block's first dword 2
+G5  producers of cat2/choice2         0  (folded + aggregate + seeds + string)
+G6  references to cat2  4
+G6     0x522e23 mov    ecx,DWORD PTR [eax+0x927b18]
+G6     0x522e70 cmp    edx,DWORD PTR [ecx+0x927b18]
+G6     0x5a1a88 mov    esi,DWORD PTR [eax+0x927b18]
+G6     0x5a1dd4 cmp    DWORD PTR [eax+0x927b18],edx
+G6  references to choice2 4
+G6     0x522e49 cmp    ecx,DWORD PTR [eax+0x927b20]
+G6     0x522e7e mov    eax,DWORD PTR [ecx+0x927b20]
+G6     0x5a1a96 mov    edi,DWORD PTR [eax+0x927b20]
+G6     0x5a1ddc cmp    DWORD PTR [eax+0x927b20],ecx
+G6  of them loads/cmp 8, stores 0
+G6  roll 1 @0x5a118e mov    ecx,0x3 ; roll 2 @0x5a11a2 idiv   ecx ; +1 @0x5a11a6 inc    edx ; store @0x5a11d1 mov    DWORD PTR [edi-0x8],esi
+G6  sentinel presets @0x5a1180/83/85 mov    DWORD PTR [edi-0x8],eax / mov    DWORD PTR [edi],esi / mov    DWORD PTR [edi+0x8],eax
+G6  choice1 range                     1..3
+G6  picker candidate mask @0x5a1dbc   and    ecx,0x3  (choice = idx & 3)
+G6  picker zero-choice skip @0x5a1dc1 je     0x5a1e03  -> skip=True
+G6  scorer zero-cell guard @0x522e45 test   ecx,ecx / je     0x522e5f
+G6  predicate FUN_005a1a70 callers    ['0x4b282c', '0x4b2b5b', '0x4b5697', '0x4b7665', '0x5a85c9']
+G7  measured: choice2=0  candidate choices=[1, 2, 3]  zero-cell guard=True
+G7  R1 predicate  fires only on the pair (0,0)      -> True
+G7  R2 picker     skip fires when 0 in [1, 2, 3]           -> False
+G7  R3 scorer     nonzero grid cell == choice2       -> False
+G7  R4 mirror     B.pair2==(0,0) => A.pair1 == (0,0)
+G7  RIVAL-1 the +8 store seeds the pair            found=0  rival holds=True
+G7  RIVAL-2 a static init sets the pair            found=0  rival holds=True
+G7  RIVAL-3 a window store hits a 0x59c record     found=0  rival holds=True
+G7  R4 slot 0's FIRST pair is 0        -> True ; mirror then fires=True
+
+PASS M393: 31/31  72f86628daea0dd9
