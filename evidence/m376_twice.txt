@@ -1,0 +1,115 @@
+M376 what the 0x92babc grid is - the #SOCIO social-engineering matrix
+tag  what                                                       value
+G0   text insns                                                 781429
+G0   text sha1                                                  02d578095222031e
+G0   exe sha1                                                   a889fd11be2fc4cc
+G0   alpha.txt sha1                                             81e4de46a71c18df
+G0   0x5a1150 bytes                                             f7 05 e8 5a 98 00 00
+G0   0x5a1160 bytes                                             b9 0c 00 00 00
+G0   0x5a11f3 bytes                                             8d 8c 8a bc ba 92 00
+G0   0x52b822 bytes                                             b9 0b 00 00 00
+G0   0x57abe7 bytes                                             e8 c4 4c 0d 00
+G0   0x4a66df bytes                                             8b 88 98 ba 92 00
+G1   0x5a11f3 form                                              lea    ecx,[edx+ecx*4+0x92babc]
+G1   coefficient of a (row)                                     212
+G1   coefficient of b (cell)                                    44
+G1   table base (lea disp)                                      0x92babc
+G1   a modulus @0x5a118e                                        3
+G1   b modulus @0x5a119d (+inc @0x5a11a6)                       (3, True)
+G1   cell words: copy count @0x52b822                           11
+G1   cell words: scan bound @0x5a1203                           11
+G1   parser zeroing count @0x57ab94                             11
+G1   parser cell step @0x52b82c                                 0x2c
+G1   parser cells/row bound @0x52b832                           0xb0
+G1   parser row step @0x52b847                                  add    esi,0xd4 -> 212
+G1   parser rows bound @0x52b84d                                0x350
+G1   row-name store base @0x57ab45                              0x92ba98
+G1   row header = cellbase - rownamebase                        0x24
+G1   keyword base/stride/bound insns                            mov    esi,0x9270c0 | add    esi,0x68 | cmp    esi,0x927538
+G1   keyword array capacity (bound-base)/stride                 11
+G1   #SOCIO keywords                                            11
+G1   #SOCIO categories                                          4
+G1   #SOCIO choices                                             16
+G1   keyword array capacity (0x927538-0x9270c0)/0x68            11
+G2   keyword list                                               ECONOMY, EFFIC, SUPPORT, TALENT, MORALE, POLICE, GROWTH, PLANET, PROBE, INDUSTRY, RESEARCH
+G2   second keyword line == first                               True
+G2   categories                                                 Politics, Economics, Values, Future Society
+G2   cells parsed                                               16
+G2   empty cells                                                [(0, 0, 'Frontier'), (1, 0, 'Simple'), (2, 0, 'Survival'), (3, 0, 'None')]
+G2   non-empty cells                                            12
+G2   cells with a first-positive effect                         12
+G2   first-positive of 'Police State'                           2
+G2   vector of 'Police State'                                   [0, -2, 2, 0, 0, 2, 0, 0, 0, 0, 0]
+G2   vector of 'Free Market'                                    [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0]
+G2   empty vectors are exactly choice index 0                   True
+G3   bit24 gate @0x5a1150                                       test   DWORD PTR ds:0x985ae8,0x1000000
+G3   used-pair registry dwords @0x5a1160                        12
+G3   registry index insns                                       lea    eax,[edx+esi*2] / add    ecx,eax
+G3   max registry index 3*a+b                                   9
+G3   records walked (bound @0x5a1213)                           8
+G3   record stride @0x5a120d                                    0x59c
+G3   seed pointer @0x5a1171                                     0x9280b8
+G3   record[1] seed / walk end @0x523cfa/0x523e1a               ('0x927b2c', '0x92a270')
+G3   record base derived (seed1 - stride)                       0x927590
+G3   seed-record delta                                          0xb28
+G3   delta = 1*stride + 0x58c                                   (1, '0x58c')
+G3   fields: category / choice / signature-effect               ('0x584', '0x58c', '0x594')
+G3   rand call sites                                            call   0x64c6f0 / call   0x64c6f0
+G3   first-positive scan                                        cmp    DWORD PTR [ecx],0x0 / jg     0x5a120a
+G3   store order                                                mov    DWORD PTR [edi-0x8],esi | mov    DWORD PTR [edi],edx | mov    DWORD PTR [edi+0x8],eax
+G3   first write address                                        0x9280b8
+G3   last write address                                         0x92a7fc
+G3   8-record save block end (0x927590+8*0x59c)                 0x92a270
+G3   sampled (category, choice) pairs                           9
+G3   sampled rows (Future Society row 3?)                       [0, 1, 2]
+G3   sampled pairs that are non-empty cells                     9
+G3   last category index                                        3
+G4   category read @0x4a667b                                    cmp    DWORD PTR [edx+eax*4+0x927b14],0x0
+G4   choice read @0x4a6693                                      cmp    DWORD PTR [ecx+edx*4+0x927b1c],0x0
+G4   category offset (0x927b14-0x927590)                        0x584
+G4   choice offset (0x927b1c-0x927590)                          0x58c
+G4   category-name lookup                                       imul   eax,eax,0xd4 / mov    ecx,DWORD PTR [eax+0x92ba98]
+G4   choice-name lookup                                         mov    ecx,DWORD PTR [edx+eax*4+0x92baac]
+G4   choice-name array offset (0x92baac-0x92ba98)               0x14
+G4   text appends (addresses)                                   ['0x4a66e6', '0x4a6707']
+G4   formatter buffer @0x4237cd                                 push   0x997120
+G4   loop bound @0x4a6665                                       1
+G5   0x92babc inside section raw data?                          False
+G5   containing section (va, raw size)                          [('00689000', '020000')]
+G5   file-backed VA end of that section                         0x6a9000
+G5   #FACTIONS rows in alpha.txt                                7
+G5   rival 11 columns = factions                                False
+G5   rival cell = 12 dwords                                     (11, 11)
+G5   rival agenda can be Future Society                         False
+
+  G0   ok   text 781429 insns sha 02d578095222
+  G0   ok   the cell lea and the 11-word copy are the bytes decoded below
+  G1   ok   emulator: cell = 0x92babc + 212*a + 44*b
+  G1   ok   both random pickers divide by the loaded modulus (a, b)
+  G1   ok   cell width 11 dwords = #SOCIO keyword count (copy, scan and zero counts agree)
+  G1   ok   rows 4 = #SOCIO categories, 4 cells/row = #SOCIO choices/category
+  G1   ok   keyword array holds 11 names (from the compare/stride insns); row header = 0x24 B = 9 dwords
+  G2   ok   the 11 columns are the 11 alpha.txt #SOCIO effect keywords and the array's capacity is 11
+  G2   ok   column i = strcmp(token, 0x9270c0 + i*0x68); edi advances one column per keyword
+  G2   ok   the token's +/- count is ADDED to the column (signed weights)
+  G2   ok   the 4 empty vectors are exactly choice 0 of each category (Frontier, Simple, Survival, None)
+  G2   ok   every non-empty cell has a first POSITIVE effect (Police State -> SUPPORT)
+  G3   ok   the bit-24 block zeroes a 12-dword used-pair registry indexed 3*a+b
+  G3   ok   registry index 3*a+b max 9 < 12
+  G3   ok   fields derived from the seed: category +0x584, choice +0x58c, effect +0x594
+  G3   ok   writer (+0x584/+0x58c) and reader (0x927b14/0x927b1c) agree on the same two fields
+  G3   ok   the scan stops at the first weight > 0 inside the cell
+  G3   ok   the walk covers 8 records; 9 possible (category, choice) pairs, all non-empty
+  G3   ok   both moduli divide the result of the game's rand call 0x64c6f0
+  G3   ok   the record base is derived from a real 8-record walk (seed 0x927b2c, end 0x92a270)
+  G3   ok   the consumer samples rows 0..2 only - Future Society (row 3) is never an agenda
+  G3   ok   measured: the 8th write (0x92a7fc) lands past the 8-record block (0x92a270)
+  G4   ok   the reader turns the stored category into [0x92ba98 + d*0xd4] = the NAME
+  G4   ok   the stored choice indexes the row's name array at +0x14
+  G4   ok   both names go through formatter 0x4237c0, which appends to buffer 0x997120; the category call (0x4a66e6) precedes the choice call (0x4a6707)
+  G5   ok   RIVAL 'the table is initialized .data' FAILS: 0x92babc is past that section's file-backed end 0x6a9000 - it is BSS
+  G5   ok   RIVAL 'the 11 columns are factions' FAILS: alpha.txt #FACTIONS has 7 rows
+  G5   ok   RIVAL 'a cell is 12 dwords' FAILS: stride 0x2c = 11 dwords
+  G5   ok   RIVAL 'an agenda can be a Future Society choice' FAILS: only 3 of 4 rows are sampled
+
+PASS M376: 29/29 gates digest f22d2b46cc7e9507

@@ -624,12 +624,12 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (V, INF noun); 0x40 = 'SET TREATY' + 50-tick window (V, INF noun); 0x100000 = eviction
   grievance (INF); 0x8000/0x10000 = war/truce companions (OPEN). **OPEN**: 0x53bbed's role;
   0x5526b3 / 0x507d21 hosts; 0x4da404's 4th arg.
-
 ## Session 339-chain1 — B37: the treaty lifecycle; peace vs war split (review #408 hardened)
 
 - **ACCEPT** `python3 -u -m sim.treaty` -> **`PASS B37: 8/8`** `5dd4119bd1882d1d` (`evidence/b37_treaty.txt:76`),
   twice byte-identical, same digest (`evidence/b37_twice.txt:2-3`); `scripts/b37_mutate.py`
-  **14/14, NO-OP []** (`evidence/b37_mutate.txt:16`).- **BLOCK** (`:1-14`): 10 insns `0x5552b6..0x5552d4`, `and al,0xbf`@0x5552d1, ONE exit 0x5552d9, so a zero cell stores NOTHING; the 409,000,318-B dump is pinned by sha256 `f67458fa25011f45` (`:13`).
+  **14/14, NO-OP []** (`evidence/b37_mutate.txt:16`).
+- **BLOCK** (`:1-14`): 10 insns `0x5552b6..0x5552d4`, `and al,0xbf`@0x5552d1, ONE exit 0x5552d9, so a zero cell stores NOTHING; the 409,000,318-B dump is pinned by sha256 `f67458fa25011f45` (`:13`).
 - **ARMS** (`:15-33`): 11 refs = 4 arms + 3 reads + 3 write-backs + 1 lea (partition closed); the caller-mask
   arm's CONTROL FLOW is proved (`test cl,0x40` -> `je 0x551d64` PAST the arm, `:29`), not merely a nearby test.
 - **PARITY/REPLAY** (`:35-49`): 2048 pairs 0 disagreements, expiry at tick 50; re-arm t30, status t40, expiry
@@ -645,3 +645,39 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   all 256 masks, the census prints the measured arm count, MU1/MU2 mutate the parsed window, the dump's sha256 is pinned.
 - **PITFALLS**: (1) `and al,0xbf` is a BYTE op; (2) a rival scored on END STATE can tie the truth - score the
   per-tick digest (first version 0/49); (3) "event then tick, one per turn" is policy, declared UNMODELED.
+
+## Session 339-chain2 — M376: the 0x92babc "12 slots" are alpha `#SOCIO`'s SE-effect matrix
+
+- **ACCEPT** `python3 -u scripts/m376_socio_grid.py` -> **`PASS M376: 29/29`** `f22d2b46cc7e9507`
+  (`evidence/m376_socio_grid.txt:115`; re-run byte-identical, `evidence/m376_twice.txt` sha1
+  `ac23fc9540f77151`); `scripts/m376_mutate.py` **33/33 killed, cov G1-G4**
+  (`evidence/m376_mutate.txt:36`). Static only, zero box.
+- **REVIEW #409 (10 findings / 5 P1, all fixed in-gate)**: every constant is now read from an
+  instruction or a file — header 0x24 = lea-disp - `mov esi,0x92ba98`; keyword capacity =
+  `(0x927538-0x9270c0)/0x68`; record base = `mov esi,0x927b2c` - 0x59c (walk end 0x92a270);
+  the BSS claim computes .data's file-backed VA end (0x6a9000) and MU26 patches a copy of the PE
+  header to redden it; the rand noun is gated on both `call 0x64c6f0`/`cdq` legs; the reader's
+  "same buffer" is gated on `push 0x997120` inside formatter 0x4237c0 plus the two call
+  addresses; "8 records hit" reworded to the measured "8 records walked, 9 possible pairs". One
+  dismissal: the cited `sha1 ac23fc9540f77151` is `sha1sum` of the FILE; the reviewer compared git
+  blob ids (a different hash).
+- **GEOMETRY** (a tiny insn emulator over 0x5a11ca..f3): cell = `0x92babc + 0xd4*a + 0x2c*b`;
+  cell = **11 dwords**; 4 rows / 4 cells; row header 0x24 (name, 4 tech, 4 names).
+- **SOURCE** `FUN_0057a070` parses alpha.txt `#SOCIO` (line 746 = the 11 keywords
+  ECONOMY..RESEARCH, 748 = 4 categories, 749-764 = 16 choices): keywords -> 0x9270c0
+  (0x68 B, count 0x927538, capacity 11), row names -> 0x92ba98+0xd4*o, the +/- tokens ->
+  0x92babc. Column i = `strcmp(token,0x9270c0+i*0x68)`, count ADDED.
+- **CONSUMER** (M374's bit24): unique (a,b) per faction in a 12-dword registry (`3a+b`), then
+  the first weight > 0; stores category/choice at record **+0x584/+0x58c** (+ first-positive
+  at +0x594). Derived: `0x9280b8-0x927590 = 0xB28 = 1*0x59c + 0x58c`, cross-checked against
+  the reader's own 0x927b14/0x927b1c.
+- **READER** 0x4a66d9 prints the pair: `[0x92ba98+d*0xd4]` category name,
+  `[0x92baac+d*0xd4+e*4]` choice name (row+0x14), both appended — the agenda is TEXT.
+- **NEGATIVES**: 0x92babc is BSS (raw .data ends 0x6a9000) => parser-built, not a .data table;
+  rows 0..2 only, so Future Society (row 3) can never be an agenda; the 8th write 0x92a7fc is
+  0x58c past the 8-record block end 0x92a270 (OPEN: 9-slot intent vs slack).
+- **PITFALL**: per-faction field arrays are written `record[1] + field_off + i*0x59c`, so a
+  "+0x584" field appears as the literal 0x927b14; 0x9280b8 looks like a base but is
+  record[1]+0x58c. Do not read those literals as record bases.
+- Rotated `## M286`/`## M287` VERBATIM -> `docs/named-archive-m376-rows{,2}.md` (sha1
+  `25eb67cd987ee782`/`723e6eebf7c77ff8`) for the NAMED cap; both `--verify` PASS.
