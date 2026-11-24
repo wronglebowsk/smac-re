@@ -1,1 +1,1 @@
-M365 | accept `python3 -u scripts/m365_pair_slot.py` -> PASS 22/22 `d1d567339ee8c5b2` (`evidence/m365_pair_slot.txt:142`), harness 26/26 (`evidence/m365_mutate.txt:33`) | PR #395 (merge pending) | next: relation bit NOUNS (chain-2 lane); the 13 label strings (0x997b20 heap)
+B35 | accept `python3 -u -m sim.grantcall` -> PASS 11/11 `fa541d0a2445cacf` (`evidence/b35_grantcall.txt:113`), harness 18/18 (`evidence/b35_mutate.txt:20`) | PR #396 (merge pending) | next: BUILD B36 (track_mode) / analyse (x6) pref-block writers

@@ -1,0 +1,20 @@
+MU1   ok   red=['G8'] want=['G8']  item 1 dropped from the founder's signature: the two discriminating births stop being explained
+MU2   ok   red=['G11', 'G8'] want=['G11', 'G8']  bit 1 folded into the new-game set: the rival entry scores 3/3 and the two entries stop separating
+MU3   ok   red=['G1'] want=['G1']  one founder call site deleted from the pinned list: the census mismatch goes unnoticed
+MU4   ok   red=['G3'] want=['G3']  one decoded item changed: the push-to-arg decode would be taken on faith
+MU5   ok   red=['G6'] want=['G6']  the zero/OR ORDER inverted: an OR-then-zero init would read as the birth signature
+MU6   ok   red=['G10', 'G11', 'G7', 'G8', 'G9'] want=['G10', 'G11', 'G7', 'G8', 'G9']  the 19 bases present at sample 0 counted as births: the oracle is no longer mid-run
+MU7   ok   red=['G10', 'G3', 'G4'] want=['G10', 'G3', 'G4']  the arg decode keeps 2 pushes: the item stops being the last push
+MU8   ok   red=['G6'] want=['G6']  the OR-site count off by one: a changed founder body would still pass
+MU9   ok   red=['G3'] want=['G3']  the set-flag comparison inverted: no site reads as a grant and the gate must bite
+MU11  ok   red=['G11', 'G8'] want=['G11', 'G8']  coverage made unconditional: both entries read 3/3 and stop separating
+MU12  ok   red=['G10'] want=['G10']  a digest unpinned: a change-shape drift would slip past
+MU13  ok   red=['G5'] want=['G5']  the API body read from the MAPPER instead: the stride computation and the two stores go unmeasured
+MU14  ok   red=['G9'] want=['G9']  every change counted as founder-compatible: the bit-identity count stops being measured
+MU15  ok   red=['G2'] want=['G2']  one host deleted from the pinned list: the attribution row would be taken on faith
+MU16  ok   red=['G5'] want=['G5']  a pinned store address off by one: the gate would accept a different store endpoint
+MU17  ok   red=['G11', 'G9'] want=['G11', 'G9']  births and changes no longer tested for disjointness: 0/6 becomes 6/6
+MU18  ok   red=['G7'] want=['G7']  the birth SAMPLE/round unpinned: a birth at sample 0 would read as mid-run
+NOOP  ok   red=[] want=[]  identity: nothing may redden
+
+RUN PASS 18 mutants, NO-OP []
