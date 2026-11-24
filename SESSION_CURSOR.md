@@ -1,8 +1,7 @@
-# CURSOR s322-chain1 / M342
-ID: M342 (ANALYSE) - who SETS +0x8c.
-ACCEPT `python3 -u scripts/m342_completion_setter.py` -> PASS M342: 7/7, digest
-2b88df5da5aeafe1 (`evidence/m342_completion_setter.txt:190`), 2x identical; harness 9/9 [] (`evidence/m342_mutate.txt:10`).
-ANSWER: +0x8c SET by `or`+mapper mask at 11 addrs (API FUN_004e44f0 @0x4e4528, 27 sites/8 fns; base
-screen; 2 un-indexed regions; FUN_004e47d0 x7), CLEAR 3 `and`; pop FUN_004ef5d0 never touches it.
-MERGED? milestone/m342. NEXT: which API caller completes production.
-NAMED 248,127->241,089 (M329 to named-archive-m329-rows.md:5).
+# CURSOR s323-chain1 / M344
+ID: M344 (ANALYSE) - which API caller COMPLETES production.
+ACCEPT `python3 -u scripts/m344_completion_caller.py` -> PASS 8/8, digest 034bf0e1a1606d2c
+(`evidence/m344_completion_caller.txt:148`), 2x identical; harness 10/10 [] (`m344_mutate.txt:14`).
+ANSWER: NO API caller - stamp = inline `or` @0x4f0ec0 (FUN_004ef6d0), item=edi, 304*ds:0x68cbb0,
+0x86 before pop @0x4f0f46; spends base+0x40, item row [edi*48+0x984d38]. M342 split = 16/8/3 (0x40dd3c).
+MERGED? milestone/m344. NEXT: who raises the build-finished ALERT (0x985b10/event queue).

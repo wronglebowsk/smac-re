@@ -1374,20 +1374,18 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | rivals dead: index is not 0x985aec; 0x983a10 is not the faction array (0x8c vs 0x20bc); 0x57c606's index is not stored | `:8` | V MU7 |
 | ACCEPT `PASS M338: 8/8` `1ae1563d47d0039e` x2, harness 16/16 `56455db0eadbedd7` | `:9` | V |
 | OPEN: the +0x20 index is UNCLAMPED; a pref >=6 is ADMITTED (M340); 0x44a1c8's window is the HoF screen (INFERRED). **CLOSED by `## M341`:** the window's page arithmetic | - | lead |
-## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, review #358 hardened) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder — `evidence/m340_pref_admission.txt:79-90`
+## M340 (s320-chain1, pick (x6) residual = M338's #1 lead, STATIC 7/7, review #358 hardened) — FUN_0058e7f0 ADMITS a `Difficulty` pref >= 6: no bound anywhere in the read -> parse -> store chain, so index 6 reaches `0x94d2c4`, one dword past the six-row ladder. FULL TABLE VERBATIM at `docs/named-archive-m340-rows.md` (`dceab1fc162b3b519d1abce76800c81bb5bb4bd4`); every `:<line>` below is `evidence/m340_pref_admission.txt:<line>`; this stub governs, one line per claim  ACCEPT `scripts/m340_pref_admission.py` -> `PASS M340: 7/7`, rows `1cc44d0146a8b419`; harness `12/12`, NO-OP `[]`, `a2a1726721114b4d`.
 
-| claim | evidence | conf |
+| claim (one line) | evidence | conf |
 |---|---|---|
-| 18 `call edi` sites, each with a 6-push window holding exactly one `push 0x100` (argc-6); exactly ONE key 0x692718 = PE `"Difficulty"` (0x58e8a1) whose lpDefault push IS 0x997120, the itoa(0) buffer seeded at 0x58e865; its store `ds:0x92bde8` @0x58e8c6 is the ONLY store to that cell in the function | `:3-8` | V MU1,MU10,MU11 |
-| 0x58e8a9..0x58e8c6 is 10 straight-line insns (0 jcc/jmp/ret) with the two stores `ds:0x996be8,eax` (cursor) and `ds:0x92bde8,eax` | `:6-18` | V MU2,MU7 |
-| the stored eax IS 0x6287e2's return: 0x58e8b9 calls 0x5ea484 -> 0x5eaa53 -> {0x5ea985, 0x6287e2}; both wrappers are branch-free, write no eax after their call and end pop ebp/ret; 0 eax writes between the call and the store | `:19-21` | V MU2,MU3,MU9 |
-| the parse chain (atoi 0x64c360/0x64c460, tokeniser 0x5ea985, radix 0x6287e2/0x628720/0x62876b) compares CHARACTER CLASSES only: constants {0x0,0x1,0x2b,0x2c,0x2d,0x30,0x31,0x36}; intersection with {2,3,4,5,6} EMPTY | `:22-42` | V MU4,ALG1 |
-| POSITIVE CONTROL, same function: `Language`'s consumer 0x628130 puts the argument in [ebp-0x4], `cmp [ebp-0x4],0x4`, `ja 0x6281a8`, then indexes `[edx*4+0x6281ac]` — bound 4 there, NONE on the Difficulty path | `:44-58` | V MU5 |
-| endpoints MEASURED from the ladder loader 0x57ac74/0x57ac88 (base 0x94d2ac, end 0x94d2c4) and 6 rows from 0x57c6cb `cmp esi,0x6`; k=5 -> 0x94d2c0 last legal, k=6 -> 0x94d2c4 | `:61-65` | V MU8 |
-| the three pref-fed readers 0x48678f / 0x44a1c8 / 0x599405 load TABLE at scale 4 from a memory-loaded index whose def-use gap (0/0/2 insns) holds no branch, call, compare or rewrite | `:67-76` | V MU6 |
-| ACCEPT `python3 -u scripts/m340_pref_admission.py` -> `PASS M340: 7/7 gates`, rows `1cc44d0146a8b419`, census `a7bb50fde374ddca`, window `1ff9a31080ec2e22`, 2 runs byte-identical; `scripts/m340_mutate.py` -> `PASS HARNESS M340: 12/12`, 7/7 gates covered, NO-OP `[]`, `a2a1726721114b4d` | `evidence/m340_mutate.txt:16` | V |
-| OPEN: what the runtime dword AT 0x94d2c4 holds (a box read); whether any other writer of the 0x92bde8/0x985aec pair (0x57c7b0 writes both in one breath, source untraced) supplies a bounded value | - | lead |
-
+| 18 `call edi` sites, each with a 6-push window holding one `push 0x100` (argc-6); exactly ONE key `0x692718` = PE `"Difficulty"` (`0x58e8a1`), lpDefault push IS the itoa(0) buffer `0x997120`; its store `ds:0x92bde8` @`0x58e8c6` is the only store to that cell | `:3-8` | V MU1,MU10,MU11 |
+| `0x58e8a9..0x58e8c6` is 10 straight-line insns (0 jcc/jmp/ret), two stores (`ds:0x996be8` cursor, `ds:0x92bde8`) | `:6-18` | V MU2,MU7 |
+| the stored eax IS `0x6287e2`'s return: both wrappers branch-free, no eax write after their call | `:19-21` | V MU2,MU3,MU9 |
+| the parse chain compares CHARACTER CLASSES only; constants ∩ {2,3,4,5,6} EMPTY | `:22-42` | V MU4,ALG1 |
+| POSITIVE CONTROL, same function: `Language`'s consumer has `cmp [ebp-0x4],0x4; ja` — no such bound on the Difficulty path | `:44-58` | V MU5 |
+| ladder endpoints MEASURED (`0x94d2ac..0x94d2c4`), 6 rows from `cmp esi,0x6`; k=5 -> `0x94d2c0`, k=6 -> `0x94d2c4` | `:61-65` | V MU8 |
+| the three pref-fed readers (`0x48678f`/`0x44a1c8`/`0x599405`) index TABLE at scale 4 from a memory-loaded index, def-use gap 0/0/2 insns with no branch | `:67-76` | V MU6 |
+| OPEN: what `0x94d2c4` holds at runtime (box read); whether `0x57c7b0`'s paired write supplies a bounded value | - | lead |
 ## M342 (s322-chain1, ANALYSE, static, zero box; ACCEPT `python3 -u scripts/m342_completion_setter.py` -> **`PASS M342: 7/7 gates`**, table digest `2b88df5da5aeafe1` (PINNED, G7), 2 runs identical (`evidence/m342_completion_setter.txt:200,:218`); harness `scripts/m342_mutate.py` -> **9/9**, NO-OP `[]`, baseline green (`evidence/m342_mutate.txt:2,:12`)) — pick (x9) ANSWERED: the `base+0x8c` bit is SET by `or` through the mapper's mask at **11 addresses**, the API `FUN_004e44f0` first; the queue-pop is a NON-writer. (M329 rotated VERBATIM to `docs/named-archive-m329-rows.md:5`, sha1 `ccee72a56f16b4b4`.)
 
 | claim | evidence | conf |
@@ -1396,7 +1394,7 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | the field has exactly 2 writer idioms: **11 direct constant-form stores** in exactly 2 Ghidra functions (`FUN_0041cf20` 1 whole-byte copy, `FUN_004e47d0` 7 `or` + 3 copies) and **9 pointer-form `lea` sites, 9/9 resolved to a store through that register** (2 copy / 4 `or` / 3 `and`) | `:9-72`,`:86`,`:204` | V MU2/MU8 |
 | SET = 11 `or` addresses (`4e4528 4e4b5a 4e4b87 4e4bec 4e4c16 4e4c3d 4e4c83 4e4d81 4f0ec0 4f3ebc 4f3f4c`); CLEAR = 3 `and` (`4e4546 4f38bb 4f49e1`, the last inside the charge routine `FUN_004f47f0`) | `:210-216` | V MU2/MU8 |
 | the API `FUN_004e44f0` (92 B) is the first SET address: `or BYTE PTR [eax],cl` @`0x4e4528` after the 304-fold (`0x4e4512-0x4e451e`), index = mapper out1 slot `[ebp+0x8]`, mask = out2 slot `[ebp-0x4]`; its AND twin @`0x4e4546` clears | `:99-113`,`:205` | V MU3 |
-| 27 call sites in 8 functions: 16 push set=1, 7 push set=0, 4 variable | `:129-158`,`:206` | V MU4 |
+| 27 call sites in 8 functions: 16 push set=1, **8 set=0, 3 variable** — M344 re-derived this with a 16-insn push window; the shipped 16/7/4 read `0x40dd3c` as '?' because its `push 0x0` sits 7 instructions back | `:129-158`,`:206`; `evidence/m344_completion_caller.txt:36-38` | V MU4 (M344 MU1/MU2) |
 | the queue-pop `FUN_004ef5d0` (244 B, 3 direct callers all inside `FUN_004ef6d0`) has 0 references to `0x95da9c` and 0 API calls: the pop does not stamp | `:160-177`,`:207` | V MU5 |
 | inline grant `FUN_004e47d0`: 7 ORs + 3 copies, 7/7 OR masks loaded from a stack slot the mapper filled | `:180-191`,`:208` | V MU6 |
 | the printed digest is PINNED by G7 - the ACCEPT anchor cannot drift silently | `:200`,`:209` | V MU7 |
@@ -1438,3 +1436,14 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | OPEN: dispatcher of the +0x64 slot (19 `call [reg+0x64]` sites image-wide, 0 direct); the container's item record past +0xec; any consumer of `[this+0x3100]` (5759 stages the arg) | - | lead |
 
 
+
+## M344 (s323-chain1, ANALYSE, static; ACCEPT `scripts/m344_completion_caller.py` -> **`PASS M344: 8/8 gates`**, digest `034bf0e1a1606d2c`, 2 runs identical (`evidence/m344_completion_caller.txt:148`); harness `scripts/m344_mutate.py` -> **10/10**, NO-OP `[]` (`evidence/m344_mutate.txt:14`)) — NO API caller completes production: the stamp is the base screen's inline `or` @`0x4f0ec0`.
+
+| claim | evidence | conf |
+|---|---|---|
+| all 27 item args resolve (imm 18 / callret 3 / clamped 2 / loopctr 2 / param 2); split **16 set=1 / 8 set=0 / 3 variable** — M342's 16/7/4 read `0x40dd3c` as '?' (its `push 0x0` sits 7 insns back); only divergent row of 27 | `:4-38` | V MU1,MU2,MU3 |
+| **0/27** items' resolved class is QUEUE (the base record window `+0x4c..+0x77`); **0/8** caller functions calls the pop | `:34`,`:40-49`,`:141`,`:145` | V MU4 |
+| the 4 register-item set=1 sites: `0x41c6f8` (modal-runner return + bitmap pre-read = toggle), `0x41d8fc` (loop counter under `0x5a6e70`), `0x508c85`/`0x508cee` (1..0x26 clamp) | `:127-131` | V MU5 |
+| stamp = `or BYTE PTR [eax],cl` @`0x4f0ec0` in FUN_004ef6d0: mapper(item=`edi`) -> 304*`ds:0x68cbb0`, 10 pinned insns, **0x86** before the byte-read `call 0x4ef5d0` (pop) @`0x4f0f46` | `:51-70`,`:143`,`:145` | V MU6,MU8 |
+| the same block spends `[edx+0x40]` by `edi` (`0x4f0ca4/6`) then reads `[edi*48+0x984d38]` (`0x4f0f65-6f`), `edi` unwritten in between | `:112-124`,`:144` | V MU7 |
+| the 8 caller ROLES; `edx` at `0x4f0ca1` = the base record; `+0x40` = accumulated minerals; `edi` = the completed item | `:40-50` | INFERRED |
