@@ -968,3 +968,70 @@ commutative on this fixture); the nouns of +2fc/+308/+310/+3f8 (M330/M331) and o
 master 0x92bde8; the index->label order stays open); which factions the game would really charge (the eight blocks are run
 uniformly, as B25 applies the gesture to every unit); whether the refund leg ever runs in this
 save at all (measured inert here). No box time, no /proc, no gdb, no game-binary load.
+
+---
+
+**B28 - the UPKEEP FEEDER made EXECUTABLE: FUN_004f47f0's per-item charge loop runs on the save's
+OWN base records, and the CARRIED HALF-UNIT becomes a field the WRITER owns** (`sim/feeder.py` =
+the law, `sim/composedfeeder.py` = the run; s316 authored this rung from main 497d766, as B14-B27
+did).** B27 made one round's energy flow executable but took the feeder's per-item `v` as an INPUT
+(`sim.economy.base_upkeep` sums alpha rows into `feed`); M333 then pinned the loop's LAW statically
+— ids 1..38 VISITED / 1..34 CHARGED, a slot charged only when its bit is set in the 304-B base
+record at `+0x8c`, the cost read from the stride-48 item table at `row0+0x10`, the halving gated on
+`ds:0x985ba0` (sign + owner-byte compare), and bit5 of `block[own]+0` a CARRIED HALF-UNIT exclusive
+to this function. None of that was code: the sim still charged the raw alpha sum, so a round whose
+costs are odd silently lost the half-unit and the rung could not say which price path a save took.
+B28 executes the law, reads the gate out of the CONTAINER, and persists the carry through the
+writer.
+
+`python3 -u -m sim.selftest --b28` must print `PASS B28: 8/8 gates` (authored once in
+`sim/composedfeeder.py`; `--b28` only relays, so the two entry points cannot print different text)
+with: **G1** transcription integrity — every leg pin is a (label, address, FIELD TOKEN, file) triple
+and ONE committed evidence line must carry BOTH the address and the token claimed for it (an address
+that merely occurs somewhere proves nothing), counted, with the deliberately-bogus control pin inside
+the same list so it is measured in the same pass and must hit nothing; **G2** the bounds are READ,
+not retyped — the loop's init and BOTH cmp immediates are parsed out of the committed M333 census
+lines and the executable loop's own VISITS/CHARGES ranges are derived from the parsed numbers
+(rival: 0-based whole table); **G3** the bitmap gate on the save's OWN bytes — per base, the charged
+id set equals the decoded `+0x8c` bits ∩ the charged range, and the width gap is MEASURED: the bytes
+beyond the pinned dword (`+0x90..+0x93`, the ids 32..63 window — only ids 32..38 are reachable) are
+scanned in every base record of the save and printed, and the SAME scan is run as a CONTROL over the
+pinned dword's own window (`+0x8c..+0x8f`, nonzero in 14/18 records), so "ids 32..38 are inert here"
+is a count taken by an instrument shown to see bytes, not a wave (rival: charge every table row
+regardless of the bitmap, at counted bases); **G4** the price-path gate read out of the CONTAINER —
+`ds:0x985ba0` is inside the carried state header, its value is read at `mem2file(0x985ba0)` and the
+sign skip is applied, so which path THIS save took is measured (and its inertness printed: the
+halving runs 0 times when the dword is negative), shown not to be a stub by sweeping the dword over
+the save's own base indices and counting how many flip to the halved path per owner byte (rival:
+unconditional halving, at counted cells); **G5** the carry law against the instruction semantics —
+over a swept (cost, carry_in) grid the charge is `trunc((cost+carry)/2)` with the SUM's parity
+written back into the SAME bit (the `cdq/sub/sar` trunc-toward-zero shape, not a shift), and three
+rivals are MEASURED at counted cells: floor-halving, zero-the-carry, round-half-up; **G6** the carry
+PERSISTED THROUGH THE WRITER, **on synthetic fixtures only** (this save's own run touches no faction:
+the honest pass's touch set `[]` and its rewritten bit5 octet, equal to the container's, are measured
+and asserted) — `block[own]+0` joins the modeled spans for this call only, the unmutated build is
+still the identity, every differing byte lies in a modeled span, a fixture two-round run with an odd
+first-round total leaves bit5 SET in the written image and changes round 2's charge by exactly 1
+over the differing set (the zero-carry rival differs at counted factions, and the zero-carry baseline
+is licensed by an all-ones carry-seed tie on the full-price path), and `savewriter.modeled_spans()`
+called WITHOUT overrides still returns exactly the pre-B27 list (the older rungs' strictness is not
+loosened); **G7** parity with the game's own recorded rows — the five live-pinned (id, name, cost)
+rows, the raw sum, the disabled-list sum and the recorded HUD `0x744f28` are PARSED out of
+`evidence/b4_economy.txt:24` (never retyped here) and the executable feeder on the full-price path
+reproduces both sums from the live-pinned costs, while the alpha-derived table is checked against
+those same five rows and the mismatch count printed (this is the ONLY part of the 39-row item table
+any recorded read pins — the rest stays OPEN and is declared); **G8** rivals + determinism — every
+rival FAILS on the printed numbers, and two runs give an identical rows digest, an identical
+PRINTED-TABLE digest and an identical final-container sha256, all three pinned to literals inside
+G8. `scripts/b28_mutate.py` re-creates the defects by anchor->replacement in a fresh subprocess and
+exits non-zero unless each reddens EXACTLY its declared (MEASURED) gate set.
+
+DECLARED UNMODELED: the item table's runtime row order beyond the five live-pinned ids (alpha has 71
+`#FACILITIES` rows, the runtime table has 39 — the mapping is pinned only where a recorded live read
+pins it); the NOUN of `ds:0x985ba0` (M333: no writer in .text, noun INFERRED — B28 reads its VALUE
+out of the container and gates the two paths, it does not name it); which faction `ebx`
+(`BYTE[[ds:0x8f0d60]+4]`) is for a non-player feeder call (the carry address uses it; the save's own
+`own_player` dword is printed as context only, never equated to it); the REMOVAL path the same loop
+takes when energy goes negative (M333's OPEN lead, pick (x7) — B28 stops at the `jge`); the
+per-faction disabled list for the AI factions (only the player's recorded one is used, at G7).
+No box time, no /proc, no gdb, no game-binary load.

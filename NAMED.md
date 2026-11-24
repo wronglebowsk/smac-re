@@ -47,33 +47,24 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 
 ## (ARCHIVE) M89-M221: moved VERBATIM to `docs/named-archive-m89-m221.md` (s251 hygiene split - 619 lines, 55 headings; grep there for per-id semantics of M89-M221 incl. UNMERGED M101/M103/M109; git history is the trail)
 ## (ARCHIVE) M227-M245 + B1-B2: moved VERBATIM to `docs/named-archive-m227-m245.md` (s254 hygiene split - 133 lines, 10 headings; grep there for per-id semantics; git history is the trail)
-## M246 (s197) — the save's last 4 B are a `timeGetTime()` save-CREATION stamp
+## M246 (s197) — the save's last 4 B are a `timeGetTime()` save-CREATION stamp — FULL rows VERBATIM at `docs/named-archive-b28-rows.md:10` (§rotation-1 marker at `:8`, s316-chain1 headroom rotation, sha1 `fcd4989fdf15` — the region is bounded by its own terminator line, its line number AND full digest re-asserted by `scripts/b28_named_rotate.py --verify`); this stub governs.
+- `FUN_00597ce0` writes the trailing dword from `timeGetTime()` (`local_8` line 15 → `FUN_0064c9a0(&local_8,4,1,iVar2)` line 44), the codec never reads it; Δ(dword) vs Δ(mtime) ≤ 2.5 s on 5/5 same-session pairs | shard_015.c | V
+- creation-stamped, not file-write-stamped: `0x15c79939` on 3 files 486,979 s apart, `0x2db1b939` on 2 files 71,224 s apart | census G3, 17 saves | V
 
-| claim | evidence | status |
-|---|---|---|
-| `FUN_00597ce0` takes `local_8 = timeGetTime()` at entry (body line 15), calls `FUN_00596850(iVar2,1)` (line 42), then `FUN_0064c9a0(&local_8,4,1,iVar2)` (line 44) writes the trailing dword, which the codec never reads | shard_015.c `FUN_00597ce0`; Δ(dword) vs Δ(mtime) ≤ 2.5 s on 5/5 same-session pairs (Autosave 2→1 31 s / 30,989 ms; m241_probe_A→B 16 s / 16,785 ms) | V |
-| creation-stamped, not file-write-stamped: `0x15c79939` sits on 3 files 486,979 s apart, `0x2db1b939` on 2 files 71,224 s apart | census G3 over 17 saves | V |
+## M247 (s197) — the region map's row stride is `Rw>>1`, not `(Rw+1)/2` — rows in the same archived region; this stub governs.
+- 6 referencing functions; the only element accessors `FUN_00582340`/`FUN_00582360` index `(param_1>>1)+DAT_0092ae18+(DAT_0092ad9c>>1)*param_2`; `(Rw+1)/2` occurs once image-wide (the length) | G4 | V
+- builder `FUN_0058ce00` (y<Rh, x=(y&1) step 2<Rw) writes exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 for odd Rw, else 0 | G5 | V
+- the slack is never written: bytes 79..90 = `0xcd` in 17/17 saves, none in 0..78; both .MP (even Rw) slack 0 | 17 saves + 2 .MP | V
+- the byte VALUES: terrain record `+3` of the first of 9 sampled tiles with `+1 & 0xe0 > 0x5f`, else 0; `+3` unnamed | rule V, meaning OPEN
 
-## M247 (s197) — the region map's row stride is `Rw>>1`, not `(Rw+1)/2`
-
-| claim | evidence | status |
-|---|---|---|
-| `DAT_0092ae18` has 6 referencing functions; the only element accessors `FUN_00582340`/`FUN_00582360` index `(param_1>>1) + DAT_0092ae18 + (DAT_0092ad9c>>1)*param_2` (shard_014.c:27392/27401); `(Rw+1)/2` appears once image-wide (the length, 27266) | census G4 over all shards: stride-6 funcs 2, non-accessor/non-blob funcs 0, `(Rw+1)/2` sites 1 | V |
-| builder `FUN_0058ce00` (shard_015.c:4707-4747) walks y < Rh, x = (y&1) step 2 < Rw, so its write set is exactly bytes 0..78 at Rw=Rh=13; slack = Rh−1 when Rw is odd, else 0 | census G5, computed from the loop bounds | V |
-| the slack is never written: bytes 79..90 are `0xcd` (uninitialized-heap fill) in 17/17 saves with no `0xcd` in 0..78; both .MP (even Rw) have slack 0 and no `0xcd` | 17 saves + planet.MP + planetx.MP | V |
-| what the byte VALUES mean: `FUN_0058ce00` takes terrain record `+3` of the first of 9 sampled tiles whose `+1 & 0xe0 > 0x5f`, else 0 (shard_015.c:4716-4741); values 0x3f/0x01/0x00/0x10 seen, `+3` unnamed | rule V, meaning OPEN | OPEN |
-
-## M248/M249 (s198, PASS 5/5) — the region map's bytes are a per-region copy of terrain record +3, the map's REGION LABEL
-
-| claim | evidence | conf |
-|---|---|---|
-| region byte = record +3 of the FIRST land tile of a centre-first 9-diamond sample at (x*5+dx, y*5+dy), 0 if no land; x wraps mod DAT_0092a378, y only bounded by DAT_0092a37c | `FUN_0058ce00` shard_015.c:4690-4752; (dx,dy) read from terran.exe 0x67850c/0x678990 = (0,0)(1,-1)(2,0)(1,1)(0,2)(-1,1)(-2,0)(-1,-1)(0,-2); G1 9/9 | V |
-| stored region map == recomputed, byte for byte | 19 files (17 saves + 2 .MP), 1809 written cells, 0 mismatches, 38 wrapped samples — G2, `evidence/m248_region_values.txt` | V |
-| the region map has exactly 1 reader fn (`FUN_00556690`, shard_014.c:3450/3469) and 1 writer fn (`FUN_0058ce00`, shard_015.c:4739); 17 other refs = alloc/free/file-io/null-guard/clear in shard_014.c | G3 | V |
-| record +3's ONLY writer is the byte setter `FUN_00582d00` (shard_014.c:27745); 4 call sites, all map generation: shard_015.c:4862/4892 `FUN_0058d120`, :5086/5097 `FUN_0058d390` | G4 (18 record-array stores, 1 covers byte 3) | V |
-| +3 plane identical across 17 saves spanning turns 50,51,52,53,60 | G4 | V |
-| +3 < 0x40 on every land tile, >= 0x41 on every water tile, 0x40 unused (0 exceptions, 19 files); land ids 18/25/62 at 64/80/128; used as index into a per-faction array at DAT_0094eda8 (stride 0x20bc) shard_012.c:2681-2683 and split at 0x40 shard_012.c:7336 | G5 | V (census), OPEN (what names the partition; ids repeat across disconnected groups: 25 ids / 47 components, 130/16626 adjacencies differ) |
-| instrument: `scripts/m248_region_values_census.py` -> `evidence/m248_region_values.txt` | rc=0 | H |
+## M248/M249 (s198, PASS 5/5) — the region map's bytes are a per-region copy of terrain record +3, the map's REGION LABEL — rows in the same archived region; this stub governs.
+- region byte = record +3 of the FIRST land tile of a centre-first 9-diamond sample at (x*5+dx, y*5+dy), 0 if no land; x wraps mod DAT_0092a378, y bounded by DAT_0092a37c; the 9 (dx,dy) read from 0x67850c/0x678990 | `FUN_0058ce00` shard_015.c:4690-4752, G1 9/9 | V
+- stored == recomputed byte for byte: 19 files, 1809 cells, 0 mismatches, 38 wrapped samples | G2, `evidence/m248_region_values.txt` | V
+- exactly 1 reader fn (`FUN_00556690`), 1 writer fn (`FUN_0058ce00`); 17 other refs = alloc/free/file-io/null-guard/clear | G3 | V
+- record +3's ONLY writer is `FUN_00582d00`; 4 call sites, all map generation | G4 (18 record-array stores, 1 covers byte 3) | V
+- +3 plane identical across 17 saves, turns 50,51,52,53,60 | G4 | V
+- +3 < 0x40 on every land tile, >= 0x41 on every water tile, 0x40 unused (19 files); index into DAT_0094eda8 (stride 0x20bc), split at 0x40 | G5 | V (census), OPEN (what names the partition; 25 ids / 47 components, 130/16626 adjacencies differ)
+- instrument `scripts/m248_region_values_census.py` -> `evidence/m248_region_values.txt` | rc=0 | H
 
 ## B3 (s199, BUILD track, PASS 6/6) — `sim/turn.py`: M30's turn engine, executable, replays the recorded trace 67/67
 
@@ -88,56 +79,7 @@ The rotated tail is the B10 `## Not yet named` candidates plus the M24-M28 gdb/w
 | OPEN: the press transition (3,0)→(3,2) is unobservable (no_press variant still 66/66) — does the engine write turn_flags before cur_player?; `nb` (base count, 0x985AF4, 51→58 with one decrease at row 28) is unmodelled | G4 line, cursor | OPEN |
 | instrument: `python3 -m sim.selftest --replay evidence/m30_turn_trace.jsonl` → `PASS B3: 6/6 gates` | rc=0, 22.3 s, one invocation | V |
 
-## M250 (s200, PASS 7/7) — the region generator: 3 callers, and the coarse map is built LAST inside it
-
-| claim | evidence | conf |
-|---|---|---|
-| `FUN_0058d390` (0x58d390, 1293 B) has exactly 3 call sites image-wide: `0x5add8f` `FUN_005add30`, `0x5af0c7` `FUN_005af0c0`, `0x5b09e3` `FUN_005b09b0` | G1, `evidence/m250_region_generation.txt:1` | V |
-| the new-game driver is `FUN_005b2970` (shard_015.c:28040-28115, 4 call sites `FUN_004e10c0`/`FUN_004e11b0`/`FUN_0057c550`/`FUN_0057ecf0`): `FUN_00582170` → placement loop → `FUN_005add30`→`FUN_0058d390`, then the loop condition `FUN_005af0c0()` re-runs the generator and votes retry (≤4, while `DAT_00985ae8 & 0x80 == 0`); `FUN_005b09b0` = the "ADJUSTING WORLD CLIMATE" stage (22 sites) re-runs it | G1 + shard_015.c:24616/25519/26549/28102-28108 | V (static), OPEN (which driver site is NEW GAME) |
-| inside `FUN_0058d390` the flood-fill `call 0x58d120` @`0x58d47e` is enclosed by BOTH scan back edges (`0x58d5fa→0x58d3f9`, `0x58d60c→0x58d3e2`); `FUN_0058ce00` @`0x58d88c` is enclosed by NONE and is the last call but one (`0x58d891` = `FUN_005e9e0d`, the free) | G3 | V |
-| id bands: land `1..0x3e`, water `0x41..0x7e` (`0x40` never assigned — counter pre-incremented), overflow `0x3f`/`0x7f` for the border rings (`and ..,0x40; add ..,0x3f`, 2 sites) and for the band-exhaustion merge (smallest region relocated, shard_015.c:5007-5073) — explains M249's "25 ids / 47 components" | G4 (immediates 0x3e/0x7e/0x3f = 1/1/2), shard_015.c:4976-5101 | V |
-| region table `DAT_00989ce0`, stride `0x1c` (7 dwords via `lea [r*8+0]`+`sub`, 8 folds, 13 refs in d390 / 4 in d120): dword 0 = tile count, `+0x14` = 8-byte bitmap of adjacent opposite-class regions (`FUN_00507410` bit index, shard_015.c:5119-5160) | G4 | V |
-| instrument: `python3 scripts/m250_region_generation.py` → `SUMMARY PASS: 7/7` | rc=0, 2.7 s, one invocation, static image | V |
-
-## M251 (s200, PASS 7/7) — `DAT_0094eda8` = the per-faction, per-REGION category byte (128 ids, 4 values)
-
-| claim | evidence | conf |
-|---|---|---|
-| shape `[region + faction*0x20bc]` byte array, base exactly `0x94eda8`; 128 entries (the stage's region loop `cmp reg,0x80` @`0x556737`/`0x558b1c`) | shard_014.c:2159/2217/2220, G5 | V |
-| 79 refs in 18 functions; **6 store sites in 2 writers**: `FUN_00556690` ×5 (`0x557fdf`=8, `0x558516`=dl, `0x558549`=0, `0x55855e`=2, `0x55856b`=7), `FUN_0055f650` ×1 (`0x564ad7`=7); values written exactly {0,2,7,8} | G5, `evidence/m250_region_generation.txt:5` | V |
-| effects: `< 2` preferred candidate (+1000, shard_014.c:3409-3411); `== 7` accepted at face score (:3429); `== 8` accepted only if `DAT_00989ce0[region] < 0x96` (150 tiles, :3439), raises `FUN_00556370`'s divisor 2→4 and decrements `FUN_00556150`'s 1..10 score; `== 2` blocks the pick and forces `FUN_00556370` to 1 | :3409-3440, :2159-2224 | V (effects), OPEN (which value NAMES which state) |
-| reset per pass: the 4 reserved ids (`id & 0x3f` ∈ {0,0x3f} → 0, 0x3f, 0x40, 0x7f) with score 0 are stamped 8 (:3188-3191); every water id ends at 7 (:3583) | :3188-3191, :3583 | V |
-| siblings in the same block, same index: `0x94e4a8` short ×128 (ends exactly at `0x94e5a8`), `0x94e5a8` byte SCORE, `0x94e628` (cleared per region), `0x94e7a8` flag bytes | G5 + shard_014.c:3188-3300 | V (addressing), OPEN (meanings) |
-
-## M252 (s200, PASS 7/7) — the coarse region map has ONE consumer: `FUN_00556690`'s site search
-
-| claim | evidence | conf |
-|---|---|---|
-| the coarse accessor `FUN_00582340` is called at exactly 2 sites in the image, both inside `FUN_00556690` (`0x55878a`, `0x558812`) | G6/G7, `evidence/m250_region_generation.txt:6-7` | V |
-| `FUN_00556690` (14 349 B) is called only from `FUN_005208f0` `0x52094f` and `FUN_0059ce10` `0x59dd43` (M94's per-player upkeep sequence) | G7 | V |
-| the search walks the coarse grid by its own dims (`DAT_0092ad9c` × `DAT_0092ada0`, 7 refs), keeps cells whose label == the candidate region, converts cell → terrain `x = cell*5`, scans neighbour footprints for land tiles, scores them | shard_014.c:3443-3556 | V |
-| the winner is gated by the terraform cost `FUN_004cc7b0` (2 calls in the stage) against the faction's budget, then issued as `FUN_0056d350(faction, 0x29, 2, x, y, -1)`; both `push 0x29` sites (`0x556a47`, `0x558ad9`) reach a `call 0x56d350` 3 insns later | G6 | V |
-| so the coarse map is the SPATIAL INDEX for "where is region R", not a minimap layer | G6/G7 + the 2-site census | V |
-## M253 (s201, PASS 8/8) — the four region verdict codes are named by the guard that writes each
-
-| claim | evidence | conf |
-|---|---|---|
-| `DAT_0094eda8[region + fac*0x20bc]` is a verdict code, not a category label: **8 = the reserved ids with nothing scored** — `0x557fdf` is reached only after `and eax,0x3f` + (`cmp eax,0x3f` or `test eax,eax` zero) + `test al,[..0x94e5a8]` zero, and is followed by `jmp 0x558b18` (the region loop tail: the region is skipped) | G4, `evidence/m253_region_categories.txt:4` | V |
-| **7 vs 8 = the worth test's boolean + 7**: `sete dl; add dl,0x7` -> `mov BYTE PTR [esi+edi*1+0x94eda8],dl` at `0x558516` | G4, `:4` | V |
-| **the water band always ends at 7**: `0x55856b` lies between `cmp edi,0x40` / `jl 0x558578` and `jmp 0x558b18` — id >= 0x40 stores 7 and the region is done (M251's "every water id ends at 7", now pinned to the band test) | G4, `:4` | V |
-| **0 = cleared-open** under `test BYTE PTR [ebp-0x40],0x2` (`0x558549`); **2 = contested** under `test [ebp-0x40],0x1` (`0x55855e`) — the 2-store comes AFTER the 0-store, so a single contact verdict wins | G4, `:4`; names from M254 | V (guards), INFERRED (names) |
-| consumer domain: 33 `cmp BYTE PTR [..],imm` and 21 `cmp <reg>,imm` right after a load test **exactly {2,7,8}**; 39 plain loads; 0 unclassified; nothing tests 0/1/3/4/5/6 and 1 is never written | G1/G2, `:1-2` | V |
-| effects re-pinned: `+1000` at `0x55863d`; `cmp al,0x7` at `0x5586f9`; the 8-arm size gate `cmp DWORD PTR [edx*4+0x989ce0],0x96` with `edx = region*7` (`lea [r*8]`+`sub` fold of the M250 stride-0x1c table, dword 0 = tile count) at `0x55870e` | G3, `:3` | V |
-
-## M254 (s201, PASS 8/8) — the two bits come from FUN_00531bf0: contact between two factions inside one region
-
-| claim | evidence | conf |
-|---|---|---|
-| the stage's accumulator `[ebp-0x40]` has exactly ONE computed write: `test ecx,ecx; mov eax,0x1; jne 0x558349; mov eax,0x2; or DWORD PTR [ebp-0x40],eax` — only {1,2} are ever OR'd in, only masks {1,2} are ever tested | G5, `evidence/m253_region_categories.txt:5` | V |
-| `FUN_00531bf0(facA, facB, region, mode)` (505 B, 10 call sites, 2 inside `FUN_00556690`) walks the unit array over terrain records at `DAT_0092ae14`, keeps a facA unit whose record byte +3 (the region label, M249) == the region, then seeks a facB unit in the same region and calls `FUN_0058b1b0` (route) / `FUN_0058cfc0`; returns 1 iff a route is found | G5, `:5` + shard_013 body | V (shape), INFERRED (route) |
-| so **bit 1 = contact -> 2 = CONTESTED (blocks the pick)**, **bit 2 = no contact -> 0 = OPEN (the +1000 candidate)** | G4+G5 pairing | INFERRED (named) |
-| `FUN_0055f650`'s only store promotes **8 -> 7** at `0x564ad7` under `cmp DWORD PTR [ebp-0x8c],0x8`, in the same window as `add WORD PTR [eax+0x94eaa8],0xfff6` (-10) and `or BYTE PTR [eax+0x94e7a8],0x9` — the auto-manager clears the not-worth verdict when it acts in the region | G4, `:4` | V (code), INFERRED (why) |
-
+## M250-M254 (s200-s201; PASS 7/7 + 7/7 + 7/7 + 8/8 + 8/8) — the region generator, the per-faction per-region verdict byte, the coarse map's single consumer, the four verdict codes, and the contact bits — FULL rows VERBATIM at `docs/named-archive-b28-rows.md:41` (§rotation-2 marker at `:40`, s316-chain1 review-round headroom rotation #2, sha1 `c839a606651b` — the region is bounded by its own terminator line, its line number AND the full digest re-asserted by `scripts/b28_named_rotate2.py --verify`); this stub governs. M254's bit-naming row stays INFERRED (named); every other row is V.
 ## M255-M258 (s201-s202, PASS 8/8) - ROTATED VERBATIM to `docs/named-archive-m255-m258.md`
 Hygiene rotation at s307 (M329 headroom): 36 lines, 6,734 B, sha1 `9111d3b24758`, asserted byte-exact by `scripts/m329_named_rotate.py`; the archive holds the full rows, git history is the trail. One line per claim, gates and cites unchanged:
 
@@ -1369,9 +1311,9 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 - G3 (MU8/MU12/ME1): a slot is charged only when its BIT is set in the current base's 304-B record at `base+0x8c` (`304*[ds:0x68cbb0]`) — and the tested bit is the mapper's bit-mask output for THIS item: the bitmap read's index register loads `[ebp-0x8]` and the `and al,cl`'s `cl` loads `[ebp-0xc]`, both mapper out-slots pushed with `esi` (FUN_00507410) — the slot is a facility the base HAS, not a queue position
 - G4 (MU3/MU4/MU10/MU13/ME2): the halving is a CARRIED HALF-UNIT — bit5 of `block[owner]+0` (`0x94d430+8380*own`, `own=BYTE[[ds:0x8f0d60]+4]` read ONCE in the prologue, tied: `own_src` dest == `own_byte` base, `xor ebx,ebx` immediately before, fold leaf == that `ebx`) is extracted (`shr 5`+`and 1`), ADDED to the item cost, the sum's `sar 1` quotient is the charge, and the sum's PARITY is written back into the SAME bit5 (odd remainder survives the round); order read→add→test→set/clr→store→quotient monotonic; only the parity pair touches `ecx`
 - G5+RIVAL-R2 (MU3/MU4/ME2/ME3): def-use census (path-insensitive, stops at calls/function bounds/address discontinuities; the 2 block+0 sites in UNCLAIMED gap regions are measured and printed) — FUN_004f47f0 is the ONLY function in .text that READS bit5 of a block+0 value AND the ONLY one that WRITES it (`or ecx,0x20` → store-back via the lea'd pointer); the 15 near-miss functions' `0x20` ops are on other values — FUN_004dc390 mirrors block+0 bits 30/29/20 into bits 4/5/6 of a DERIVED dword (rival "bit5 is a shared faction flag" dies here)
-- G6 (MU7/MU11): `ds:0x985ba0` has NO writer in .text — ALL operand-text mentions measured (2 loads, 0 stores, no lea-absolute; a computed-address writer is beyond static .text reach — noun INFERRED); the halving fires only when that base's ZERO-EXTENDED owner byte (`xor edx,edx` then `mov dl,[ecx+0x95da14]`, no edx write between) == `ebx`, the current record's owner byte (`cmp`/`sete`/`je`), plus a sign test (`jl`) — 2 distinct skips to full price; `ebx`==the charged base's owner is INFERRED, not measured
+- G6 (MU7/MU11): `ds:0x985ba0` has NO writer in .text — ALL operand-text mentions measured (2 loads, 0 stores, no lea-absolute; a computed-address writer is beyond static .text reach — noun INFERRED); the halving fires only when that base's ZERO-EXTENDED owner byte (`xor edx,edx` then `mov dl,[ecx+0x95da14]`, no edx write between) == `ebx`, the current record's owner byte (`cmp`/`sete`/`je`), plus a sign test (`jl`) — 2 distinct skips to full price; `ebx`==the charged base's owner is INFERRED, not measured. **QUALIFIED by B28**: the dword IS carried — it lives in the save's state header at file offset 244 and reads `-1` in `m54b_clean.SAV`, so the halving is measured INERT on that container (`NAMED ## B28`, `evidence/b28_feeder_exec.txt:5`; mutants MU6/MU7 redden the two legs separately)
 - G2 (MU9/ME1): FUN_004f4760(item, faction) is the SAME law standalone — 6 features 1:1 in both bodies, same 48-fold leaf `esi`, both fold the disabled-list record to 1436 B
-- OPEN LEAD (printed, not gated): the same loop body carries a REMOVAL path — second mapper call `0x4f49b6`, bitmap bit-CLEAR `0x4f49e1`, 3 stores to `block+0x220` (`0x4f497f`/`0x4f4999`/`0x4f4a0b`), callees FUN_004e40a0/0x6265a2/0x48f100 — pick (x7) — **ANSWERED by `## M334` (s316-chain2)**
+- OPEN LEAD (printed, not gated): the same loop body carries a REMOVAL path — second mapper call `0x4f49b6`, bitmap bit-CLEAR `0x4f49e1`, 3 stores to `block+0x220` (`0x4f497f`/`0x4f4999`/`0x4f4a0b`), callees FUN_004e40a0/0x6265a2/0x48f100 — pick (x7)
 
 ## M334 (s316-chain2, STATIC, zero box) — FUN_004f47f0's upkeep-FAILURE branch = a DIFFICULTY-GATED AUTO-SELL of one facility from the current base; ENERGY is ASSIGNED the price, not refunded (closes pick (x7); CORRECTS `docs/named-archive-m32-m84e.md:268`)
 
@@ -1386,3 +1328,15 @@ REVIEW ROUND #299 (5 P2, ALL accepted): digest hashed LABELS not measurements (k
 | INFERRED/OPEN: `base_rec+0x50` = queue head (archived live H `named-archive-m32-m84e.md:312`; 51 sites read [R+0x50] with R:=ds:0x8f0d60 incl. 0x4f4994); `row+12` runtime value (39×48 table is .bss, no .text store names it) ⇒ numeric ENERGY outcome; FUN_004e40a0 = ECONOMIC FACTOR (archived H) | `:39` | lead |
 
 ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates` digest `5b5ece39af02baba` x2 (`:56-57`, `_rerun.txt:56-57`); harness `python3 -u scripts/m334_mutate.py` → `PASS HARNESS 45/45` digest `a5a5091e533f7883`, coverage 10/10 (`evidence/m334_mutate.txt:47-49`, `_rerun.txt` identical), `--selftest` 6/6 (`_selftest.txt:8`)
+
+## B28 (s316 BUILD, zero box) — the UPKEEP FEEDER made EXECUTABLE on the save's OWN base records; the CARRIED HALF-UNIT becomes a modeled block-A field (`sim/feeder.py` law, `sim/composedfeeder.py` run, spine §B28). ACCEPT `python3 -u -m sim.selftest --b28` -> **`PASS B28: 8/8 gates`** digest(rows) `705a4520c08c4062` / print `99c52201f073499d` / container `38bba29ab857654b`, 2 runs byte-identical (`evidence/b28_feeder_exec.txt:9`); harness `python3 -u scripts/b28_mutate.py` -> **`HARNESS PASS 18/18`** digest `3974d739da3af55f`, 8/8 gates covered, NO-OP `[]` (`evidence/b28_mutate.txt:20-23`). Post-#351-review: G4 asserts the pinned offset+value (244 / -1), G3 asserts the inert window against a control scan, G7 asserts the exact 7/8 and its miss, G6 measures the honest run's zero touch set.
+
+| claim | evidence | conf |
+|---|---|---|
+| `ds:0x985ba0` is CARRIED in the save's state header (file offset 244) and reads **-1** in m54b_clean — G4 ASSERTS both the offset and the value from the bytes (pinned 244 / -1, offset < block A): the 4f48dc sign skip fires, the halving runs 0 times here (MU6 drops the sign skip and reddens G4+G6+G7) | `evidence/b28_feeder_exec.txt:5` | V |
+| the container's own `+300` octet `[0,1,1,0,1,0,1,1]` IS the executable feeder's full-price total, 8/8 with the own faction's recorded disabled id (8, parsed `docs/named-archive-m32-m84e.md:272`); the no-list rival's exact 7/8 and its single miss `[own_player=3]` are ASSERTED (not merely `<8`) — MU5/MU9/MU10/ME3 redden G3/G7 | `:8` | V |
+| bounds are the PARSED immediates 1 / 0x22 / 0x27: VISITS 1..38, CHARGES 1..34, upkeep dword at row+0x10 — MU4/ME2 redden G2 | `:3` | V |
+| charged only when the bit is set in the base's own `+0x8c` bitmap (18/18); ids 32..38 inert here: the ids 32..63 window `+0x90..+0x93` is nonzero in 0 of 18 records while the SAME scan finds nonzero bytes in 14/18 control windows `+0x8c..+0x8f` — both asserted — MU5/MU9/ME6 redden G3 | `:4` | V (inert here); the bitmap WIDTH past `+0x8f` OPEN |
+| charge = `trunc((cost+carry)/2)` (the `cdq/sub/sar` shape, not a shift), the sum's parity written back into the SAME bit5; full-price leaves the carry — MU1/MU2/MU3/MU8 redden G5 | `:6` | V |
+| **FIXTURE-ONLY** persistence — the save's own run writes no carry: gate dword pointed at a base of the charged faction -> bit5 survives round 1 at 5 of 7 fixtures and changes round 2 by exactly 1 at those only (exactness measured over the differing set), 0 wrong halvings elsewhere, the zero-carry baseline licensed by a measured all-ones-carry seed tie (ME5 breaks it); the HONEST run touches `[]` and rewrites bit5 `[0,0,0,0,0,0,0,0]` unchanged; `modeled_spans()` no-arg still the pre-B27 list; unmutated build = identity — MU3/MU7/MU8/MU11/MU12/ME4/ME5 redden G6 | `:7` | V (fixture-only) |
+| the NOUN of `ds:0x985ba0`; `ebx` == the charged base's owner | M333 G6 (no .text writer); no mutant can name a noun | INFERRED |
