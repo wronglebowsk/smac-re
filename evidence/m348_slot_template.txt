@@ -1,0 +1,87 @@
+M348 - which template consumes the completion block's slots 1/2
+input: terran.exe sha1 a889fd11be2fc4cc
+
+TABLE 1 - the text bank (all inside .data: RVA 0x289000 + 0x316284)
+  payload  0x999ff4  store [k*4+0x999ff4]
+  owner    0x999fcc  store [k*4+0x999fcc]
+  text     0x99a01c  byte clear [k<<8 + 0x99a01c]; stride 0x100
+  numeric  0x999fa4  $NUMk / $HEXk read [k*4+0x999fa4]
+
+TABLE 2 - the two slot setters (bound k <= 9 in both)
+  A bound cmp    cmp DWORD PTR [ebp+0x8],0x9
+  A bound jcc    jle 0x6265b5
+  A payload      mov DWORD PTR [edx*4+0x999ff4],eax
+  A owner        mov DWORD PTR [eax*4+0x999fcc],ecx
+  A text clear   mov BYTE PTR [edx+0x99a01c],0x0
+  A label table  mov ecx,0x997b28
+  A resolver     call 0x61482f
+  B bound cmp    cmp DWORD PTR [ebp+0x8],0x9
+  B literal push push eax
+
+TABLE 3 - completion window 0x4f0f46..0x4f0f9b (28 insns)
+  call 0x6265a2 @0x4f0f78 arg1..arg4 ['0x1', 'edx', '0xffffffff', '0xffffffff']
+  call 0x626634 @0x4f0f96 arg1..arg4 ['0x2', 'ecx', '0xffffffff', '0xffffffff']
+
+TABLE 4 - argument computation
+  item: edi*48 + 0x984d38  (record first dword -> label id)
+  base: ebx*1436 + 0x927894  (record pointer -> literal text)
+
+TABLE 5 - the popup key the block assembles in 0x997120
+  0x68cf8c 'PROJECT'       
+  0x68cf94 'FAC'           
+  0x68cfb0 'voices\\fac'   
+  0x68cfbc '.mp3'          
+  0x68cfc4 'PRODUCEX'      
+  0x68cfd0 'Q'             
+  0x68cfd4 'G'             
+  0x68cfe8 'PRODUCE'       
+  0x68cfd8 'facblt_sm.pcx' 
+  strcat(0x64b9e0) sites in block: ['4f105c', '4f107f', '4f1093', '4f10b3', '4f113a', '4f115a', '4f1169', '4f11c3', '4f11ea', '4f1212', '4f1270', '4f1297', '4f12bf']
+
+TABLE 6 - the consumer entry point
+  block display call 0x48f100 sites: ['4f122a', '4f1319']
+  FUN_0048f100 slot-0 setter calls: ['48f20f']
+  FUN_0048f100 slot-0 source: mov edx,DWORD PTR ds:0x8f0d60 ; add edx,0x13
+
+TABLE 7 - the Script.txt records reachable from the block's keys
+  #PRODUCEXQ  slots=['0', '1']  '#xs 600 #caption Operations Director $BASENAME0 builds $ITEM1. $NUM1 $<#1:'
+  #PRODUCEXG  slots=['0', '1']  '#xs 600 #caption Operations Director Governor of $BASENAME0 builds $ITEM1.'
+  #PRODUCEQ   slots=['0', '1']  '#xs 500 #wave 25 #caption Operations Director $BASENAME0 builds $ITEM1. $N'
+  #PRODUCEG   slots=['0', '1']  '#xs 500 #wave 25 #caption Operations Director Governor of $BASENAME0 build'
+  #PRODUCE2   slots=['0', '1', '2']  '#xs 600 #caption Operations Director $BASENAME0 ($<M1:$FACTIONADJ2>) build'
+  #PRODUCE3   slots=['0', '1', '2']  '#xs 600 #caption Operations Director $BASENAME0 ($<M1:$FACTIONADJ2>) build'
+
+TABLE 8 - is the template an .rdata string?
+  printable .rdata strings containing '$': 1 ['673330']
+  of those containing '$<': 0
+
+TABLE 9 - who reads the text bank 0x99a01c
+  0x99a01c referencing insns: 63 in 30 functions
+  funcs: ['FUN_0040a990', 'FUN_0041b110', 'FUN_0043c130', 'FUN_004843b0', 'FUN_004d1280', 'FUN_004da2c0', 'FUN_004dd070', 'FUN_004dd560', 'FUN_004dde00', 'FUN_004e03d0', 'FUN_004e2770', 'FUN_004e2b90']
+  same-register shl REG,8 / add REG,0x99a01c pairs: 7 ['5f12ee', '625da9', '625f08', '6261b0', '62637c', '62661c', '6266a9']
+
+TABLE 10 - M346's 'drainer' FUN_00636b1e re-read
+  push 0x6998b0 @0x63727a  -> 'Session Name:'
+  push 0x6998c0 @0x6372af  -> 'Maximum Players:'
+  push 0x6998d4 @0x6372c9  -> 'Session Password (Optional):'
+  slot1 length test: cmp eax,0x10 ; jle 0x637362
+  re-loop target: jmp 0x63724e
+
+  G1   PASS bank arrays 0x999ff4/0x999fcc/0x99a01c inside .data; text stride 0x100; bound 9  [bound cmp 0x9 + jle; text index edx<<8]
+  G2   PASS setter A stores payload/owner and clears slot text  [stores + byte clear + return 3]
+  G3   PASS setter A resolves a LABEL ID through table 0x997b28; setter B copies a literal  [0x997b28 + call 0x61482f only in A]
+  G4   PASS two posts in the completion window, kind 1 then kind 2  [2 posts; pop 0x4ef5d0]
+  G5   PASS slot-1 argument = dword at 0x984d38 + edi*48  [factor 48 base 0x984d38]
+  G6   PASS slot-2 argument = 0x927894 + ebx*1436  [stride 1436 factor 359]
+  G7   PASS key = PRODUCEX + Q|G (PRODUCE fallback) appended in 0x997120; voice name PROJECT|FAC + idx  [13 strcat sites]
+  G8   PASS display call 0x48f100 gets 0x997120; it sets slot 0 = [0x8f0d60]+0x13  [display calls ['4f122a', '4f1319']; slot0 setter ['48f20f']]
+  G9   PASS #PRODUCEXQ reads slot 1 ($ITEM1/$NUM1); #PRODUCE2 reads slot 2  [XQ slots ['0', '1']; P2 has FACTIONADJ2=True]
+  G10  PASS no .rdata string carries a $< token; only the vocabulary $LINK<  [1 '$' strings, 0 '$<' ]
+  G11  PASS exactly 7 sites build 0x99a01c+(k<<8): 4 in FUN_00625b20, 2 in the setters, 1 in the modal screen  [7 pairs; 30 functions read 0x99a01c; 0x5f12ee in FUN_005f0583]
+  G12  PASS FUN_00636b1e pushes the three session-field labels and loops on strlen(slot1)>0x10  [labels ['63727a', '6372af', '6372c9']; cmp 0x10 -> jmp 0x63724e]
+
+R1 RIVAL .rdata template   -> REFUTED
+R2 RIVAL alert-private bank-> REFUTED
+R3 RIVAL slot2 same popup  -> REFUTED
+
+RESULT PASS: 12/12 gates  digest 35afb622edfa6bdc
