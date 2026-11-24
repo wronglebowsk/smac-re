@@ -1,5 +1,5 @@
-# NEXT_PROMPT.md - footing (B37 s339 `5dd4119bd1882d1d`; M376 s339 `f22d2b46cc7e9507`. STATE: B1-B37 + M54A-M381; (ix) box-GATED; (x) OPEN-LEADS; #180 pre-existing FAIL.)
-Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS (grep only), skill instrument-laws.md.
+# NEXT_PROMPT.md - footing (B38 s342 `e0bb2deb53ecb96c`; M376 s339 `f22d2b46cc7e9507`. STATE: B1-B38 + M54A-M381; (ix) box-GATED; (x) OPEN-LEADS; #180 pre-existing FAIL.)
+Overflow: `docs/nextprompt-archive-m299-b20.md`, `docs/pick-archive.md`, NAMED §CHAIN-BUILDS/PICKS, skill instrument-laws.md.
 
 ## BUDGET — read before anything else (compression CANNOT be relied on)
 
@@ -21,9 +21,9 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B37 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B34`-`## B37` govern).
-**B38**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
-**DOC CAP: NAMED 244,207/250,000 (5.8k free; `b37_named_rotate.py` = rotate pattern).**
+box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B38 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B34`-`## B38` govern).
+**B39**: `track_mode.py` decides; author the rung in `BUILD_SPINE.md` BEFORE probing.
+**DOC CAP: NAMED 247,600/250,000 (2.4k free - ROTATE FIRST next fire; `b38_named_rotate.py` = pattern).**
 
 ## THE LEDGER
 
@@ -43,19 +43,15 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
 
 - **Where things live:** map/terrain = `MAP_FORMAT.md`; faction fields = `docs/field-atlas-faction.md`
   (read §M297 first - the 0x94d104 phrasing is WRONG).
-- **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A`.
+- **ISOLATION (s254)**: if a fire is live (`ps` + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A`.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
-  Next (ANALYSE, static, zero box): **(a) the two peace writers outside FUN_005537d0 - 0x53fcb3 / 0x523f4c (M368, chain-1)**.
-  NOT chain 1: 0xc00 readers (chain 2), 0x94e48c composition (chain 3). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
-  Next (ANALYSE, static, zero box): (a) who asks the 0xc00 cluster - the 5 field-inline tests
-  (0x4ec9c3 0x523a7c 0x563165 0x56a8a2 0x5859ae) and the 2 register readers (0x5468c7/0x5552ff); (c) bit 13 (M373). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
-  CLOSED enumeration + pick rows + open-lead census (v..x4, B27) VERBATIM at `docs/pick-archive.md`
+  Next (ANALYSE, static, zero box): **(a) the two peace writers outside FUN_005537d0 - 0x53fcb3 / 0x523f4c (M368)**.
+  ANSWERED: M227-M340,M344,M346 + B1-B38 (M241 FAIL 2/5 #180).
+  CLOSED enumeration + pick rows + open-lead census VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
-  NEVER bp mid-instruction (s213).
   **NO STATIC PICKS LEFT** except **(ix)** (box-GATED); the analysis-only option is the OPEN-LEADS
   list, each with a NAMED question. STILL OPEN: (x6) other writers of the 0x92bde8..0x92bf14 pref
-  block (chain-3); the two peace writers outside FUN_005537d0 — `0x53fcb3`/`0x523f4c` (chain-1, M368);
-  `ds:0x985ba0`'s WRITER (M334). ANSWERED (do not re-derive): x1 M333, x7 M334, x8 M337, x9
+  block (chain-3); `ds:0x985ba0`'s WRITER (M334). ANSWERED (do not re-derive): x1 M333, x7 M334, x8 M337, x9
   M342+M344+M346+M348, `0x999fa4` M353. Lists live in NAMED ## M310-M368. READER LAWS still BIND:
   every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 
@@ -118,4 +114,6 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M382 (s341-c2): 0xc00 cluster = 15 readers (0x5468c7 is NOT one - bits 2|16). 35/35 `90cb89f84ce7feeb`. Next: who SETS 0x400.
 - M381 (s341-c3): 0x2000 = PEACE; setter A 0x50393d (PACT third party + peace/commlink + strict might(ecx) > might(esi), peer's own scalar); setter B 0x506cf1 = not-at-war only; both rows. 9/9 `2fa1a4100ec6f4f6`, 20/20.
 - M383 (s341-c3): 0x94e48c = per-unit (OFF+ARM) sum; 12/14 rewrites resolve. 9/9 `1d419b65323aec6c`, 29/29.
+- B38 (s342) MERGED: `#SOCIO` 4x4x11 grid in `sim/socio.py` - M376's two vectors reproduced field-for-field, settings -> 11 totals, signature 12 add/4 reject; `0x92babc` does NOT feed `0x94e48c`. 9/9 `e0bb2deb53ecb96c`, 12 mutants. NEXT: pick (a).
+- M388 (s342-c6): slot 0's agenda pair has NO writer — M376's randomizer starts at record 1 (7 records), the SE commit 0x4b2570 writes only the 0x94d658 grid; slot0 (0,0) = 'no agenda' (37/37 `bb2f4329dd2467f2`, 15/15). NEXT: slot 0's owner (which faction id the 0x59c block indexes).
 - M385 (s342-c3): nine dyn-mask 0xc00 sites resolved (7 PROVEN, 2 DEAD-INF) - no 0x800, no 0xc00 pair, but 0x400 ALONE at 0x4dacf7/0x4dad22 (M382 sole-0x400 RETRACTED). 44/44 `0103209f070e60f7`, 33/33 mutants.
