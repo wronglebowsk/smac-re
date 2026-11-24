@@ -157,3 +157,5 @@ T7  RIVALS - each predicts a number the tables above already printed
 
 SUMMARY  19/19 gates
 DIGEST   162f8833a8a831f0
+
+PASS M373: 19/19 gates digest 162f8833a8a831f0  (evidence evidence/m373_pending_vendetta.txt)
