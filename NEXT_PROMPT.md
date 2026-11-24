@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B28 MERGED #351: 8/8 print `99c52201f073499d`, harness 18/18 `3974d739da3af55f`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B28 + M54A-M337 done (energy round executable + carried, `NAMED ## B27`; feeder-slot noun + carried half-unit, `NAMED ## M333`; the feeder EXECUTABLE and the container's own +300 octet = its full-price total, `NAMED ## B28`); only (ix) left, box-GATED; **(x) OPEN-LEADS** below is the analysis-only option; #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B29 MERGED: 9/9 print `377094bc16aa8f27`, harness 9/9 `ae1f8e0292a59ed3`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B29 + M54A-M337 done (item table DERIVED through M337's loader, `NAMED ## B29`); only (ix) left, box-GATED; **(x) OPEN-LEADS** below is the analysis-only option; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -24,10 +24,14 @@ C1/C2 of `scripts/s292_cap_check.py` fail BY DESIGN (its STATUS note); only C3 s
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
-(B25 = #319; B26 = #328; B26's ACCEPT + THE LAW + retractions VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a), per-rung cmds `NAMED` §CHAIN-BUILDS; `NAMED ## B25`/`## B26` govern). **B27 = #344 main 1db42cf; B28 = #351 (s316) MERGED — its squash hash is main's tip (`git log --oneline -1 origin/main`); B28's review round re-pinned the print digest and grew the harness to 18/18 (`NAMED ## B28` governs)**. **Next build B29**: the spine ends at B28 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B28 did.
+box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B29 MERGED** (B25 #319, B26 #328,
+B27 #344, B28 #351; per-rung cmds `NAMED` §CHAIN-BUILDS, `## B25`-`## B29` govern; B26's ACCEPT+LAW verbatim at
+`docs/pick-archive.md` §trim-s308-chain1 (a)). **B29 = #356 (s319): the item table
+DERIVED through M337's loader law, `ALPHA_SHIFT=1` measured, B4's four DIFFERS rows closed** — its squash hash is
+main's tip (`git log --oneline -1 origin/main`). **Next build B30**: the spine ends at B29 - author its rung text in
+`BUILD_SPINE.md` BEFORE probing, as B14-B29 did.
 
- **DOC CAP (`wc -c` s318): `NAMED.md` 246,497/250,000 = 3,503 B headroom after M337's block (M277 rotated VERBATIM to `docs/named-archive-m337-rows.md:8`, sha1 `653c93cda817`, `scripts/m337_named_rotate.py --verify`) — UNDER the 5 KB trigger: B29 ROTATES first. NEXT_PROMPT trimmed to <=12,000.**
+  **DOC CAP (`wc -c` s319): `NAMED.md` 247,800/250,000 = 2,200 B headroom after B29's block (M334 rotated VERBATIM to `docs/named-archive-b29-rows.md:5`, sha1 `579f90da7d8c`, `scripts/b29_named_rotate.py --verify`) — under the 5 KB trigger: the next fire ROTATES first. NEXT_PROMPT <=12,000.**
 
 ## THE LEDGER
 
@@ -53,7 +57,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
-- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M337 + B1-B28 (M241 FAIL 2/5 #180).
+- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M337 + B1-B29 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220..M308, what each settled, incl. the M308 SITE-list shapes) VERBATIM at
   `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). NAMED cap: see §BUDGET's DOC CAP line.
@@ -125,5 +129,5 @@ Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar not
 `NAMED ## <id>` blocks GOVERN.
 M334 (s316-chain2, MERGED fc2569d #350): 0x4f47f0 upkeep-FAILURE = difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded; block+0x8 = effective difficulty) — 7/7 5b5ece39af02baba, harness 45/45 a5a5091e533f7883. NAMED ## M334.
 M337 (s318-chain1, pick x8): item table row order = alpha `#FACILITIES` file order (record i = alpha row i-1) — 8/8 `39d82f0771690e15`, harness 13/13; M53i's +0x20/+0x28 labels superseded. NAMED ## M337.
-M335 (s317-chain2): difficulty ladder = alpha.txt #DIFF, 6 rows @0x94d2ac (loader 0x57ac56), ds:0x985aec indexes it (0x599405); 4=Thinker 5=Transcend so M330 k=2 is LIVE; only clamp FUN_00423af0(0,6) is INCLUSIVE at the array end. 7/7 fb58bdc3307d6258; 20/20 6e0e05a8ffb388d8. NAMED ## M335 (rotation: chain 1 landed M246-M254 as docs/named-archive-b28-rows.md; my duplicate dropped).
-M336 (s318-chain2): ds:0x8f0090 = the DIFFICULTY byte of PLAYER RECORD 1 (8 recs, stride 0x176, frame 0x8eff18; end 0x8f0ac8); read only by the UNCLAMPED #DIFF lookup 0x486788 (idx 0x176*(k+1), k=0 -> row 0, feeds [b*4+0x94d2ac]) so index 6 reads 0x94d2c4 (one past); 6 write sites in 3 address forms incl. the 8-iteration walk 0x4e249c. 7/7 f4ca00c55c833539 x2; 14/14 3ec4dd172c69e165 (address census: ONE reader over direct/indexed/walk forms, residue@+2 empty). NAMED ## M336.
+M335 (s317-chain2): ladder = alpha #DIFF 6 rows @0x94d2ac (0x57ac56), indexed by ds:0x985aec (0x599405); 4=Thinker 5=Transcend => M330 k=2 LIVE; only clamp FUN_00423af0(0,6) is INCLUSIVE. 7/7 fb58bdc3307d6258; 20/20 6e0e05a8ffb388d8. NAMED ## M335.
+M336 (s318-chain2): ds:0x8f0090 = DIFFICULTY byte of PLAYER RECORD 1 (8 recs, stride 0x176, frame 0x8eff18); ONE unclamped reader 0x486788 (idx 0x176*(k+1)) so index 6 reads 0x94d2c4 (one past); 6 writers in 3 address forms. 7/7 f4ca00c55c833539; 14/14 3ec4dd172c69e165. NAMED ## M336.
