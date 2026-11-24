@@ -308,3 +308,36 @@ printers of measured values need the same None-guard as the gate.
 - New mutants ME5 (full-price reads the carry-in → G6,G8), ME6 (control window moved → G3,G8); MU6 grew to {G4,G6,G7,G8}. PITFALL: every prose edit re-pins the print digest (`434b…` then `99c5…`).
 - Merge: origin/main `c0f5e2a` (M334) merged; BOTH chains' sections kept; main did not touch `sim/feeder.py`, digests unchanged post-merge.
 - DOCS: NAMED **248,734 B** (1,266 under the fail line) — headroom UNDER 5 KB: next fire ROTATES M250-M254 before adding a block.
+
+## Session 317-chain2 (2026-11-23) — M335: the difficulty ladder's INDEX->LABEL order
+
+- **ANSWER (pick (x6), first clause):** the six difficulty names are alpha.txt's `#DIFF` rows,
+  loaded at `0x57ac56` (`push "DIFF"` -> `call 0x5ea431`) into `0x94d2ac`, one dword per row,
+  `add esi,4` up to the hard-coded `cmp esi,0x94d2c4` => 6 rows, file order
+  Citizen/Specialist/Talent/Librarian/Thinker/Transcend. `ds:0x985aec` is that index: at
+  `0x599405` it loads the label (`mov ecx,ds:0x985aec; mov edx,[ecx*4+0x94d2ac]`), and the
+  chooser `0x4ddaf8` walks the table forward passing `push edi` (=k) as the item index, after
+  seeding the dialog with `ds:0x985aec` before `call 0x5f1394`.
+- **M330 refined, not retracted:** the refund's cmps are `cmp eax,3/jle` (none at <=3) and
+  `cmp eax,4/jne` => k=1 at exactly 4 (Thinker), k=2 at >=5 -- with six rows that arm is
+  TRANSCEND (index 5), i.e. live, not a hypothetical.
+- **New measured oddity:** the only `0x8f0c11`-fed clamp on the index is `FUN_00423af0(lo=0,hi=6)`
+  at `0x486f30-0x486f40` (1 of the 169 `call 0x423af0` sites); its hi is INCLUSIVE and equals the
+  array LENGTH (`hi*4 == end-base` read out of the bytes), so a difficulty of 6 would read
+  `0x94d2c4`, one row past the table. Reachability is OPEN.
+- ACCEPT `python3 -u scripts/m335_difficulty_ladder.py` -> `PASS M335: 7/7 gates`, digest
+  `fb58bdc3307d6258`; re-run diff-identical (`evidence/m335_difficulty_ladder.txt:9-10`).
+  Harness `python3 -u scripts/m335_mutate.py` -> `PASS HARNESS 20/20`, digest `6e0e05a8ffb388d8`
+  (includes an ALGORITHM mutant); `--selftest` 3/3 (`evidence/m335_mutate_selftest.txt:4`).
+- **REVIEW ROUND (Strata, PR #353): 10 findings (3 P1 / 7 P2), 10 accepted, 0 dismissed.** Fixes:
+  G4 became an ORDERED fragment walk (edi starts at 0, seed before `call 0x5f1394`); G2 reads the
+  loader's actual store; G3 uses token-boundary matching (+ MU20 algorithm mutant); G5 proves both
+  readers are counting loops; G6 READS base/bound/clamp-hi out of the code instead of comparing to
+  the script's constants and censuses all 169 clamp sites. MU1's declared set corrected to
+  {G2,G3,G6}. Two P2s were about MY doc-cap rotation -- **which is now moot: chain 1 landed the
+  same M246-M254 rotation on main as `docs/named-archive-b28-rows.md` (sha1 fcd4989fdf15)**, so the
+  duplicate archive and `scripts/m335_named_rotate.py` were dropped in the merge; the P1 rotation
+  cite bug it exposed (a key that ate a digit on `## M248/M249`) is recorded above as a finding.
+- PITFALL: this census's `gates()` originally wrapped all seven checks in ONE try/except, so a
+  vanished site reddened every gate (MU6 measured {G1..G7} instead of {G3,G5}). Per-gate
+  try/except is what makes a declared mutant SET measurable at all.

@@ -1,0 +1,10 @@
+M335 difficulty-ladder census (static; text=text.txt)
+G1  PASS alpha.txt #DIFF sections=1 rows=6 ['Citizen', 'Specialist', 'Talent', 'Librarian', 'Thinker', 'Transcend']
+G2  PASS loader push@0x57ac56 -> call 0x5ea431, name='DIFF', fill body exact=True (store 'mov DWORD PTR [esi],eax' read, not inferred), base=0x94d2ac step=4 bound=0x94d2c4 => 6 iterations == 6 file rows
+G3  PASS sites=11 expected=11 extra=[] missing=[] literal-address STORES=0 scaled-form sites=7 (a register-indirect store elsewhere is NOT excluded - scope noted)
+G4  PASS ordered forward walk True (missing after pos 11: None); edi starts at 0=True; seed ds:0x985aec -> [ebp-0x494c] BEFORE call 0x5f1394=True
+G5  PASS 0x599405 indexes with ds:0x985aec (prev=push 0xffffffff); both readers are COUNTING loops 0..5 over the table (cmp 6 + increment to the same slot + jmp back) = [True, True]
+G6  PASS geometry read from the bytes: base=0x94d2ac bound=0x94d2c4 clamp hi=6 -> hi*4 == end-base =True (hi == the array LENGTH, so the inclusive hi is one past the last row); of 169 call sites of 0x423af0 exactly ['0x486f38'] are fed by an 0x8f0c11 load; cmp immediates on 0x985aec == ['0x1', '0x2', '0x3', '0x4', 'ebx'] (M332's set reproduced); refund 3/jle + 4/jne => k=1 at 4, k=2 at >=5 = TRANSCEND = True
+G7  PASS rival 'not the difficulty labels' killed: push-site string 'DIFF' + alpha rows 6 + loader iterations 6 all agree
+digest=fb58bdc3307d6258 gates=7 pass=7
+PASS M335: 7/7 gates

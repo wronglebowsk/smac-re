@@ -1,0 +1,23 @@
+M335 mutant sweep: 20 scenarios (MU1,MU2,MU3,MU4,MU5,MU6,MU7,MU8,MU9,MU10,MU11,MU12,MU13,MU14,MU15,MU16,MU17,MU18,MU19,MU20); baseline gates G1G2G3G4G5G6G7
+MU1 loader bound 0x94d2c4->0x94d2c8        declared={G2,G3,G6}             measured={G2,G3,G6}             PASS
+MU2 loader step add esi,4->8               declared={G2}                   measured={G2}                   PASS
+MU3 PE section name DIFF->DIFX             declared={G2,G7}                measured={G2,G7}                PASS
+MU4 alpha.txt drop the Transcend row       declared={G1,G2,G7}             measured={G1,G2,G7}             PASS
+MU5 alpha.txt swap rows 0 and 1            declared={G1,G7}                measured={G1,G7}                PASS
+MU6 delete the 0x599405 index reader       declared={G3,G5}                measured={G3,G5}                PASS
+MU7 index load ds:0x985aec->ds:0x985af0    declared={G5}                   measured={G5}                   PASS
+MU8 clamp hi push 0x6->0x5                 declared={G6}                   measured={G6}                   PASS
+MU9 refund cmp eax,4->cmp eax,5            declared={G6}                   measured={G6}                   PASS
+MU10 chooser push edi->push ebx            declared={G4}                   measured={G4}                   PASS
+MU11 delete the dialog seed load           declared={G4}                   measured={G4}                   PASS
+MU12 reader loop bound ,0x6->,0x7          declared={G5}                   measured={G5}                   PASS
+MU13 RIVAL base 0x94d2ac->0x94d2e0         declared={G2,G3,G4,G5,G6}       measured={G2,G3,G4,G5,G6}       PASS
+MU14 seed store slot -0x494c->-0x4948      declared={G4}                   measured={G4}                   PASS
+MU15 chooser walks BACKWARD add->sub       declared={G4}                   measured={G4}                   PASS
+MU16 clamp hi push 0x6->0x7                declared={G6}                   measured={G6}                   PASS
+MU17 clamp index reg eax->ebx              declared={G6}                   measured={G6}                   PASS
+MU18 loader store eax->edx                 declared={G2}                   measured={G2}                   PASS
+MU19 reader loop cmp on another slot       declared={G5}                   measured={G5}                   PASS
+MU20 ALGO matcher loses the scaled form    declared={G3}                   measured={G3}                   PASS
+digest=6e0e05a8ffb388d8 scored=20 mismatch=0
+PASS HARNESS 20/20
