@@ -1,8 +1,8 @@
-baseline: 22 gates PASS, 0 FAIL
-MU1   KILL   G1a   red=G1a,G2c,G2f,G3d
-MU2   KILL   G1b   red=G1a,G1b,G2c,G2f,G3d
-MU3   KILL   G2a   red=G2a,G2d,G6a
-MU4   KILL   G2b   red=G2b,G2f,G5a
+baseline: 25 gates PASS, 0 FAIL
+MU1   KILL   G1a   red=G1a,G2c,G2f,G2g,G3d
+MU2   KILL   G1b   red=G1a,G1b,G2c,G2f,G2g,G3d
+MU3   KILL   G2a   red=G2a,G2d,G2g,G6a
+MU4   KILL   G2b   red=G2b,G2f,G2g,G5a
 MU5   KILL   G2c   red=G2c,G2e
 MU6   KILL   G2d   red=G2c,G2d,G2f,G6a
 MU7   KILL   G2f   red=G2c,G2f
@@ -17,10 +17,12 @@ MU15  KILL   G4e   red=G4e
 MU16  KILL   G5a   red=G5a
 MU17  KILL   G5b   red=G5b,G7a
 MU18  KILL   G6a   red=G2c,G2d,G2f,G5b,G6a,G7a
+MU22  KILL   G4f   red=G4a,G4b,G4c,G4f,G5b
+MU23  KILL   G5c   red=G5c
 MU21  KILL   G3c   red=G3c
-MU19  KILL   G7a   red=G1a,G2c,G2d,G3d,G6a,G7a
+MU19  KILL   G7a   red=G1a,G2c,G2d,G2g,G3d,G5b,G6a,G7a
 MU20  KILL   G7b   red=G7b
 
-21/21 mutants killed, 0 NO-OP, 0 missed
-gate coverage: 22/22 asserted gates have a named mutant
+23/23 mutants killed, 0 NO-OP, 0 missed
+gate coverage: 25/25 asserted gates have a named mutant
 VERDICT: PASS

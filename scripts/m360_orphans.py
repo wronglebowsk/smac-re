@@ -336,6 +336,11 @@ gate("G2e", diff[0x7AEC] == ([0x37, 0x38, 0x39], []),
      "the Audio/Visual widget queries 3 ids it never builds")
 gate("G2f", [w for w in WIDGETS if diff[w][0] or diff[w][1]] == [0x7AEC, 0x8614, 0x913C],
      "no other widget has a set difference (0x8614 queries the extra 0x30)")
+rows_per = [len([1 for (ww, _) in ROWS if ww == w]) for w in WIDGETS]
+q_per = [len(QUERIED.get(w, [])) for w in WIDGETS]
+say("per-widget rows:", rows_per, " queries:", q_per)
+gate("G2g", rows_per == [8, 12, 14, 8, 13, 4, 7] and q_per == [8, 12, 14, 11, 14, 4, 7],
+     "the per-widget counts are exactly rows 8/12/14/8/13/4/7 and queries 8/12/14/11/14/4/7")
 
 # ================================================================ G3 miss tracer
 print("\n-- G3  miss semantics: 0x6051fa / 0x6050d4 scan the row list, index:=count on a miss --")
@@ -423,6 +428,15 @@ gate("G3d", all((w, x, v) != (w, x, v2) for (w, x, v), (_, _, v2) in zip(abs_pai
 print("\n-- G4  paint handler classes (jump tables 0x4938c4 / byte table 0x4938e0) --")
 htab = [dword(0x4938C4 + 4 * k) for k in range(7)]
 say("handler table 0x4938c4:", [hexa(x) for x in htab])
+DISP = at(0x4934D4)
+m = re.match(r"eax,\[esi-0x([0-9a-f]+)\]$", DISP["arg"])
+DISP_KEY = int(m.group(1), 16) if m else None
+say("dispatch 0x4934d4 `%s` -> class byte = *(0x4938e0 + id - %s)" % (DISP["t"],
+     hexa(DISP_KEY) if DISP_KEY else "?"))
+
+
+def class_of(x):
+    return byte(0x4938E0 + x - DISP_KEY) if DISP_KEY is not None and 0 <= x - DISP_KEY < 0x60 else None
 
 
 def handler_kind(va):
@@ -457,10 +471,10 @@ say("\nA/V block (widget +0x7aec): id | mask | class | source | relabel ctrl")
 AV = dict(PAINT_BLOCKS)[0x7AEC]
 av_rows = []
 for x, mask in AV:
-    cls = byte(0x4938E0 + (x - 0x13)) if 0x13 <= x <= 0x58 else None
+    cls = class_of(x) if 0x13 <= x <= 0x58 else None
     hva = dword(0x4938C4 + 4 * cls) if cls is not None and cls < 7 else None
     kind, src, ctrl = handler_kind(hva) if hva else ("?", "?", None)
-    av_rows.append((x, mask, cls, kind, src, ctrl))
+    av_rows.append((x, mask, cls, kind, src, ctrl, hva))
     say("+0x7aec | %s | %s | class %s | %s | %s | %s" %
         (hexa(x), hexa(mask), cls, kind, src, hexa(ctrl) if ctrl else "-"))
 A = {r[0]: r for r in av_rows}
@@ -470,9 +484,27 @@ gate("G4a", A[0x37][3] == "radio" and A[0x38][3] == "radio" and A[0x39][3] == "r
 gate("G4b", (A[0x37][4], A[0x38][4], A[0x39][4]) == ("a4c", "a4c", "a50")
      and (A[0x37][1], A[0x38][1], A[0x39][1]) == (0x800, 0x400, 0x4000),
      "their masks are a4c 0x800 / a4c 0x400 / a50 0x4000 (M357's bits 11/10/14)")
-gate("G4c", not any(SET_ID in [imm(i["arg"]) for i in INS if hva and hva <= i["a"] <= hva + 60]
-                    for hva in (htab[1], htab[2], htab[3])),
-     "no radio handler calls 0x6050d4: they never write a checked bit")
+radio_hva = [r[6] for r in av_rows if r[3] == "radio"]
+say("radio handler VAs (from the class bytes):", [hexa(h) for h in radio_hva])
+
+
+def body_calls(va):
+    out = []
+    for i in INS[POS[va]:]:
+        if i["op"] == "call":
+            out.append(imm(i["arg"]))
+        if i["op"] in ("ret", "jmp") and out:
+            break
+        if i["op"] == "ret":
+            break
+    return out
+
+
+gate("G4c", len(radio_hva) == 3 and all(SET_ID not in body_calls(h) for h in radio_hva),
+     "the three radio handlers decoded for 0x37/0x38/0x39 never call set-by-id "
+     "0x6050d4 (bodies scanned to their own jmp/ret)")
+gate("G4f", DISP_KEY == 0x13 and (A[0x37][2], A[0x38][2], A[0x39][2]) == (1, 2, 3),
+     "the dispatch key is the MEASURED (id-0x13) and the three ids read class bytes 1/2/3")
 
 print("\nseventh widget (+0x913c) block 0x4936b8:")
 b7 = win(0x4936B8, 0x493718)
@@ -482,10 +514,25 @@ say("  ids/masks:", [(hexa(x), hexa(m)) for x, m in b7_dec])
 say("  a48 reloads in this block:", [hexa(x) for x in src7])
 say("  test operand:", "0x%x `and eax,edi` with eax=[ebp-0x8]" % 0x4936F5)
 b6_last_mask = dict(PAINT_BLOCKS)[0x8614][-1]
-gate("G4d", not src7 and b6_last_mask[1] == 0x1000,
-     "the block never reloads a48; its operand [ebp-0x8] is the previous block's last "
-     "masked value (0x%x & %s) so all four states are 0 for every a48" %
-     (b6_last_mask[1], "a48"))
+# every write to [ebp-0x8] between the a48 load and the seventh block's first test
+w8 = [i for i in win(0x4935D4, 0x4936F0) if i["op"] == "mov"
+      and i["arg"].startswith("DWORD PTR [ebp-0x8],")]
+a48_load = [i["a"] for i in win(0x4935D4, 0x4936B1) if i["op"] == "mov"
+            and i["arg"] == "ecx,DWORD PTR [ebx+0xa48]"]
+b6_mask_mov = [i["a"] for i in win(0x4935D4, 0x4936B1) if i["op"] == "and"
+               and i["arg"] == "ecx,edi"]
+operand = at(0x4936F2)["arg"]
+say("  writes to [ebp-0x8]:", [(hexa(i["a"]), i["arg"]) for i in w8])
+say("  a48 -> ecx loads:", [hexa(x) for x in a48_load], " `and ecx,edi`:", [hexa(x) for x in b6_mask_mov])
+say("  seventh-block operand load:", "0x4936f2 `%s`, tested at 0x4936f5 `%s`" %
+    (operand, at(0x4936F5)["arg"]))
+gate("G4d", not src7 and b6_last_mask[1] == 0x1000 and len(w8) == 1
+     and w8[0]["a"] == 0x49368C and w8[0]["arg"].endswith(",ecx")
+     and len(a48_load) == 1 and a48_load[0] == 0x4935D4 and len(b6_mask_mov) == 1
+     and b6_mask_mov[0] == 0x49368A and operand == "eax,DWORD PTR [ebp-0x8]",
+     "the seventh block never reloads a48: its operand [ebp-0x8] is THE single write at "
+     "0x49368c = ecx & edi, ecx from [ebx+0xa48] (0x4935d4), edi = the block's last mask "
+     "0x%x -> all four states are 0 for every a48" % b6_last_mask[1])
 gate("G4e", all((row_mask & 0x1000) == 0 for _, row_mask in b7_dec if row_mask),
      "every mask in the seventh block is disjoint from 0x1000 -> the AND is identically 0")
 
@@ -529,19 +576,57 @@ for (tab, n), (w, dec) in zip(PAINT_TABLES, PAINT_BLOCKS):
         if x in r:
             continue
         if merge is None:
-            cls = byte(0x4938E0 + (x - 0x13))
+            cls = class_of(x)
             tgt = dword(0x4938C4 + 4 * cls)
         else:
             tgt = merge
         if first_call(tgt) == SET_ID:
             bad_pairs.append((w, x))
-say("absent-id (widget,id) pairs ever passed to set-by-id:", [(hexa(w), hexa(x)) for w, x in bad_pairs])
+say("absent-id (widget,id) pairs decoded from the PAINT blocks:", [(hexa(w), hexa(x)) for w, x in bad_pairs])
+# census: every set-by-id call site in .text, with the widget it targets (member offset)
+WID7 = set(WIDGETS)
+def widget_at(n):
+    """the member offset ecx holds at instruction n, traced over the preceding block."""
+    j = n - 1
+    while j > 0 and INS[j]["op"] != "call":
+        j -= 1
+    edi_off = w = None
+    for i in INS[j:n]:
+        if i["op"] == "lea":
+            m = re.search(r"^(ecx|edi),\[(?:esi|ebx)\+0x([0-9a-f]+)\]$", i["arg"])
+            if m:
+                off = int(m.group(2), 16)
+                if m.group(1) == "edi":
+                    edi_off = off
+                else:
+                    w = off
+        if i["op"] == "mov" and i["arg"] == "ecx,edi" and edi_off is not None:
+            w = edi_off
+        if i["op"] == "add" and i["arg"].startswith("ecx,0x"):
+            v = imm(i["arg"].split(",", 1)[1])
+            if v:
+                w = v
+    return w
+
+
+sites = []
+for n, i in enumerate(INS):
+    if i["op"] == "call" and imm(i["arg"]) == SET_ID:
+        sites.append((i["a"], widget_at(n)))
+say("set-by-id call sites: %d total, %d target one of the seven widgets (%d in paint)" %
+    (len(sites), len([1 for a, w in sites if w in WID7]),
+     len([1 for a, w in sites if w in WID7 and PAINT[0] <= a <= PAINT[1]])))
+foreign = [w for a, w in sites if w not in WID7]
+say("  targets outside the seven widgets (other dialog objects):", sorted({hexa(w) for w in foreign}))
+gate("G5c", len([1 for a, w in sites if w in WID7]) ==
+     len([1 for a, w in sites if w in WID7 and PAINT[0] <= a <= PAINT[1]]),
+     "every set-by-id call aimed at one of the seven widgets is inside PAINT 0x4930e0")
 gate("G5a", len(setbit_callers) == 3 and imm(at(0x605008)["arg"]) == SET_BIT,
      "three bit-write paths, all indexed: add_item (index = count-so-far), toggle-by-bit, and "
      "set-by-id's inline OR/AND (index = the scan result)")
-gate("G5b", all(w != 0x7AEC and w != 0x8614 for w, _ in bad_pairs) and (0x913C, 0x50) in bad_pairs,
-     "no absent id is ever written into the A/V or warnings widgets -> their bits 8 and 13 "
-     "are never set; the one absent-id write is (0x913c,0x50)")
+gate("G5b", bad_pairs == [(0x913C, 0x50)],
+     "over the seven widgets the absent-id writes are EXACTLY [(0x913c,0x50)]: the A/V bit 8 "
+     "and the +0x8614 bit 13 are written by nothing")
 
 # ================================================================ G6 built row 0x30
 print("\n-- G6  the id the seventh widget actually built (0x30) --")
