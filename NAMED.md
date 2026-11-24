@@ -1413,18 +1413,17 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | the printed digest is PINNED by G7 - the ACCEPT anchor cannot drift silently | `:200`,`:209` | V MU7 |
 | OPEN: which of the 27 API call sites is the production-completion call; 3 pointer writers (`0x4f38b0`, `0x4f3eb1`, `0x4f3f3e`) sit in regions the Ghidra index does NOT name (semantics unidentified); projects 39..71 unmeasured | - | lead |
 
-## M339 (s320-chain2, pick (x6) "callee 0x5f1394", STATIC 7/7, review #359 hardened) — 0x5f1394 = the modal SCREEN RUNNER; its return is the screen OBJECT's `+0xa40` result cell, and the difficulty dialog writes that return into `ds:0x985aec` + all 8 faction blocks — `evidence/m339_modal_runner.txt:1`
+## M339 (s320-chain2, STATIC 7/7, review #359 hardened) — 0x5f1394 = the modal SCREEN RUNNER; its return is the screen OBJECT's `+0xa40` result cell, and the difficulty dialog writes that return into `ds:0x985aec` + all 8 faction blocks. FULL TABLE VERBATIM at `docs/named-archive-m339-rows.md` (`9a93e8acca0a99ac0779babaa63a94ae5afca934`); this stub governs, one line per claim; every `:<line>` below is `evidence/m339_modal_runner.txt:<line>`
 
-| claim | line | kind |
+| claim (one line) | evidence | conf |
 |---|---|---|
-| FUN_005f1394 = 11,207 B span / 2,235 insns (gap histogram 2220x0 + 14x3 = the objdump byte-column wraps, no overlap); `ret 0x8`, args read = only `[ebp+0x8]`/`[ebp+0xc]`; SEH `0x66f786`, `sub esp,0x38c`, first call `[vtbl+0x170]`@0x5f13c6 whose 0 -> `or eax,-1`; vtable lane {15c,160,164,16c,170}; window create 0x5e3ed9's error returned verbatim | `:1`, `:42-43` | V MU1,MU2,MU9 |
-| 7 exits, all jumping to the ONE SEH-restore label (no jump skips it): -1 x2, 0 x1, passthrough x2, `ds:0x698d0c` x1, `[obj+0xa40]` x1; the two passthroughs are TRACED to their feeder calls `[vtbl+0x15c]` and `0x5e3ed9`; +0xa40 read ONCE / written 0x, +0xa44 never read | `:43-44` | V MU3,MU7,ALG_A1 |
-| 94 direct thiscall sites, exact receiver census: 76 `lea ecx,[ebp-…]` (screen object = a caller frame local), 14 pointer slots, 3 register, 1 global `0x9210a8`; none without a receiver | `:45` | V MU4,MU10 |
-| FUN_004ddaa0 seeds `ds:0x985aec` into obj+0xa44 (0x4ddb3e/4d, the store ADJACENT to the call, receiver = the same lea 0x4ddb47), `call 0x5f1394`, `test eax,eax`/`jge 0x4ddcf1`; there `mov ds:0x985aec,eax` (no eax write in between) then `mov [ecx],eax` + `add ecx,0x20bc` + back-edge `jl 0x4ddcfb` from 0x94d438 to 0x95da18 = 8 iterations => the return IS the new effective difficulty of 8 factions | `:46` | V MU5,MU6,MU8,MU11,MU12 |
-| rivals dead: "the runner is the chooser" — 0 refs to 0x94d2ac/0x985aec in 2,235 insns vs 3 in FUN_004ddaa0's own extent; "return is a dialog ID" — its only IMMEDIATE returns are -1 and 0 | `:47` | V MU7 |
-| ACCEPT `python3 -u scripts/m339_modal_runner.py` -> `PASS M339: 7/7` `d76a5e83770b77bb` x2, `text_sha256=eb9f463e…` (`evidence/m339_modal_runner.txt:49-50`); harness `m339_mutate.py` 13/13 `927a1c66c322709e`, `--selftest` 3/3 | `evidence/m339_mutate.txt:17` | V |
-| OPEN: the writer of `[screen+0xa40]` (outside the runner and outside FUN_004ddaa0); call site 0x57dd45 pushes ONE dword against `ret 0x8` (frame restore tolerates it); the MFC `DoModal` identity is INFERRED from shape only | - | lead |
-
+| FUN_005f1394 = 11,207 B / 2,235 insns, `ret 0x8`, SEH 0x66f786, `sub esp,0x38c`; vtable lane {15c,160,164,16c,170} | `:1`, `:42-43` | V MU1,MU2,MU9 |
+| 7 exits all through the ONE SEH-restore label; `[obj+0xa40]` read ONCE, written 0x; +0xa44 never read | `:43-44` | V MU3,MU7,ALG_A1 |
+| 94 direct thiscall sites: 76 `lea ecx,[ebp-…]`, 14 pointer slots, 3 register, 1 global 0x9210a8; none receiverless | `:45` | V MU4,MU10 |
+| FUN_004ddaa0: seed 0x985aec -> obj+0xa44, `call 0x5f1394`, `test eax`/`jge`, store-back + 8-iteration faction loop (0x20bc) | `:46` | V MU5,MU6,MU8,MU11,MU12 |
+| rivals dead: runner is not the chooser (0 refs in 2,235 insns); return is not a dialog ID (only -1/0 immediates) | `:47` | V MU7 |
+| ACCEPT `scripts/m339_modal_runner.py` -> `PASS M339: 7/7` `d76a5e83770b77bb` x2; harness 13/13; `--selftest` 3/3 | `evidence/m339_mutate.txt:17` | V |
+| OPEN at s320: writer of `[screen+0xa40]` — CLOSED by M343 (3 dialog-family methods) | - | lead |
 ## M341 (s321-chain2, STATIC 10/10; ACCEPT `python3 -u scripts/m341_hof_window.py` -> `PASS M341: 11/11`, `digest=1cfdea39295dadce`, 2 runs identical; harness `scripts/m341_mutate.py` 19/19 `e1c003e81552f53f`) - the HoF record window is `5*n - 5 + s`: THREE .text sites decode to the same law, so the 35 records at 0x983a10 are 7 blocks x 5 rows and page index 8 lands on the terminator. FULL-LENGTH TABLE VERBATIM at `docs/named-archive-m343-rows.md:5` (sha1 `bcf9ba24a3eb4efb`); this stub governs, one line per claim
 
 | # | claim (one line) | conf |
@@ -1460,3 +1459,15 @@ Every `V` row above is the archived row's verdict verbatim: its mutant (MU1-MU25
 | stamp = `or BYTE PTR [eax],cl` @`0x4f0ec0` in FUN_004ef6d0: mapper(item=`edi`) -> 304*`ds:0x68cbb0`, 10 pinned insns, **0x86** before the byte-read `call 0x4ef5d0` (pop) @`0x4f0f46` | `:51-70`,`:143`,`:145` | V MU6,MU8 |
 | the same block spends `[edx+0x40]` by `edi` (`0x4f0ca4/6`) then reads `[edi*48+0x984d38]` (`0x4f0f65-6f`), `edi` unwritten in between | `:112-124`,`:144` | V MU7 |
 | the 8 caller ROLES; `edx` at `0x4f0ca1` = the base record; `+0x40` = accumulated minerals; `edi` = the completed item | `:40-50` | INFERRED |
+## M345 (s324-chain2, 12/12) — the dialog family `+0x64` commit slot has no .text dispatcher
+
+| claim | evidence | conf |
+|---|---|---|
+| slot `0x5f58fa` = 5 data dwords, all a family vt+0x64; 0 `.text` operands (no call/thunk/lea) | `evidence/m345_slot64_dispatch.txt:3-10` | V MU1,MU3,MU2 |
+| ctor 0x405ef0: 0x67164c at +0, CPane 0x671644 at +0x444 -> its `+0x6c` IS the primary `+0x64` | `:16,:93` | V MU1,MU4 |
+| trio `+0x60`/`+0x64`/`+0x68` = 5f59bf ret8 / 5f58fa ret4 / 5f59e8 | `:12-15` | V MU5 |
+| universe = 19 `[r+0x64]` + 18 `[r+0x6c]` calls, 0 jmp, 0 in the dialog module | `:18-57,:86-89` | V MU6,MU10 |
+| arity {0:3,1:5,5:8,6:3}: 5 fit ret 4 = 3 MEMBER + 2 self, none a dialog | `:59-65,:100` | V MU8,MU9 |
+| module's 4 `[r+0x64]` are movs; 5f49ad/b9 swaps `[this+0x2240]+0x64` | `:67-77,:102` | V MU7,MU10 |
+| ACCEPT `m345_slot64_dispatch` -> `PASS M345: 12/12` `833faf38e189ad40` x2; harness 11/11 | `:104` | V MU0 |
+| OPEN: MEMBER-receiver classes (+0xf624/+0xd9ec/+0x3870/+0x270c) untyped | - | lead |

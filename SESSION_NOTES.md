@@ -452,6 +452,18 @@ printers of measured values need the same None-guard as the gate.
 - **PITFALL:** `"DWORD PTR"` CONTAINS `"WORD PTR"` — a width test that checks WORD first read all 72 refs as 2-byte (first run: dword 0, G1 red). PITFALL 2: the CPane subobject vtable 0x671644 carries the same two functions at +0xb0/+0x6c, not at the class offsets +0xa8/+0x64.
 - **UNKNOWN:** who dispatches the +0x64 slot (19 `call [reg+0x64]` sites image-wide, none direct); the container's item record past +0xec; any consumer of `[this+0x3100]` (5759 stages the arg there).
 
+## Session 324-chain2 (2026-11-24) — M345: the `+0x64` slot DISPATCH, answered NEGATIVE (milestone/m345)
+
+- **SLOT:** `0x5f58fa` occurs **5x** as data, all `.rdata` at vtable+0x64 (0x6716b0/0x671830/0x672924/0x675d28/0x67772c); **0** `.text` operands (no call/thunk/lea). G1,G2.
+- **ALIAS LAW:** ctor `FUN_00405ef0` installs 0x67164c at +0 and CPane 0x671644 at +0x444; 0x671644 sits 8 lower, so its `+0x6c` IS the primary `+0x64` — hence the census must include `+0x6c`. G3,G4.
+- **TRIO:** `+0x60` 0x5f59bf `ret 8` (refuses on `[this+0x30a8]&0x4000`), `+0x64` 0x5f58fa `ret 4` (arg never read), `+0x68` 0x5f59e8. G5.
+- **UNIVERSE:** 19 `call [r+0x64]` + 18 `call [r+0x6c]`, 0 jmp; **0 of 37** in 0x5f0000-0x600000; evasions absent (0 cached-slot->`call reg`, 0 `lea`+`call [r]`). G6,G7,G9.
+- **ARITY:** {0:3,1:5,5:8,6:3}; 5 sites fit `ret 4` = 3 MEMBER + 2 self: `+0xf624` array elem, `+0xd9ec`, `+0x3870` (in FUN_00488ac0, a 13/27 key handler at +0x1e4 of family vt 0x675cc4), `[this+0x14]` (forwarder at +0x188 of class 0x676f70 whose `+0x64` is 0x4b8430), self in FUN_005cf43a. None is a dialog. G10.
+- **TRAP:** the module's 4 `[r+0x64]` are all `mov`; 0x5f49ad/b9 swaps `[this+0x2240]+0x64` (read, then `[this+0x3168]` back) — a mnemonic-blind census calls it a dispatch. G8,G12 (swap measured).
+- **ACCEPT** `m345_slot64_dispatch.py` -> `PASS M345: 12/12` `833faf38e189ad40` x2 (`evidence/m345_slot64_dispatch.txt:104`); `m345_mutate.py` 11/11, NO-OP [] (`evidence/m345_mutate.txt:17`). NAMED 245,927 B; M339 rotated VERBATIM to `docs/named-archive-m339-rows.md` (`9a93e8acca0a99ac`, `--verify` ok).
+- **REVIEW #368:** 10 findings, all fixed in the instrument — dynamic gate count + G12, TABLE 3 prints all 37, G7/G10 full-set with a pinned kind set, G4 asserts `[eax]`, digest widened to the whole universe, M339 stub cites named.
+- **UNKNOWN:** classes of the three MEMBER receivers and of FUN_00409a40's `+0x270c` member (no vptr install for it image-wide) — if one is a dialog the slot is live; consumer of `[this+0x3100]`.
+
 ## Session 324 — B31 BUILD (round 5/10): the recorded run as the completion ORACLE
 
 Command: `python3 -u -m sim.facoracle` -> `PASS B31: 16/16 gates` (`evidence/b31_facoracle.txt:63`),

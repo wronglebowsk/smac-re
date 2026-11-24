@@ -1,0 +1,17 @@
+baseline: PASS M345: 12/12 gates   digest=833faf38e189ad40
+baseline gates: 12 PASS, 0 FAIL
+
+  id    row defended                                        expected  reddened  verdict
+  MU0   ACCEPT baseline (no mutation, must stay 12/12)   -         -         BASELINE
+  MU1   slot census == 5 data dwords                     G1        G1,G3     RED
+  MU2   no .text operand names the slot                  G2        G2        RED
+  MU3   all five family vtables carry the slot (5th dword patched) G3        G1,G3     RED
+  MU4   ctor installs the CPane vptr at +0x444           G4        G4        RED
+  MU5   slot arity is one (ret 4)                        G5        G5        RED
+  MU6   19 x call [r+0x64]                               G6        G10,G6    RED
+  MU7   module [r+0x64] forms are 4 movs, none a dispatch G8        G8        RED
+  MU8   no cached-slot -> call reg pair (evasion detector) G9        G10,G6,G9 RED
+  MU9   arity/BB classifier (algorithm mutant: no block bounds) G10       G10       RED
+  MU10  the runner dispatches no +0x64 slot              G11       G11,G6,G7,G8 RED
+
+HARNESS PASS M345: 11/11 scored, NO-OP [], uncovered []

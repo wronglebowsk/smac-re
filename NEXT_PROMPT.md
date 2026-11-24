@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 10/10 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B30 + M54A-M342 (`NAMED ## B30`, `## M340`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
+# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 11/11 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B30 + M54A-M342 (`NAMED ## B30`, `## M340`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -125,3 +125,5 @@ Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar not
 M342 (x9) MERGED: +0x8c `or` x11, `and` x3; pop NON-writer. 7/7 2b88df5da5aeafe1, 9/9.
 - M339 MERGED: 0x5f1394 = the modal SCREEN RUNNER; return = the screen obj's +0xa40 cell; FUN_004ddaa0 writes it to ds:0x985aec + 8 faction blocks. 7/7 d76a5e83770b77bb, harness 13/13.
 - M343 (s323-chain2) MERGED: `[obj+0xa40]` writer = 3 dialog methods (FUN_005f5759 +0xa8 x4, FUN_005f58fa +0x64 x3, FUN_005f5a11 ds:0x9977f0 x2). 9/9 bcdace84a0352b4a, harness 12/12. NAMED ## M343.
+
+- M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11
