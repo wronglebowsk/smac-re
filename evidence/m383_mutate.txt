@@ -9,6 +9,10 @@ MU6   code  K2    killed   'do not read the type record'
 MU7   code  K4    killed   'K4 the sibling accumulator does not take A alone'
 MU8   code  K5    killed   'K5 [ebp-8] is not the 52*unit'
 MU9   code  K3    killed   'does not index a 0x10-stride byte table'
+MU14  code  K4    killed   'K4 the sibling accumulator does not take A alone'
+MU15  code  K1    killed   'K1 the addend is not added to the loaded FIELD'
+MU16  code  K3    killed   'does not index a 0x10-stride byte table'
+MU17  code  K2    killed   'the scaled symbol is not the unit-type word load'
 MU10  code  R0    killed   'R0 the provable droppers are not the 2'
 MU11  code  R0    killed   'R0 the unresolved set changed'
 MU12  code  R0    killed   'R0 the provable droppers are not the 2'
@@ -24,5 +28,6 @@ A8    algo  K5    killed   'K5 [ebp-8] is not the 52*unit'
 A9    algo  R0    killed   'R0 the unresolved set changed'
 A10   algo  R1    killed   'R1 resolved'
 A11   algo  R0    killed   'R0 the provable droppers are not the 2'
+A12   algo  R0    killed   'R0 an unresolved store sits in a function whose CFG is NOT closed'
 
-SUMMARY M383: 24/24 killed
+SUMMARY M383: 29/29 killed

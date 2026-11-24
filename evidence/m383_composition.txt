@@ -3,7 +3,7 @@ K0  store census - the field's direct stores, and which one adds
     FUN_00556690: 0x5566d5 0x5579ea
     FUN_0059ec90: 0x59efb1
   ok  K0 exactly 3 direct stores; the ADDer is 0x5579ea (the other two are the creation/reset zeroing runs M380 proved)
-  pinned instructions 13/13 present with the expected mnemonic
+  pinned instructions 17/17 present with the expected mnemonic
   the accumulator window 0x557972..0x5579eb: 40 instructions
     0x557972 mov    eax,DWORD PTR [ebp-0x8]
     0x557975 push   edi
@@ -48,6 +48,7 @@ K0  store census - the field's direct stores, and which one adds
 
 K1  term algebra - parse the stored value into an expression tree
   stored value parsed as: (FIELD+((((ARM_RATE(b[eax*4+0x98adae], edi)+OFF_RATE(b[edx*4+0x98adad], edi))*(SITE_FACTOR(slot-4, #0, #0)+0x6))+lowbits)>>3))
+  the stored value is FIELD + <term>: yes
   term = mul(<ARM_RATE+OFF_RATE>, <rate>) where rate = SITE_FACTOR(slot-4, #0, #0); shifted >>3
   ok  K1 addend = (OFF_RATE + ARM_RATE) * (SITE_FACTOR + 6) >> 3, added to the loaded field and stored back
 
@@ -58,6 +59,7 @@ K2  the two leaves - who OFF_RATE and ARM_RATE are called with
   ok  K2 OFF_RATE <- byte[0x98ad88+0x25+52*type], ARM_RATE <- byte[0x98ad88+0x26+52*type] (one type record, both ids)
   0x5706c0 type index: table load 0x557985 [edx*4+...], symbol coeffs {'@557976': 13} -> stride [52]
   0x570670 type index: table load 0x5579a7 [eax*4+...], symbol coeffs {'@557998': 13} -> stride [52]
+  unit array 0x933278 + 0xa = 0x933282 = the type word's displacement 0x933282: True
   ok  K2 both indices measure 13*type*4 = 52*type off the SAME word load at unit+0xa (0x34 = the type-record stride)
 
 K3  the tables behind the two ratings
@@ -81,6 +83,7 @@ K4  the sibling accumulator - what distinguishes the two summed inputs
     0x557a15 add    edx,eax
     0x557a17 test   ecx,ecx
     0x557a19 mov    DWORD PTR [ebx+0x94e490],edx
+  rate carried into the sibling: `mov eax,ecx` at 0x5579fe; the rate itself is `add ecx,0x6` at 0x5579c9 (shared with the field term)
   sibling term: imul eax,esi at 0x557a03
   rate register ecx is the SAME (SITE_FACTOR+6); only the additive input differs:  +0x105c takes A+B, +0x1060 takes A alone
   ok  K4 the sibling dword takes ONE of the two ratings at the same rate -> the pair (A,B) are two distinct summed inputs
@@ -122,9 +125,9 @@ R0  the 27 relations-dword rewrites - must-dataflow over the function CFG
   555f39 eax  PRESERVE      in   in   555f36 and ah,0xfd
   555f4b edx  PRESERVE      in   in   555f48 and dh,0xfd
   totals: 27 stores, PRESERVE 23, DROP 2, unknown 2
-  reason 52b9c7: source is stack slot slot:-0x50, written 0x52affb from the field (0x52aff5); FUN_0052a720 carries 5 INDIRECT jump-table edges, so the predecessor set is not closed and no value can be proved on every path
-  reason 52b9d0: source is stack slot slot:-0x4c, written 0x52b004 from the field (0x52affe); FUN_0052a720 carries 5 INDIRECT jump-table edges, so the predecessor set is not closed and no value can be proved on every path
-  ok  R0 25/27 resolve; the only 2 that do not are stack-slot copies whose slot is not written on every path (reason above)
+  reason 52b9c7: source is stack slot slot:-0x50, written 0x52affb from the field (0x52aff5); CFG closure: 0 unresolved indirect edge(s); the writer does NOT dominate the store
+  reason 52b9d0: source is stack slot slot:-0x4c, written 0x52b004 from the field (0x52affe); CFG closure: 0 unresolved indirect edge(s); the writer does NOT dominate the store
+  ok  R0 25/27 resolve over a CLOSED CFG (jump tables resolved from the emitting `cmp/ja` bounds); the only 2 that do not write a stack slot that is NOT written on every path to the store (dominance measured above)
 
 R1  the 14 M380 left unknown (it stopped at the first branch/call)
   M380's 14: 14 present in the store set; now resolved 12: 552cca=PRESERVE, 552cd8=PRESERVE, 552d6f=PRESERVE, 552d7d=PRESERVE, 55540a=PRESERVE, 5556eb=PRESERVE, 555758=PRESERVE, 55580f=PRESERVE, 555a45=PRESERVE, 555a60=PRESERVE, 555a6e=PRESERVE, 555f39=PRESERVE

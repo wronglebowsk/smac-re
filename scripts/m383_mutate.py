@@ -30,6 +30,14 @@ MUTANTS = [
     ("MU8", "code", "0x556c95|shl esi,0x3", "K5", "K5 [ebp-8] is not the 52*unit"),
     ("MU9", "code", "0x5706c6|shl eax,0x3", "K3",
      "does not index a 0x10-stride byte table"),
+    ("MU14", "code", "0x5579fe|mov eax,esi", "K4",
+     "K4 the sibling accumulator does not take A alone"),
+    ("MU15", "code", "0x5579da|mov edx,DWORD PTR [ebx+0x94e490]", "K1",
+     "K1 the addend is not added to the loaded FIELD"),
+    ("MU16", "code", "0x5706c9|mov eax,DWORD PTR [eax+0x92b950]", "K3",
+     "does not index a 0x10-stride byte table"),
+    ("MU17", "code", "0x557976|movsx eax,WORD PTR [eax+0x9332a6]", "K2",
+     "the scaled symbol is not the unit-type word load"),
     # -- the relations (R) rows
     ("MU10", "code", "0x55542d|or ah,0x7f", "R0", "R0 the provable droppers are not the 2"),
     ("MU11", "code", "0x555a38|mov eax,DWORD PTR [ebx+0x94d468]", "R0",
@@ -50,6 +58,7 @@ MUTANTS = [
     ("A9", "algo", "9", "R0", "R0 the unresolved set changed"),
     ("A10", "algo", "10", "R1", "R1 resolved"),
     ("A11", "algo", "11", "R0", "R0 the provable droppers are not the 2"),
+    ("A12", "algo", "12", "R0", "R0 an unresolved store sits in a function whose CFG is NOT closed"),
 ]
 
 

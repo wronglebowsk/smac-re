@@ -39,6 +39,7 @@ Mutants (scripts/m383_mutate.py drives both):
 import hashlib
 import os
 import re
+import struct
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -234,7 +235,10 @@ def chain_to(k, reg, n=24):
 # contract: a mutation harness patches these bytes, the instrument reads them, and a patch
 # that changes a mnemonic reddens K0 before any downstream gate can be satisfied.
 PINS = [
-    (0x557985, "mov"), (0x5579A7, "mov"),          # the two type-record byte loads
+    (0x557976, "movsx"), (0x557985, "mov"),        # the type word and its +0x25 byte
+    (0x5579A7, "mov"),                             # the +0x26 byte
+    (0x5579DA, "mov"), (0x5579FE, "mov"),          # the field load and the sibling's rate copy
+    (0x5706C9, "mov"),                             # the OFF table byte load
     (0x5579C9, "add"), (0x5579CE, "imul"),         # the rate add and the term multiply
     (0x5579E0, "sar"), (0x5579EA, "mov"),          # the >>3 and the field store
     (0x557A03, "imul"),                            # the sibling accumulator's term
@@ -466,6 +470,12 @@ def shape(e):
     return mul, left, right, lc, rate, sar
 
 
+adds_to_field = (isinstance(store_expr, Ex) and store_expr.op == "add"
+                 and any(isinstance(x, Ex) and x.op == "atom" and x.k[0] == "FIELD"
+                         for x in store_expr.k))
+say(f"  the stored value is FIELD + <term>: {'yes' if adds_to_field else 'NO'}")
+if not adds_to_field:
+    bad("K1 the addend is not added to the loaded FIELD (a different dword is accumulated)")
 mid = None
 if store_expr is not None:
     r = shape(store_expr)
@@ -563,16 +573,21 @@ elif not all(s and s.startswith("@") and "0x933282" in
              INS[IDXBY[int(s[1:], 16)]]["ops"].lower() for s in SYM):
     bad(f"K2 the scaled symbol is not the unit-type word load: {SYM}")
 else:
-    say("  ok  K2 both indices measure 13*type*4 = 52*type off the SAME word load at "
-        "unit+0xa (0x34 = the type-record stride)")
+    say(f"  unit array {UNIT:#x} + 0xa = {UNIT + 0xA:#x} = the type word's displacement "
+        f"{UNIT_TYPE:#x}: {UNIT + 0xA == UNIT_TYPE}")
+    if UNIT + 0xA != UNIT_TYPE:
+        bad("K2 the type word is not unit+0xa")
+    else:
+        say("  ok  K2 both indices measure 13*type*4 = 52*type off the SAME word load at "
+            "unit+0xa (0x34 = the type-record stride)")
 
 # ================================================================ K3
 say("")
 say("K3  the tables behind the two ratings")
 for t, base, nm in ((C_A, T_OFF, "OFF"), (C_B, T_ARM, "ARM")):
     body = win(t, t + 0x60)
-    ld = [i for i in body if i["mn"] == "mov" and re.search(
-        r'\[\s*(\w+)\s*\+\s*0x%x\s*\]' % base, i["ops"].lower())]
+    ld = [i for i in body if i["mn"] == "mov" and "byte ptr" in i["ops"].lower()
+          and re.search(r'\[\s*(\w+)\s*\+\s*0x%x\s*\]' % base, i["ops"].lower())]
     if not ld:
         say(f"  {t:#x} ({nm}): byte table load MISSING")
         bad(f"K3 {t:#x} does not index a 0x10-stride byte table at {base:#x}")
@@ -597,7 +612,15 @@ SIB = win(0x5579F0, 0x557A1C)
 for i in SIB:
     say(f"    {i['a']:#08x} {i['mn']:6s} {i['ops']}")
 sib_mul = [i for i in SIB if i["mn"] == "imul"]
-sib_ok = bool(sib_mul) and fam(src(sib_mul[0])) == "esi" and fam(dst(sib_mul[0])) == "eax"
+rate_copy = [i for i in SIB if i["mn"] == "mov" and dst(i).lower() == "eax"
+             and src(i).strip().lower() == "ecx"]
+rate_add = [i for i in W if i["mn"] == "add" and dst(i).lower() == "ecx" and imms(src(i)) == [6]]
+say(f"  rate carried into the sibling: `mov eax,ecx` at "
+    + (f"{rate_copy[0]['a']:#08x}" if rate_copy else "MISSING")
+    + f"; the rate itself is `add ecx,0x6` at "
+    + (f"{rate_add[0]['a']:#08x}" if rate_add else "MISSING") + " (shared with the field term)")
+sib_ok = (bool(sib_mul) and fam(src(sib_mul[0])) == "esi" and fam(dst(sib_mul[0])) == "eax"
+          and bool(rate_copy) and bool(rate_add))
 say(f"  sibling term: imul eax,esi at {sib_mul[0]['a']:#08x}" if sib_mul else "  no imul")
 say(f"  rate register ecx is the SAME (SITE_FACTOR+6); only the additive input differs:"
     f"  +0x{FIELD - BLOCK:x} takes A+B, +0x{FIELD_B - BLOCK:x} takes A alone")
@@ -638,6 +661,62 @@ REL = [i for i in INS if mem_dest(i) and any(PAIR <= v <= PAIR + 3 for v in disp
 say(f"  direct stores to {PAIR:#x}: {len(REL)}")
 
 
+# ---- PE VA reads (jump tables live in .rdata, addresses are VAs)
+_EXE = os.path.join(ROOT, "programs/terran.exe")
+_D = open(_EXE, "rb").read()
+_pe = struct.unpack_from("<I", _D, 0x3C)[0]
+_so = _pe + 24
+_nsec = struct.unpack_from("<H", _D, _pe + 6)[0]
+_opthdr = struct.unpack_from("<H", _D, _pe + 20)[0]
+_ibase = struct.unpack_from("<I", _D, _so + 28)[0]
+SECS = []
+for _i in range(_nsec):
+    _o = _so + _opthdr + _i * 40
+    _vsz, _va, _rsz, _ra = struct.unpack_from("<IIII", _D, _o + 8)
+    SECS.append((_va + _ibase, _rsz, _ra, _vsz))
+
+
+def va_dword(va):
+    for sva, rsz, ra, vsz in SECS:
+        if sva <= va < sva + max(rsz, vsz) and va - sva + 4 <= rsz:
+            return struct.unpack_from("<I", _D, ra + (va - sva))[0]
+    return None
+
+
+JT = re.compile(r'\[\s*(\w+)\s*\*\s*4\s*\+\s*(0x[0-9a-f]+)\s*\]', re.I)
+
+
+def jump_table(j, fn_lo, fn_hi):
+    """Resolve `jmp DWORD PTR [reg*4+TABLE]` -> its target list.
+    The entry count is MEASURED from the emitting guard: the last `cmp reg,imm`
+    before the `ja/jae` that jumps out of the switch bounds the index to imm+1."""
+    i = INS[j]
+    if ALGO == 12:
+        return None                   # law: an indirect jump is a hole
+    m = JT.search(i["ops"])
+    if not m:
+        return None
+    reg = fam(m.group(1))
+    table = int(m.group(2), 16)
+    bound = None
+    for k in range(j - 1, max(0, j - 14), -1):
+        c = INS[k]
+        if c["mn"] == "cmp" and fam(dst(c)) == reg and imms(c["ops"]):
+            nxt = INS[k + 1]
+            if nxt["mn"] in ("ja", "jae", "jg", "jge", "jbe", "jb"):
+                bound = imms(c["ops"])[0]
+                break
+    if bound is None or bound > 0x400:
+        return None
+    tg = []
+    for e in range(bound + 1):
+        d = va_dword(table + 4 * e)
+        if d is None or d not in IDXBY or not (fn_lo <= d < fn_hi):
+            return None
+        tg.append(d)
+    return (reg, table, bound + 1, tg)
+
+
 def cfg(fn_lo, fn_hi):
     succ, bad_edges = {}, 0
     for i in INS:
@@ -653,8 +732,13 @@ def cfg(fn_lo, fn_hi):
             if t and int(t.group(1), 16) in IDXBY:
                 succ[i["a"]] = [int(t.group(1), 16)]
             else:
-                succ[i["a"]] = []          # indirect: flag, assume unreachable-only
-                bad_edges += 1
+                jt = jump_table(k, fn_lo, fn_hi)
+                if jt:
+                    succ[i["a"]] = sorted(set(jt[3]))
+                    TABLES.append((i["a"], jt[1], jt[2]))
+                else:
+                    succ[i["a"]] = []
+                    bad_edges += 1
         elif m in JCC or m in ("loop", "loope", "loopne"):
             t = TGT.match(i["ops"].strip())
             succ[i["a"]] = ([nxt] if nxt else []) + \
@@ -669,7 +753,10 @@ STAMP = {"lo": 0x8000, "hi": 0x10000}
 
 
 def newstate():
-    return {}
+    # every register starts UNKNOWN: a missing key must mean "unreachable", never
+    # "this path simply did not write it" (that reading would inherit another path's
+    # value across a join and manufacture PRESERVEs).
+    return {r: (U, U, None) for r in ("eax", "ebx", "ecx", "edx", "esi", "edi")}
 
 
 def meet(a, b):
@@ -760,7 +847,8 @@ def transfer(s, i, byte_reach_bug=False):
     if const is None:
         # register-to-register with an unknown mask: `or` can only set bits
         if m == "or" and re.fullmatch(r'[a-z]{2,3}', sr):
-            s[fr] = (av, ah, None)
+            # or cannot clear a set bit, but it CAN set a provably-0 one: in->in, out->unk
+            s[fr] = ({I: I, O: U, U: U}[av], {I: I, O: U, U: U}[ah], None)
             return s
         if m == "and" and re.fullmatch(r'[a-z]{2,3}', sr):
             ov, oh = get(s, fam(sr))[:2]
@@ -803,6 +891,36 @@ def transfer(s, i, byte_reach_bug=False):
     return s
 
 
+TABLES = []
+
+
+def dominators(succ, entry):
+    nodes = list(succ)
+    preds = {a: [] for a in nodes}
+    for a, ss in succ.items():
+        for t in ss:
+            preds[t].append(a)
+    D = {a: set(nodes) for a in nodes}
+    D[entry] = {entry}
+    ch = True
+    while ch:
+        ch = False
+        for n in nodes:
+            if n == entry:
+                continue
+            p = preds[n]
+            new = {n}
+            if p:
+                inter = set(D[p[0]])
+                for x in p[1:]:
+                    inter &= D[x]
+                new |= inter
+            if new != D[n]:
+                D[n] = new
+                ch = True
+    return D
+
+
 def analyse(fn_lo, fn_hi, byte_bug=False):
     succ, bad_edges = cfg(fn_lo, fn_hi)
     ins = {}
@@ -826,13 +944,13 @@ def analyse(fn_lo, fn_hi, byte_bug=False):
             if inmap.get(t) != cand:
                 inmap[t] = cand
                 work.append(t)
-    return inmap, bad_edges, seen
+    return inmap, bad_edges, seen, succ, dominators(succ, entry)
 
 
 ROWS = []
 for s in REL:
     fn = fn_of(s["a"])
-    inmap, bad_edges, steps = analyse(fn[1], fn[1] + fn[2], byte_bug=(ALGO == 11))
+    inmap, bad_edges, steps, SUCC, DOM = analyse(fn[1], fn[1] + fn[2], byte_bug=(ALGO == 11))
     fr = fam(src(s))
     v = inmap.get(s["a"]) or {}
     lo, hi, _ = get(v, fr)
@@ -868,7 +986,7 @@ UNKROW = [r for r in ROWS if r[5] == "unknown"]
 REASON = {}
 for a, fr, *_ in UNKROW:
     fn = fn_of(a)
-    inmap, bad_edges, _ = analyse(fn[1], fn[1] + fn[2])
+    inmap, bad_edges, _, _, DOM = analyse(fn[1], fn[1] + fn[2])
     sk = None
     for j in range(IDXBY[a] - 1, IDXBY[a] - 6, -1):
         mm = re.search(r'\[ebp(-0x[0-9a-f]+)\]', INS[j]["ops"].lower())
@@ -884,12 +1002,13 @@ for a, fr, *_ in UNKROW:
             if PAIR in disp(INS[j]["ops"]):
                 src_field.append(INS[j]["a"])
                 break
-    REASON[a] = (sk, writes, src_field, bad_edges)
+    dom = [w in DOM.get(a, set()) for w in writes] if writes else [False]
+    REASON[a] = (sk, writes, src_field, bad_edges, dom)
     say(f"  reason {a:06x}: source is stack slot {sk}, written "
         + (", ".join(f"{w:#08x}" for w in writes) or "nowhere")
         + (f" from the field ({', '.join(hex(x) for x in src_field)})" if src_field else "")
-        + f"; {fn[0]} carries {bad_edges} INDIRECT jump-table edges, so the predecessor set "
-          "is not closed and no value can be proved on every path")
+        + f"; CFG closure: {bad_edges} unresolved indirect edge(s); the writer "
+        + ("DOES" if dom and dom[0] else "does NOT") + " dominate the store")
 UNKSET = {r[0] for r in UNKROW}
 if len(REL) != 27:
     bad(f"R0 the relations-store population is not 27: {len(REL)}")
@@ -898,12 +1017,17 @@ elif NDROP != 2:
 elif UNKSET != {0x52B9C7, 0x52B9D0} or NUNK != 2:
     bad(f"R0 the unresolved set changed: {[f'{a:x}' for a in sorted(UNKSET)]} "
         f"(expected only the two stack-slot stores 52b9c7/52b9d0)")
-elif any(r[3] == 0 for r in REASON.values()):
-    bad(f"R0 an unresolved store sits in a CLEAN function - the dataflow should have closed it: "
+elif any(r[3] != 0 for r in REASON.values()):
+    bad(f"R0 an unresolved store sits in a function whose CFG is NOT closed "
+        f"({[r[3] for r in REASON.values()]} unresolved indirect edges) - the verdict rests on "
+        "an incomplete predecessor set")
+elif any(r[4] and r[4][0] for r in REASON.values()):
+    bad(f"R0 an unresolved store's slot writer DOES dominate it - the dataflow lost a live value: "
         f"{REASON}")
 else:
-    say(f"  ok  R0 {NPRES + NDROP}/27 resolve; the only 2 that do not are stack-slot copies "
-        "whose slot is not written on every path (reason above)")
+    say(f"  ok  R0 {NPRES + NDROP}/27 resolve over a CLOSED CFG (jump tables resolved from the "
+        "emitting `cmp/ja` bounds); the only 2 that do not write a stack slot that is NOT "
+        "written on every path to the store (dominance measured above)")
 
 # ================================================================ R1
 say("")
