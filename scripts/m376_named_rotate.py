@@ -60,8 +60,17 @@ def main():
     sha = hashlib.sha1(blk.encode()).hexdigest()
     n = len(blk.encode())
     if a.verify:
-        print("PRESENT  sha1 %s len %d" % (sha, n))
-        return 0
+        if not os.path.exists(ARCHIVE):
+            print("PRESENT  sha1 %s len %d (no archive yet)" % (sha, n))
+            return 0
+        ablk, _, _ = block_of(open(ARCHIVE, encoding="utf-8").read(), HEAD)
+        if ablk.endswith("\n"):
+            ablk = ablk[:-1]
+        asha = hashlib.sha1(ablk.encode()).hexdigest()
+        ok = asha == sha and len(ablk.encode()) == n
+        print("PRESENT  sha1 %s len %d; archive %s (%s len %d)"
+              % (sha, n, "MATCHES" if ok else "STALE", asha, len(ablk.encode())))
+        return 0 if ok else 1
     arch = arch.rstrip("\n") + "\n\n<!-- ## M286 sha1 %s len %d -->\n%s\n" % (sha, n, blk)
     stub = ("## M286 \u2014 VERBATIM at `%s` (sha1 `%s`, %d B); this stub governs: the REALLYQUIT "
             "message dialog is family 0x67164c but does NOT dispatch +0x4c on clicks (static 5/5); "

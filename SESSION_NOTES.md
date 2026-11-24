@@ -714,10 +714,19 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   0x5526b3 / 0x507d21 hosts; 0x4da404's 4th arg.
 ## Session 339-chain2 — M376: the 0x92babc "12 slots" are alpha `#SOCIO`'s SE-effect matrix
 
-- **ACCEPT** `python3 -u scripts/m376_socio_grid.py` -> **`PASS M376: 27/27`** `0d23d4d394dde133`
-  (`evidence/m376_socio_grid.txt:105`; re-run identical, `evidence/m376_twice.txt`, sha1
-  `09c186c4e0cabfe5`); `scripts/m376_mutate.py` **25/25 killed, cov G1-G4**
-  (`evidence/m376_mutate.txt:28`). Static only, zero box.
+- **ACCEPT** `python3 -u scripts/m376_socio_grid.py` -> **`PASS M376: 29/29`** `f22d2b46cc7e9507`
+  (`evidence/m376_socio_grid.txt:115`; re-run byte-identical, `evidence/m376_twice.txt` sha1
+  `ac23fc9540f77151`); `scripts/m376_mutate.py` **33/33 killed, cov G1-G4**
+  (`evidence/m376_mutate.txt:36`). Static only, zero box.
+- **REVIEW #409 (10 findings / 5 P1, all fixed in-gate)**: every constant is now read from an
+  instruction or a file — header 0x24 = lea-disp - `mov esi,0x92ba98`; keyword capacity =
+  `(0x927538-0x9270c0)/0x68`; record base = `mov esi,0x927b2c` - 0x59c (walk end 0x92a270);
+  the BSS claim computes .data's file-backed VA end (0x6a9000) and MU26 patches a copy of the PE
+  header to redden it; the rand noun is gated on both `call 0x64c6f0`/`cdq` legs; the reader's
+  "same buffer" is gated on `push 0x997120` inside formatter 0x4237c0 plus the two call
+  addresses; "8 records hit" reworded to the measured "8 records walked, 9 possible pairs". One
+  dismissal: the cited `sha1 ac23fc9540f77151` is `sha1sum` of the FILE; the reviewer compared git
+  blob ids (a different hash).
 - **GEOMETRY** (a tiny insn emulator over 0x5a11ca..f3): cell = `0x92babc + 0xd4*a + 0x2c*b`;
   cell = **11 dwords**; 4 rows / 4 cells; row header 0x24 (name, 4 tech, 4 names).
 - **SOURCE** `FUN_0057a070` parses alpha.txt `#SOCIO` (line 746 = the 11 keywords
@@ -736,5 +745,5 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **PITFALL**: per-faction field arrays are written `record[1] + field_off + i*0x59c`, so a
   "+0x584" field appears as the literal 0x927b14; 0x9280b8 looks like a base but is
   record[1]+0x58c. Do not read those literals as record bases.
-- Rotated `## M286` VERBATIM -> `docs/named-archive-m376-rows.md` (sha1 `25eb67cd987ee782`)
-  for the NAMED cap; `scripts/m376_named_rotate.py --verify` PASS.
+- Rotated `## M286`/`## M287` VERBATIM -> `docs/named-archive-m376-rows{,2}.md` (sha1
+  `25eb67cd987ee782`/`723e6eebf7c77ff8`) for the NAMED cap; both `--verify` PASS.

@@ -48,8 +48,17 @@ MUT = [
     ("MU22", "code", "0x4a66d9|imul   eax,eax,0x2c", "G4"),
     ("MU23", "code", "0x4a66ff|mov    ecx,DWORD PTR [edx+eax*4+0x92ba98]", "G4"),
     ("MU24", "code", "0x4a667b|cmp    DWORD PTR [edx+eax*4+0x927b18],0x0", "G3"),
-    # file lever
+    # file levers
     ("MU25", "alpha", "factions=11", "G5"),
+    ("MU26", "pe", "rawsize", "G5"),
+    # the bytes behind the gated facts
+    ("MU27", "code", "0x523cfa|mov    esi,0x927b28", "G3"),
+    ("MU28", "code", "0x5a1197|call   0x5ea448", "G3"),
+    ("MU29", "code", "0x4237cd|push   0x997124", "G4"),
+    ("MU30", "code", "0x52b847|add    esi,0x78", "G1"),
+    ("MU31", "code", "0x57ab45|mov    esi,0x92ba9c", "G1"),
+    ("MU32", "code", "0x57ac02|cmp    esi,0x9275a8", "G1"),
+    ("MU33", "code", "0x4a6707|call   0x423900", "G4"),
 ]
 
 
@@ -75,6 +84,21 @@ def main():
             env["M376_PATCH"] = payload
         elif kind == "algo":
             env["M376_ALGO"] = payload
+        elif kind == "pe":
+            dst = os.path.join(tmpd, "terran.exe")
+            d = bytearray(open(os.path.join(ROOT, "programs/terran.exe"), "rb").read())
+            p0 = int.from_bytes(d[0x3C:0x40], "little")
+            base = int.from_bytes(d[p0 + 24 + 28:p0 + 24 + 32], "little")
+            q = p0 + 24 + int.from_bytes(d[p0 + 20:p0 + 22], "little")
+            for _ in range(int.from_bytes(d[p0 + 6:p0 + 8], "little")):
+                vs = int.from_bytes(d[q + 8:q + 12], "little")
+                va = int.from_bytes(d[q + 12:q + 16], "little")
+                if base + va <= 0x92BABC < base + va + vs:
+                    d[q + 16:q + 20] = (0x400000).to_bytes(4, "little")   # SizeOfRawData
+                    break
+                q += 40
+            open(dst, "wb").write(bytes(d))
+            env["M376_EXE"] = dst
         else:
             dst = os.path.join(tmpd, "alpha.txt")
             lines = open(BASE, "r", errors="replace").read().splitlines()

@@ -401,31 +401,7 @@ chooser/menu path (untestable in this save: empty queue opens no chooser).
 
 ## M286 — VERBATIM at `docs/named-archive-m376-rows.md` (sha1 `25eb67cd987ee7825bf1f90568f4b056ebae42c9`, 1465 B); this stub governs: the REALLYQUIT message dialog is family 0x67164c but does NOT dispatch +0x4c on clicks (static 5/5); the LIVE half is INSTRUMENT-INVALID per M293
 
-## M287 (s232) in-game game MENU pane is NOT family - FOUR click paths measured, zero +0x4c dispatch (static 5/5, live STATE 4 measured-negative w/ falsifier)
-- **LIVE HALF INSTRUMENT-INVALID (s240/M293):** the SITE guard
-  `if $reg >= 0x1000000` excluded every image-range vtable (the five family
-  vtables 0x67164c/0x6717cc/0x6728c0/0x675cc4/0x6776c8 are all < 0x1000000),
-  so a real family dispatch printed NOTHING: the live 0-fired rows here are
-  instrument-silence, RETRACTED as evidence (static claims stand; guard now
-  >= 0x400000; a re-armed census is an open lead).
-
-The last click-path candidate of M286: the in-game game menu (MENU button
-(61,369) -> console bar -> GAME row -> 12-row popup: Switch To Simple Menus /
-Preferences... / ... / Save Game / Load Game / Resign / Start New Game / Quit).
-Static: the console bar is CHROME - GAME/HQ/NETWORK/.../EDIT MAP/HELP in NO
-Script.txt pane (g4); the popup is the real menu.  LIVE: bar raised, GAME
-clicked at (26,190) (GAME row never OCRs; NETWORK anchors y226 with 18-px
-stride - geometry from two independent frames), popup OPEN (vision-verified).
-FALSIFIER at the click: menu obj 0x03cbc0c8 vptr 0x0067919c NOT FAMILY (run 2
-read DIALOG_CUR=0 - the pane isn't a DIALOG_CUR dialog that run).  Safe-row
-click (Preferences, (172,350), vision coords; NEVER y>=548 Resign/Start/Quit)
-landed but opened no new dialog; vptr scan delta all 0.  Site bps 0/12 x2,
-entry 0.  STATE 4 measured-negative with the falsifier - the family +0x4c
-slot (FUN_005f6aa3) fires through NONE of the 12 sites and has still NEVER
-been observed entered from any live click.  Combined with M284 (base
-display), M285 (chooser) and M286 (REALLYQUIT IS family but its row cb is
-INLINE in the pump): +0x4c is NOT dispatched on ANY click path - the next
-shape is dialog CREATE-time (FUN_00405ef0) or the Return-key path.
+## M287 — VERBATIM at `docs/named-archive-m376-rows2.md` (sha1 `723e6eebf7c77ff80793a5cb69a29e7bfa2014e0`, 1853 B); this stub governs: the in-game MENU pane is NOT the dialog family (four click paths, zero +0x4c dispatch, static 5/5); the LIVE half is INSTRUMENT-INVALID per M293
 
 ## M288 (s233, static 5/5, merged PR pending submit) - +0x4c CLOSED (s240: stands on STATIC evidence alone - the four live click-path legs M284-M287 are instrument-invalid); neither dialog CREATE-time nor the Return-key path dispatches the family +0x4c slot; FUN_005f6aa3 is reachable only through a live family +0x4c dispatch, and NO reachable path takes it
 - FUN_005f6aa3 (the family +0x4c slot target = dialog row-click dispatcher:
@@ -1671,16 +1647,16 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | bit23: 0x59ef11 five rand fields + 0x5a1446 pairing arm; bit24: 0x5a1150 12-slot assignment (stride 0x59c, 8 factions) | `:29-41` | V MU7-MU10 MU16 MU17 |
 | script keys are PE strings RULES/AIEDITOR/AIEDITOR2/SCENRULES; FUN_004dc5f0 pushes RULES @0x4dc6fb | `:43-49` | V MU18 |
 | OPEN: the 12 slots' identity (SE-choice/agenda grid, INF); bit position 23/24 cause | - | INF |
-## M376 (s339-c2, STATIC 27/27) — `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix; bit-24's "12 slots" = 11 effect columns + a 12-dword used-pair registry. ACCEPT `scripts/m376_socio_grid.py` -> **`PASS M376: 27/27`** `0d23d4d394dde133` (`evidence/m376_socio_grid.txt:105`, x2); harness **25/25** (`evidence/m376_mutate.txt:28`). `:N` = acceptance line.
+## M376 (s339-c2, STATIC 29/29) — `0x92babc` = alpha `#SOCIO` 4x4x11 SE-effect matrix; bit-24's "12 slots" = 11 effect columns + a 12-dword used-pair registry. ACCEPT `scripts/m376_socio_grid.py` -> **`PASS M376: 29/29`** `f22d2b46cc7e9507` (`evidence/m376_socio_grid.txt:115`, x2 sha1 `ac23fc9540f7715`); harness **33/33** (`evidence/m376_mutate.txt:36`). `:N` = acceptance line.
 | claim | ev | conf |
 |---|---|---|
-| GEOMETRY (emu of 0x5a11ca..f3): `0x92babc + 0xd4*a + 0x2c*b`; cell = 11 dwords (@0x52b822/0x5a1203/0x57ab94); 4 rows `0x350/0xd4`, 4 cells `0xb0/0x2c`; header 0x24 | `:14-31` | V MU1-MU8 |
-| SOURCE FUN_0057a070 = alpha `#SOCIO`: 11 keywords -> 0x9270c0 (0x68 B, count 0x927538), 4 categories, 16 choices; col i = `strcmp(token,0x9270c0+i*0x68)`, +/- count ADDED (@0x57abd2/d6, 0x57abf8). The grid is **BSS** (0x92babc past .data's raw end 0x6a9000) => parser-built, not a .data table | `:31-41,70` | V MU10-MU12 |
-| COMPUTED: 4 EMPTY cells = choice 0 (Frontier/Simple/Survival/None); the other 12 each have a first POSITIVE column (Police State -> SUPPORT) | `:35-41` | V MU11 MU12 ALGO1 |
-| CONSUMER bit24: registry idx `3a+b`, a=`rand%3`, b=`rand%3+1`, first `>0`; 8 rec x 0x59c; +0x584 cat / +0x58c choice / +0x594 first-positive (`0x9280b8-0x927590=0xB28=1*0x59c+0x58c`) | `:42-56` | V MU13-MU20 |
-| READER 0x4a66d9: cat -> `[0x92ba98+d*0xd4]` NAME, choice -> `[0x92baac+d*0xd4+e*4]` NAME (row+0x14), both appended | `:65-68` | V MU22-MU24 |
-| RIVALS FAIL: 11 columns != 7 #FACTIONS rows `:72`; cell stride 0x2c = 11 dwords, not 12 `:74`; row 3 (Future Society) never sampled `:75` | `:72-75` | V MU7 MU13 MU25 |
-| OPEN: rows 0..2 only; 8th write 0x92a7fc is 0x58c past block end 0x92a270; +0x594 use | `:55-56` | OPEN |
+| GEOMETRY (emu of 0x5a11ca..f3): `0x92babc + 0xd4*a + 0x2c*b`; cell = 11 dwords (@0x52b822/0x5a1203/0x57ab94); rows `0x350/0xd4`=4, cells `0xb0/0x2c`=4 (exact `add esi,0x..` shape + divisibility); header `lea-0x92ba98`=0x24 | `:14-33` | V MU1-MU9 MU30 MU31 |
+| SOURCE FUN_0057a070 = alpha `#SOCIO`: 11 keywords into 0x9270c0 (capacity `(0x927538-0x9270c0)/0x68` from the compare/stride insns), 4 categories, 16 choices; col i = `strcmp(token,0x9270c0+i*0x68)`, +/- count ADDED (@0x57abd2/d6, 0x57abf8). Grid is **BSS**: 0x92babc is past .data's file-backed end 0x6a9000 => parser-built | `:29,79` | V MU10-MU12 MU32 MU26 |
+| COMPUTED: 4 EMPTY cells = choice 0 (Frontier/Simple/Survival/None); the other 12 each have a first POSITIVE column (Police State -> SUPPORT) | `:38-41` | V MU11 MU12 ALGO1 |
+| CONSUMER bit24: registry idx `3a+b` (12 dwords), a=`rand%3`, b=`rand%3+1` from **rand 0x64c6f0** (both cdq/idiv legs), first `>0`; 8 rec x 0x59c (base derived `0x927b2c-0x59c`=0x927590, walk end 0x92a270); +0x584 cat / +0x58c choice / +0x594 first-positive | `:42-57` | V MU13-MU20 MU27 MU28 |
+| READER 0x4a66d9: cat -> `[0x92ba98+d*0xd4]` NAME, choice -> `[0x92baac+d*0xd4+e*4]` NAME (row+0x14); both via formatter 0x4237c0 = `push 0x997120` (@0x4237cd), category call 0x4a66e6 before choice 0x4a6707 | `:74-75` | V MU22-MU24 MU29 MU33 |
+| RIVALS FAIL: 11 columns != 7 #FACTIONS `:81`; cell stride 0x2c = 11 dwords, not 12 `:82`; row 3 (Future Society) never sampled `:83` | `:81-83` | V MU7 MU13 MU25 |
+| OPEN: rows 0..2 only (INF: agendas are Politics/Economics/Values); 8th write 0x92a7fc is 0x58c past block end 0x92a270; +0x594 consumption | `:60-61` | OPEN |
 ## M373 (s338-chain1, STATIC 19/19) — the PENDING-VENDETTA consumer: FUN_005551e0 clears 0x80000000 under a bit-13 exception; **bit 27 is not a gate there** (the pick's premise refuted). ACCEPT `python3 -u scripts/m373_pending_vendetta.py` -> `PASS M373: 19/19` `4fd02c603e36c69c` x2 (`evidence/m373_pending_vendetta.txt:165`); harness 16/16 (`evidence/m373_mutate.txt:20`). `:N` = a line of the evidence.
 | claim | ev | conf |
 |---|---|---|

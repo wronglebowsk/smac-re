@@ -54,7 +54,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEXT = os.environ.get("M376_TEXT", os.path.join(ROOT, "scratch/m574/text.txt"))
-EXE = os.path.join(ROOT, "programs/terran.exe")
+EXE = os.environ.get("M376_EXE", os.path.join(ROOT, "programs/terran.exe"))
 ALPHA = os.environ.get("M376_ALPHA", os.path.join(ROOT, "programs/alpha.txt"))
 ALGO = int(os.environ.get("M376_ALGO", "0") or 0)
 
@@ -117,11 +117,21 @@ def pe_sections():
 
 
 def covered(va):
+    """True if the VA is inside a section's FILE-BACKED bytes (not its BSS tail)."""
     d, secs = pe_sections()
     for v, vs, ra, rs in secs:
         if v <= va < v + vs:
-            return ra + va - v < ra + rs
+            return va - v < rs
     return False
+
+
+def raw_end(va):
+    """VA where the containing section's file-backed bytes stop."""
+    d, secs = pe_sections()
+    for v, vs, ra, rs in secs:
+        if v <= va < v + vs:
+            return v + rs
+    return None
 
 
 # ------------------------------------------------------- tiny insn emulator
@@ -286,9 +296,21 @@ row("G1", "cell words: scan bound @0x5a1203", imm(txt(0x5A1203)))
 row("G1", "parser zeroing count @0x57ab94", imm(txt(0x57AB94)))
 row("G1", "parser cell step @0x52b82c", hex(imm(txt(0x52B82C))))
 row("G1", "parser cells/row bound @0x52b832", hex(imm(txt(0x52B832))))
-row("G1", "parser row step @0x52b847", txt(0x52B847))
+_m = re.match(r"add\s+esi,0x([0-9a-f]+)$", txt(0x52B847))
+ROWSTEP = int(_m.group(1), 16) if _m else None
+row("G1", "parser row step @0x52b847", "%s -> %s" % (txt(0x52B847), ROWSTEP))
 row("G1", "parser rows bound @0x52b84d", hex(imm(txt(0x52B84D))))
-row("G1", "row header = 0x92babc-0x92ba98", hex(0x92BABC - 0x92BA98))
+ROWBASE = imm(txt(0x57AB45))        # mov esi,0x92ba98 (the row-name store base)
+KWBASE = imm(txt(0x57ABE0))         # mov esi,0x9270c0
+KWSTRIDE = imm(txt(0x57ABFC))       # add esi,0x68
+KWBOUND = imm(txt(0x57AC02))        # cmp esi,0x927538
+HEADER = BASE - ROWBASE
+CAPACITY = (KWBOUND - KWBASE) // KWSTRIDE if KWBOUND and KWBASE and KWSTRIDE else None
+row("G1", "row-name store base @0x57ab45", hex(ROWBASE or 0))
+row("G1", "row header = cellbase - rownamebase", hex(HEADER))
+row("G1", "keyword base/stride/bound insns",
+    "%s | %s | %s" % (txt(0x57ABE0), txt(0x57ABFC), txt(0x57AC02)))
+row("G1", "keyword array capacity (bound-base)/stride", CAPACITY)
 row("G1", "#SOCIO keywords", len(KW))
 row("G1", "#SOCIO categories", len(CATS))
 row("G1", "#SOCIO choices", len(CH))
@@ -299,7 +321,7 @@ row("G2", "keyword list", ", ".join(KW))
 row("G2", "second keyword line == first", KW2 == KW)
 row("G2", "categories", ", ".join(CATS))
 NC = imm(txt(0x52B832)) // imm(txt(0x52B82C))       # cells per row from the loop bound
-NR = imm(txt(0x52B84D)) // imm(txt(0x52B847)) if imm(txt(0x52B847)) else None
+NR = imm(txt(0x52B84D)) // ROWSTEP if ROWSTEP else None
 grid = {}
 for n, (name, tech, toks) in enumerate(CH):
     grid[(n // NC, n % NC)] = vec(toks, KW)
@@ -324,7 +346,9 @@ reg = imm(txt(0x5A1160))
 rows_n = imm(txt(0x5A1213))
 stride = imm(txt(0x5A120D))
 seed = imm(txt(0x5A1171))
-rec0 = 0x927590
+SEED1 = imm(txt(0x523CFA))          # mov esi,0x927b2c = record[1] base
+END8 = imm(txt(0x523E1A))           # cmp esi,0x92a270 = the 8-record walk end
+rec0 = SEED1 - stride if SEED1 else None
 delta = seed - rec0
 inrec = delta % stride
 idx = delta // stride
@@ -337,9 +361,12 @@ row("G3", "max registry index 3*a+b", 3 * (amod - 1) + (bmod))
 row("G3", "records walked (bound @0x5a1213)", rows_n)
 row("G3", "record stride @0x5a120d", hex(stride))
 row("G3", "seed pointer @0x5a1171", hex(seed))
+row("G3", "record[1] seed / walk end @0x523cfa/0x523e1a", (hex(SEED1 or 0), hex(END8 or 0)))
+row("G3", "record base derived (seed1 - stride)", hex(rec0 or 0))
 row("G3", "seed-record delta", hex(delta))
 row("G3", "delta = %d*stride + %#x" % (idx, inrec), (idx, hex(inrec)))
 row("G3", "fields: category / choice / signature-effect", (hex(cat), hex(cho), hex(sig)))
+row("G3", "rand call sites", txt(0x5A1188) + " / " + txt(0x5A1197))
 row("G3", "first-positive scan", txt(0x5A11FA) + " / " + txt(0x5A11FD))
 row("G3", "store order", txt(0x5A11D1) + " | " + txt(0x5A11D4) + " | " + txt(0x5A120A))
 row("G3", "first write address", hex(writes[0]))
@@ -368,7 +395,9 @@ choname = txt(0x4A66FF)
 row("G4", "category-name lookup", nmul + " / " + catname)
 row("G4", "choice-name lookup", choname)
 row("G4", "choice-name array offset (0x92baac-0x92ba98)", hex(0x92BAAC - 0x92BA98))
-row("G4", "text appends", sum(1 for a in win(0x4A66D9, 0x4A6710) if "call   0x4237c0" in txt(a)))
+APP = [a for a in win(0x4A66D9, 0x4A6710) if "call   0x4237c0" in txt(a)]
+row("G4", "text appends (addresses)", [hex(a) for a in APP])
+row("G4", "formatter buffer @0x4237cd", txt(0x4237CD))
 row("G4", "loop bound @0x4a6665", int(txt(0x4A6665).split(",")[-1], 16))
 
 # -------------------------------------------------------------- G5 rivals
@@ -386,6 +415,7 @@ for n, ln in enumerate(open(ALPHA, "r", errors="replace").read().splitlines()):
         break
 row("G5", "0x92babc inside section raw data?", r1)
 row("G5", "containing section (va, raw size)", r1_sec)
+row("G5", "file-backed VA end of that section", hex(raw_end(0x92BABC) or 0))
 row("G5", "#FACTIONS rows in alpha.txt", facts)
 row("G5", "rival 11 columns = factions", 11 == facts)
 row("G5", "rival cell = 12 dwords", (imm(txt(0x52B82C)) // 4, imm(txt(0x52B822))))
@@ -411,13 +441,16 @@ ok &= check("G1", txt(0x5A1193) == "idiv   ecx" and txt(0x5A11A2) == "idiv   ecx
             "both random pickers divide by the loaded modulus (a, b)")
 ok &= check("G1", imm(txt(0x5A1203)) == imm(txt(0x52B822)) == imm(txt(0x57AB94)) == len(KW),
             "cell width %d dwords = #SOCIO keyword count (copy, scan and zero counts agree)" % len(KW))
-ok &= check("G1", NR == len(CATS) and NC == len(CH) // len(CATS),
+ok &= check("G1", NR == len(CATS) and NC == len(CH) // len(CATS) and
+            imm(txt(0x52B84D)) % imm(txt(0x52B847)) == 0 and
+            imm(txt(0x52B832)) % imm(txt(0x52B82C)) == 0,
             "rows %d = #SOCIO categories, %d cells/row = #SOCIO choices/category" % (NR, NC))
-ok &= check("G1", (0x927538 - 0x9270C0) // 0x68 == len(KW) and 0x92BABC - 0x92BA98 == 9 * 4,
-            "keyword array holds %d names; row header is %d dwords before the cells"
-            % (len(KW), (0x92BABC - 0x92BA98) // 4))
+ok &= check("G1", CAPACITY == len(KW) and HEADER == 9 * 4 and HEADER % 4 == 0,
+            "keyword array holds %d names (from the compare/stride insns); row header = %#x B = %d dwords"
+            % (CAPACITY, HEADER, HEADER // 4))
 
-ok &= check("G2", len(KW) == 11, "the 11 columns are the 11 alpha.txt #SOCIO effect keywords")
+ok &= check("G2", len(KW) == 11 and CAPACITY == len(KW),
+            "the 11 columns are the 11 alpha.txt #SOCIO effect keywords and the array's capacity is 11")
 ok &= check("G2", txt(0x57ABE0) == "mov    esi,0x9270c0" and
             txt(0x57ABE7) == "call   0x64f8b0" and
             txt(0x57ABFC) == "add    esi,0x68" and txt(0x57ABFF) == "add    edi,0x4",
@@ -438,7 +471,8 @@ ok &= check("G3", txt(0x5A1150) == "test   DWORD PTR ds:0x985ae8,0x1000000" and 
             "the bit-24 block zeroes a %d-dword used-pair registry indexed 3*a+b" % reg)
 ok &= check("G3", 3 * (amod - 1) + bmod + 1 <= reg,
             "registry index 3*a+b max %d < %d" % (3 * (amod - 1) + bmod, reg))
-ok &= check("G3", cat == 0x584 and cho == 0x58C and sig == 0x594 and idx == 1,
+ok &= check("G3", rec0 == SEED1 - stride and SEED1 + 7 * stride == END8 and
+            cat == 0x584 and cho == 0x58C and sig == 0x594 and idx == 1,
             "fields derived from the seed: category +%#x, choice +%#x, effect +%#x" % (cat, cho, sig))
 ok &= check("G3", txt(0x4A667B) == "cmp    DWORD PTR [edx+eax*4+0x927b14],0x0" and
             cat_base - rec0 == cat and cho_base - rec0 == cho,
@@ -447,7 +481,13 @@ ok &= check("G3", txt(0x5A11FA) == "cmp    DWORD PTR [ecx],0x0" and txt(0x5A11FD
             "the scan stops at the first weight > 0 inside the cell")
 ok &= check("G3", rows_n == 8 and stride == 0x59C and len(sampled) == 9 and
             len(sampled_nonempty) == 9,
-            "8 records hit by 9 distinct (category, choice) pairs, all non-empty")
+            "the walk covers %d records; %d possible (category, choice) pairs, all non-empty"
+            % (rows_n, len(sampled)))
+ok &= check("G3", txt(0x5A1188) == "call   0x64c6f0" and txt(0x5A1197) == "call   0x64c6f0" and
+            txt(0x5A118D) == "cdq" and txt(0x5A119C) == "cdq",
+            "both moduli divide the result of the game's rand call 0x64c6f0")
+ok &= check("G3", txt(0x523CFA) == "mov    esi,0x927b2c" and txt(0x523E1A) == "cmp    esi,0x92a270",
+            "the record base is derived from a real 8-record walk (seed 0x927b2c, end 0x92a270)")
 ok &= check("G3", ALGO != 2 and len({a for a, _ in sampled}) == len(CATS) - 1 and last_row == 3,
             "the consumer samples rows 0..%d only - %s (row %d) is never an agenda"
             % (amod - 1, CATS[-1], last_row))
@@ -461,12 +501,13 @@ ok &= check("G4", txt(0x4A66D9) == "imul   eax,eax,0xd4" and
 ok &= check("G4", txt(0x4A66FF) == "mov    ecx,DWORD PTR [edx+eax*4+0x92baac]" and
             0x92BAAC - 0x92BA98 == 0x14,
             "the stored choice indexes the row's name array at +0x14")
-ok &= check("G4", sum(1 for a in win(0x4A66D9, 0x4A6710) if "call   0x4237c0" in txt(a)) == 2,
-            "both names are appended to the same text buffer (category then choice)")
+ok &= check("G4", APP == [0x4A66E6, 0x4A6707] and txt(0x4237CD) == "push   0x997120",
+            "both names go through formatter 0x4237c0, which appends to buffer 0x997120; "
+            "the category call (0x4a66e6) precedes the choice call (0x4a6707)")
 
-ok &= check("G5", r1 is False,
-            "RIVAL 'the table is initialized .data' FAILS: 0x92babc is in %s raw %s B - BSS"
-            % (r1_sec[0][0] if r1_sec else "?", r1_sec[0][1] if r1_sec else "?"))
+ok &= check("G5", r1 is False and raw_end(0x92BABC) == 0x6A9000,
+            "RIVAL 'the table is initialized .data' FAILS: 0x92babc is past that section's "
+            "file-backed end 0x6a9000 - it is BSS")
 ok &= check("G5", 11 != facts,
             "RIVAL 'the 11 columns are factions' FAILS: alpha.txt #FACTIONS has %d rows" % facts)
 ok &= check("G5", imm(txt(0x52B82C)) // 4 == len(KW) != 12,
