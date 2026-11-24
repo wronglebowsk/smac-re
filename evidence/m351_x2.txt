@@ -1,0 +1,10 @@
+M351 - x2 determinism record (python3 -u scripts/m351_type_producer.py, two runs)
+run1 sha1 6f53b29d18cdccd36ba71114e8d0b59b99f4b6bf  113 lines
+run2 sha1 6f53b29d18cdccd36ba71114e8d0b59b99f4b6bf  113 lines
+diff run1 run2: EMPTY (byte-identical)
+digest line (both runs): DIGEST 504c7342fb16273b  universe=15 gates=15
+PASS line (both runs): PASS M351: 15/15 gates
+listing sha1 (both runs): 02d578095222031e (scratch/m574/text.txt, 781429 insns)
+post-review: the digest now binds the listing sha1 + every parsed literal + the trace pairs;
+G12/R2 read the recorded pairs from the traces (no hardcoded fallback), G13 parses the m68
+verdict, TABLE 3 enumerates all 256 flag bytes.

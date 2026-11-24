@@ -126,5 +126,7 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11
 - M347 (s324-chain2): HoF page writer = the +0x5970 child selector, ids 1..7 (page bound 7); 12/12 `3fadfd6e6d26e64c`, 20/20
 - M349 (s326-chain2) MERGED: M68/M69 `NEG_TYPE` ANSWERED — a negative queue head is the NEGATED UNIT TYPE (`neg` @0x4ef89f; `>=0` = facility id, `-38` = sentinel, id<0x40 stamps, `>=0x40` gated by 0x98adb8 bit2, one 0x95da9c+304*p bitmap); 13/13 `4d3c2e4ded19d620`, harness 18/18
+- M350 (s327-chain3): pref block END = 0x92bf34; loader = sole profile-backed init. (0/11 local); co-writes = commits. 6/6 `23794d22` x2, 15/15.
+- M351 (s328-chain2): the negative head's producer = the chooser row ITEM, negated when flags&0x20==0; unit rows' item = the TYPE ORDINAL (0x984d38+0x30*i) stored to base+0x50 @0x418b57. 15/15 `504c7342fb16273b`, harness 20/20.
 - M350 (s327-c3): pref END 0x92bf34; loader = sole init; co-writes = commits. 6/6 `23794d22`, 15/15.
 - M352 (s328-c3): `ds:0x6710fc`=WritePrivateProfileStringA; 13 keys, 12 cell-backed+stamp; Laptop/Language read-only; `0x6926ec` literal; M350 OPEN closed. 7/7 `d553194a` 13/13.
