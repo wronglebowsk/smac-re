@@ -1,8 +1,9 @@
-# SESSION CURSOR — s319-chain1 / B29
-ID: B29 (BUILD) — item table DERIVED from alpha via M337's loader law (`sim/itemtable.py`).
-ACCEPT: `python3 -u -m sim.selftest --b29` -> `PASS B29: 9/9` rows `e4b1c98e68ff8685`
-print `377094bc16aa8f27` (`evidence/b29_item_table.txt:85-86`); harness 9/9 `ae1f8e0292a59ed3`
-(`evidence/b29_mutate.txt:10`).
-MERGED? branch `milestone/b29`.
-NEXT: B30 (author the rung text in BUILD_SPINE.md FIRST). NAMED 247,800 B; M334 ->
-`docs/named-archive-b29-rows.md:5` (sha1 579f90da7d8c).
+# SESSION CURSOR — s320-chain1 / M340
+ID: M340 (STATIC) — FUN_0058e7f0 ADMITS a `Difficulty` pref >=6: no bound in the
+read->parse->store chain; index 6 -> `0x94d2c4`, one dword past the six-row ladder.
+ACCEPT: `python3 -u scripts/m340_pref_admission.py` -> `PASS M340: 7/7`
+rows `277483c12bd5cc44` (`evidence/m340_pref_admission.txt:60-71`); harness 9/9
+`b25e0bc3a09693f5` (`evidence/m340_mutate.txt:13`).
+MERGED? branch `milestone/m340`.
+NEXT: ANALYSIS — 0x94d2c4's runtime dword is box-GATED; static: 0x92bde8..0x92bf14
+co-writers. M332 rotated -> `docs/named-archive-m340-rows.md:5`.
