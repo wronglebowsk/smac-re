@@ -639,8 +639,8 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 ## Session 342 — B38: the `#SOCIO` SE-effect matrix is executable (9/9, 12 mutants, zero box)
 - **The grid.** `data/alpha.json` `#SOCIO` (19 records) -> 4 categories x 4 choices x 11 keyword
   columns; each entry = the signed count of the token's `+`/`-` prefix. Geometry recomputed from
-  the dump: 0x350/0xd4 = 4 rows, 0xb0/0x2c = 4 cells, 0x2c/4 = 11 dwords, row = 0x24 header + 0xb0 (`evidence/b38_socio.txt:17`); 16 cells / 39 tokens / max |v| 5
-  (`:39`). `python3 -u -m sim.socio` -> `PASS B38: 9/9 gates  digest e0bb2deb53ecb96c` (`:75`),
+  the dump: 0x350/0xd4 = 4 rows, 0xb0/0x2c = 4 cells, 0x2c/4 = 11 dwords, row = 0x24 header + 0xb0 (`evidence/b38_socio.txt:17-18`); 16 cells / 39 tokens / max |v| 5
+  (`:39`). `python3 -u -m sim.socio` -> `PASS B38: 9/9 gates  digest e0bb2deb53ecb96c` (`:78`),
   re-run byte-identical.
 - **Parity.** Both vectors M376 measured off its emulated parser are re-read from
   `evidence/m376_socio_grid.txt:42-43` and reproduced field for field — Police State
@@ -649,9 +649,9 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **Application.** Police State/Planned/Power/Thought Control -> `[0,-4,1,0,4,4,2,0,2,-1,0]`
   (`:50`); all 256 settings agree with a dict reference; a category's delta = its choice's vector.
 - **Consumer.** The bit-24 agenda triple (category, choice, signature): 12 add / 4 reject, the 4
-  empty cells store -1 — M379's reader polarity reproduced (`:57`).
+  empty cells store -1 — M379's reader polarity reproduced (`:57-61`).
 - **FINDING (negative, measured).** `0x92babc` is NOT an input to `0x94e48c`: 0 matrix operands in
-  the 36-insn M383 chain around the store `0x5579ea` (`:62`); no SE->military wiring is modelled.
+  the 36-insn M383 chain around the store `0x5579ea` (`:65`); no SE->military wiring is modelled.
 - **Harness.** `scripts/b38_mutate.py` -> `RUN PASS 12 mutants, NO-OP []`
   (`evidence/b38_mutate.txt:14`); per-gate mutant map in `## B38`.
 - **PITFALLS**: (1) `#SOCIO` carries NO numbers — the effect is the PREFIX LENGTH ('-----' is -5),

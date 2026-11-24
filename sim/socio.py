@@ -247,7 +247,7 @@ def main(argv=None):
            if len({token_value(t)[1] for t in c.tokens}) != len(c.tokens)]
     print("G3   cells / tokens / max |value|                              %d / %d / %d"
           % (sum(1 for _ in soc.cells()), sum(len(c.tokens) for c in soc.cells()), max(mags)))
-    gate("G3", len(bad_tok) == 0 and max(mags) == 5 and not dup
+    gate("G3", len(bad_tok) == 0 and max(mags) <= 5 and not dup
          and all(len(c.vec) == 11 for c in soc.cells())
          and all(sum(1 for v in c.vec if v) <= len(c.tokens) for c in soc.cells()),
          "every effect token resolves to exactly one of the 11 columns, no cell repeats a "
@@ -316,7 +316,16 @@ def main(argv=None):
     rejects = [r for r in recs if r[2] < 0]
     print("G5   M379 reader polarity: >0 adds / <0 rejects                 %d add, %d reject"
           % (len(adds), len(rejects)))
-    gate("G5", len(recs) == 16 and len(adds) == 12 and len(rejects) == 4
+    pol = []
+    for site in (0x5A1EAC, 0x54696C):
+        seq = [ins.get(site + k, "") for k in (0, 6, 8)]   # load / test / jl on 6-byte then 2-byte forms
+        pol.append(seq)
+        print("G5   reader 0x%x  %s | %s | %s" % (site, seq[0], seq[1], seq[2]))
+    polarity_ok = all(len(q) == 3 and "+0x927b24]" in q[0] and q[1] == "test   eax,eax"
+                      and q[2].startswith("jl") for q in pol)
+    print("G5   both readers: load +0x927b24, test eax, jl (negative = the reject arm)  %s"
+          % polarity_ok)
+    gate("G5", polarity_ok and len(recs) == 16 and len(adds) == 12 and len(rejects) == 4
          and all(r[2] == -1 for r in rejects)
          and next(r[2] for r in recs if r[0] == 0 and r[1] == 1) == 2
          and all(0 <= r[2] <= 10 for r in adds),
@@ -348,7 +357,7 @@ def main(argv=None):
     r2 = tuple(soc.rows[0][1].vec[order_a.index(i)] for i in range(len(kw)))
     r3 = tuple(sum(c.vec[i] for c in soc.cells()) for i in range(len(kw)))
     r4 = tuple(sum(soc.rows[r][settings[r]].vec[i] for r in range(3)) for i in range(len(kw)))
-    r5 = max(i for i, v in enumerate(soc.rows[0][1].vec) if v)
+    r5 = max(i for i, v in enumerate(soc.rows[0][1].vec) if v > 0)
     print("G7   R1 sign-only: Free Market POLICE                          model %+d  rival %+d"
           % (fm.vec[5], r1))
     print("G7   R2 alphabetical columns: Police State vector               model %s  rival %s"

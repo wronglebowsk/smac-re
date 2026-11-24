@@ -1604,15 +1604,15 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | six rivals differ (min 1 config); ACCEPTANCE `python3 -u -m sim.treaty` PASS 8/8 `5dd4119bd1882d1d`, twice identical | `evidence/b37_treaty.txt:76`, `evidence/b37_twice.txt:2-3` | V MU10-11 |
 | UNMODELED: nouns of 0x800/0x20000/0x400; FUN_00552970's role; one upkeep pass == one turn | docstring | lead |
 
-## B38 (s342, BUILD 9/9, zero box; 12 mutants) — the `#SOCIO` SE-effect matrix is EXECUTABLE: `sim/socio.py` builds the 4x4x11 grid off `data/alpha.json`, applies a faction's four settings, and runs the bit-24 agenda consumer. **`PASS B38: 9/9`** `e0bb2deb53ecb96c` (`evidence/b38_socio.txt:75`), re-run identical; harness 12/12 (`evidence/b38_mutate.txt:14`). `:N` = acceptance line.
+## B38 (s342, BUILD 9/9, zero box; 12 mutants) — the `#SOCIO` SE-effect matrix is EXECUTABLE: `sim/socio.py` builds the 4x4x11 grid off `data/alpha.json`, applies a faction's four settings, and runs the bit-24 agenda consumer. **`PASS B38: 9/9`** `e0bb2deb53ecb96c` (`evidence/b38_socio.txt:78`), re-run identical; harness 12/12 (`evidence/b38_mutate.txt:14`). `:N` = acceptance line.
 | claim | ev | conf/mutant |
 |---|---|---|
-| grid = 4 categories x 4 choices x 11 columns, entry = signed `+`/`-` prefix length; dump geometry 0x350/0xd4=4, 0xb0/0x2c=4, 0x2c/4=11, row = 0x24 header + 0xb0 | `:17` `:39` | V MU2 MU10 |
+| grid = 4 categories x 4 choices x 11 columns, entry = signed `+`/`-` prefix length; dump geometry 0x350/0xd4=4, 0xb0/0x2c=4, 0x2c/4=11, row = 0x24 header + 0xb0 | `:17-18` `:39` | V MU2 MU10 |
 | parity: Police State `[0,-2,2,0,0,2,0,0,0,0,0]`, Free Market `[2,0,0,0,0,-5,0,-3,0,0,0]` == M376's emulated-parser vectors (`evidence/m376_socio_grid.txt:42-43`); 4 empty cells at choice 0, 12 first-positive, PS -> 2 | `:42-44` | V MU3 MU4 MU10 |
 | application: 4 settings -> one 11-vector, exclusive per category, linear over all 256 settings vs a dict reference; PS/Planned/Power/Thought Control = `[0,-4,1,0,4,4,2,0,2,-1,0]` | `:50` | V MU5 MU7 |
-| consumer: bit-24 triple (category, choice, signature) — 12 add / 4 reject, empty cells -> -1 (M379 polarity) | `:57` | V MU4 MU8 |
-| NEGATIVE: `0x92babc` is NOT an input to `0x94e48c` — 0 matrix operands in the 36-insn M383 chain (store 0x5579ea) | `:62` | V MU6 MU11 |
-| rivals FAIL: sign-only (-1 vs -5), mirrored columns, all-cells accumulate, row 3 dropped, last-positive | `:66` | V MU8 MU3 |
+| consumer: bit-24 triple (category, choice, signature) — 12 add / 4 reject, empty cells -> -1; both readers load `+0x927b24`, `test eax`, `jl` | `:57-61` | V MU4 |
+| NEGATIVE: `0x92babc` is NOT an input to `0x94e48c` — 0 matrix operands in the 36-insn M383 chain (store 0x5579ea) | `:65` | V MU6 MU11 |
+| rivals FAIL: sign-only (-1 vs -5), mirrored columns, all-cells accumulate, row 3 dropped, last-positive | `:69-73` | V MU8 MU3 |
 | OPEN: which live event selects a category (UI path); row 3 reachability (M376) | — | OPEN |
 
 ## M371 (s337-chain2, STATIC 18/18) — the war-initiation hosts' 0x8 IS COMMLINK: contact (0x8) and vendetta (0x10) are TWO bits; the setter makes contact an invariant of war. `:N` = a line (8..128) of `evidence/m371_war_contact.txt:8`.

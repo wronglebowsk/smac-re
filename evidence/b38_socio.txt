@@ -56,6 +56,9 @@ G4   that delta equals the Police State vector, base zero       True / True
 G5   bit-24 agenda consumer: stored triple (category, choice, signature)
 G5   records                                                   [(0, 0, -1), (0, 1, 2), (0, 2, 1), (0, 3, 4), (1, 0, -1), (1, 1, 0), (1, 2, 6), (1, 3, 1), (2, 0, -1), (2, 1, 2), (2, 2, 1), (2, 3, 0), (3, 0, -1), (3, 1, 1), (3, 2, 0), (3, 3, 4)]
 G5   M379 reader polarity: >0 adds / <0 rejects                 12 add, 4 reject
+G5   reader 0x5a1eac  mov    eax,DWORD PTR [eax+0x927b24] | test   eax,eax | jl     0x5a1ee0
+G5   reader 0x54696c  mov    eax,DWORD PTR [edx+0x927b24] | test   eax,eax | jl     0x5469ba
+G5   both readers: load +0x927b24, test eax, jl (negative = the reject arm)  True
   ok    G5   every cell stores a signature; the 4 empty cells store -1 (the reader's reject arm) and the 12 others store a column 0..10 (the add arm), Police State -> 2
 G6   M383 chain window 0x557980..0x5579ea                       36 insns
 G6   0x94e48c loads / stores / adds inside the window          0x5579da / 0x5579ea / none

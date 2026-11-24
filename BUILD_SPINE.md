@@ -1508,8 +1508,9 @@ lengths only, every effect keyword resolving to exactly one column, |v| <= 5, an
 tokens distinct; **G4** the application: four settings produce one 11-vector — exclusive per
 category, linear over the whole 256-setting sweep against a from-scratch reference, with a printed
 single-category delta; **G5** the consumer: the bit-24 writer's stored triple (category, choice,
-first-positive signature) for every cell, the 4 empty cells' signature = -1, and M379's reader
-polarity (`>0` adds, `<0` rejects) reproduced on the printed records; **G6** the measured NEGATIVE:
+first-positive signature) for every cell, the 4 empty cells' signature = -1, and the polarity
+MEASURED at M379's two readers (`mov eax,[..+0x927b24]` / `test eax,eax` / `jl` = the reject arm);
+**G6** the measured NEGATIVE:
 zero `0x92babc`/`0x92ba98` operands in M383's per-unit military chain (`0x557980..0x557a20`), so the
 matrix is NOT an input to `0x94e48c` and the model refuses to wire one; **G7** five rivals FAIL on
 the printed numbers (sign-only counting: Free Market POLICE -1 not -5; alphabetical columns;
