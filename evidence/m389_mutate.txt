@@ -1,0 +1,25 @@
+M389 mutation harness: 21 mutants
+  MU1  KILL G1 every def is a `mov reg,imm`                            rc=1 0x4daea3|mov    ebx,DWORD PTR [esi+0x8]
+  MU2  KILL G1 the resolved masks are {0x4,0x2,0x1000,0x2000}          rc=1 0x4db035|mov    edi,0x3000
+  MU3  KILL G1 all four register masks resolve to a literal            rc=1 0x4dafcf|mov    edi,DWORD PTR [ebp+0x8]
+  MU4  KILL G1 the four pushed masks are {0x20,0x2000000,0x400,0x40000 rc=1 0x4db0aa|push   0x410
+  MU5  KILL G2 seven guarded arms                                      rc=1 0x4dae43|call   0x551a20
+  MU6  KILL G2 the ladder is exactly the seven lows                    rc=1 0x4daea3|mov    ebx,0x400
+  MU7  KILL G2 no arm asks 0x400                                       rc=1 0x4daea3|mov    ebx,0x400
+  MU8  KILL G2 every arm witnesses one SET and one CLEAR               rc=1 0x4dae13|call   0x5518f0
+  MU9  KILL G2 the SET witness precedes the je target                  rc=1 0x4dadf4|je     0x4daddf
+  MU10 KILL G3 FUN_004dacc0 has two 0x551cf0 arms                      rc=1 0x4dad05|call   0x551a20
+  MU11 KILL G3 0x551cf0 reads a flag argument ([ebp+0x14])             rc=1 0x551cf3|mov    eax,DWORD PTR [ebp+0x18]
+  MU12 KILL G4 the family pushes 0x400 exactly once                    rc=1 0x4db0aa|push   0x800
+  MU13 KILL G5 FUN_004dadd0 has exactly two direct callers             rc=1 0x4dab96|call   0x4dabb0
+  MU14 KILL G7 digest pins the verdict table                           rc=1 0x4db035|mov    edi,0x3000
+  MA1  KILL ALGO: calls clobber callee-saved ebx/edi (def tracer)      rc=1 ALGO=1
+  MA2  KILL ALGO: SET/CLEAR regions swapped (direction classifier)     rc=1 ALGO=2
+  MA3  KILL ALGO: 0x5518f0's NOT+AND unwitnessed (verb classifier)     rc=1 ALGO=3
+  MA4  KILL ALGO: a 0x400 arm admitted (bit classifier)                rc=1 ALGO=4
+  MA5  KILL ALGO: first `mov reg,imm` from function start (no dominanc rc=1 ALGO=5
+  MA6  KILL ALGO: the guard call ignored (arm builder)                 rc=1 ALGO=6
+  MA7  KILL ALGO: a data reference read as a call (reachability census rc=1 ALGO=7
+
+21/21 killed
+PASS M389 mutants: 21/21
