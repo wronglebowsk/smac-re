@@ -1353,3 +1353,15 @@ ACCEPT `python3 -u scripts/m334_powershort_census.py` → `PASS M334: 7/7 gates`
 | rec i == alpha row i-1: 6-vs-11 branch at rec 39 == alpha's first 11-token row (idx 38, alpha.txt:629) | G4 `:84` MU2 | V |
 | one token per comma (`0x5ea985`); stores `+00,+0c,+10,+14,+18,+04,+18,+1c,+2c,+24,+28,+20` — supersedes M53i's +0x20/+0x28 (swapped) | G5 `:85` MU7,8 | V |
 | "39" = consumers' bound (`cmp esi,0x27` @0x4f4a35), array ends rec 72; projects are this loop's (`jl` 0x57a866 skips 5 trailing stores) | G2/G7 `:82,:87` MU11,12 | V |
+| OPEN: a non-UI writer putting 6+ into `0x8f0c11`/`0x985aec` (the inclusive clamp would index `0x94d2c4`, outside the table); FUN_0060c555's API; index provenance of 0x44a1c8 / 0x57c606 (0x48678f ANSWERED by ## M336) | - | lead |
+
+## M336 (s318-chain2, STATIC 7/7) — `0x8f0090` = the DIFFICULTY byte of RECORD 1 (stride 0x176, frame `0x8eff18`); one UNCLAMPED `#DIFF` reader 0x486788; index 6 -> `0x94d2c4` — `evidence/m336_cell090_consumer.txt:1`
+
+| claim | line | kind |
+|---|---|---|
+| ADDRESS census (3 forms; residue): loads at +2 = {0x486788} only, 6 stores, residue EMPTY, no address materialisation | `:1-14` | V MU1,MU4,MU9,MU14 |
+| TARGET=FRAME+0x176+2; end `0x8f0ac8`; rec-1 ptr `0x8f008e` @0x525c42 | `:16-23` | V MU2,MU5 |
+| chain: k=[ebp-0x8] (0x4865dc/5f5/77c) -> +1 -> imul 0x176 -> `[ecx+0x8eff1a]` -> `[edx*4+0x94d2ac]`, 0 gap | `:25-39` | V MU3,MU13 |
+| walk stride `add eax,0x176` (0x4e24ab), 8 iters, iter 1 = TARGET; field+2 store sources = each register's own load (0x8f0c11 x3, lit 0) | `:41-56` | V MU8,MU11 |
+| base/end READ 0x57ac74/0x57ac88 = 6 rows; only clamp 0x486f30 `FUN_00423af0(diff,0,6)` INCLUSIVE => 6 -> `0x94d2c4` | `:58-90` | V MU6,MU7,MU10,MU12 |
+| OPEN: FUN_0058e7f0 >=6?; record indices assumed 0..7 | - | lead |

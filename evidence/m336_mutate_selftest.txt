@@ -1,0 +1,5 @@
+  gate parser: PASS
+  digest parser: PASS
+  both-directions law: PASS
+  gate coverage: PASS
+SELFTEST PASS 4/4
