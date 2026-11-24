@@ -795,9 +795,9 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 ## Session 343-chain3 — M390: FUN_004dabb0 is DEAD-INF by every dispatch form a PE32 has; 0x551cf0's 4th arg is SET/CLEAR polarity
 
-- **ACCEPT** `python3 -u scripts/m390_entry_noun.py` -> **`PASS M390: 44/44`** `05ea891851aace25`
-  (`evidence/m390_entry_noun.txt:181`), twice byte-identical (`evidence/m390_twice.txt:3`);
-  harness **11/11 killed** (`evidence/m390_mutate.txt:25`); static, zero box.
+- **ACCEPT** `python3 -u scripts/m390_entry_noun.py` -> **`PASS M390: 47/47`** `bafd75107d142bc4`
+  (`evidence/m390_entry_noun.txt:188`), twice byte-identical (`evidence/m390_twice.txt:3`);
+  harness **16/16 killed** (`evidence/m390_mutate.txt:36`); static, zero box.
 - **Q1, mechanism named**: `FUN_004dabb0` (122 B, 48 insns) has ZERO of every
   entry mechanism - 0 `call` (`:79`), 0 `jmp`/`jcc` (`:80`), 0 branch into the body from
   outside, 0 VA immediates, 0 stored dwords in 3,067,904 B (`:89`), 0 register-indirect

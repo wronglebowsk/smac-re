@@ -110,4 +110,4 @@ verified PASS. Region-B pointers: §trim-s313-chain1 (sha1 `6f2ddbe32478`); per-
 
 - M384 (s342-c2): 0x400 has 7 setters - `0x5534ae`/`0x555a6b` inline, plus 5 callers of the pair-mask API FUN_00551a20/FUN_00551cf0 passing 0x400 (95/106 masks resolved); `PASS M384: 39/39` `evidence/m384_bit400_writer.txt:280`, 23 mutants. Next: the 7 runtime mask args (0x4dadxx family) or what `0x551a20`'s `and 0xfaeef378` blanket clear means for the 0xc00 cluster.
 - M387 (s342-c5): M380's last 2 = a verbatim pair-dword copy gated by arg7; arg7==0 writes UNWRITTEN (store unguarded), only msg 0x16 reaches it. 11/11 `c0e46fd18f2fc313`, 20/20.
-- M390 (s343-c3): 0x4dabb0 DEAD-INF under every PE32 dispatch form (non-rebasable PE, 0 stored VA); 0x551cf0 arg4 = SET/CLEAR (26 one / 6 zero / 4 reg of 36). 44/44 `05ea891851aace25`, 11/11 mutants.
+- M390 (s343-c3): 0x4dabb0 DEAD-INF under every PE32 dispatch form (non-rebasable PE, 0 stored VA); 0x551cf0 arg4 = SET/CLEAR (26 one / 6 zero / 4 reg of 36). 47/47 `bafd75107d142bc4`, 16/16 mutants.

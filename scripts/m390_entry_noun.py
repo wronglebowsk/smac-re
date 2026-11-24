@@ -174,7 +174,7 @@ print("  index.csv: entry=%#x size=%d insns=%d n_callers=%d" % (ent, size, nins,
 print("  body %#x..%#x:" % (body[0][0], body[-1][0] + 1))
 for a, b in body:
     print("    %#010x  %s" % (a, b))
-prev_i = IDX[ent] - 1
+prev_i = IDX[ent] - 1 - (2 if ALGO == 2 else 0)   # ALGO 2 = treat the `ret 4` as transparent
 prev = INS[prev_i]
 after = INS[IDX[body[-1][0]] + 1]
 rets = [(a, b) for a, b in body if b.startswith("ret")]
@@ -187,14 +187,15 @@ check("G1 body is 122 B / 48 insns and ends at the 0x4dac2a nop pad",
       size == 122 and len(body) == nins == 48 and after[0] == 0x4DAC2A,
       "%d/%d/%#x" % (size, len(body), after[0]))
 check("G1 the predecessor instruction is a `ret 4` (no fallthrough)",
-      ALGO != 2 and prev[1].replace(" ", "") == "ret0x4", "%#x %s" % (prev[0], prev[1]))
+      prev[1].replace(" ", "") == "ret0x4", "%#x %s" % (prev[0], prev[1]))
 check("G1 both exits are `ret 4` (one ebp frame, one arg)",
       len(rets) == 2 and all(b == "ret    0x4" for _a, b in rets), str([hex(a) for a, _ in rets]))
-sib = body_of(*FN["FUN_004dac30"][:2])
+SIB = 0x4DAB90 if ALGO == 13 else 0x4DAC30   # ALGO 13: compare against a non-sibling neighbour
+sib = body_of(*FN["FUN_%08x" % SIB][:2])
 pro = [b for _a, b in body[:6]]
 sib_pro = [b for _a, b in sib[:6]]
 print("  prologue      %s" % pro)
-print("  sibling 0x4dac30 prologue %s" % sib_pro)
+print("  sibling %#x prologue %s" % (SIB, sib_pro))
 check("G1 prologue is the family signature, identical to the CALLED sibling 0x4dac30",
       pro == sib_pro and pro[0] == "push   ebp" and pro[5] == "mov    esi,ecx")
 
@@ -220,18 +221,21 @@ print("  jmp/jcc -> %#x : %d %s" % (TARGET, len(by_kind.get("jump", [])),
                                     [hex(x) for x in by_kind.get("jump", [])]))
 print("  branch targets INTO the body from outside : %d %s"
       % (len(inside), [(hex(a), m) for a, m in inside]))
-print("  non-branch instructions carrying 0x4dabb0 as an immediate : %d %s"
+print("  non-branch instructions whose TEXT mentions 0x4dabb0 : %d %s"
       % (len(imms), [(hex(a), b) for a, b in imms]))
 check("G2 zero direct `call` instructions reach 0x4dabb0",
       len(by_kind.get("call", [])) == 0, str(len(by_kind.get("call", []))))
 check("G2 zero `jmp`/`jcc` reach 0x4dabb0", len(by_kind.get("jump", [])) == 0,
       str(len(by_kind.get("jump", []))))
 check("G2 no branch from outside lands inside the body", len(inside) == 0, str(len(inside)))
-check("G2 no immediate operand is 0x4dabb0", len(imms) == 0, str(len(imms)))
+check("G2 no non-branch instruction text mentions 0x4dabb0 (byte-level test is G3)", len(imms) == 0,
+      str(len(imms)))
 
 # ---------------- G3 ---------------------------------------------------------
 print("\nG3  address-taken census over the whole image (positive control included)")
-data = RAW[:0x271000] if ALGO == 1 else RAW   # law mutant: .rdata/.data never scanned
+data = RAW[:0x271000] if ALGO == 1 else RAW    # ALGO 1: .rdata/.data never scanned
+if ALGO == 10:                                 # ALGO 10: silently truncated scan surface
+    data = RAW[:0x100000]
 
 
 def hits(va, blob=None):
@@ -278,6 +282,8 @@ print("  CONTROL run: %d contiguous .text pointers at VA %s, first 12 %s"
       % (len(run), hex(off2va(lo) if ctrl else 0), [hex(v) for v in run[:12]]))
 check("G3 zero occurrences of the 0x4dabb0 VA in the image", len(hits_target) == 0,
       str(len(hits_target)))
+check("G3 the scanned blob is the whole image (no silent truncation)",
+      len(data) == len(RAW) == 3067904, "%d of %d" % (len(data), len(RAW)))
 check("G3 zero image-base-relative occurrences of 0xdabb0", len(rel_target) == 0,
       str(len(rel_target)))
 check("G3 the census surface is real: >5000 stored .text addresses", len(text_ptr_pos) > 5000,
@@ -285,9 +291,9 @@ check("G3 the census surface is real: >5000 stored .text addresses", len(text_pt
 check("G3 CONTROL: the live sibling 0x4dab90 IS address-taken once, in .rdata",
       len(ctrl) == 1 and sect_of_va(off2va(ctrl[0])) == ".rdata",
       "%d %s" % (len(ctrl), [sect_of_va(off2va(o) or 0) for o in ctrl]))
-check("G3 CONTROL: that slot sits in a run of >=100 contiguous .text pointers",
-      len(run) >= 100 and all(TEXT_LO <= v < TEXT_HI for v in run) if run else False,
-      str(len(run)))
+check("G3 CONTROL: that slot sits in a run of >=100 contiguous .text pointers inside .rdata",
+      bool(run) and len(run) >= 100 and all(TEXT_LO <= v < TEXT_HI for v in run)
+      and sect_of_va(off2va(lo)) == ".rdata", "%d entries from VA %s" % (len(run), hex(off2va(lo))))
 
 # ---------------- G4 ---------------------------------------------------------
 print("\nG4  indirect dispatch: every slot an indirect call/jmp could read")
@@ -295,6 +301,8 @@ ind = [(a, b) for a, b in INS if re.match(r"^(call|jmp)\s+", b) and not BRANCH.m
 kinds = {"call reg": 0, "call [mem]": 0, "jmp reg": 0, "jmp [mem]": 0}
 for a, b in ind:
     k = ("call" if b.startswith("call") else "jmp") + (" [mem]" if "PTR" in b else " reg")
+    if ALGO == 14 and k == "jmp [mem]":        # ALGO 14: memory-indirect jumps not counted
+        continue
     kinds[k] += 1
 print("  indirect sites=%d  %s" % (len(ind), kinds))
 abs_tab = []
@@ -333,8 +341,9 @@ ins = sorted({str(s) for _a, _t, s in abs_tab_sec if s is not None})
 check("G4 in-section table bases live only in .text/.rdata/.data/UVA (never _SELFMOD/.rsrc)",
       ins == [".data", ".rdata", ".text", "UVA_DATA"] and len(unres) < len(abs_tab) // 10,
       "%s in-section, %d out-of-section" % (ins, len(unres)))
-check("G4 no register-indirect site loads a family address into its target register",
-      len(famimm) == 0, "%d of %d" % (len(famimm), len(regind)))
+check("G4 0 of the register-indirect sites has a NEARBY literal family `mov reg,imm` "
+      "(full closure is the G3 byte census)", len(famimm) == 0,
+      "%d of %d" % (len(famimm), len(regind)))
 check("G4 no indirect table slot equals 0x4dabb0 (from the G3 census, 0 dwords anywhere)",
       len(hits_target) == 0, str(len(hits_target)))
 
@@ -372,10 +381,10 @@ check("R1 'a computed dispatch (vtable/switch table/registry) reaches 0x4dabb0' 
       len(hits_target) == 0 and len(rel_target) == 0,
       "%d stored VAs, %d base-relative" % (len(hits_target), len(rel_target)))
 check("R2 'code falls or jumps into the body: 0x4dabb0 is no entry at all' refuted",
-      not (ALGO == 2) and prev[1] == "ret    0x4" and len(inside) == 0 and pro == sib_pro,
+      prev[1] == "ret    0x4" and len(inside) == 0 and pro == sib_pro,
       "pred=%s inside=%d prologue-eq=%s" % (prev[1], len(inside), pro == sib_pro))
 check("R3 'the relocations would fix up a pointer the byte search cannot see' refuted",
-      not (ALGO == 3) and not (dllc & 0x40) and reloc_dir == (0, 0),
+      not (dllc & 0x40) and reloc_dir == (0, 0),
       "%#06x %s" % (dllc, reloc_dir))
 body2 = body_of(*FN["FUN_004dac30"][:2])
 n = 6 if ALGO == 4 else min(len(body), len(body2))
@@ -398,12 +407,17 @@ sb = body_of(s_ent, s_size)
 print("  body=%d B / %d insns, index.csv n_callers=%d" % (s_size, len(sb), s_ncall))
 arg_slots = sorted(set(re.findall(r"\[ebp\+0x([0-9a-f]+)\]", " ".join(b for _a, b in sb))))
 print("  stack slots read: %s" % ["[ebp+0x%s]" % x for x in arg_slots])
-flag_read = [b for _a, b in sb if re.match(r"mov\s+\w+,DWORD PTR \[ebp\+0x14\]$", b)]
+FSLOT = "0x10" if ALGO == 5 else "0x14"   # ALGO 5 = read the flag from arg3's slot
+flag_read = [b for _a, b in sb if re.match(r"mov\s+\w+,DWORD PTR \[ebp\+%s\]$" % FSLOT, b)]
+loads = {sl: sum(1 for _a, b in sb
+                 if re.match(r"mov\s+\w+,DWORD PTR \[ebp\+0x%s\]$" % sl, b))
+         for sl in arg_slots}
 test_i = None
 for i, (a, b) in enumerate(sb):
-    if b == "test   eax,eax" and i and sb[i - 1][1].endswith("[ebp+0x14]"):
+    if b == "test   eax,eax" and i and sb[i - 1][1].endswith("[ebp+%s]" % FSLOT):
         test_i = i
-print("  flag read: %s then %s" % (flag_read, sb[test_i][1] if test_i is not None else None))
+print("  flag read: %s then %s" % (flag_read, sb[test_i][1] if test_i is not None else "NO TEST"))
+print("  per-slot LOAD counts %s" % loads)
 obs = [(a, b) for a, b in sb if b.startswith(("and", "or")) and re.search(r"\b(edx|ecx)\b", b)]
 print("  mask ops: %s" % [(hex(a), b) for a, b in obs])
 n_and = sum(1 for _a, b in obs if b.startswith("and"))
@@ -421,33 +435,39 @@ print("  `not`=%d  %s ; timer cell stores=%s" % (len(nots), [hex(x) for x in not
 je = [(a, b) for a, b in sb if b.startswith("je")]
 print("  branch on the flag: %s" % [(hex(a), b) for a, b in je])
 zero_lo = int(re.search(r"0x([0-9a-f]+)", je[0][1]).group(1), 16)
-print("  SET side = %#x..%#x (fallthrough);  CLEAR side = %#x..%#x (je target)"
-      % (s_ent, zero_lo, zero_lo, s_ent + s_size))
-check("G7 the callee reads 4 cdecl args ([ebp+8/0xc/0x10/0x14])",
-      set(arg_slots) == {"8", "c", "10", "14"} and len(arg_slots) == 4, str(arg_slots))
-check("G7 the branch tests the 4th arg [ebp+0x14]",
-      not (ALGO == 5) and test_i is not None and
-      sb[test_i - 1][1] == "mov    eax,DWORD PTR [ebp+0x14]",
-      sb[test_i - 1][1] if test_i else "none")
+# the SET side is the FLAG!=0 path = fallthrough; ALGO 7 takes the je target as the SET side
+set_side = (s_ent, zero_lo) if ALGO != 7 else (zero_lo, s_ent + s_size)
+clear_side = (zero_lo, s_ent + s_size) if ALGO != 7 else (s_ent, zero_lo)
+print("  SET side = %#x..%#x ;  CLEAR side = %#x..%#x" % (set_side + clear_side))
+print("  je[0] at %#x follows the flag test at index %s ; je[1] -> %s"
+      % (je[0][0], test_i, je[1][1] if len(je) > 1 else "-"))
+check("G7 the callee reads exactly 4 stack args, each via a real `mov reg,[ebp+slot]` load",
+      set(arg_slots) == {"8", "c", "10", "14"} and len(arg_slots) == 4
+      and all(loads.get(sl, 0) >= 1 for sl in ("8", "c", "10", "14")), "%s %s" % (arg_slots, loads))
+check("G7 the flag branch is `mov eax,[ebp+0x14]` / `test eax,eax` / `je`, with je OFFSET i+1",
+      FSLOT == "0x14" and test_i is not None and test_i >= 1
+      and sb[test_i - 1][1] == "mov    eax,DWORD PTR [ebp+0x14]"
+      and sb[test_i][1] == "test   eax,eax" and sb[test_i + 1][1] == je[0][1],
+      "slot=0x%s test_i=%s" % (FSLOT, test_i))
 check("G7 exactly one AND-shaped and one OR-shaped write to 0x94d448",
       n_and == 1 and n_or == 1 and len(lea_field) == 1 and len(stores) == 3
       and len(cell) == 1,
       "%d/%d/%d/%d/%d" % (n_and, n_or, len(lea_field), len(stores), len(cell)))
-check("G7 the CLEAR side is AND-NOT: the single `not` precedes the single `and`",
-      len(nots) == 1 and nots[0] > zero_lo and nots[0] < s_ent + s_size, str([hex(x) for x in nots]))
-check("G7 the OR write sits on the flag!=0 side, the AND write on the flag==0 side",
-      len(obs) == 2 and obs[0][1].startswith("or") and obs[0][0] < zero_lo
-      and obs[1][1].startswith("and") and obs[1][0] > zero_lo,
-      "%s zero-side starts %#x" % ([(hex(a), b) for a, b in obs], zero_lo))
-check("G7 the 0x40 -> 0x32 countdown store exists once and only on the flag!=0 side",
-      len(cell) == 1 and cell[0][0] < zero_lo and cell[0][1].endswith(",0x32"),
+inside_ = lambda a, side: side[0] <= a < side[1]
+check("G7 the CLEAR side is AND-NOT: the single `not` sits on the CLEAR side",
+      len(nots) == 1 and inside_(nots[0], clear_side), str([hex(x) for x in nots]))
+check("G7 the OR write sits on the SET side, the AND write on the CLEAR side",
+      len(obs) == 2 and obs[0][1].startswith("or") and inside_(obs[0][0], set_side)
+      and obs[1][1].startswith("and") and inside_(obs[1][0], clear_side),
+      "%s set=%s clear=%s" % ([(hex(a), b) for a, b in obs], set_side, clear_side))
+check("G7 the 0x40 -> 0x32 countdown store exists once and only on the SET side",
+      len(cell) == 1 and inside_(cell[0][0], set_side) and cell[0][1].endswith(",0x32"),
       str([(hex(a), b) for a, b in cell]))
 print("  NOUN: flag!=0 -> OR the mask in (SET);  flag==0 -> AND it out (CLEAR);")
 print("        SET additionally stamps %s=0x32 when the mask carries 0x40" % CELL)
-flip = (ALGO == 7)
-check("G7 noun = SET/CLEAR polarity, not 'arm the timer' (the 0x40 test is inside the SET side)",
-      (not flip) and n_or == 1 and len(cell) == 1 and cell[0][0] < zero_lo,
-      "or=%d cell=%d" % (n_or, len(cell)))
+check("G7 noun = SET/CLEAR polarity, not 'arm the timer': the OR and the 0x40 stamp share ONE side",
+      n_or == 1 and len(cell) == 1 and inside_(obs[0][0], set_side) and inside_(cell[0][0], set_side),
+      "or@%#x cell@%#x set=%s" % (obs[0][0], cell[0][0], set_side))
 
 sites = [(i, a) for i, (a, b) in enumerate(INS) if b.startswith("call") and b.endswith("0x551cf0")]
 print("\n  caller census: %d `call 0x551cf0` sites" % len(sites))
@@ -493,6 +513,14 @@ check("G7 32 of 36 sites pass a literal bool; 4 pass a runtime register",
       dist["1"] == 26 and dist["0"] == 6 and dist["reg"] == 4 and not (ALGO == 6), str(dist))
 check("G7 no site collects a 5th push (the window is exactly the 4 args)",
       all(r[2] <= 4 for r in rows), str(sorted({r[2] for r in rows})))
+CWIN = 1 if ALGO == 11 else 3                  # ALGO 11: cleanup looked for on ONE insn only
+clean = [(a, INS[j][1]) for i, a in sites
+         for j in range(i + 1, min(i + CWIN + 1, len(INS)))
+         if INS[j][1].replace(" ", "") == "addesp,0x10"]
+print("  `add esp,0x10` within %d insns after the call: %d/%d sites %s"
+      % (CWIN, len(clean), len(sites), [hex(a) for a, _b in clean][:8]))
+check("G7 28/36 sites clean up exactly 0x10 B - an independent 4-cdecl-arg confirmation",
+      len(clean) == 28, str(len(clean)))
 m385 = {0x4DAD05: "push   0x1", 0x4DAD30: "push   0x0"}
 got = {a: t for a, t, _n in rows}
 check("G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) passes 1, "
@@ -502,7 +530,16 @@ check("G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) passes 1, "
 
 # ---------------- G8 ---------------------------------------------------------
 print("\nG8  digest")
-payload = "".join(REPORT).split("\nG8  digest")[0]
+INPUTS = [("terran.exe", RAW), ("text.txt", open(TEXT, "rb").read()),
+          ("index.csv", open(CSV, "rb").read())]
+if ALGO == 12:                                  # ALGO 12: an input blob is dropped from the digest
+    INPUTS = INPUTS[:2]
+ih = ["%s=%s" % (n, hashlib.sha1(b).hexdigest()[:16]) for n, b in INPUTS]
+print("  inputs: " + "  ".join("%s %s (%d B)" % (n, hashlib.sha1(b).hexdigest()[:16], len(b))
+                               for n, b in INPUTS))
+check("G8 the digest binds all three input blobs (exe, dump, index)",
+      len(INPUTS) == 3 and all(len(b) > 0 for _n, b in INPUTS), str([len(b) for _n, b in INPUTS]))
+payload = "\n".join(ih) + "".join(REPORT).split("\nG8  digest")[0]
 h1 = hashlib.sha1(payload.encode()).hexdigest()[:16]
 h2 = hashlib.sha1(payload.encode()).hexdigest()[:16]
 print("  payload=%d B  digest run1=%s run2=%s" % (len(payload), h1, h2))

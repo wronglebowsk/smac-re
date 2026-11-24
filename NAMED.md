@@ -1635,16 +1635,16 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | 0x574a66 masks {0x20,0x30} | `:59-82` | V MU11 MU12 MA2 |
 | 0x800 / 0xc00 pair at no PROVEN site | `:96-98` | V MU18 MA3 |
 | OPEN: FUN_004dabb0 entry; 0x551cf0 arg noun -> ANSWERED by M390 (`## M390`) | - | CLOSED |
-## M390 (s343-c3) - 0x4dabb0 DEAD-INF under every PE32 dispatch form; 0x551cf0 arg4 = SET/CLEAR. `scripts/m390_entry_noun.py` -> **`PASS M390: 44/44`** `05ea891851aace25` (`evidence/m390_entry_noun.txt:181`), 11/11 mutants (`evidence/m390_mutate.txt:25`). `:N` = that file.
+## M390 (s343-c3) - 0x4dabb0 DEAD-INF, every PE32 dispatch form; 0x551cf0 arg4 = SET/CLEAR. `scripts/m390_entry_noun.py` -> **`PASS M390: 47/47`** `bafd75107d142bc4` (`evidence/m390_entry_noun.txt:188`), 16/16 mutants (`evidence/m390_mutate.txt:36`). `:N` = that file.
 | claim | ev | conf/mutant |
 |---|---|---|
-| 0 `call`/`jmp`/VA-imm; predecessor `ret 4`; of 4288 indirect sites, 0 family address | `:65-113` | V MU1 MU2 MU3 MU5 |
-| 0 stored VA in 3,067,904 B; CONTROL 0x4dab90 stored once, .rdata 0x677ff8 (187 run) | `:89-99` | V MU3 MU4 |
+| 0 `call`/`jmp`/VA-imm; predecessor `ret 4`; of 4288 indirect sites, 0 family address | `:65-113` | V MU1 MU2 MU3 MU5 MU16 |
+| 0 stored VA in 3,067,904 B; CTRL 0x4dab90 once at .rdata 0x677ff8 (187 run) | `:89-99` | V MU3 MU4 MU12 |
 | CENSUS LAW: ImageBase 0x400000, DllCharacteristics 0x0, reloc dir (0,0) | `:5-10` | V MU6 |
-| not a fold: 6/48 match 0x4dac30; fields 0x94d448 / 0x94d468 | `:132-134` | V MU7 |
-| 0x551cf0: flag!=0 = OR (SET) + 0x40 -> 0x94d4c8=0x32; ==0 = NOT+AND; 1 row a*0x82f+b | `:141-155` | V MU8 MU10 |
-| callers 36 = 26 one / 6 zero / 4 reg; M385 gate 0x4dad05=1, 0x4dad30=0 | `:158-174` | V MU9 MU11 |
-| OPEN: arithmetic address (split immediates) | - | OPEN |
+| not a fold: 6/48 match 0x4dac30; fields 0x94d448 / 0x94d468 | `:132-134` | V MU7 MU15 |
+| 0x551cf0: flag!=0 = OR + 0x40 -> 0x94d4c8=0x32; ==0 = NOT+AND; 1 row a*0x82f+b | `:141-155` | V MU8 MU10 |
+| callers 36 = 26 one / 6 zero / 4 reg; 28/36 `add esp,0x10`; M385 gate 0x4dad05=1, 0x4dad30=0 | `:158-180` | V MU9 MU11 MU13 |
+| OPEN: arithmetic address (split imms) | - | OPEN |
 ## M386 (s342-c4, 55/55) — +0x94d820 = X of a per-faction PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's guard reads the PARTNER row. ACCEPT `scripts/m386_marker_pair.py` `401580f3c8ad292e` (`evidence/m386_marker_pair.txt:143`), 15 mutants (`evidence/m386_mutate.txt:19`). `:N` = same file.
 | claim | ev | conf |
 |---|---|---|

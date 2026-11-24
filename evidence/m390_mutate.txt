@@ -1,26 +1,36 @@
-M390 mutation harness - 11 mutants
-BASE  rc=0  red=0  ['PASS M390: 44/44']
-MU1   KILLED rc=1 red=5  G2 zero direct `call` instructions reach 0x4dabb0 | G2 no branch from outside lands inside the body | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
+M390 mutation harness - 16 mutants
+BASE  rc=0  red=0  ['PASS M390: 47/47']
+MU1   KILLED rc=1 red=5  G2 zero direct `call` instructions reach 0x4dabb0 - 1 | G2 no branch from outside lands inside the body - 1 | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
       a real `call` to the target is injected (the called sibling 0x4dac30's site)
-MU2   KILLED rc=1 red=2  G2 zero `jmp`/`jcc` reach 0x4dabb0 | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
+MU2   KILLED rc=1 red=2  G2 zero `jmp`/`jcc` reach 0x4dabb0 - 1 | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
       a conditional jump into the target's entry is injected
-MU3   KILLED rc=1 red=6  G3 zero occurrences of the 0x4dabb0 VA in the image | G4 no indirect table slot equals 0x4dabb0 (from the G3 census, 0 | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
+MU3   KILLED rc=1 red=6  G3 zero occurrences of the 0x4dabb0 VA in the image - 1 | G4 no indirect table slot equals 0x4dabb0 (from the G3 census, 0 | G5 0x4dabb0 has zero of ALL FOUR mechanisms (calls/jumps/dwords/
       the census is aimed at the live sibling 0x4dab90 (a stored VA must then be found)
-MU4   KILLED rc=1 red=3  G3 CONTROL: the live sibling 0x4dab90 IS address-taken once, in  | G3 CONTROL: that slot sits in a run of >=100 contiguous .text po | G5 every OTHER family member has >=1 entry mechanism (the census
+MU4   KILLED rc=1 red=2  G3 the scanned blob is the whole image (no silent truncation) -  | G3 CONTROL: the live sibling 0x4dab90 IS address-taken once, in 
       the byte census is restricted to .text, so the .rdata slot becomes invisible
-MU5   KILLED rc=1 red=2  G1 the predecessor instruction is a `ret 4` (no fallthrough) | R2 'code falls or jumps into the body: 0x4dabb0 is no entry at a
+MU5   KILLED rc=1 red=2  G1 the predecessor instruction is a `ret 4` (no fallthrough) - 0 | R2 'code falls or jumps into the body: 0x4dabb0 is no entry at a
       fallthrough is assumed through a `ret 4` boundary
-MU6   KILLED rc=1 red=2  G0 image has NO DYNAMIC_BASE (never relocated) | R3 'the relocations would fix up a pointer the byte search canno
+MU6   KILLED rc=1 red=2  G0 image has NO DYNAMIC_BASE (never relocated) - 0x40 | R3 'the relocations would fix up a pointer the byte search canno
       the image is treated as rebasable, which would make the byte census incomplete
 MU7   KILLED rc=1 red=1  R4 '0x4dabb0 is a COMDAT fold of the live sibling 0x4dac30' refu
       the body diff only looks at the 6-instruction prologue (which IS identical)
-MU8   KILLED rc=1 red=1  G7 the branch tests the 4th arg [ebp+0x14]
-      the flag is read from arg3's slot [ebp+0x10] instead of arg4's
-MU9   KILLED rc=1 red=3  G7 both polarities occur: literal 0 AND literal 1 are used | G7 32 of 36 sites pass a literal bool; 4 pass a runtime register | G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) pas
+MU8   KILLED rc=1 red=1  G7 the flag branch is `mov eax,[ebp+0x14]` / `test eax,eax` / `j
+      the flag MEASUREMENT moves to arg3's slot [ebp+0x10] (the branch predicate changes)
+MU9   KILLED rc=1 red=3  G7 both polarities occur: literal 0 AND literal 1 are used - {'1 | G7 32 of 36 sites pass a literal bool; 4 pass a runtime register | G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) pas
       the caller classifier takes the LAST push (arg1) instead of the 4th arg
-MU10  KILLED rc=1 red=1  G7 noun = SET/CLEAR polarity, not 'arm the timer' (the 0x40 test
-      the SET/CLEAR polarity is flipped (the classifier's law), numbers unchanged
+MU10  KILLED rc=1 red=4  G7 the CLEAR side is AND-NOT: the single `not` sits on the CLEAR | G7 the OR write sits on the SET side, the AND write on the CLEAR | G7 the 0x40 -> 0x32 countdown store exists once and only on the 
+      the classifier's law flips: the je TARGET becomes the SET side, so the measured or/and move
 MU11  KILLED rc=1 red=2  G7 32 of 36 sites pass a literal bool; 4 pass a runtime register | G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) pas
       the real `push 0x1` at M385's set-site is rewritten to 0 in the dump
+MU12  KILLED rc=1 red=2  G3 the scanned blob is the whole image (no silent truncation) -  | G3 CONTROL: the live sibling 0x4dab90 IS address-taken once, in 
+      the byte-census surface is truncated to 1 MB without saying so
+MU13  KILLED rc=1 red=1  G7 28/36 sites clean up exactly 0x10 B - an independent 4-cdecl-
+      the stack-cleanup window shrinks to one instruction (the arg-count witness is lost)
+MU14  KILLED rc=1 red=1  G8 the digest binds all three input blobs (exe, dump, index) - [
+      an input blob is dropped, so the digest no longer binds the exe/dump/index
+MU15  KILLED rc=1 red=2  G1 prologue is the family signature, identical to the CALLED sib | R2 'code falls or jumps into the body: 0x4dabb0 is no entry at a
+      the prologue is compared against the 32-B non-sibling neighbour 0x4dab90
+MU16  KILLED rc=1 red=1  G4 all four indirect forms appear - {'call reg': 206, 'call [mem
+      memory-indirect `jmp` sites are silently not counted, shrinking the dispatch surface
 
-PASS M390 mutants: 11/11 killed
+PASS M390 mutants: 16/16 killed

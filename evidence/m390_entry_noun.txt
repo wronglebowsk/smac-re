@@ -79,11 +79,11 @@ G2  branch census over the whole .text: who transfers control to 0x4dabb0
   call -> 0x4dabb0 : 0 []
   jmp/jcc -> 0x4dabb0 : 0 []
   branch targets INTO the body from outside : 0 []
-  non-branch instructions carrying 0x4dabb0 as an immediate : 0 []
+  non-branch instructions whose TEXT mentions 0x4dabb0 : 0 []
   ok   G2 zero direct `call` instructions reach 0x4dabb0 - 0
   ok   G2 zero `jmp`/`jcc` reach 0x4dabb0 - 0
   ok   G2 no branch from outside lands inside the body - 0
-  ok   G2 no immediate operand is 0x4dabb0 - 0
+  ok   G2 no non-branch instruction text mentions 0x4dabb0 (byte-level test is G3) - 0
 
 G3  address-taken census over the whole image (positive control included)
   dword 0x004dabb0 in 3067904 B : 0 []
@@ -98,10 +98,11 @@ G3  address-taken census over the whole image (positive control included)
   CONTROL 0x4dab90 <- dword at ['0x277ff8'] (VA ['0x677ff8'], section ['.rdata'])
   CONTROL run: 187 contiguous .text pointers at VA 0x677dbc, first 12 ['0x4cc7a0', '0x405350', '0x4cb610', '0x5cdd0a', '0x5cdf82', '0x5e47ac', '0x404e70', '0x404e10', '0x4bc6d0', '0x404e30', '0x4bc6d0', '0x404e30']
   ok   G3 zero occurrences of the 0x4dabb0 VA in the image - 0
+  ok   G3 the scanned blob is the whole image (no silent truncation) - 3067904 of 3067904
   ok   G3 zero image-base-relative occurrences of 0xdabb0 - 0
   ok   G3 the census surface is real: >5000 stored .text addresses - 14754
   ok   G3 CONTROL: the live sibling 0x4dab90 IS address-taken once, in .rdata - 1 ['.rdata']
-  ok   G3 CONTROL: that slot sits in a run of >=100 contiguous .text pointers - 187
+  ok   G3 CONTROL: that slot sits in a run of >=100 contiguous .text pointers inside .rdata - 187 entries from VA 0x677dbc
 
 G4  indirect dispatch: every slot an indirect call/jmp could read
   indirect sites=4288  {'call reg': 206, 'call [mem]': 3720, 'jmp reg': 21, 'jmp [mem]': 341}
@@ -110,7 +111,7 @@ G4  indirect dispatch: every slot an indirect call/jmp could read
   ok   G4 the dump contains indirect call/jmp sites (instrument is live) - 4288
   ok   G4 all four indirect forms appear - {'call reg': 206, 'call [mem]': 3720, 'jmp reg': 21, 'jmp [mem]': 341}
   ok   G4 in-section table bases live only in .text/.rdata/.data/UVA (never _SELFMOD/.rsrc) - ['.data', '.rdata', '.text', 'UVA_DATA'] in-section, 104 out-of-section
-  ok   G4 no register-indirect site loads a family address into its target register - 0 of 213
+  ok   G4 0 of the register-indirect sites has a NEARBY literal family `mov reg,imm` (full closure is the G3 byte census) - 0 of 213
   ok   G4 no indirect table slot equals 0x4dabb0 (from the G3 census, 0 dwords anywhere) - 0
 
 G5  verdict table - entry mechanisms per family member
@@ -138,21 +139,23 @@ G7  FUN_00551cf0(a,b,mask,flag): what is `flag`?
   body=118 B / 41 insns, index.csv n_callers=36
   stack slots read: ['[ebp+0x10]', '[ebp+0x14]', '[ebp+0x8]', '[ebp+0xc]']
   flag read: ['mov    eax,DWORD PTR [ebp+0x14]'] then test   eax,eax
+  per-slot LOAD counts {'10': 2, '14': 1, '8': 2, 'c': 2}
   mask ops: [('0x551d1d', 'or     edx,ecx'), ('0x551d60', 'and    edx,ecx')]
   loads/stores through 0x94d448: [('0x551d22', 'mov    DWORD PTR [eax+0x94d448],edx')]
   lea of the field: [('0x551d52', 'lea    eax,[edx*4+0x94d448]')] ; ALL dword stores in body: 3 [('0x551d22', 'mov    DWORD PTR [eax+0x94d448],edx'), ('0x551d2a', 'mov    DWORD PTR [eax+0x94d4c8],0x32'), ('0x551d62', 'mov    DWORD PTR [eax],edx')]
   `not`=1  ['0x551d50'] ; timer cell stores=[('0x551d2a', 'mov    DWORD PTR [eax+0x94d4c8],0x32')]
   branch on the flag: [('0x551cf8', 'je     0x551d36'), ('0x551d28', 'je     0x551d64')]
-  SET side = 0x551cf0..0x551d36 (fallthrough);  CLEAR side = 0x551d36..0x551d66 (je target)
-  ok   G7 the callee reads 4 cdecl args ([ebp+8/0xc/0x10/0x14]) - ['10', '14', '8', 'c']
-  ok   G7 the branch tests the 4th arg [ebp+0x14] - mov    eax,DWORD PTR [ebp+0x14]
+  SET side = 0x551cf0..0x551d36 ;  CLEAR side = 0x551d36..0x551d66
+  je[0] at 0x551cf8 follows the flag test at index 3 ; je[1] -> je     0x551d64
+  ok   G7 the callee reads exactly 4 stack args, each via a real `mov reg,[ebp+slot]` load - ['10', '14', '8', 'c'] {'10': 2, '14': 1, '8': 2, 'c': 2}
+  ok   G7 the flag branch is `mov eax,[ebp+0x14]` / `test eax,eax` / `je`, with je OFFSET i+1 - slot=0x0x14 test_i=3
   ok   G7 exactly one AND-shaped and one OR-shaped write to 0x94d448 - 1/1/1/3/1
-  ok   G7 the CLEAR side is AND-NOT: the single `not` precedes the single `and` - ['0x551d50']
-  ok   G7 the OR write sits on the flag!=0 side, the AND write on the flag==0 side - [('0x551d1d', 'or     edx,ecx'), ('0x551d60', 'and    edx,ecx')] zero-side starts 0x551d36
-  ok   G7 the 0x40 -> 0x32 countdown store exists once and only on the flag!=0 side - [('0x551d2a', 'mov    DWORD PTR [eax+0x94d4c8],0x32')]
+  ok   G7 the CLEAR side is AND-NOT: the single `not` sits on the CLEAR side - ['0x551d50']
+  ok   G7 the OR write sits on the SET side, the AND write on the CLEAR side - [('0x551d1d', 'or     edx,ecx'), ('0x551d60', 'and    edx,ecx')] set=(5577968, 5578038) clear=(5578038, 5578086)
+  ok   G7 the 0x40 -> 0x32 countdown store exists once and only on the SET side - [('0x551d2a', 'mov    DWORD PTR [eax+0x94d4c8],0x32')]
   NOUN: flag!=0 -> OR the mask in (SET);  flag==0 -> AND it out (CLEAR);
         SET additionally stamps 94d4c8=0x32 when the mask carries 0x40
-  ok   G7 noun = SET/CLEAR polarity, not 'arm the timer' (the 0x40 test is inside the SET side) - or=1 cell=1
+  ok   G7 noun = SET/CLEAR polarity, not 'arm the timer': the OR and the 0x40 stamp share ONE side - or@0x551d1d cell@0x551d2a set=(5577968, 5578038)
 
   caller census: 36 `call 0x551cf0` sites
   flag arg (4th push): SET(1)=26  CLEAR(0)=6  runtime/register=4
@@ -171,11 +174,15 @@ G7  FUN_00551cf0(a,b,mask,flag): what is `flag`?
   ok   G7 both polarities occur: literal 0 AND literal 1 are used - {'1': 26, '0': 6, 'reg': 4}
   ok   G7 32 of 36 sites pass a literal bool; 4 pass a runtime register - {'1': 26, '0': 6, 'reg': 4}
   ok   G7 no site collects a 5th push (the window is exactly the 4 args) - [4]
+  `add esp,0x10` within 3 insns after the call: 28/36 sites ['0x41b2d2', '0x4cd6f6', '0x4dad05', '0x4dad30', '0x4db02d', '0x4db08d', '0x507aad', '0x507c52']
+  ok   G7 28/36 sites clean up exactly 0x10 B - an independent 4-cdecl-arg confirmation - 28
   ok   G7 M385's own gate corroborates: 0x4dad05 (bit CLEAR -> set) passes 1, 0x4dad30 (bit SET -> clear) passes 0 - {'0x4dad05': 'push   0x1', '0x4dad30': 'push   0x0'}
 
 G8  digest
-  payload=10528 B  digest run1=05ea891851aace25 run2=05ea891851aace25
-  ok   G8 digest is stable across two computations - 05ea891851aace25/05ea891851aace25
-  M390_DIGEST=05ea891851aace25
+  inputs: terran.exe a889fd11be2fc4cc (3067904 B)  text.txt 02d578095222031e (40900318 B)  index.csv f67385ae20986b89 (482990 B)
+  ok   G8 the digest binds all three input blobs (exe, dump, index) - [3067904, 40900318, 482990]
+  payload=11317 B  digest run1=bafd75107d142bc4 run2=bafd75107d142bc4
+  ok   G8 digest is stable across two computations - bafd75107d142bc4/bafd75107d142bc4
+  M390_DIGEST=bafd75107d142bc4
 
-PASS M390: 44/44
+PASS M390: 47/47
