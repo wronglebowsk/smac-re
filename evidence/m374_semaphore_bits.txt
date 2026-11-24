@@ -1,0 +1,76 @@
+M374 cell 0x92bf0c bits 23/24 - nouns
+tag  what                                                           value
+G0   text insns                                                     781429
+G0   text sha1                                                      02d578095222031e
+G0   exe sha1                                                       a889fd11be2fc4cc
+G0   0x59ef11 bytes                                                 a9 00 00 80 00
+G0   0x5a1150 bytes                                                 f7 05 e8 5a 98 00 00
+G0   0x4dc88b bytes                                                 a9 00 00 01 00
+G1   unpack 4dc88b: test 0x10000 -> or 0x800000 (@4dc898) -> sem bit 23 (rec bit 16) 23
+G1   unpack 4dc89e: test 0x20000 -> or 0x1000000 (@4dc8ab) -> sem bit 24 (rec bit 17) 24
+G1   cell store mask @0x4dc8b7                                      0x1800000
+G1   cell store @0x4dc8c3 target                                    0x92bf0c
+G1   pack 4dc6cf: test stage 0x800000 -> or stage 0x10000           None
+G1   pack 4dc6e3: test stage 0x1000000 -> or stage 0x20000          None
+G2   Rules-cell bits the pack reads                                 16
+G2   their positions                                                0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+G2   record bits the 2 semaphore legs add                           [16, 17]
+G2   union                                                          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+G2   Rules-cell load @0x4dc5f6                                      mov    ecx,DWORD PTR ds:0x985ac4
+G2   ecx writes in the pack block                                   1
+G2   other-path clear mask @0x4dc604                                0xfe7fffff
+G3   #RULES items                                                   18
+G3   #AIEDITOR items                                                11
+G3   #RULES tail item 17                                            Randomize faction leader personalities.
+G3   #RULES tail item 18                                            Randomize faction leader social agendas.
+G3   AIEDITOR record bits (pack block)                              [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+G3   AIEDITOR leg @0x4dc208 (field bit 4)                           or     al,0x10
+G3   ALGO item-index base                                           0
+G4   bit23 gate @0x59ef11                                           test   eax,0x800000
+G4   its eax source @0x59eedc                                       mov    eax,ds:0x985ae8
+G4   rand calls in the gated block                                  5
+G4   stores into the five fields                                    5
+G4   idiv 3 present                                                 True
+G4   &0x80000001 sign-fix count                                     4
+G4   bit23 pairing arm calls                                        4
+G4   bit24 gate @0x5a1150                                           test   DWORD PTR ds:0x985ae8,0x1000000
+G4   bit24 block zeroes N dwords                                    12
+G4   bit24 stride insn                                              add    edi,0x59c
+G4   bit24 loop bound                                               8
+G4   bit24 rand calls                                               2
+G4   bit23 second gate @0x5a1446                                    test   DWORD PTR ds:0x985ae8,0x800000
+G4   pairing pushes of 0x200                                        4
+G5   or ecx,bit23/24 sites                                          ['4dc892:0x800000', '4dc8a5:0x1000000', '57cc35:0x800000', '57cc48:0x1000000']
+G5   eax source @0x4dc786                                           mov    eax,ds:0x99aa38
+G5   0x41a9xx leg 16 @0x41ab1c                                      mov    esi,0x10000 / test   esi,edx
+G5   0x41a9xx leg 18 @0x41ab36                                      test   edx,0x40000
+G5   shipped INI Semaphore                                          00000000
+G5   script keys (PE strings)                                       [(6866980, 'RULES'), (6866956, 'AIEDITOR'), (6866968, 'AIEDITOR2'), (6866988, 'SCENRULES')]
+G5   RULES key push @0x4dc6fb                                       push   0x68c824
+G5   0x4dc8b7 mask (=~0x1800000?)                                   0xfe7fffff
+
+  G0   ok   text 781429 insns sha 02d578095222
+  G0   ok   the three anchor instructions are the bytes the claims decode
+  G1   ok   record bit 16 -> cell bit 23, record bit 17 -> cell bit 24 (both decoded)
+  G1   ok   the pack direction is the same map (round trip)
+  G1   ok   the cell store keeps ONLY bits 23/24 (mask 0x1800000) -> 0x92bf0c
+  G2   ok   the 16 legs read the Rules cell 0x985ac4 through one ecx load
+  G2   ok   the RULES record is an 18-bit word: Rules-cell bits 0..15 + semaphore bits 16/17
+  G2   ok   the non-record path clears bits 23/24 with 0xfe7fffff
+  G3   ok   #RULES in Script.txt has 18 items = the record's 18 bits
+  G3   ok   the AIEDITOR bits are the contiguous set 0..10 (leg 0x4dc208 sets bit 4)
+  G3   ok   #AIEDITOR has 11 items and its pack touches 11 bits (contract holds for a 2nd key)
+  G3   ok   bits 16/17 = the two tail items: ['Randomize faction leader personalities.', 'Randomize faction leader social agendas.']
+  G4   ok   bit 23 reader tests ds:0x985ae8 bit 23 directly
+  G4   ok   the gated block seeds FIVE faction fields (5 rand calls, 5 stores)
+  G4   ok   the same bit's pairing arm makes 4 fixed calls
+  G4   ok   bit 24 reader tests ds:0x985ae8 bit 24 directly
+  G4   ok   the gated block is the 12-slot assignment (zeroes 0xc dwords)
+  G4   ok   the assignment walks 8 faction records at stride 0x59c
+  G4   ok   the 0x5a1446 arm re-tests bit 23 and makes its 4 fixed pairing calls
+  G5   ok   only TWO blocks write each bit (4 or-sites, all from the record's 16/17)
+  G5   ok   the writer's eax is the script record's staging dword, not a 0x41a9xx read
+  G5   ok   the record keys are PE strings and FUN_004dc5f0 pushes RULES
+  G5   ok   shipped INI Semaphore=00000000 -> the loader alone sets neither bit
+
+PASS M374: 23/23 gates digest 705bd8cd7ed3f705
