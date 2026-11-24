@@ -1,0 +1,138 @@
+-- G1  the row widgets of the Preferences dialog (member offsets of one object) --
+widget offsets (builder/rebuild/paint refs):
+  +0x5974  builder=8 refresh=1 paint=1
+  +0x649c  builder=12 refresh=1 paint=2
+  +0x6fc4  builder=14 refresh=1 paint=1
+  +0x7aec  builder=8 refresh=1 paint=1
+  +0x8614  builder=13 refresh=1 paint=1
+  +0x913c  builder=4 refresh=1 paint=1
+  +0x9c64  builder=7 refresh=1 paint=1
+  builder targets not in rebuild: | []
+  rebuild targets not in builder: | []
+[PASS] G1a the same 7 widget offsets are built, refreshed and painted (+0x5974, +0x649c, +0x6fc4, +0x7aec, +0x8614, +0x913c, +0x9c64)
+[PASS] G1b no widget offset is ever addressed absolutely (ds:0x...): all 7 are members of the dialog object, so the id space cannot be shared with another dialog
+
+-- G2  rows built / ids queried / ids painted, per widget --
+widget | rows | queried
++0x5974 | 8 ['0x5', '0x6', '0x40', '0x7', '0x8', '0x9', '0xa', '0xb'] | 8 ['0x5', '0x6', '0x40', '0x7', '0x8', '0x9', '0xa', '0xb']
++0x649c | 12 ['0xc', '0xd', '0xe', '0xf', '0x10', '0x18', '0x11', '0x12', '0x14', '0x4f', '0x15', '0x16'] | 12 ['0xc', '0xd', '0xe', '0xf', '0x10', '0x18', '0x11', '0x12', '0x14', '0x4f', '0x15', '0x16']
++0x6fc4 | 14 ['0x19', '0x1a', '0x1b', '0x1c', '0x1d', '0x1e', '0x56', '0x1f', '0x20', '0x21', '0x22', '0x23', '0x24', '0x25'] | 14 ['0x19', '0x1a', '0x1b', '0x1c', '0x56', '0x1d', '0x1e', '0x1f', '0x20', '0x21', '0x22', '0x23', '0x24', '0x25']
++0x7aec | 8 ['0x3a', '0x3b', '0x3c', '0x58', '0x3d', '0x3e', '0x45', '0x13'] | 11 ['0x37', '0x38', '0x39', '0x3a', '0x3b', '0x3c', '0x58', '0x3d', '0x3e', '0x45', '0x13']
++0x8614 | 13 ['0x26', '0x27', '0x28', '0x29', '0x2a', '0x2b', '0x2c', '0x2d', '0x2e', '0x2f', '0x31', '0x32', '0x33'] | 14 ['0x26', '0x27', '0x28', '0x29', '0x2a', '0x2b', '0x2c', '0x2d', '0x2e', '0x2f', '0x30', '0x31', '0x32', '0x33']
++0x913c | 4 ['0x34', '0x35', '0x36', '0x30'] | 4 ['0x34', '0x35', '0x36', '0x50']
++0x9c64 | 7 ['0x46', '0x4b', '0x57', '0x47', '0x48', '0x49', '0x4a'] | 7 ['0x46', '0x4b', '0x47', '0x48', '0x49', '0x4a', '0x57']
+totals: rows=66 queried=70
+
+widget | painted ids (paint order) | count
++0x5974 | ['0x5', '0x6', '0x7', '0x8', '0x9', '0xa', '0xb', '0x40'] | 8
++0x649c | ['0xc', '0xd', '0xe', '0xf', '0x10', '0x18', '0x11', '0x12', '0x4f', '0x14', '0x15', '0x16'] | 12
++0x6fc4 | ['0x19', '0x1a', '0x1b', '0x1c', '0x1d', '0x1e', '0x1f', '0x20', '0x21', '0x22', '0x23', '0x24', '0x25', '0x56'] | 14
++0x7aec | ['0x37', '0x38', '0x39', '0x3a', '0x3b', '0x3c', '0x3d', '0x3e', '0x45', '0x13', '0x58'] | 11
++0x8614 | ['0x26', '0x27', '0x28', '0x29', '0x2a', '0x2b', '0x2c', '0x2d', '0x2e', '0x2f', '0x31', '0x32', '0x33'] | 13
++0x913c | ['0x35', '0x36', '0x50', '0x34'] | 4
++0x9c64 | ['0x46', '0x4b', '0x47', '0x48', '0x49', '0x4a', '0x57'] | 7
+
+widget | queried-but-not-built | built-but-not-queried
++0x5974 | [] | []
++0x649c | [] | []
++0x6fc4 | [] | []
++0x7aec | ['0x37', '0x38', '0x39'] | []
++0x8614 | ['0x30'] | []
++0x913c | ['0x50'] | ['0x30']
++0x9c64 | [] | []
+[PASS] G2a the builder fills 66 rows, all ids distinct
+[PASS] G2b REBUILD queries 70 ids over the 7 widgets
+[PASS] G2c the queried-but-unbuilt ids are exactly ['0x30', '0x37', '0x38', '0x39', '0x50']
+[PASS] G2d the seventh widget has a SWAPPED id: it queries 0x50 and built 0x30
+[PASS] G2e the Audio/Visual widget queries 3 ids it never builds
+[PASS] G2f no other widget has a set difference (0x8614 queries the extra 0x30)
+per-widget rows: | [8, 12, 14, 8, 13, 4, 7] |  queries: | [8, 12, 14, 11, 14, 4, 7]
+[PASS] G2g the per-widget counts are exactly rows 8/12/14/8/13/4/7 and queries 8/12/14/11/14/4/7
+
+-- G3  miss semantics: 0x6051fa / 0x6050d4 scan the row list, index:=count on a miss --
+loop head 0x605239 `mov [ebp-0x4],0x0`; body 0x605242 `add ecx,1`; exit 0x605251 `cmp eax,[edx+0x10] / jge`; hit test 0x60525f `cmp eax,[ebp+0x8]`
+tail 0x605291 `mov eax,[edx+ecx+0xd0]` (= node+0x14, the scanned index); test 0x6052b0 `and eax,[edx+ecx+0xec]` (node+0x30, the checked bitmap)
+[PASS] G3a the scan is start-0 / increment-on-miss / exit-at-count / test-id / bit<index>
+set-by-id 0x6050d4: zero ['0x605100'], exit-at-count ['0x60512b'], hit ['0x605139'], shift<+0xd0> ['0x605171'], OR ['0x605197'], AND ['0x6051e0']
+[PASS] G3b set-by-id 0x6050d4 runs the same start-0 / exit-at-count scan and shifts by the scanned index (+0xd0), so a miss writes bit<count> (not bit 0)
+
+measured loop: start=0 step=1 exit=`jge    0x605286` (inclusive bound=True)
+
+widget | count | id | resolved bit
++0x7aec | 8 | 0x37 | 8  (miss)
++0x7aec | 8 | 0x38 | 8  (miss)
++0x7aec | 8 | 0x39 | 8  (miss)
++0x8614 | 13 | 0x30 | 13  (miss)
++0x913c | 4 | 0x50 | 4  (miss)
+rival 'miss leaves index 0'   : | [('0x37', 0), ('0x38', 0), ('0x39', 0), ('0x30', 0), ('0x50', 0)]
+rival 'miss leaves index n-1' : | [('0x37', 7), ('0x38', 7), ('0x39', 7), ('0x30', 12), ('0x50', 3)]
+measured                     : | [('0x37', 8), ('0x38', 8), ('0x39', 8), ('0x30', 13), ('0x50', 4)]
+[PASS] G3c every present id resolves to its own row; all 5 absent ids resolve to bit<count>, and both rival tracers give a different number on every one
+[PASS] G3d the two rival miss conventions are refuted on every absent id
+
+-- G4  paint handler classes (jump tables 0x4938c4 / byte table 0x4938e0) --
+handler table 0x4938c4: | ['0x49359b', '0x493557', '0x493529', '0x4934ef', '0x493585', '0x49358d', '0x4935a9']
+dispatch 0x4934d4 `lea    eax,[esi-0x13]` -> class byte = *(0x4938e0 + id - 0x13)
+
+A/V block (widget +0x7aec): id | mask | class | source | relabel ctrl
++0x7aec | 0x37 | 0x800 | class 1 | radio | a4c | 0x4e
++0x7aec | 0x38 | 0x400 | class 2 | radio | a4c | 0x4c
++0x7aec | 0x39 | 0x4000 | class 3 | radio | a50 | 0x4d
++0x7aec | 0x3a | 0x20000 | class 0 | ? | ? | -
++0x7aec | 0x3b | 0x10000000 | class 6 | ? | ? | -
++0x7aec | 0x3c | 0x40000 | class 4 | ? | ? | -
++0x7aec | 0x3d | 0x80 | class 6 | ? | ? | -
++0x7aec | 0x3e | 0x8000000 | class 6 | ? | ? | -
++0x7aec | 0x45 | 0x80000 | class 0 | ? | ? | -
++0x7aec | 0x13 | 0x200 | class 0 | ? | ? | -
++0x7aec | 0x58 | 0x1000000 | class 5 | ? | ? | -
+[PASS] G4a the three unbuilt A/V ids paint as RADIO handlers relabelling controls 0x4e/0x4c/0x4d
+[PASS] G4b their masks are a4c 0x800 / a4c 0x400 / a50 0x4000 (M357's bits 11/10/14)
+radio handler VAs (from the class bytes): | ['0x493557', '0x493529', '0x4934ef']
+[PASS] G4c the three radio handlers decoded for 0x37/0x38/0x39 never call set-by-id 0x6050d4 (bodies scanned to their own jmp/ret)
+[PASS] G4f the dispatch key is the MEASURED (id-0x13) and the three ids read class bytes 1/2/3
+
+seventh widget (+0x913c) block 0x4936b8:
+  ids/masks: | [('0x35', '0x8000'), ('0x36', '0x10000'), ('0x50', '0x20000'), ('0x34', '0x4000')]
+  a48 reloads in this block: | []
+  test operand: | 0x4936f5 `and eax,edi` with eax=[ebp-0x8]
+  writes to [ebp-0x8]: | [('0x49368c', 'DWORD PTR [ebp-0x8],ecx')]
+  a48 -> ecx loads: | ['0x4935d4'] |  `and ecx,edi`: | ['0x49368a']
+  seventh-block operand load: | 0x4936f2 `eax,DWORD PTR [ebp-0x8]`, tested at 0x4936f5 `eax,edi`
+[PASS] G4d the seventh block never reloads a48: its operand [ebp-0x8] is THE single write at 0x49368c = ecx & edi, ecx from [ebx+0xa48] (0x4935d4), edi = the block's last mask 0x1000 -> all four states are 0 for every a48
+[PASS] G4e every mask in the seventh block is disjoint from 0x1000 -> the AND is identically 0
+
+-- G5  who can write a checked bit --
+callers of set_bit 0x6052bd: | ['0x605008', '0x6050b9', '0x6050c9']
+  - add_item 0x604fd2 (0x605008) with index=[this+0xcc] = the row count BEFORE append
+  - toggle-by-bit 0x605099 (0x6050b9 / 0x6050c9) with the caller's bit index
+  - set-by-id 0x6050d4 writes inline (OR 0x605197 / AND 0x6051e0) at the scanned index
+callers of set-by-id 0x6050d4: 24 (9 in paint 0x4930e0, 15 elsewhere)
+absent-id (widget,id) pairs decoded from the PAINT blocks: | [('0x913c', '0x50')]
+set-by-id call sites: 24 total, 8 target one of the seven widgets (8 in paint)
+  targets outside the seven widgets (other dialog objects): | ['0x15a0', '?']
+[PASS] G5c every set-by-id call aimed at one of the seven widgets is inside PAINT 0x4930e0
+[PASS] G5a three bit-write paths, all indexed: add_item (index = count-so-far), toggle-by-bit, and set-by-id's inline OR/AND (index = the scan result)
+[PASS] G5b over the seven widgets the absent-id writes are EXACTLY [(0x913c,0x50)]: the A/V bit 8 and the +0x8614 bit 13 are written by nothing
+
+-- G6  the id the seventh widget actually built (0x30) --
+id 0x30: built in ['0x913c'], queried in ['0x8614'], painted in []
+[PASS] G6a the built row 0x30 lives in +0x913c but is queried against +0x8614 and painted nowhere: its check state is read back from the wrong widget and never shown
+
+-- G7  RIVALS (each must FAIL on the printed numbers) --
+R1 seventh page nobody builds              | holds=False | builder rows into +0x913c = 4 (a page nobody builds would be 0)
+R2 a non-preferences dialog owns the ids   | holds=False | every add_item site targets one of the 7 members of the one dialog object (7 widgets, 0 foreign targets)
+R3 an absent id returns 0 immediately      | holds=False | the scan runs to count and tests bit<count>: 1 absent-id set calls exist
+R4 a miss leaves the index at 0            | holds=False | traced index on a miss = rowcount, never 0
+[PASS] G7a all 4 rivals are refuted by the printed numbers
+
+-- Script.txt: the Audio/Visual section offers more lines than the exe builds --
+AUDIOVISUALPREFS lines=11, exe rows for +0x7aec=8, unbuilt ids=3
+unconsumed tail: | ['Sliding windows.', 'Sliding scrollbars.', 'Whole unit blinks.']
+[PASS] G7b the A/V section offers 3 more lines than the exe builds, and 3 ids go unbuilt (count match)
+
+-- VERDICT --
+id 0x37/0x38/0x39 = A/V radio rows (+0x7aec) that the builder no longer emits; 0x50 = the seventh widget's 4th id, whose built row is 0x30
+an absent id resolves to bit<count> (8 / 13 / 4); the A/V bit 8 is written by nobody, so 0x37/0x38/0x39 contribute nothing; 0x50's write is masked to 0 by the stale operand
+[PASS] M360: 25/25 gates
+DIGEST eb9f07df920a75ab

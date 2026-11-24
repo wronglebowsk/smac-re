@@ -594,6 +594,32 @@ whether a facility completion stamps at all.
   `docs/named-archive-m356-rows.md` (sha1 `a7e25e64`).
 - OPEN: +0x27/+0x28 nouns; bit2 UI reading INFERRED.
 
+## Session 331-chain3 (2026-11-24) — M360: the four row-less ids are A/V radio rows + a swapped id in a SEVENTH widget, not a seventh page
+
+- **PICK** (M357's orphans): "a seventh page nobody builds, or a non-preferences dialog?" ->
+  **neither**.
+- **ACCEPT** `python3 -u scripts/m360_orphans.py` -> **`PASS M360: 25/25 gates`** digest
+  `eb9f07df920a75ab` (`evidence/m360_orphans.txt:137`), re-run identical; `m360_mutate.py` ->
+  **23/23 killed, coverage 25/25** (`evidence/m360_mutate.txt:26`).
+- **SEVEN widgets** +0x5974/649c/6fc4/7aec/8614/913c/9c64; builder 66 rows (8/12/14/8/13/4/7);
+  REBUILD 0x492940 queries **70** (8/12/14/**11**/14/4/7); PAINT paints the same 70.
+- **Orphans**: +0x7aec queries 0x37/0x38/0x39, builds none; +0x8614 queries an extra 0x30
+  (built in +0x913c); +0x913c **built 0x30, queries 0x50** — a swapped id.
+- **MISS SEMANTICS (retraction of draft #1)**: `is_checked` 0x6051fa and `set_checked` 0x6050d4
+  scan from 0, exit on `jge` at the count, test `1<<[node+0x14]`: a miss resolves to
+  **bit<count>**, not 0 — 8/13/4.
+- **0x37/0x38/0x39 are RADIO handlers** (dispatch key (id-0x13) MEASURED at 0x4934d4, class bytes
+  1/2/3): a4c 0x800/0x400, a50 0x4000; they set a flag and relabel ctrl 0x4e/0x4c/0x4d via
+  0x493ec0, never call set-by-id -> A/V bit 8 is written by nothing (inert, not aliasing).
+- **0x50 is a checkbox** but its block never reloads a48: it ANDs stale `[ebp-0x8]` = (a48 &
+  0x1000, one write 0x49368c) with 0x8000/0x10000/0x20000/0x4000 -> all 0.
+- **RIVALS refuted** `:123-127`: R1 0 rows into 0x913c -> 4; R2 79 add_item sites, 0 foreign, no
+  `ds:` widget; R3 1 absent-id write exists; R4 miss leaves n-1 -> n. 8 of 24 set-by-id sites
+  target the seven widgets, all in PAINT (`:114`).
+- **INFERRED**: the 3 unbuilt A/V ids match Script.txt's 3 unconsumed A/V lines (count only).
+- **OPEN**: pre-1.0 builds with those rows; readers of flags [0x14d6c]/[0x14220]/[0x158b8].
+- **REVIEW #387**: 11 findings triaged (new G2g/G4f/G5c, G4c re-anchored, G4d reads [ebp-0x8]).
+
 ## Session 332-chain2 (2026-11-24) — M359: +0x28 = CARRY CAPACITY (V), +0x27 = reactor level (INFERRED); M356's single-writer row RETRACTED
 
 - **ACCEPT** `python3 -u scripts/m359_design_record.py` -> **`PASS M359: 14/14 gates`**,
