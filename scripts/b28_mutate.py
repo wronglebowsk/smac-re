@@ -99,6 +99,18 @@ MUTANTS = [
      "                      \"<i\", imgs_f[0], so.BLOCK_A_OFF + sf.BLK_STRIDE * f)[0]),",
      "                      \"<i\", imgf, so.BLOCK_A_OFF + sf.BLK_STRIDE * f)[0]),",
      "bit5 read back from the FINAL image, not the round that wrote it (the s316 defect)"),
+    ("ME5", "sim/feeder.py",
+     "    if not halve:\n        return cost, carry",
+     "    if not halve:\n        return cost + carry, carry",
+     "the FULL-PRICE path reads the carry-in (the zero-carry baseline stops being licensed)"),
+    ("ME6", "sim/composedfeeder.py",
+     "    m[\"width_ctrl_nonzero\"] = sum(1 for i in range(sv.n_bases)\n"
+     "                                  if any(sv.data[sv.bases_off + sf.BASE_STRIDE * i + 0x8c:\n"
+     "                                                 sv.bases_off + sf.BASE_STRIDE * i + 0x90]))",
+     "    m[\"width_ctrl_nonzero\"] = sum(1 for i in range(sv.n_bases)\n"
+     "                                  if any(sv.data[sv.bases_off + sf.BASE_STRIDE * i + 0x90:\n"
+     "                                                 sv.bases_off + sf.BASE_STRIDE * i + 0x94]))",
+     "the width CONTROL window moved onto the inert window (the zero stops being a measurement)"),
 ]
 
 # Filled from `--measure` (s316): the sets this harness MEASURED, not the ones hoped for.
@@ -109,7 +121,7 @@ DECLARED = {
     "MU3": {"G5", "G6", "G8"},
     "MU4": {"G2", "G8"},
     "MU5": {"G3", "G7", "G8"},
-    "MU6": {"G4", "G7", "G8"},
+    "MU6": {"G4", "G6", "G7", "G8"},
     "MU7": {"G4", "G6", "G8"},
     "MU8": {"G6", "G8"},
     "MU9": {"G3", "G7", "G8"},
@@ -120,6 +132,8 @@ DECLARED = {
     "ME2": {"G2", "G8"},
     "ME3": {"G7", "G8"},
     "ME4": {"G6", "G8"},
+    "ME5": {"G6", "G8"},
+    "ME6": {"G3", "G8"},
 }
 
 

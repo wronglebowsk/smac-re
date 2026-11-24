@@ -994,8 +994,10 @@ not retyped — the loop's init and BOTH cmp immediates are parsed out of the co
 lines and the executable loop's own VISITS/CHARGES ranges are derived from the parsed numbers
 (rival: 0-based whole table); **G3** the bitmap gate on the save's OWN bytes — per base, the charged
 id set equals the decoded `+0x8c` bits ∩ the charged range, and the width gap is MEASURED: the bytes
-beyond the pinned dword (`+0x90..+0x93`, ids 32..38) are scanned in every base record of the save and
-printed, so "ids 32..38 are inert here" is a count, not a wave (rival: charge every table row
+beyond the pinned dword (`+0x90..+0x93`, the ids 32..63 window — only ids 32..38 are reachable) are
+scanned in every base record of the save and printed, and the SAME scan is run as a CONTROL over the
+pinned dword's own window (`+0x8c..+0x8f`, nonzero in 14/18 records), so "ids 32..38 are inert here"
+is a count taken by an instrument shown to see bytes, not a wave (rival: charge every table row
 regardless of the bitmap, at counted bases); **G4** the price-path gate read out of the CONTAINER —
 `ds:0x985ba0` is inside the carried state header, its value is read at `mem2file(0x985ba0)` and the
 sign skip is applied, so which path THIS save took is measured (and its inertness printed: the
@@ -1005,11 +1007,14 @@ unconditional halving, at counted cells); **G5** the carry law against the instr
 over a swept (cost, carry_in) grid the charge is `trunc((cost+carry)/2)` with the SUM's parity
 written back into the SAME bit (the `cdq/sub/sar` trunc-toward-zero shape, not a shift), and three
 rivals are MEASURED at counted cells: floor-halving, zero-the-carry, round-half-up; **G6** the carry
-PERSISTED THROUGH THE WRITER — `block[own]+0` joins the modeled spans for this call only, the
-unmutated build is still the identity, every differing byte lies in a modeled span, a two-round run
-with an odd first-round total leaves bit5 SET in the written image and changes round 2's charge by
-exactly 1 (the zero-carry rival differs at counted factions), and `savewriter.modeled_spans()` called
-WITHOUT overrides still returns exactly the pre-B27 list (the older rungs' strictness is not
+PERSISTED THROUGH THE WRITER, **on synthetic fixtures only** (this save's own run touches no faction:
+the honest pass's touch set `[]` and its rewritten bit5 octet, equal to the container's, are measured
+and asserted) — `block[own]+0` joins the modeled spans for this call only, the unmutated build is
+still the identity, every differing byte lies in a modeled span, a fixture two-round run with an odd
+first-round total leaves bit5 SET in the written image and changes round 2's charge by exactly 1
+over the differing set (the zero-carry rival differs at counted factions, and the zero-carry baseline
+is licensed by an all-ones carry-seed tie on the full-price path), and `savewriter.modeled_spans()`
+called WITHOUT overrides still returns exactly the pre-B27 list (the older rungs' strictness is not
 loosened); **G7** parity with the game's own recorded rows — the five live-pinned (id, name, cost)
 rows, the raw sum, the disabled-list sum and the recorded HUD `0x744f28` are PARSED out of
 `evidence/b4_economy.txt:24` (never retyped here) and the executable feeder on the full-price path

@@ -451,6 +451,17 @@ build track. Protocol, validated end to end:
   completes full milestones including review rounds inside one fire when the unit is bounded. Keep
   it off the critical path; measure the gap with the tok/s recipe in the same hermes-agent reference
   rather than guessing from per-call latency.
+- **Re-pointing the lanes at one model ("run some sessions on model X").** The existing paused jobs are
+  the right vehicle — do not create a third. `cronjob_manage(pinned=true)` captures the CONFIG default,
+  so pin each lane with `hermes cron edit <job_id> --model <served-id> --provider <provider-name>` and
+  read the `model`/`provider` pair back from `jobs.json` before firing. Per lane: `resume` → `run` with
+  a lane-specific transient footing → `pause`; then confirm BOTH `status='running'` rows in
+  `executions.db` and each fire's `on_session_start.model` in the harness-story jsonl (match by
+  `turn_id` containing `cron:<job_id>:<execution_id>`; do NOT pick by mtime — the orchestrator's own
+  session jsonl is newer). A stored prompt written for the old endpoint now contains a false "different
+  model" premise: say the new model in the override, and update the stored prompt when it also names
+  wrong picks/ownership. End the turn once both are live; the completion reports re-enter the chat and
+  polling only burns calls. Generic cron traps: hermes-agent `references/background-systems.md` §Cron.
 
 ## Taking over a cut-off fire (s287, B24)
 
@@ -471,6 +482,18 @@ build track. Protocol, validated end to end:
   not move a pinned digest. The dead fire's harness subprocess died with it — check `ps` and the
   evidence file's existence before assuming a pass is still running, and re-run from the corrected
   working-tree state. Pass the dead fire's owed list verbatim into the continuation override.
+- **A footing file's "MERGED" claim is not state — measure it.** A fire cut off after `submit` can leave
+  `NEXT_PROMPT.md` asserting "MERGED-BY-THIS-FIRE" while `track_mode.py` still names that rung and
+  `gh pr list` shows the PR OPEN. Before firing a continuation, resolve the milestone from `track_mode.py`,
+  `gh pr list --state open`, and `git ls-tree origin/main -- <module>`; then put the contradiction in the
+  transient override verbatim ("the NEXT_PROMPT MERGED line is WRONG — PR <n> is OPEN"), because the fire
+  reads NEXT_PROMPT before any tool call and will otherwise start the next pick.
+- **A continuation fire into a dirty worktree must be told not to clean it.** The stored prompt's first
+  step expects `main` clean; when the dead fire left uncommitted remediation on `milestone/<id>`, the
+  override says: do NOT `checkout`/`reset`/`stash`/`clean`; re-run the acceptance from the WORKING TREE,
+  commit the remediation, then `git fetch && git rebase origin/main` (name the current trunk hash — the
+  stored prompt carries none). Name the review findings' file path as well; a fire left to find it spends
+  calls it does not have.
 
 
 ## s290 retirement from SKILL.md (VERBATIM)

@@ -86,7 +86,10 @@ be pushed (pre-push hook), so post-merge tweaks ride their own branch + PR. When
 branch exists, `start` refuses and leaves you on `main`: check the branch + `ls scripts/<id>*` before
 concluding the instrument is missing. **Verify the named milestone is not already merged before starting** —
 a kickoff prompt can lag the repo: `git log --oneline | grep -i <ID>` plus `grep -n '^## <ID>' NAMED.md`
-answers in one call; if both hit, run what `SESSION_CURSOR.md` names and state the swap.
+answers in one call; if both hit, run what `SESSION_CURSOR.md` names and state the swap. The footing file
+lies in the other direction too: a fire cut off after `submit` can leave `NEXT_PROMPT.md` saying
+"MERGED-BY-THIS-FIRE" with the PR still OPEN — confirm a merge with `gh pr list` plus
+`git ls-tree origin/main -- <module>`, never from the doc's own claim.
 Cycle: `milestone.py start <ID>` → work → `gate.py --base main` GREEN → `submit --title …` → `gh pr checks` →
 `merge`. **Create the PR body with a JSON FILE, not inline `curl -d`** — an apostrophe closes the shell quote
 and the whole command (including the push) fails as 422 `head invalid`. **Merging several PRs in one session is

@@ -30,7 +30,13 @@ RULES = os.path.join(ROOT, "data", "alpha.json")
 
 # Filled from the first real run's printed digest; G8 asserts the result table hashes to it.
 ANCHOR = "705a4520c08c4062"        # digest of the composed (faction, round, ...) rows
-PRINT_ANCHOR = "8c87e05ffa2b80cc"  # digest of the printed table, G8 line excluded
+PRINT_ANCHOR = "99c52201f073499d"  # digest of the printed table, G8 line excluded
+# The gate dword's OWNED position and value in THIS container, MEASURED by G4 (it is
+# `mem2file(0x985ba0)`, i.e. inside the carried state header, before block A at 812).  Pinned so
+# the headline claim ("carried, and reads -1 here, so the halving runs 0 times") is asserted from
+# the bytes: a save that carries a different value makes G4 go RED instead of quietly re-deriving.
+SEL_OFF_PIN = 244
+SEL_PIN = -1
 
 NFACTION = 8
 ROUNDS = 2
@@ -202,8 +208,11 @@ def measure_full(sav_path):
     m["exec_charged"] = [i for (i, _co, _v) in charged]
     m["exec_lo"], m["exec_hi"] = m["exec_charged"][0], m["exec_charged"][-1]
     m["exec_n"] = len(m["exec_charged"])
-    # rival: the whole table 0-based (ids 0..38 charged)
-    m["rival0_n"] = 39
+    # rival: the whole table 0-based (ids 0..38 charged) - RUN, not asserted by hand
+    _rt, _rc, r0charged = sf.charge_base(table, allbits, 0, False, (), 0,
+                                         len(table) - 1, len(table) - 1)
+    m["rival0_n"] = len(r0charged)
+    m["rival0_lo"], m["rival0_hi"] = r0charged[0][0], r0charged[-1][0]
 
     # the container -----------------------------------------------------------------
     sv = so.parse(sav_path)
@@ -222,9 +231,18 @@ def measure_full(sav_path):
         per_base.append((i, owners[i], [c[0] for c in charged], dec, t))
     m["per_base"] = per_base
     m["base_match"] = sum(1 for r in per_base if r[2] == r[3])
+    # the pinned dword is +0x8c..+0x8f (ids 0..31).  The NEXT four bytes, +0x90..+0x93, carry
+    # ids 32..63 under the same mapper (byte = id>>3, bit = id&7).  The loop can never charge
+    # past id 34 and never visits past 38, so of that window only ids 32..38 are even reachable.
     m["width_nonzero"] = sum(1 for i in range(sv.n_bases)
                              if any(sv.data[sv.bases_off + sf.BASE_STRIDE * i + 0x90:
                                             sv.bases_off + sf.BASE_STRIDE * i + 0x94]))
+    # control for the scan above: the SAME any() over the pinned dword's own window must find
+    # nonzero bytes (the bitmap is populated).  Without it, width_nonzero == 0 could mean "the
+    # bytes are inert" or "the scan is blind" - this makes the zero a measurement.
+    m["width_ctrl_nonzero"] = sum(1 for i in range(sv.n_bases)
+                                  if any(sv.data[sv.bases_off + sf.BASE_STRIDE * i + 0x8c:
+                                                 sv.bases_off + sf.BASE_STRIDE * i + 0x90]))
     m["hi_bits"] = sorted({it for i in range(sv.n_bases)
                            for it in range(32, 39) if sf.fac_bit(bitmaps[i], it)})
     # rival: charge every table row regardless of the bitmap
@@ -248,10 +266,11 @@ def measure_full(sav_path):
 
     # per-faction totals.  halve_mode None = the gate AS THE LAW READS IT out of the
     # container; True/False = a forced rival.
-    def totals(halve_mode, disabled):
+    def totals(halve_mode, disabled, carry_seed=None):
         out = []
         for f in range(NFACTION):
-            carry, tot = 0, 0
+            carry = 0 if carry_seed is None else carry_seed[f]
+            tot = 0
             for i in range(sv.n_bases):
                 if owners[i] != f:
                     continue
@@ -273,6 +292,15 @@ def measure_full(sav_path):
     m["tot_raw"] = totals(None, {})
     m["tot_halved"] = totals(True, disabled)
     m["tot_full"] = totals(False, disabled)
+    # P1(a) from the pr351 review: `fix_other_halved` compares a fixture's other-faction total
+    # against `tot_full`, which starts every faction at carry 0.  That is only a fair baseline if
+    # the full-price total is independent of the carry-IN state - so MEASURE it: rerun the
+    # full-price totals from an all-ones carry seed (the worst case for a path that accidentally
+    # read block+0) and require the same vector.  If the full-price path ever started consuming
+    # the carry, this tie goes RED and the baseline below is no longer licensed.
+    m["carry_seed_probe"] = [1] * NFACTION
+    m["tot_full_carry1"] = totals(False, disabled, carry_seed=m["carry_seed_probe"])
+    m["full_price_carry_indep"] = (m["tot_full_carry1"] == m["tot_full"])
     m["honest_eq_full"] = (m["tot_honest"] == m["tot_full"])
     m["spend_oct"] = [struct.unpack_from("<i", sv.data, so.BLOCK_A_OFF + sf.BLK_STRIDE * f
                                          + sf.OFF_SPEND)[0] for f in range(NFACTION)]
@@ -310,6 +338,12 @@ def measure_full(sav_path):
     # therefore swept over the factions, one container per faction with the gate dword pointed
     # at a base that faction owns (the container's own value keeps the path inert - G4).
     rows_h, img_h, imgs_h, shas_h = compose(sv, table, sel, disabled, m["bounds"])
+    # P1(c) from the pr351 review: the persistence evidence is FIXTURE-ONLY.  Measure the honest
+    # run's own touch set and the bit5 octet it actually writes, so the print states plainly that
+    # this save's feeder touched no faction and re-wrote the container's own bit5 octet unchanged.
+    m["real_touched"] = [f for f in range(NFACTION) if rows_h[0][f][8]]
+    m["real_bit5_out"] = sf.read_bit5_octet(img_h, so.BLOCK_A_OFF)
+    m["real_bit5_kept"] = (m["real_bit5_out"] == m["bit5_oct"])
     fix, fix_imgs = {}, []
     m["fix_other_halved"] = []
     for f in range(NFACTION):
@@ -337,8 +371,11 @@ def measure_full(sav_path):
     m["fix_factions"] = sorted(fix)
     m["carry_live"] = [f for f in sorted(fix) if fix[f]["carry_out"] == 1]
     m["carry_diff"] = [f for f in sorted(fix) if fix[f]["r2_total"] != fix[f]["r2_rival"]]
-    m["carry_diff_exact1"] = all(abs(fix[f]["r2_total"] - fix[f]["r2_rival"]) == 1
-                                 for f in m["carry_live"])
+    # exactness is measured over the DIFFERING set itself (review P2): keying it on carry_live
+    # made it equivalent-by-luck to the equality below, and vacuous when both sets were empty.
+    m["carry_diff_exact1"] = (len(m["carry_diff"]) >= 1
+                              and all(abs(fix[f]["r2_total"] - fix[f]["r2_rival"]) == 1
+                                      for f in m["carry_diff"]))
     m["bit5_written_ok"] = [f for f in sorted(fix) if fix[f]["bit5_img"] == fix[f]["carry_out"]]
     m["bit5_rival_cleared"] = [f for f in sorted(fix) if fix[f]["bit5_rival"] == 0]
 
@@ -407,7 +444,8 @@ def render(m):
     out = []
     p = out.append
     p("B28 inputs: %s  n_bases=%d  own_player=%d  item table rows=%d (alpha #FACILITIES rows=%d)"
-      % (os.path.basename(m["sav"]), m["n_bases"], m["own_player"], 39, m["alpha_rows"]))
+      % (os.path.basename(m["sav"]), m["n_bases"], m["own_player"], len(m["table"]),
+         m["alpha_rows"]))
     p("G1 pins: %d/%d real pins hit >=1 line carrying BOTH address and token; misses=%s; "
       "CONTROL-bogus %s@%s hits=%d (must be 0)"
       % (m["pins_hit"], len(m["pins_real"]), m["pins_zero"] or "none",
@@ -419,30 +457,36 @@ def render(m):
          m["range_imm"] - 1, m["init_imm"], m["charge_imm"], m["exec_lo"], m["exec_hi"],
          m["exec_n"], m["row_dword_tok"], "UPKEEP_DWORD_OFF", m["row_dword_off"], m["rival0_n"]))
     p("G3 per base: %d/%d bases' charged id set == the decoded +0x8c bits clipped to the charge "
-      "range; bytes +0x90..+0x93 nonzero in %d of %d base records (ids 32..38 set anywhere: %s); "
+      "range; bytes +0x90..+0x93 (the ids 32..63 window; only 32..38 are reachable) nonzero in %d "
+      "of %d base records, ids 32..38 set anywhere: %s (both asserted inert; the same scan finds "
+      "nonzero bytes in %d of the control window +0x8c..+0x8f); "
       "rival 'charge every row' differs at %d bases"
       % (m["base_match"], len(m["per_base"]), m["width_nonzero"], m["n_bases"],
-         m["hi_bits"] or "none", m["rival_nobitmap"]))
-    p("G4 ds:0x985ba0 read at file offset %d = %d -> path=%s for own_player=%d; the halving runs "
+         m["hi_bits"] or "none", m["width_ctrl_nonzero"], m["rival_nobitmap"]))
+    p("G4 ds:0x985ba0 read at file offset %d = %d (pinned %d/%d, both asserted) -> path=%s for "
+      "own_player=%d; the halving runs "
       "for %d of %d factions on this container; sweeping sel over %d values (-1..%d) flips %d to "
       "the halved path, and the plain owner count of own's bases is %d (owner_of_sel=%s)"
-      % (m["sel_off"], m["sel"], m["path"], m["own_player"], m["halve_runs"], NFACTION,
+      % (m["sel_off"], m["sel"], SEL_OFF_PIN, SEL_PIN, m["path"], m["own_player"],
+         m["halve_runs"], NFACTION,
          m["sweep_n"], m["n_bases"], m["sweep_halved"], m["sweep_expected"],
          m["owner_of_sel_if_valid"]))
     p("G5 carry grid n=%d: mismatches vs the instruction semantics=%d; rivals fail at "
       "floor-halving=%d zero-the-carry=%d round-half-up=%d cells; full-price keeps the carry=%s"
       % (m["grid_n"], m["grid_bad"], m["grid_floor"], m["grid_zc"], m["grid_rhu"],
          m["fullprice_carry_kept"]))
-    p("G6 fixture sweep (gate dword pointed at a base owned by the charged faction): %d factions "
-      "tested %s; the half-unit survives round 1 at %s; round-2 totals differ from the zero-carry "
-      "rival at %s (every live one by exactly 1: %s); bit5 in the written image == carry_out at "
-      "%s and the rival clears it at %s; the factions that should stay at full price in a "
-      "fixture: %d pairs halved when they should not; unmutated build identity=%s; differing "
-      "bytes outside modeled spans: honest=%d fixtures=%d; modeled_spans() no-arg == the pre-B27 "
-      "list: %s"
+    p("G6 FIXTURE-ONLY persistence (gate dword pointed at a base owned by the charged faction): "
+      "%d factions tested %s; the half-unit survives round 1 at %s; round-2 totals differ from the "
+      "zero-carry rival at %s (every differing one by exactly 1: %s); bit5 in the written image == "
+      "carry_out at %s and the rival clears it at %s; the factions that should stay at full price "
+      "in a fixture: %d pairs halved when they should not (baseline carry-independent from an "
+      "all-ones seed: %s); the HONEST run touches %s and rewrites bit5 %s (unchanged: %s); "
+      "unmutated build identity=%s; differing bytes outside modeled spans: honest=%d fixtures=%d; "
+      "modeled_spans() no-arg == the pre-B27 list: %s"
       % (len(m["fix_factions"]), m["fix_factions"], m["carry_live"], m["carry_diff"],
          m["carry_diff_exact1"], m["bit5_written_ok"], m["bit5_rival_cleared"],
-         len(m["fix_other_halved"]), m["identity"],
+         len(m["fix_other_halved"]), m["full_price_carry_indep"], m["real_touched"],
+         m["real_bit5_out"], m["real_bit5_kept"], m["identity"],
          len(m["outside_h"]), len(m["outside_f"]), m["spans_noarg_pre_b27"]))
     p("G7 recorded: 'Climactic Research' facilities %s, live-pinned rows %s, raw %d, disabled %d, "
       "HUD 0x744f28 %d; the executable feeder reproduces raw=%d adj=%d; alpha table mismatches at "
@@ -482,12 +526,14 @@ def acceptance(m, results):
          and m["rival0_n"] != m["exec_n"]))
 
     add(("G3 the bitmap gate holds on the save's own bytes (%d/%d bases) and the width gap is "
-         "measured (%d records nonzero past +0x8f, ids 32..38 set: %s); rival 'charge every row' "
-         "differs at %d bases"
+         "measured (%d records nonzero past +0x8f, ids 32..38 set: %s; the same scan sees bytes in "
+         "%d control windows); rival 'charge every row' differs at %d bases"
          % (m["base_match"], len(m["per_base"]), m["width_nonzero"], m["hi_bits"] or "none",
-            m["rival_nobitmap"]),
+            m["width_ctrl_nonzero"], m["rival_nobitmap"]),
          m["base_match"] == len(m["per_base"]) and m["rival_nobitmap"] > 0
-         and len(m["per_base"]) == m["n_bases"]))
+         and len(m["per_base"]) == m["n_bases"]
+         and m["width_nonzero"] == 0 and m["hi_bits"] == []
+         and m["width_ctrl_nonzero"] >= 1))
 
     add(("G4 the price-path gate read out of the container (ds:0x985ba0=%d at file offset %d) "
          "gives path=%s with the halving running %d times; the sweep over %d sel values flips "
@@ -497,7 +543,12 @@ def acceptance(m, results):
             m["sweep_expected"]),
          m["sweep_n"] == m["n_bases"] + 1 and m["sweep_halved"] >= 1
          and m["sweep_halved"] == m["sweep_expected"]
-         and (m["halve_runs"] == 0) == (m["sel"] < 0)))
+         and (m["halve_runs"] == 0) == (m["sel"] < 0)
+         # the headline V-row read from the BYTES, not from a derived path property (review P1b):
+         # the dword sits at file offset 244 inside the carried state header (before block A) and
+         # reads -1 in this container.  A different container value reddens G4 instead of sliding.
+         and m["sel"] == SEL_PIN and m["sel_off"] == SEL_OFF_PIN
+         and m["sel_off"] < so.BLOCK_A_OFF))
 
     add(("G5 the carry law matches the instruction semantics on all %d grid cells and the three "
          "rivals fail at counted cells (floor %d, zero-carry %d, round-half-up %d); the "
@@ -506,32 +557,45 @@ def acceptance(m, results):
          m["grid_bad"] == 0 and m["grid_floor"] > 0 and m["grid_zc"] > 0
          and m["grid_rhu"] > 0 and m["fullprice_carry_kept"]))
 
-    add(("G6 the carry persists through the writer: %d factions swept, the half-unit survives at "
-         "%s and those (and only those, %s) change round 2 by exactly 1 (%s); bit5 in the written "
-         "image == carry_out at %s of %d; %d fixture pairs halved a faction that must stay at "
-         "full price; unmutated build identity=%s; %d+%d differing bytes outside modeled spans; "
-         "no-arg modeled_spans() still the pre-B27 list=%s"
+    add(("G6 FIXTURE-ONLY persistence: %d factions swept, the half-unit survives at "
+         "%s and the differing set %s changes round 2 by exactly 1 (%s); bit5 in "
+         "the written image == carry_out at %s of %d; %d fixture pairs halved a faction that must "
+         "stay at full price; the full-price baseline survives an all-ones carry seed (%s); on "
+         "the honest run itself the feeder touches %s and rewrites bit5 %s unchanged=%s; "
+         "unmutated build identity=%s; %d+%d differing bytes outside modeled spans; no-arg "
+         "modeled_spans() still the pre-B27 list=%s"
          % (len(m["fix_factions"]), m["carry_live"], m["carry_diff"], m["carry_diff_exact1"],
             m["bit5_written_ok"], len(m["fix_factions"]), len(m["fix_other_halved"]),
-            m["identity"], len(m["outside_h"]), len(m["outside_f"]), m["spans_noarg_pre_b27"]),
+            m["full_price_carry_indep"], m["real_touched"], m["real_bit5_out"],
+            m["real_bit5_kept"], m["identity"], len(m["outside_h"]), len(m["outside_f"]),
+            m["spans_noarg_pre_b27"]),
          m["identity"] and not m["outside_h"] and not m["outside_f"]
          and m["spans_noarg_pre_b27"] and len(m["carry_live"]) >= 1
          and m["carry_live"] == m["carry_diff"] and m["carry_diff_exact1"]
          and len(m["bit5_written_ok"]) == len(m["fix_factions"])
-         and not m["fix_other_halved"]))
+         and not m["fix_other_halved"]
+         # reviewed P1(a): the zero-carry baseline the tie above uses is only licensed if the
+         # full-price total does not depend on the carry-in state - measured, not argued.
+         and m["full_price_carry_indep"]
+         # reviewed P1(c): the honest run must be MEASURED as writing no carry at all.
+         and not m["real_touched"] and m["real_bit5_kept"]))
 
     add(("G7 the executable feeder reproduces the recorded HUD rows (raw %d==%d, disabled %d==%d "
          "== 0x744f28 %d) from the live-pinned costs, the alpha table mismatches at %s, the run "
          "agrees with the law at %d/8, and the container's own +300 octet matches %d/8 on the "
-         "gate-derived totals with the parsed disabled list %s (rivals: no-list %d/8, forced-halved "
-         "%d/8, honest==forced-full-price %s)"
+         "gate-derived totals with the parsed disabled list %s (rivals: no-list %d/8 with misses "
+         "%s - exactly [own_player=%d], forced-halved %d/8, honest==forced-full-price %s)"
          % (m["feeder_raw"], m["b4_raw"], m["feeder_adj"], m["b4_adj"], m["b4_hud"],
             m["table_mismatch"] or "none", m["run_vs_law"], m["match_honest"], m["disabled"],
-            m["match_raw"], m["match_halved"], m["honest_eq_full"]),
+            m["match_raw"], m["mismatch_raw"], m["own_player"], m["match_halved"],
+            m["honest_eq_full"]),
          m["feeder_raw"] == m["b4_raw"] and m["feeder_adj"] == m["b4_adj"]
          and m["feeder_adj"] == m["b4_hud"] and not m["table_mismatch"]
          and m["run_vs_law"] == NFACTION and m["honest_eq_full"]
-         and m["match_honest"] == NFACTION and m["match_raw"] < NFACTION
+         and m["match_honest"] == NFACTION
+         # reviewed P2: "7/8, and the single miss is own_player" is the disabled-list finding -
+         # assert the exact population and the exact miss, not merely "< 8".
+         and m["match_raw"] == NFACTION - 1 and m["mismatch_raw"] == [m["own_player"]]
          and m["match_halved"] < NFACTION))
 
     add(("G8 determinism: rows digest %s == second run %s; print digest %s; final container %s "
