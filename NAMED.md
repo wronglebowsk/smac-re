@@ -923,6 +923,17 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
+## M381 (s341-c3, 9/9) — bit 13 (`0x2000`) = a PEACE stamp with TWO setters; the strength leg is a strict `>` against the peer's own scalar. **`PASS M381: 9/9`** `2fa1a4100ec6f4f6` (`evidence/m381_bit13_noun.txt:149`), re-run identical; harness 20/20 (`evidence/m381_mutate.txt:22`). `:N` = evidence line.
+| claim | ev | conf/mutant |
+|---|---|---|
+| TWO setters, both in FUN_00502cd0, both `push 0x2000` -> `call FUN_00551a20`: 0x50393d and 0x506cf1 (call sites 0x503944 / 0x506cf8; 33 `push 0x2000` sites image-wide, 17 hosts, 6 feeding the setter) | `:3-12` | V MU1 MU6 MU14 |
+| setter A guard: skip factions [ebp-8]/[ebp-4]; table byte +7 == esi; row([ebp-8],esi) & **0x1 PACT**; row([ebp-4],esi) **0x10 clear, 0x8 set** (peace+commlink); then the strength test | `:24-63` | V MU11 |
+| **the threshold = the peer's live value**: `cmp eax,DWORD PTR [edi]`@0x503936 / `jle 0x50396a`@0x503938 — strict `>`, NO immediate and NO mul/div in the window; edi = field(esi), +0x20bc, 7 iterations | `:101-110` | V MU2 MU3 MU12 |
+| the left operand is faction ecx's OWN field: chain folds to **2095*ecx with no `add esi`**; of the host's 5 `add eax,esi`, only 0x5038f4/0x50390f chain into a relations-row load | `:88-98` | V MU4 MU8 |
+| setter B's only guard is `test BYTE [row(edi,esi)],0x10`@0x506cde / `jne`@0x506ce6 (1 jcc in the window) with no 0x94e48c operand: a strength-gap-only ("MEEK") noun is REFUTED; 0x2000 is a standing PEACE marker (noun INFERRED) | `:10-11` | V MU13 MU15 |
+| both rows written: all 6 dword AND masks in FUN_00551a20 preserve bit 13; the unconditional tail ORs `edx,ebx` at 0x551be6/0x551c09 | `:116-119` | V MU16 MU17 |
+| follow-on: if stat `+0x94f504+4*[ebp-4]` of esi has `0x800000`, `FUN_00531b0([ebp-4],esi,+3)` = attitude delta (`add ecx,esi`@0x5314dd into `[a,b]+0x94d488`, clamp `0x14`) | `:67-72,:123-126` | V MU5 MU18 |
+| readers (3-instruction load window, 6-instruction cross-check disclosed): **5 byte-form** `test ah,0x20` (0x54820d 0x5555a0 0x55563b 0x55572d 0x555747) + **1 dword-form** 0x4db30b -> FUN_006050d4; 0x55574a -> 0x555809 skips the bit-31 clear at 0x555750 | `:131-134` | V MU7 MU10 MU19 |
 ## M380 (s340-c3, 7/7) — 0x94e48c = MIGHTY/MEEK strength scalar; hub mode-3 refusal; 2/27 rel rewrites DO drop a stamp. **`PASS M380: 7/7`** `5dfd436fe4093015` (`evidence/m380_diplo_power.txt:135`), re-run same; harness 19/19 (`evidence/m380_mutate.txt:23`).
 - block+0x105c: 70 operands (67R/3W); stride 2095 dwords measured 19/19 — V MU1 MU2 MU18 (`:9`)
 - 3 writers; create/reset zero +0x1054..+0x1068/+0x1070, zeroing proved; accumulator @0x5579ea shape 7/7 — V MU3 MU15 MU16 (`:14-26`)
@@ -1622,11 +1633,11 @@ ROTATED VERBATIM to `docs/named-archive-m345-rows.md` (sha1 `907d07053aedb079`);
 | claim | ev | conf |
 |---|---|---|
 | CONSUMER: 6 bit-31 touch points — READ 0x55573c, CLEAR 0x555750 + store 0x555758 (own), CLEAR 0x55578a + store 0x555792 (mirror), ARM `push 0x80000000`@0x5558da -> setter 0x551a20 @0x5558e1 (target AND call site asserted) | `:12-19` | V MU1,5,13,14 |
-| GUARD: conditional — `je 0x555809`@0x555741 (not pending) and `jne 0x555809`@0x55574a (bit13 set) both reach `and ah,0xdf`@0x555809, a ONE-SHOT protector that scrubs bit 13 in the same pass | `:35-43` | V MU2,3,15,16 |
+| GUARD: conditional — `je 0x555809`@0x555741 (not pending) and `jne 0x555809`@0x55574a (bit13 set) both reach `and ah,0xdf`@0x555809, a ONE-SHOT protector that scrubs bit 13 in the same pass; **M381 pins the pair**: the bit-13 read is the byte form `test ah,0x20`@0x555747, the skipped clear is `and eax,0x7fffffff`@0x555750 | `:35-43` | V MU2,3,15,16 |
 | BIT 27: ZERO immediates inside the pass; 5 word-form `test` reads in 4 fns (0x5230f0/0x532a2c/0x54687b/0x5526ce+0x55278f); STICKY — set only by request mask 0x88000008, cleared by no setter mask | `:48-55,73` | V MU8 |
 | STORES: 41 register stores (+0 `and/or/xor [word],imm`, +0 `mov [word],imm32` shapes) — 33 cannot clear bit 31, the ONLY 2 literal clears are the pass's own, 3 caller-mask, 3 opaque; G4c ties the sim's 3 masks to the dump's bytes | `:76-121` | V MU6,7,11,12 |
 | SECOND CLEARER: FUN_005518f0 (`not edx`) / FUN_00551cf0 (4th arg 0) clear a CALLER mask — 66 sites, 46 with a contiguous >=3-push run / 35 literal (20 undecoded, disclosed); `0x9000ff48`@0x59f176 (FUN_0059ec90 sweep) is the only LITERAL mask carrying bit 31 | `:124-132` | V MU9 |
-| UNRESOLVED: the noun of bit 13 (0x2000); 0xdd9bc3c0@0x4da404 (flag = caller's ebx) and the 20 undecoded call sites could clear bit 31; which live event fires the ARM | `:132` | OPEN MU10 |
+| UNRESOLVED: ~~the noun of bit 13 (0x2000)~~ **ANSWERED by `## M381`** (0x2000 = PEACE, two setters); 0xdd9bc3c0@0x4da404 (flag = caller's ebx) and the 20 undecoded call sites could clear bit 31; which live event fires the ARM | `:132` | OPEN MU10 |
 ## M378 (s340-c1) — 0x800 = TREATY IN FORCE, 0x20000 = an OUTSTANDING request; FUN_00552970 is NOT a 0x800 setter. ACCEPT `scripts/m378_bit_nouns.py` **`PASS 45/45`** `b841021cb7b0f4b8` (`evidence/m378_bit_nouns.txt:115`; x2 in SESSION_NOTES), 17 mutants (`evidence/m378_mutate.txt:19`). `:N` = evidence line.
 | claim | ev | conf/mutant |
 |---|---|---|
