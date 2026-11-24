@@ -33,7 +33,6 @@ REQUIRE_SOLE = True                 # ALG mutant target: exactly one immediate p
 
 # measured pins (scripts/m371_war_contact.py prints these before asserting)
 HOST_WARISH = {(0x554389, 0x80000008, "FUN_00554350"),
-               (0x5543C6, 0x40000000, "FUN_00554350"),
                (0x554426, 0x88000008, "FUN_00554350"),
                (0x554E88, 0x18, "FUN_00554d10"),
                (0x55566E, 0x88000008, "FUN_005551e0"),
@@ -80,6 +79,12 @@ def win(ins, lo, hi):
 
 def push_imm(t):
     m = re.match(r"push +(?:0x)?([0-9a-f]+)$", t)
+    return int(m.group(1), 16) if m else None
+
+
+def imm_of(t):
+    """the immediate of `mnemonic reg,imm` (and/or/test), else None."""
+    m = re.search(r",(0x[0-9a-f]+)$", t)
     return int(m.group(1), 16) if m else None
 
 
@@ -192,8 +197,8 @@ def main():
     say("    warish (bit 8 or 0x10) host writes: %d" % len(warish))
     for a, m, n in sorted(warish):
         say("      0x%06x 0x%-9x %s" % (a, m, n))
-    gate("G1a", warish == HOST_WARISH,
-         "host war-ish write set is exactly %d pinned (site, mask, function) rows" % len(HOST_WARISH))
+    gate("G1a", warish == HOST_WARISH and len(host_calls) == 10,
+         "10 host setter calls; the %d bit-8/war rows are exactly the pinned set" % len(HOST_WARISH))
     g1b = all((m & 8) and (m & 0x10 or m & 0x80000000) for _, m, _ in warish) and \
         all((m & 8) for _, m, _ in warish)
     gate("G1b", g1b, "every host war-ish mask carries bit 8; 0x18/0x80000018 carry war 0x10, "
@@ -204,8 +209,7 @@ def main():
     say("G2  the setter FUN_00551a20: where a war (0x10) request becomes a stored 0x18")
     w = win(ins, A20, A20_END)
     ors = [(a, t) for a, t in w if t.startswith("or ebx,")]
-    ors8 = [(a, t) for a, t in w if t.startswith("or ebx,") and push_imm(t) is not None
-            and (push_imm(t) & 8)]
+    ors8 = [(a, t) for a, t in w if t.startswith("or ebx,") and (imm_of(t) or 0) & 8]
     tests = [(a, t) for a, t in w if t.startswith("test bl,")]
     or_guard = [x for x in tests if x[0] < ors8[0][0]] if ors8 else []
     guard = or_guard[-1] if or_guard else (None, "")
@@ -215,14 +219,14 @@ def main():
     say("    guard before the bit-8 OR: 0x%06x %s" % (guard[0] or 0, guard[1] or "NONE"))
     say("    and-masks: %s" % ", ".join("0x%06x %s" % (a, t) for a, t in ands))
     say("    final symmetric ORs: %s" % ", ".join("0x%06x %s" % (a, t) for a, t in stores))
-    gate("G2a", len(ors8) == 1 and ors8[0][0] == 0x551B11 and push_imm(ors8[0][1]) == 0x80000108
+    gate("G2a", len(ors8) == 1 and ors8[0][0] == 0x551B11 and imm_of(ors8[0][1]) == 0x80000108
          and guard[1] == "test bl,0x10",
          "exactly one mask OR of bit 8: `or ebx,0x80000108` at 0x551b11, inside the `test bl,0x10` branch")
     gate("G2b", bits(0x80000108) == [3, 8, 31],
          "0x80000108 = bits %s: a war request also sets 0x100, bit 8 (contact) and bit 31" % bstr(0x80000108))
     keep = {}
     for a, t in ands:
-        v = push_imm(t)
+        v = imm_of(t)
         keep.setdefault(v, []).append(a)
     say("    and-mask table:  mask        bit8  bit4(0x10)")
     for v in sorted(keep):
@@ -232,8 +236,8 @@ def main():
          and all(v & 8 for v in keep) and not (0xffee7faf & 0x10) and (0xfaeef378 & 0x10),
          "three clear masks, NONE clears bit 8; only the 0x7 (peace) mask 0xffee7faf clears 0x10: "
          "contact survives war -> peace")
-    gate("G2d", [(a, t) for a, t in stores] == [(0x551BE6, "or edx,ebx"), (0x551C09, "or edx,ebx")]
-         and ("0x551BEA", "mov eax,esi") in [("0x%06X" % a, t) for a, t in w],
+    gate("G2d", stores == [(0x551BE6, "or edx,ebx"), (0x551C09, "or edx,ebx")]
+         and (0x551BEA, "mov eax,esi") in w,
          "the war-augmented mask register (ebx) is stored in BOTH directions (0x551be6 / 0x551c09)")
 
     # ---------------------------------------------------------------- G3 census
@@ -262,8 +266,8 @@ def main():
                     and not (mask_at(ins, idx, a)[0] & 0x10))
     say("    war(0x10) WITHOUT bit 8: %d sites %s" % (len(w_only), " ".join("0x%06x" % a for a in w_only)))
     say("    bit 8 WITHOUT war(0x10): %d sites %s" % (len(c_only), " ".join("0x%06x" % a for a in c_only)))
-    gate("G3b", len(w_only) == 15 and WAR_ALONE <= {(a, fn_of(a)) for a in w_only},
-         "15 callers declare war resolving to 0x10 (+1 to 0x8010) and NEVER name contact; "
+    gate("G3b", len(w_only) == 16 and WAR_ALONE <= {(a, fn_of(a)) for a in w_only},
+         "16 callers request war (14x0x10, 0x8010, 0x50) and NEVER name contact; "
          "both exits of the human declare path FUN_005076d0 are in the set")
     gate("G3c", len(c_only) == 8,
          "8 callers request bit 8 with no war bit (4 pure 0x8 + 3 0x88000008 + 1 0x80000008)")
@@ -289,11 +293,12 @@ def main():
         % (["0x%06x" % x for x in r40018], ["0x%06x" % x for x in c8],
            ["0x%06x" % x for x in r8018], ["0x%06x" % x for x in c8018],
            ["0x%06x" % x for x in r18], ["0x%06x" % x for x in cdl8]))
-    gate("G4b", r40018 == [0x555491] and c8 == [0x555496] and r8018 == [0x5554DC]
-         and c8018 == [0x5554E2] and r18 == [0x555502] and cdl8 == [0x555505],
+    gate("G4b", r40018 == [0x555491] and 0x555496 in c8 and min(x for x in c8 if x > 0x555491) - 0x555491 < 8
+         and r8018 == [0x5554DC] and c8018 == [0x5554E2] and r18 == [0x555502] and cdl8 == [0x555505],
          "the AI's war gate reads (rel & 0x40018) == 8 = contacted AND not at war; "
          "the third-faction test reads (& 0x18) == 8 = contacted, not at war: 8 is the contact predicate")
-    atro_reads = [a for a, t in win(ins, 0x554D10, 0x55501D) if re.search(r"and e[a-z]+,0x10$", t)
+    atro_reads = [a for a, t in win(ins, 0x554D10, 0x55501D)
+                  if re.match(r"test (al|eax|e[a-z]{2}),0x10$", t)
                   or re.search(r"test (DWORD PTR )?\[?[^,]*0x94d448[^,]*,0x10", t)]
     say("    FUN_00554d10 (atrocity) reads of 0x10 before its 0x18 write: %s"
         % ["0x%06x" % x for x in atro_reads])
@@ -322,8 +327,8 @@ def main():
         ws = win(ins, lo, lo + size - 1)
         strs = []
         for a, t in ws:
-            v = push_imm(t) if t.startswith("push") else None
-            if v and 0x690000 <= v <= 0x6A0000:
+            v = push_imm(t) if t.startswith("push") else imm_of(t)
+            if v and 0x670000 <= v <= 0x6B0000:
                 s = cstring(v)
                 if s not in strs:
                     strs.append(s)
@@ -358,8 +363,8 @@ def main():
     say("")
     say("R3  RIVAL 'war can be stored without contact' - refuted at the choke point")
     say("    any 0x10 request leaves FUN_00551a20 with 0x18 (or ebx,0x80000108 in the 0x10 branch,")
-    say("    stored in both directions) - the 15 war-alone callers (G3b) all store contact too")
-    gate("R3", ors8 and push_imm(ors8[0][1]) & 8 and push_imm(ors8[0][1]) & 0x10 == 0
+    say("    stored in both directions) - the 16 war-alone callers (G3b) all store contact too")
+    gate("R3", bool(ors8) and (imm_of(ors8[0][1]) & 8) and not (imm_of(ors8[0][1]) & 0x10)
          and len(stores) == 2,
          "bit 8 in a war write is the setter's implication, not a second war meaning")
 

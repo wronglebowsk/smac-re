@@ -1,0 +1,33 @@
+CONTROL  unbiased run: PASS (PASS M371: 18/18 gates digest 6670dd9eda4b73da)
+M371 mutation harness - 25 mutants
+  mutant gate   verdict   claim
+  MU1    G2a    KILLED    the 0x80000108 OR lives inside the test-bl-0x10 (war) branch
+  MU2    G2a    KILLED    the war branch sets bit 8 through 0x80000108
+  MU3    G2c    KILLED    the peace clear mask keeps bit 8
+  MU4    G2c    KILLED    the war clear mask keeps bit 8 (it clears pact/treaty/truce)
+  MU5    G1a    KILLED    the atrocity host writes mask 0x18 (war + contact)
+  MU6    G1a    KILLED    the aid host writes mask 0x80000018
+  MU7    G1a    KILLED    FUN_00554350's vendetta-pending write is 0x88000008 (no war bit)
+  MU8    G1a    KILLED    FUN_005551e0's pending-vendetta writes carry no war bit
+  MU9    G3b    KILLED    one declare-path exit requests war ALONE (mask 0x10)
+  MU10   G3b    KILLED    the second declare-path exit is also a war-alone request
+  MU11   G3b    KILLED    FUN_00507ce0 requests war (0x8010) without contact
+  MU12   G3b    KILLED    mask 0x50 is a war-alone request (the 16th)
+  MU13   G4a    KILLED    the goody pod writes contact alone (exact mask 8)
+  MU14   G4a    KILLED    the council sweep writes contact alone
+  MU15   G4a    KILLED    the new-game host writes contact alone
+  MU16   G4b    KILLED    the AI war gate masks 0x40018 and requires == 8 (contact, no war)
+  MU17   G4b    KILLED    the third-faction test masks 0x18 and compares to 8
+  MU18   G4c    KILLED    the atrocity host tests the WAR bit 0x10 before writing 0x18
+  MU19   G5a    KILLED    id 0x8 -> element 875 -> line 886 'Commlink'
+  MU20   G5a    KILLED    id 0x10 -> element 646 -> line 657 'Vendetta'
+  MU21   G1a    KILLED    the argument-push lookback window is 14 instructions (0x554426 proves it)
+  MU22   G5a    KILLED    the label line is 11+elem (line 10 is the count) - tracer mutated
+  MU23   G1a    KILLED    the host-call classifier selects bit 8 or war 0x10
+  MU24   G3b    KILLED    the war-alone classifier selects 0x10, not 0x18
+  MU25   G2b    KILLED    the bit decomposer enumerates the whole mask (3 bits for 0x80000108)
+  MU0           NO-OP     the NO-OP control: target absent, nothing may change
+
+killed 25/25 scored (1 NO-OP control reported, never counted)
+
+PASS M371-MUT: 25/25

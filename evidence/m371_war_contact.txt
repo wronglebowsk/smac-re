@@ -1,0 +1,124 @@
+M371 - war-initiation hosts and the 0x8 bit: COMMLINK or war companion?
+
+G1  the four hosts: every setter call in the function's byte range, mask + bits
+    FUN_00554350   0x554350  4 setter call(s)
+      0x554389 mask=0x80000008 bits=[3,31]
+      0x5543c6 mask=0x40000000 bits=[30]
+      0x554426 mask=0x88000008 bits=[3,27,31]
+      0x554453 mask=0x40000000 bits=[30]
+    FUN_00554d10   0x554d10  1 setter call(s)
+      0x554e88 mask=0x18       bits=[3,4]
+    FUN_005551e0   0x5551e0  4 setter call(s)
+      0x55539a mask=0x2000     bits=[13]
+      0x55566e mask=0x88000008 bits=[3,27,31]
+      0x5558e1 mask=0x80000000 bits=[31]
+      0x555bb9 mask=0x88000008 bits=[3,27,31]
+    FUN_00507460   0x507460  1 setter call(s)
+      0x507653 mask=0x80000018 bits=[3,4,31]
+    warish (bit 8 or 0x10) host writes: 6
+      0x507653 0x80000018  FUN_00507460
+      0x554389 0x80000008  FUN_00554350
+      0x554426 0x88000008  FUN_00554350
+      0x554e88 0x18        FUN_00554d10
+      0x55566e 0x88000008  FUN_005551e0
+      0x555bb9 0x88000008  FUN_005551e0
+  G1a   PASS  10 host setter calls; the 6 bit-8/war rows are exactly the pinned set
+  G1b   PASS  every host war-ish mask carries bit 8; 0x18/0x80000018 carry war 0x10, 0x88000008/0x80000008 carry only bit31+8 (pending, no 0x10)
+
+G2  the setter FUN_00551a20: where a war (0x10) request becomes a stored 0x18
+    or ebx,imm: 0x551abc or ebx,0x2, 0x551b11 or ebx,0x80000108
+    guard before the bit-8 OR: 0x551abf test bl,0x10
+    and-masks: 0x551a88 and edx,0xffee7faf, 0x551aaf and edx,0xffee7faf, 0x551b17 and edx,0xfaeef378, 0x551b42 and edx,0xfaeef378, 0x551b98 and edx,0xff7fffff, 0x551bbf and edx,0xff7fffff
+    final symmetric ORs: 0x551be6 or edx,ebx, 0x551c09 or edx,ebx
+  G2a   PASS  exactly one mask OR of bit 8: `or ebx,0x80000108` at 0x551b11, inside the `test bl,0x10` branch
+  G2b   PASS  0x80000108 = bits [3,8,31]: a war request also sets 0x100, bit 8 (contact) and bit 31
+    and-mask table:  mask        bit8  bit4(0x10)
+      0xfaeef378   KEPT  KEPT  (2 site)
+      0xff7fffff   KEPT  KEPT  (2 site)
+      0xffee7faf   KEPT  CLEAR (2 site)
+  G2c   PASS  three clear masks, NONE clears bit 8; only the 0x7 (peace) mask 0xffee7faf clears 0x10: contact survives war -> peace
+  G2d   PASS  the war-augmented mask register (ebx) is stored in BOTH directions (0x551be6 / 0x551c09)
+
+G3  census of all 70 `call 0x551a20` sites: literal masks, carried masks, bit classes
+    literal masks (46 sites):
+      0x1           4  bits=[0]
+      0x2           1  bits=[1]
+      0x4           1  bits=[2]
+      0x8           4  bits=[3]
+      0x10         14  bits=[4]
+      0x18          1  bits=[3,4]
+      0x43          1  bits=[0,1,6]
+      0x50          1  bits=[4,6]
+      0x58          1  bits=[3,4,6]
+      0x2000        7  bits=[13]
+      0x8010        1  bits=[4,15]
+      0x10004       1  bits=[2,16]
+      0x400000      1  bits=[22]
+      0x40000000    2  bits=[30]
+      0x80000000    1  bits=[31]
+      0x80000008    1  bits=[3,31]
+      0x80000018    1  bits=[3,4,31]
+      0x88000008    3  bits=[3,27,31]
+    carried (not linearly visible) 24 sites, first 6: 0x4dabf3 FUN_004dabb0, 0x4daedd FUN_004dadd0, 0x4daf41 FUN_004dadd0, 0x52e3ef FUN_0052bce0, 0x5306a0 FUN_00530640, 0x533eb0 FUN_00533e70
+  G3a   PASS  70 calls = 46 literal + 24 carried; 18 distinct literal masks as pinned
+    war(0x10) WITHOUT bit 8: 16 sites 0x4ccbcf 0x4dae77 0x4db165 0x507ac0 0x507c71 0x507d21 0x523df6 0x523f3c 0x552c36 0x55346f 0x554aa2 0x594d76 0x594f69 0x595318 0x59562a 0x59577f
+    bit 8 WITHOUT war(0x10): 8 sites 0x42999d 0x4dae13 0x554389 0x554426 0x55566e 0x555bb9 0x56f5ad 0x5a7c0a
+  G3b   PASS  16 callers request war (14x0x10, 0x8010, 0x50) and NEVER name contact; both exits of the human declare path FUN_005076d0 are in the set
+  G3c   PASS  8 callers request bit 8 with no war bit (4 pure 0x8 + 3 0x88000008 + 1 0x80000008)
+
+G4  contact is written and read on its own - the independence leg
+    mask == 0x8 exactly: 0x42999d  FUN_00429950
+    mask == 0x8 exactly: 0x4dae13  FUN_004dadd0
+    mask == 0x8 exactly: 0x56f5ad  FUN_0056df40
+    mask == 0x8 exactly: 0x5a7c0a  FUN_005a7970
+  G4a   PASS  4 pure-contact writes: new game FUN_005a7970, council FUN_00429950, page commit FUN_004dadd0, goody pod FUN_0056df40
+    FUN_005551e0 read gates: and 0x40018 @['0x555491'] -> cmp 0x8 @['0x555338', '0x555496'] | and 0x8018 @['0x5554dc'] -> cmp 0x8018 @['0x5554e2'] | and 0x18 @['0x555502'] -> cmp dl,0x8 @['0x555505']
+  G4b   PASS  the AI's war gate reads (rel & 0x40018) == 8 = contacted AND not at war; the third-faction test reads (& 0x18) == 8 = contacted, not at war: 8 is the contact predicate
+    FUN_00554d10 (atrocity) reads of 0x10 before its 0x18 write: ['0x554e6b']
+  G4c   PASS  the atrocity host asks `at war already?` (bit 0x10) BEFORE writing 0x18 - the war bit is the state, bit 8 rides along as contact
+
+G5  the page nouns (builder FUN_004db480 -> labels.txt line 11+elem)
+    id 0x8         elem 875 -> line 886 = 'Commlink'
+    id 0x10        elem 646 -> line 657 = 'Vendetta'
+    id 0x4         elem 643 -> line 654 = 'Truce'
+    id 0x2         elem 644 -> line 655 = 'Treaty'
+    id 0x1         elem 645 -> line 656 = 'Pact'
+    id 0x1000      elem 868 -> line 879 = 'I have infiltrator'
+    id 0x2000      elem 869 -> line 880 = 'I want to talk'
+    id 0x20        elem 870 -> line 881 = 'I want revenge'
+    id 0x2000000   elem 871 -> line 882 = 'I have surrendered'
+    id 0x400       elem 872 -> line 883 = 'I shall betray'
+    id 0x40000     elem 873 -> line 884 = 'I am atrocity victim'
+    id 0x80000008  elem 874 -> line 885 = 'Fight to the death'
+    id 0x80002000  elem 894 -> line 905 = 'Fix current status as permanent'
+  G5a   PASS  id 8 = 'Commlink', id 0x10 = 'Vendetta': two different nouns on the page
+
+G6  host identities in game words (string-table resolution + caller edge)
+    FUN_00554350   strings: <none>
+    FUN_00554d10   strings: MAJORATROCITY, council_sm.pcx
+    FUN_005551e0   strings: <none>
+    FUN_00507460   strings: AIDSTHEM, AIDSUS
+    callers of FUN_00554350: 0x5558cf FUN_005551e0, 0x5a58c2 FUN_005a3470
+  G6a   PASS  FUN_00554d10 is the atrocity consequence (MAJORATROCITY), FUN_00507460 the AI aid/join (AIDSTHEM/AIDSUS): both are war-declaration contexts
+  G6b   PASS  the AI turn pass FUN_005551e0 calls FUN_00554350 at 0x5558cf after the contact gate (G4b)
+
+DECISION TABLE - three independent tests of '0x8 is a war companion (one bit)'
+    test                     companion predicts          measured
+    pure-8 writes            none                        4 sites 0x42999d 0x4dae13 0x56f5ad 0x5a7c0a
+    peace clear (test bl,0x7) clears bit 8               keeps bit 8 (0xffee7faf, G2c)
+    page noun for id 8       a war word                  'Commlink' (G5a)
+  R1    PASS  RIVAL '8 = war companion / one bit' is DEAD on all three printed predictions
+
+R2  RIVAL '0x88000008 / 0x80000008 are war writes' - refuted by decomposition
+    0x88000008 bits [3,27,31] | 0x80000008 bits [3,31] | war bit 0x10 present in neither
+  R2    PASS  the vendetta-pending masks set bit 31/27 + contact; they never set war 0x10
+
+R3  RIVAL 'war can be stored without contact' - refuted at the choke point
+    any 0x10 request leaves FUN_00551a20 with 0x18 (or ebx,0x80000108 in the 0x10 branch,
+    stored in both directions) - the 16 war-alone callers (G3b) all store contact too
+  R3    PASS  bit 8 in a war write is the setter's implication, not a second war meaning
+
+SUMMARY  18/18 gates
+DIGEST   6670dd9eda4b73da
+
+PASS M371: 18/18 gates digest 6670dd9eda4b73da
