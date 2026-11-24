@@ -63,7 +63,7 @@ JCC = {"je", "jne", "jl", "jle", "jg", "jge", "jb", "jbe", "ja", "jae",
        "js", "jns", "jo", "jno", "jp", "jnp", "jz", "jnz"}
 
 # Pinned on the first real run (s330); a dump, decode or arithmetic drift reddens G12.
-CENSUS_ANCHOR = "f8442b847c68016d"
+CENSUS_ANCHOR = "b89b9e6bd940e8d3"
 CFG_ANCHOR = "e1304fc33c09e349"
 REACH_ANCHOR = "cead75d5e443057d"
 SCORE_ANCHOR = "6000c87277dcb198"
@@ -85,7 +85,7 @@ def load_census(path=CENSUS):
             if line.startswith("#") or not line.strip():
                 continue
             p = line.split()
-            rows.append((int(p[0], 16), p[1], p[2] if len(p) > 2 else "-"))
+            rows.append((int(p[0], 16), int(p[1]), p[2], p[3] if len(p) > 3 else "-"))
     return rows
 
 
@@ -111,8 +111,8 @@ class CFG:
     call returns to the next instruction.  Targets outside the span are counted, not hidden."""
 
     def __init__(self, rows):
-        self.addr = [a for a, _m, _o in rows]
-        self.ins = {a: (m, o) for a, m, o in rows}
+        self.addr = [r[0] for r in rows]
+        self.ins = {r[0]: (r[2], r[3]) for r in rows}
         self.edges = {}
         self.external = 0
         self.indirect = 0
@@ -151,7 +151,18 @@ class CFG:
 
 
 def writes(census, ref=GATE_LOCAL):
-    return [a for a, _m, o in census if o == "w" + ref]
+    return [r[0] for r in census if r[3] == "w" + ref]
+
+
+def ghidra_size(path=None):
+    """Ghidra's own byte length for the function, read from the committed index row."""
+    p = os.path.join(ROOT, "ghidra_out", "index.csv") if path is None else path
+    with open(p, encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            parts = line.strip().split(",")
+            if len(parts) >= 3 and parts[0].lower() == "0x004ef6d0":
+                return int(parts[2])
+    raise SystemExit("FUN_004ef6d0 not in ghidra index")
 
 
 # --- the recorded rows -------------------------------------------------------------------
@@ -222,6 +233,7 @@ def build(census=None, keys=None, samples=None):
     cfg = CFG(census)
     rows = rows_of(samples)
     m = dict(census=census, keys=keys, cfg=cfg, rows=rows, samples=samples)
+    m["ghidra_size"] = ghidra_size()
     m["gate_writes"] = writes(census)
     m["r_entry"] = cfg.reach(ENTRY)
     m["r_unit"] = cfg.reach(UNIT_IN)
@@ -325,25 +337,36 @@ def gates(m):
     out = []
     f_txt = [keys.get(a, "") for a in SPEND_FAC]
     u_txt = [keys.get(a, "") for a in SPEND_UNIT]
-    out.append(("G1", "the census is the WHOLE function: %d instructions, span 0x%06x..0x%06x "
-                "== Ghidra size %d" % (len(m["census"]), LO, HI, SIZE),
-                len(m["census"]) == 3164 and m["census"][0][0] == LO and m["census"][-1][0] < HI
-                and m["census"][0][0] == ENTRY, "digest=%s" % m["d_census"]))
+    census = m["census"]
+    contiguous = all(census[i + 1][0] == census[i][0] + census[i][1]
+                     for i in range(len(census) - 1))
+    out.append(("G1", "the census is the WHOLE function: %d instructions, %d bytes, contiguous, "
+                "0x%06x..0x%06x == Ghidra's size %d"
+                % (len(census), sum(r[1] for r in census), LO, HI, m["ghidra_size"]),
+                len(census) == 3164 and contiguous and census[0][0] == ENTRY
+                and census[-1][0] + census[-1][1] == HI
+                and sum(r[1] for r in census) == SIZE == m["ghidra_size"],
+                "digest=%s" % m["d_census"]))
     out.append(("G2", "the CFG is BUILT at instruction granularity - %d nodes, %d edges, "
                 "%d external targets, %d indirect jumps: the graph is CLOSED, so reachability is "
                 "complete" % (len(cfg.edges), sum(len(s) for s in cfg.edges.values()),
                               cfg.external, cfg.indirect),
-                len(cfg.edges) == len(m["census"]) and cfg.indirect == 0 and cfg.external == 0,
+                len(cfg.edges) == len(m["census"]) and sum(len(s) for s in cfg.edges.values()) == 3482
+                and cfg.indirect == 0 and cfg.external == 0,
                 "digest=%s" % m["d_cfg"]))
     out.append(("G3", "reachability: stamp 0x%06x reached from entry (%d) and unit (%d), NOT from "
                 "facility (%d)" % (STAMP, len(m["r_entry"]), len(m["r_unit"]), len(m["r_fac"])),
                 STAMP in m["r_entry"] and STAMP in m["r_unit"] and STAMP not in m["r_fac"]
-                and len(m["r_fac"]) > 40, "digest=%s" % m["d_reach"]))
+                and m["r_unit"] < m["r_entry"] and m["r_fac"] < m["r_entry"]
+                and m["r_fac"] != m["r_unit"]
+                and (len(m["r_entry"]), len(m["r_unit"]), len(m["r_fac"])) == (3164, 3045, 886),
+                "digest=%s" % m["d_reach"]))
     out.append(("G4", "the stamp has one entry edge (0x4f0d94) inside a block with one entry "
                 "(0x4f0b80 jg), and that branch tests %s" % GATE_LOCAL,
                 cfg.preds[STAMP] == {0x4f0d94} and cfg.preds[BLOCK] == {GATE}
                 and cfg.ins[GATE][0] == "jg" and _direct(cfg.ins[GATE][1]) == BLOCK
-                and "ebp-0x30" in keys.get(0x4f0b7b, "")))
+                and cfg.ins[0x4f0b7b] == ("mov", "r[ebp-0x30]")
+                and cfg.ins[0x4f0b7e] == ("test", "-")))
     out.append(("G5", "%s is written at ONE site (%s), in the unit branch and nowhere in the "
                 "facility region" % (GATE_LOCAL, ["0x%06x" % a for a in m["gate_writes"]]),
                 m["gate_writes"] == [UNIT_IN] and not m["fac_gate_writes"]
@@ -352,6 +375,7 @@ def gates(m):
                 "0x%06x/0x%06x/0x%06x" % (SPEND_FAC + SPEND_UNIT),
                 "ecx+0x40" in f_txt[0] and f_txt[1].startswith("sub") and "ecx+0x40" in f_txt[2]
                 and "edx+0x40" in u_txt[0] and u_txt[1].startswith("sub") and "edx+0x40" in u_txt[2]
+                and cfg.ins[SPEND_FAC[1]][0] == "sub" and cfg.ins[SPEND_UNIT[1]][0] == "sub"
                 and SPEND_FAC[1] in m["r_fac"] and SPEND_UNIT[1] in m["r_unit"]))
     out.append(("G7", "the model scores %d/%d: unit %d/%d stamp the mapper bit, facility-range "
                 "%d/%d do not" % (a["model_hits"], len(rows), a["unit_hits"], a["unit_n"],
@@ -382,6 +406,8 @@ def gates(m):
                 "spend) and writes [ebp-0x20] at 0x4efed1; the unit block's read of it (0x4f0d8f) "
                 "is unreachable from the facility entry",
                 0x4efe44 in m["r_fac"] and cfg.ins[0x4efe44][1] == "0x4efed1"
+                and "0x40" in keys.get(0x4efe41, "") and keys.get(0x4efe41, "").startswith("cmp")
+                and keys.get(0x4efe44, "").startswith("jl")
                 and 0x4efed1 in m["r_fac"] and cfg.ins[0x4efed1][1] == "w[ebp-0x20]"
                 and cfg.ins[0x4f0d8f][1] == "r[ebp-0x20]" and 0x4f0d8f not in m["r_fac"]))
     out.append(("G12", "the CFG is CLOSED, two passes agree, every anchor is pinned to a literal",

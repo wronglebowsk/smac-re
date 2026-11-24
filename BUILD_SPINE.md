@@ -1281,7 +1281,8 @@ at Virgin Soil (recorded `10 00...`) and matches only 4/6 windows, an off-map ma
 covers 1/6 rows (Virgin Soil's mapper byte is 0, inside the eight-byte map), and the
 after-pop head scores 0/6; **G10** the OR instruction itself is un-reachable from the facility
 entry and IS reachable from the unit entry, and the census line is `or BYTE PTR [eax],cl`;
-**G11** the facility region writes the OTHER local (`[ebp-0x20] = 0` at `0x4efed1`) while the
+**G11** the facility region splits on the head at `0x4efe41` (`cmp ebx,0x40`) / `0x4efe44`
+(`jl` to the spend) and writes the OTHER local (`[ebp-0x20] = 0` at `0x4efed1`) while the
 unit block's read of it (`0x4f0d8f`) is unreachable from the facility entry - the two legs'
 doors do not cross; **G12** the CFG is CLOSED (0 external targets, 0 indirect jumps) so no path
 can leave and re-enter the walk, two in-process passes give identical digests, and every

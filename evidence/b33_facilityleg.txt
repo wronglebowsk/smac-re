@@ -49,7 +49,7 @@ TABLE 6  rivals on the same printed numbers
   R3 the stamp reads the AFTER-pop head     -> bit in gains 0/6
 
 GATES
-ok   G1 the census is the WHOLE function: 3164 instructions, span 0x4ef6d0..0x4f26da == Ghidra size 12298  digest=f8442b847c68016d
+ok   G1 the census is the WHOLE function: 3164 instructions, 12298 bytes, contiguous, 0x4ef6d0..0x4f26da == Ghidra's size 12298  digest=b89b9e6bd940e8d3
 ok   G2 the CFG is BUILT at instruction granularity - 3164 nodes, 3482 edges, 0 external targets, 0 indirect jumps: the graph is CLOSED, so reachability is complete  digest=e1304fc33c09e349
 ok   G3 reachability: stamp 0x4f0e90 reached from entry (3164) and unit (3045), NOT from facility (886)  digest=cead75d5e443057d
 ok   G4 the stamp has one entry edge (0x4f0d94) inside a block with one entry (0x4f0b80 jg), and that branch tests [ebp-0x30]
@@ -60,8 +60,8 @@ ok   G8 Virgin Soil: facility head 2, 0000000800000000 -> 1000000000000000 (bit 
 ok   G9 rivals FAIL: shared OR matches 4/6 windows, an off-map refusal covers 1/6 rows (Virgin Soil in-window), after-pop head 0/6
 ok   G10 the OR instruction itself is unreachable from the facility entry, reachable from the unit entry, and reads as `or BYTE PTR [eax],cl`
 ok   G11 the facility region splits on head >= 0x40 at 0x4efe41/0x4efe44 (jl to the spend) and writes [ebp-0x20] at 0x4efed1; the unit block's read of it (0x4f0d8f) is unreachable from the facility entry
-ok   G12 the CFG is CLOSED, two passes agree, every anchor is pinned to a literal  census=f8442b847c68016d cfg=e1304fc33c09e349 reach=cead75d5e443057d score=6000c87277dcb198 vs=462f20b2da918c6b
+ok   G12 the CFG is CLOSED, two passes agree, every anchor is pinned to a literal  census=b89b9e6bd940e8d3 cfg=e1304fc33c09e349 reach=cead75d5e443057d score=6000c87277dcb198 vs=462f20b2da918c6b
 
-DIGEST f8442b847c68016d gates=12
+DIGEST b89b9e6bd940e8d3 gates=12
 PASS B33: 12/12 gates
-ANCHORS census=f8442b847c68016d cfg=e1304fc33c09e349 reach=cead75d5e443057d score=6000c87277dcb198 vs=462f20b2da918c6b
+ANCHORS census=b89b9e6bd940e8d3 cfg=e1304fc33c09e349 reach=cead75d5e443057d score=6000c87277dcb198 vs=462f20b2da918c6b

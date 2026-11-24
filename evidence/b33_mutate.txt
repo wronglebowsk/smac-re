@@ -7,6 +7,7 @@ ok   MU5  the Virgin Soil after-window doctored to the stamp prediction reddens 
 ok   MU6  the Virgin Soil gain set given the head's own bit reddens G7  also=G8
 ok   MU7  Virgin Soil's mapper byte moved off the eight-byte map reddens G9  also=-
 ok   MU8  the after-pop head counted as a hit    reddens G9  also=-
-ok   MU9  the census truncated by one instruction reddens G1  also=G12
+ok   MU9  the census truncated by one instruction reddens G1  also=G2,G3,G12
 ok   MU10 a branch target outside the function span (open CFG) reddens G2  also=G12
-MUTANTS 10/10
+ok   MU11 the facility spend's `sub` relabelled `add` reddens G6  also=G12
+MUTANTS 11/11

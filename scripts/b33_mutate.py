@@ -24,9 +24,9 @@ def fresh():
 
 def setop(raw, addr, op=None, mnem=None):
     rows = raw["census"]
-    for i, (a, m, o) in enumerate(rows):
+    for i, (a, ln, m, o) in enumerate(rows):
         if a == addr:
-            rows[i] = (a, mnem or m, o if op is None else op)
+            rows[i] = (a, ln, mnem or m, o if op is None else op)
             return
     raise KeyError("0x%06x not in census" % addr)
 
@@ -73,6 +73,10 @@ def mu10(raw):                     # a branch target outside the span (an open C
     setop(raw, 0x4EF7D6, op="0x4f3000")
 
 
+def mu11(raw):                     # the facility spend's `sub` relabelled `add` (same addresses)
+    setop(raw, 0x4EFEDB, mnem="add")
+
+
 # (id, gate that must redden, description, pre-build mutator, post-build mutator)
 MUTANTS = [
     ("MU1", "G5", "the single write of [ebp-0x30] renamed to [ebp-0x34]", mu1, None),
@@ -85,6 +89,7 @@ MUTANTS = [
     ("MU8", "G9", "the after-pop head counted as a hit", None, mu8),
     ("MU9", "G1", "the census truncated by one instruction", mu9, None),
     ("MU10", "G2", "a branch target outside the function span (open CFG)", mu10, None),
+    ("MU11", "G6", "the facility spend's `sub` relabelled `add`", mu11, None),
 ]
 
 

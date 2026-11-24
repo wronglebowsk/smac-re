@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B33 MERGED s330 `f8442b847c68016d`; M355 MERGED s329-c3. Old header/enumerations/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B33 + M54A-M355; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
+# NEXT_PROMPT.md - footing (B33 MERGED s330 `b89b9e6bd940e8d3`; M355 MERGED s329-c3. Old header/enumerations/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B33 + M54A-M355; only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing FAIL.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -117,7 +117,7 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`); per-id `NAMED ## <id>` GOVERN.
 - M348 (s326) MERGED: slots 1/2 -> Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED (Create Session dialog). 12/12 `a3d46c017673526a`, harness 13/13.
 - M353 (s329) MERGED: `0x999fa4` = 10-dword band; filler `FUN_00626581` (k>9 -> ret 3), consumers `$NUMBER`/`$NUM`/`$HEX` (base 10) + `$#k` (no bound). 11/11 `367fdae1d78979e5`, harness 11/11. NEXT: (x6) pref-block writers.
-- B33 (s330) MERGED: the facility leg WALKED - the OR `0x4f0ec0` is unit-only (door `0x4f0b80 jg` on `[ebp-0x30]` = the unit branch's `0x4ef8a4`); recorded 4/4 unit stamps, 0/2 facility. 12/12 `f8442b847c68016d`, harness 10/10. NEXT BUILD B34 = where a facility stamps `+0x8c`.
+- B33 (s330) MERGED: the facility leg WALKED - the OR `0x4f0ec0` is unit-only (door `0x4f0b80 jg` on `[ebp-0x30]` = the unit branch's `0x4ef8a4`); recorded 4/4 unit stamps, 0/2 facility. 12/12 `b89b9e6bd940e8d3`, harness 11/11. NEXT BUILD B34 = where a facility stamps `+0x8c`.
 - M334-M340 + M339 MERGED: upkeep AUTO-SELL, #DIFF ladder, PLAYER RECORD 1 difficulty, item order, the modal SCREEN RUNNER (0x5f1394, `+0xa40` cell), pref>=6 - rows in `NAMED ## M334`-`## M340`.
 - M349 (s326-c2) MERGED: a negative queue head is the NEGATED UNIT TYPE (`neg` @0x4ef89f; `>=0` facility, `-38` sentinel, `>=0x40` gated by 0x98adb8 bit2); 13/13 `4d3c2e4ded19d620`, 18/18
 - M351 (s328-chain2): the negative head's producer = the chooser row ITEM, negated when flags&0x20==0; unit rows' item = the TYPE ORDINAL (0x984d38+0x30*i) stored to base+0x50 @0x418b57. 15/15 `504c7342fb16273b`, harness 20/20.

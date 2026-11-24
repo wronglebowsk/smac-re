@@ -1561,15 +1561,15 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
 
-## B33 (s330 BUILD, zero box) — the OR at `0x4f0ec0` is UNIT-ONLY: a facility head (`>= 0`) enters at `0x4efa2c`, spends through `[ecx+0x40]` and never reaches the stamp, whose block's only door is `0x4f0b80 jg` on `[ebp-0x30]` — written at ONE site, the unit branch's `neg`/`mov` @`0x4ef8a4` (`sim/facilityleg.py`; spine §B33). ACCEPT `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** `f8442b847c68016d` (`evidence/b33_facilityleg.txt:66`), rerun byte-identical; harness `scripts/b33_mutate.py` 10/10 (`evidence/b33_mutate.txt:12`).
+## B33 (s330 BUILD, zero box) — the OR at `0x4f0ec0` is UNIT-ONLY: a facility head (`>= 0`) enters at `0x4efa2c`, spends through `[ecx+0x40]` and never reaches the stamp, whose block's only door is `0x4f0b80 jg` on `[ebp-0x30]` — written at ONE site, the unit branch's `neg`/`mov` @`0x4ef8a4` (`sim/facilityleg.py`; spine §B33). ACCEPT `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** digest `b89b9e6bd940e8d3` (`evidence/b33_facilityleg.txt:65`), rerun byte-identical; harness `scripts/b33_mutate.py` 11/11 (`evidence/b33_mutate.txt:13`).
 
 | claim | cite | conf |
 |---|---|---|
-| census: FUN_004ef6d0 3,164 insns, 0x4ef6d0..0x4f26da == Ghidra size 12,298 | `evidence/fixtures/b33_fun4ef6d0_census.txt:1` | V MU9 |
+| census: FUN_004ef6d0 3,164 insns, 12,298 B contiguous, 0x4ef6d0..0x4f26da == Ghidra size | `evidence/b33_facilityleg.txt:52` | V MU9 |
 | CFG closed: 3,482 edges, 0 external targets, 0 indirect jumps | `evidence/b33_facilityleg.txt:53` | V MU10 |
-| stamp 0x4f0e90 reached from entry + unit (3,045), NOT from facility (886) | `:54` | V MU3 |
+| stamp 0x4f0e90 reached from entry + unit (3,045), NOT from facility (886), sets nested | `:54` | V MU3 |
 | door: preds(0x4f0e90)={0x4f0d94}, preds(0x4f0ca1)={0x4f0b80 `jg`} | `:10-11` | V MU2 |
-| `[ebp-0x30]` written at `0x4ef8a4` only; none facility-reachable | `:16` | V MU1 |
+| `[ebp-0x30]` written at `0x4ef8a4` only; none facility-reachable; the census carries the local read | `:16,52` | V MU1 |
 | recorded 4/4 unit stamps, 0/2 facility (model 6/6); Virgin Soil head 2 bit absent | `:40,43` | V MU4,MU5,MU6 |
 | rivals: shared-OR 4/6 windows, off-map refusal 1/6, after-pop head 0/6 | `:47-49` | V MU7,MU8 |
 | OPEN: facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the 0x98adb8 row | - | lead |

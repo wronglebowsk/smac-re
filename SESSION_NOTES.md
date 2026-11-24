@@ -636,11 +636,12 @@ whether a facility completion stamps at all.
 
 ## Session 330 (2026-11-24) — B33: the OR at `0x4f0ec0` is UNIT-ONLY — the facility leg spends and never stamps
 
-- **ACCEPT** `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** `f8442b847c68016d`
-  (`evidence/b33_facilityleg.txt:66`), rerun byte-identical; relay `--b33` identical;
-  `scripts/b33_mutate.py` 10/10 (`evidence/b33_mutate.txt:12`).
-- **CENSUS** FUN_004ef6d0 = 3,164 insns, `0x4ef6d0..0x4f26da` == Ghidra `size=12298`; CFG 3,482
-  edges, 0 external, 0 indirect (closed). Fixture: `scripts/b33_extract.py --check`.
+- **ACCEPT** `python3 -u -m sim.facilityleg` -> **`PASS B33: 12/12 gates`** `b89b9e6bd940e8d3`
+  (`evidence/b33_facilityleg.txt:65`), rerun byte-identical; relay `--b33` identical;
+  `scripts/b33_mutate.py` 11/11 (`evidence/b33_mutate.txt:13`).
+- **CENSUS** FUN_004ef6d0 = 3,164 insns, 12,298 B CONTIGUOUS (lengths summed), `0x4ef6d0..0x4f26da`
+  == Ghidra `size=12298` read from `ghidra_out/index.csv`; CFG 3,482 edges, 0 external, 0 indirect.
+  Fixture: `scripts/b33_extract.py --check` (objdump wrap lines folded into lengths).
 - **REACH** entry + unit branch `0x4ef8a4` reach the stamp block `0x4f0e90` (3,045 insns);
   facility branch `0x4efa2c` reaches 886 and does NOT.
 - **DOOR** `preds(0x4f0e90)={0x4f0d94}`, `preds(0x4f0ca1)={0x4f0b80}`, `0x4f0b80` = `jg` on
@@ -652,4 +653,8 @@ whether a facility completion stamps at all.
 - **RETRACTION (declared gap)** B32's "why a facility head does not stamp" is ANSWERED: the `jg`.
 - **PROTOCOL** `scripts/b33_named_rotate.py` rotated `## M333` VERBATIM (sha1 `be87f76187588fde
   4268db6355ba93f44eacc0cd`, 26 tokens) to `docs/named-archive-b33-rows.md`.
+- **REVIEW (#381, 7 findings)**: all fixed - MU11 reddens G6; G1 sums byte lengths and reads
+  Ghidra's size; G2 pins 3,482 edges; G3 pins the three sets as nested; G4 reads the local from the
+  census; G11 asserts the `cmp ebx,0x40`/`jl` split; the parser folds wrapped bytes and marks
+  indirect calls `ind`; cites repointed (`:65`).
 - **OPEN** facility stamp elsewhere (`0x4e4528`/`0x4f3ebc`/`0x4f3f4c`); the `0x98adb8` row; loss 27.
