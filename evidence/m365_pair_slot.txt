@@ -1,0 +1,142 @@
+M365  0x94d5dc - the third slot of FUN_00551a20 (per-(fac,tgt) dword at block+0x1ac)
+================================================================================================
+G1  CENSUS - every instruction naming 0x94d5dc in the image
+    addr      rw    form       base  function            text
+    0x4da604  W     abs-idx    edx   FUN_004da2c0        mov    DWORD PTR [edx*4+0x94d5dc],ebx
+    0x4da6de  W     abs-idx    edx   FUN_004da2c0        mov    DWORD PTR [edx*4+0x94d5dc],ebx
+    0x5034cd  R     base-disp  eax   FUN_00502cd0        mov    esi,DWORD PTR [eax+0x94d5dc]
+    0x5034d3  R     abs-idx    edx   FUN_00502cd0        mov    edx,DWORD PTR [edx*4+0x94d5dc]
+    0x5049cc  R     base-disp  eax   FUN_00502cd0        mov    ecx,DWORD PTR [eax+0x94d5dc]
+    0x5049d3  W     base-disp  eax   FUN_00502cd0        mov    DWORD PTR [eax+0x94d5dc],ecx
+    0x5060be  R     base-disp  eax   FUN_00502cd0        mov    edx,DWORD PTR [eax+0x94d5dc]
+    0x5060c5  W     base-disp  eax   FUN_00502cd0        mov    DWORD PTR [eax+0x94d5dc],edx
+    0x506c8e  R     base-disp  eax   FUN_00502cd0        mov    esi,DWORD PTR [eax+0x94d5dc]
+    0x506c97  W     base-disp  eax   FUN_00502cd0        mov    DWORD PTR [eax+0x94d5dc],esi
+    0x507f99  R     base-disp  ecx   FUN_00507ef0        mov    edx,DWORD PTR [ecx+0x94d5dc]
+    0x507fa4  W     base-disp  ecx   FUN_00507ef0        mov    DWORD PTR [ecx+0x94d5dc],edx
+    0x532016  R     base-disp  esi   FUN_00531df0        mov    eax,DWORD PTR [esi+0x94d5dc]
+    0x532023  R     base-disp  ecx   FUN_00531df0        mov    eax,DWORD PTR [ecx+0x94d5dc]
+    0x54a363  R     base-disp  eax   FUN_00546800        mov    ecx,DWORD PTR [eax+0x94d5dc]
+    0x54a369  R     base-disp  edx   FUN_00546800        mov    eax,DWORD PTR [edx+0x94d5dc]
+    0x54abc7  R     base-disp  edx   FUN_00546800        mov    eax,DWORD PTR [edx+0x94d5dc]
+    0x54abcd  R     base-disp  ecx   FUN_00546800        mov    edx,DWORD PTR [ecx+0x94d5dc]
+    0x54cd58  R     base-disp  ecx   FUN_00546800        mov    ebx,DWORD PTR [ecx+0x94d5dc]
+    0x54cd8d  R     base-disp  eax   FUN_00546800        mov    edx,DWORD PTR [eax+0x94d5dc]
+    0x551af6  W     abs-idx    edx   FUN_00551a20        mov    DWORD PTR [edx*4+0x94d5dc],0x0
+    0x551b01  W     base-disp  eax   FUN_00551a20        mov    DWORD PTR [eax+0x94d5dc],0x0
+    0x574423  R     base-disp  eax   FUN_00574370        mov    ecx,DWORD PTR [eax+0x94d5dc]
+    totals: 23 sites, 8 writes / 15 reads, 4 abs-indexed / 19 base+disp, 7 functions
+    per function: FUN_004da2c0 x2, FUN_00502cd0 x8, FUN_00507ef0 x2, FUN_00531df0 x2, FUN_00546800 x6, FUN_00551a20 x2, FUN_00574370 x1
+  [ok] G1a  23 instructions reference 0x94d5dc (measured)
+  [ok] G1b  8 writes / 15 reads
+  [ok] G1c  two addressing forms, 0 unknown: 4 absolute-indexed + 19 base+disp
+  [ok] G1d  7 functions, site counts [1, 2, 2, 2, 2, 6, 8]
+
+G2  GEOMETRY - the slot's position in the 0x20bc-byte faction block and its family
+    0x94d5dc - block 0x94d430 = 0x1ac (428 B = 107 dwords)
+    0x94d5dc - mask  0x94d448 = 0x194 (404 B = 101 dwords)
+    displacements in FUN_004da2c0 (its store block): 0x94d554, 0x94d55c, 0x94d57c, 0x94d59c, 0x94d5bc, 0x94d5dc
+    the five per-target slots from 0x94d55c on: 0x94d55c, 0x94d57c, 0x94d59c, 0x94d5bc, 0x94d5dc  steps 0x20, 0x20, 0x20, 0x20; 0x94d554 = first - 0x8
+  [ok] G2b  six displacements: 0x94d554 (M165's pair head, 8 B before the first) plus five per-target slots exactly 0x20 apart ending at 0x94d5dc = block+0x1ac = mask+0x194
+  [ok] G2c  the paired sibling 0x94d5bc is the array immediately before (block+0x18c)
+
+G3  INDEX FORMS - linear-form tracer (self-tested first), then each site's base
+    selftest 1 ok   2095 idiom -> 0x82f*X + tgt
+    selftest 2 ok   byte form: the same idiom with a final shl 2 is 0x20bc, not 0x82f
+    selftest 3 ok   without the tgt add the form is the bare stride 0x82f
+    selftest 4 ok   lea scale is applied to the scaled operand
+    selftest 5 ok   a stack read is a parameter symbol, not a constant
+  [ok] G3a  tracer self-test 5/5 (2095 idiom, byte-form, no-addend, lea scale)
+    0x4da604  abs-idx  base=edx  folded   0x20bc*mem@0xa1c, 0x4*mem@0xa20
+    0x4da6de  abs-idx  base=edx  folded   0x4*mem@0xa1c, 0x20bc*mem@0xa20
+    0x5034cd  base-disp base=eax  pointer  0x1*in:eax
+    0x5034d3  abs-idx  base=edx  folded   0x20bc*in:ecx, 0x4*sp-0x8
+    0x5049cc  base-disp base=eax  folded   0x20bc*in:ebx, 0x4*sp-0x4
+    0x5049d3  base-disp base=eax  folded   0x20bc*in:ebx, 0x4*sp-0x4
+    0x5060be  base-disp base=eax  folded   0x4*sp-0x4, 0x20bc*sp-0x8
+    0x5060c5  base-disp base=eax  folded   0x4*sp-0x4, 0x20bc*sp-0x8
+    0x506c8e  base-disp base=eax  folded   0x20bc*sp-0x4, 0x4*sp-0x8
+    0x506c97  base-disp base=eax  folded   0x20bc*sp-0x4, 0x4*sp-0x8
+    0x507f99  base-disp base=ecx  folded   0x20bc*in:ebx, 0x4*sp-0x4
+    0x507fa4  base-disp base=ecx  folded   0x20bc*in:ebx, 0x4*sp-0x4
+    0x532016  base-disp base=esi  pointer  0x1*in:esi
+    0x532023  base-disp base=ecx  pointer  0x1*in:ecx
+    0x54a363  base-disp base=eax  pointer  0x1*sp-0x2c
+    0x54a369  base-disp base=edx  pointer  0x1*sp-0x24
+    0x54abc7  base-disp base=edx  pointer  0x1*sp-0x2c
+    0x54abcd  base-disp base=ecx  pointer  0x1*sp-0x24
+    0x54cd58  base-disp base=ecx  pointer  0x1*sp-0x24
+    0x54cd8d  base-disp base=eax  pointer  0x1*sp-0x2c
+    0x551af6  abs-idx  base=edx  folded   0x4*in:edi, 0x20bc*in:esi
+    0x551b01  base-disp base=eax  pointer  0x1*in:eax
+    0x574423  base-disp base=eax  pointer  0x1*in:eax
+    folded 12 / pointer-param 11 / unresolved 0; byte form {0x20bc,4}: 12; dword form {0x82f,1} after /4: 12
+  [ok] G3b  every folded site is 4*(fac*0x82f + tgt) bytes: coefficient multiset {0x20bc, 4} (12/12) and {0x82f, 1} in elements (12/12)
+  [ok] G3d  0 unresolved addressing forms: all 23 sites classified (12 folded + 11 plain record pointer)
+
+G4  WRITERS - right-hand side of the 8 stores, by local def-use
+    0x4da604  CARRY:ebx                                      mov    DWORD PTR [edx*4+0x94d5dc],ebx
+    0x4da6de  CARRY:ebx                                      mov    DWORD PTR [edx*4+0x94d5dc],ebx
+    0x5049d3  INC1:ecx                                       mov    DWORD PTR [eax+0x94d5dc],ecx
+    0x5060c5  INC1:edx                                       mov    DWORD PTR [eax+0x94d5dc],edx
+    0x506c97  INC1:esi                                       mov    DWORD PTR [eax+0x94d5dc],esi
+    0x507fa4  DELTA:2x(signed byte BYTE PTR [edi+0x95da16])  mov    DWORD PTR [ecx+0x94d5dc],edx
+    0x551af6  CONST:0x0                                      mov    DWORD PTR [edx*4+0x94d5dc],0x0
+    0x551b01  CONST:0x0                                      mov    DWORD PTR [eax+0x94d5dc],0x0
+    classes: CARRY:ebx x2, CONST:0x0 x2, DELTA:2x(signed byte BYTE PTR [edi+0x95da16]) x1, INC1:ecx x1, INC1:edx x1, INC1:esi x1
+  [ok] G4a  2 zero-stores + 2 carried-register stores + 3 ++ + 1 scaled-byte delta ({'CARRY': 2, 'INC1': 3, 'DELTA': 1, 'CONST': 2})
+  [ok] G4b  the only constant ever stored at this slot is 0
+
+G5  PAIRING - 0x94d5bc and 0x94d5dc move together
+    write sites that also write 0x94d5bc in the same block: 5
+    0x4da604  pairs with 0x4da5e0  (mov    DWORD PTR [edx*4+0x94d5bc],ebx)
+    0x4da6de  pairs with 0x4da6b8  (mov    DWORD PTR [edx*4+0x94d5bc],ebx)
+    0x5049d3  pairs with 0x5049c6  (mov    DWORD PTR [eax+0x94d5bc],edx)
+    0x5060c5  pairs with 0x5060b8  (mov    DWORD PTR [eax+0x94d5bc],esi)
+    0x506c97  pairs with 0x506c88  (mov    DWORD PTR [eax+0x94d5bc],edi)
+  [ok] G5a  5 of the 8 stores carry an 0x94d5bc sibling in the same block (the 3 ++ sites, the += site and BOTH dialog stores)
+  [ok] G5b  at all 5 paired sites the sibling and the slot are addressed off the SAME base register (same pair index)
+    0x4da604  CARRY:ebx                | 0x94d5bc CARRY:ebx                same delta class: True
+    0x4da6de  CARRY:ebx                | 0x94d5bc CARRY:ebx                same delta class: True
+    0x5049d3  INC1:ecx                 | 0x94d5bc INC1:edx                 same delta class: True
+    0x5060c5  INC1:edx                 | 0x94d5bc INC1:esi                 same delta class: True
+    0x506c97  INC1:esi                 | 0x94d5bc INC1:edi                 same delta class: True
+  [ok] G5c  at every one of the 5 paired sites the sibling gets the SAME delta class (5/5)
+
+G6  CONSUMERS - deadlines and cross-direction compares
+    round counter ds:0x985afc -> imul 0x51eb851f, sar [4, 3]
+    (x*0x51eb851f)>>32>>4 vs x//50 : 0 mismatches on 0..5000
+    (x*0x51eb851f)>>32>>3 vs x//25 : 0 mismatches on 0..5000
+    addends: lea    eax,[eax+edx*1+0x1] ; lea    edx,[eax+edx*1+0x1] ; lea    eax,[esi+eax*1+0x2] ; lea    eax,[edx+eax*1+0x2]
+  [ok] G6a  the two round fractions are exactly /50 and /25 (0 mismatches each, 0..5000)
+  [ok] G6b  both deadlines add the slot value to a round fraction plus a small addend (2 sites with +1, 2 with +2)
+    0x5034cd  cmp@0x5034da cmp    edx,esi
+    0x5034d3  no use in 6 instructions
+    0x5049cc  storeback mov    DWORD PTR [eax+0x94d5dc],ecx
+    0x5060be  storeback mov    DWORD PTR [eax+0x94d5dc],edx
+    0x506c8e  storeback mov    DWORD PTR [eax+0x94d5dc],esi
+    0x507f99  storeback mov    DWORD PTR [ecx+0x94d5dc],edx
+    0x532016  arith@0x53201c lea    eax,[eax+edx*1+0x1]
+    0x532023  arith@0x532029 lea    edx,[eax+edx*1+0x1]
+    0x54a363  no use in 6 instructions
+    0x54a369  cmp@0x54a36f cmp    ecx,eax
+    0x54abc7  no use in 6 instructions
+    0x54abcd  cmp@0x54abd3 cmp    eax,edx
+    0x54cd58  arith@0x54cd72 add    edx,ebx
+    0x54cd8d  arith@0x54cd93 lea    eax,[ecx+edx*1+0x1]
+    0x574423  cmp@0x574429 cmp    edx,ecx
+  [ok] G6c  4 DISTINCT cmp instructions consume the slot across the two directions, 4 feed add/lea arithmetic (both measured)
+    the string a branch at 0x54a373 emits: b'a\x00\x00\x00HALFBRIBE\x00\x00\x00WEASELOU'
+
+G7  RIVALS (each must FAIL on the numbers above)
+    R1 'a per-FACTION scalar (0x94d434 rank style)' -> folded sites that reduce to 0x82f*A + 1*B: 12 of 23
+  [ok] R1   R1 refuted: the index is (fac*0x82f + tgt), a per-PAIR slot
+    R2 'it is the relation MASK array (0x94d448 family)' -> mask RMWs at this slot: 0; only constant stored: ['CONST:0x0']
+  [ok] R2   R2 refuted: no bit-mask store exists at 0x94d5dc (there are many at 0x94d448)
+    R3 '-1 marks unset' -> stores of -1 at this slot: 0
+  [ok] R3   R3 refuted: the slot is only ever zeroed, never set to -1
+    R4 'the two counters are one 0x20-byte row' -> delta 0x20, two separate dword reads at 0x54cd58 and 0x54cd8d (0x94d5bc at 0x54cd6c, 0x94d5dc at 0x54cd8d)
+  [ok] R4   R4 refuted: 0x20 apart = two 8-dword arrays (0x18c and 0x1ac) in the same record
+
+PASS M365: 21/21 gates
+digest 896b589c55a10bc4

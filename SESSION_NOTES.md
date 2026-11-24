@@ -671,3 +671,27 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 - **OPEN**: each row's noun (label text is runtime; 0x997b20's table is not in the file);
   0x4b87f0/0x4b8820/0x4b8a60/0x4b8af0 = audio on/off (INFERRED).
 - NAMED: `## M360` rotated VERBATIM (docs/named-archive-m360-rows.md, sha1 e504b483); 247,881 B.
+
+## Session 334-chain3 (2026-11-24) — M365: 0x94d5dc = the relations record's third slot (block+0x1ac): zeroed by the writer, ticked on contact, consumed as a DEADLINE
+
+- **ACCEPT** `python3 -u scripts/m365_pair_slot.py` -> **`PASS M365: 21/21 gates` `896b589c55a10bc4`**
+  (`evidence/m365_pair_slot.txt:141`), re-run identical; `m365_mutate.py` -> **25/25 killed, NO-OP 0, cov 21/21** (`evidence/m365_mutate.txt:32`).
+- **CENSUS 23**: 8 W / 15 R, 7 fns (502cd0 x8, 546800 x6, 4 others x2, 574370 x1); 4 abs +
+  19 base+disp; 0 unclassified. `evidence/m365_pair_slot.txt:8-29`.
+- **GEOMETRY**: slot = block 0x94d430 + **0x1ac** = mask 0x94d448 + 0x194 (101 dw).
+  FUN_004da2c0 names SIX displacements: 0x94d554 (M165's "pair head", 8 B before the first) +
+  0x57c/59c/5bc/5dc from 0x55c, five per-target slots 0x20 apart; 0x94d5dc is the LAST.
+- **INDEX**: 12 folded sites = 4*(fac*0x82f+tgt) B ({0x20bc,4} = {0x82f,1} elements; the M137
+  trap is tracer self-test 2); 11 sites take the record pointer. Algorithm mutant MU14.
+- **WRITERS**: only constant ever stored = **0** (2 sites, the bit-0x10 arm of FUN_00551a20,
+  BOTH directions); 2 carry ebx (dialog loops 4da604/4da6de); 3 `++`; 1 `+= 2*signed byte`
+  (507fa4, right before it calls the 5518f0 clear).
+- **PAIR**: 0x94d5bc (block+0x18c) gets the same delta class off the same base in 5/5 blocks.
+- **CONSUMERS**: 532016/532023 = `value + round/50 + 1` (magic 0x51eb851f sar 4 = exactly /50 on
+  0..5000; sibling /25 + 2) = DEADLINES; 4 distinct cmp across the two directions; codes 3/4.
+- **CORRECTED (M165)**: "8-byte pair (5 pairs)" = ONE head dw + five 0x20 slots.
+  Nothing retracted. **OPEN**: the NOUN (treaty/contact AGE = INFERRED); the key at 0x54a373 is
+  the 4-byte string `"a"` in .data's diplomacy action-name table, not a label.
+- **PITFALL**: a displacement can appear TWICE in one fn (4da2c0's two loops) — one-edit
+  mutants leave the family intact; MU8/MU19 need two.
+- NAMED 247,217 -> 242,766 B: `## M299`/`## M300` rotated VERBATIM (sha1 5bde05a3/c74e41cb).

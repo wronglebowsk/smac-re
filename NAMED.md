@@ -743,24 +743,8 @@ s242 = CONTEXT-HYGIENE (no pick; budget/retention work only, PR to be numbered h
 | BOTH stores are MAX by BRANCH POLARITY (`cmp edi,eax` / `jle L` landing over the `mov eax,edi` take and at-or-before the store, with no branch between L and the store; a MIN store would need `jge`) - decoded by the shipped checker WITH the old loads graded (cell: `xor eax,eax`+`mov al,[ecx]` zero-extension immediately before the cmp; slot: the full-dword load) - not asserted; the recorded walk leaves every table monotone, each slot AND every (block, site) cell at the recorded per-pair MAX (0 disagreements), and the last-write / min / owner-block-blind rivals diverge on 1 slot / 1 slot + 5 cells / 4 cells | `evidence/b18_sitegate.txt:8` | V (polarity) |
 | OPEN (LEAD): the CONTENTS of 0x989ce8 / 0x94eca8 were never dumped (a read-only /proc window grades the funnel absolutely); the slot's `[+4]` visit counter (its ++ is gated on call 0x5832b0); ebx's walked-table provenance beyond the owner-byte reading | - | lead |
 | ACCEPTANCE `python3 -m sim.selftest --b18 programs/saves/m54b_clean.SAV` -> **PASS B18: 10/10** (no box, no /proc, no gdb) | `evidence/b18_sitegate.txt:11` | V |
-## M299 (s254, STATIC, zero box) - the slot [+4] VISIT COUNTER and its FUN_005832b0 GATE decoded from pinned bytes
-| claim | evidence | conf |
-|---|---|---|
-| `FUN_0051dcb0` 0x51dffd `call 0x5832b0` + `test eax,eax` + `je 0x51e11d`: the fall-through is exactly `inc` of the dword at [esi+0x989cec] = **slot[site].counter** (0x989ce8 base + 4 + 28*site; esi fold re-decoded 0x51dfac-ba, NO esi write to the store, and 0x5832b0 pops ebx/esi/edi on ALL 6 rets); args = the pinned (x,y) pair ([ebp-0x10],[ebp-0x8], same push slots as the 0x5aff90/0x582cc0 calls) => **the visit counter increments iff FUN_005832b0(x,y) != 0** (B18 G8's UNMODELED lead CLOSED) | `evidence/m299_visitgate.txt` W1:5, G4:170 | V |
-| `FUN_005832b0(x,y)` is a PURE predicate (0 memory stores; 13/13 constants agree ghidra-vs-objdump): shared tile_record_array fold rec = ds:0x92ae14 + 44*(ds:0x692184*y + (x>>1)) (graded 4096/4096 incl. sar); ladder on dword[rec+8]: 0x102000 -> FALSE (byte9 bit5 = the B16 occ bit; byte10 bit4 unnamed); ds:0x985ac4 bit 0x2000 -> (dword & 0xc000000) ? 2 : 0; 0x10000000 -> TRUE; ds:0x92a380 == 0 -> FALSE (**rand+1**, MAP_FORMAT.md:116); then parity h=(x+y)>>1, d=x-h, index (h&3)+4*(d&3): class (byte0&0xe0)>=0x60 tests == (rand - 5*(h>>2) - 3*(d>>2)) & 0xf (exactly 1 of 16 lattice classes; 36/36), else == (rand + 8 + tdiv4(h)*ds:0x692210 + tdiv4(d)*ds:0x69220c) & 0x1f (stride VALUES unrecorded - ported only) | W2:52, G3:169, G5:171, G6:172 | V (decode), MEASURED (s249 inputs: rung1-close 481/2048, occ 16, bits26/27 12, rung3 5, class>=0x60 1087, G7:173) |
-| DECLARED: counter VALUES, ds:0x92a380/0x692210/0x69220c VALUES, 0x985ac4 bit 0x2000 semantics NEVER recorded; the byte read 0x51e02c [site + 8380*block + 0x94ed28] (region array, NAMED:371) is a LEAD; 0x5832b0 has 24 callers (lattice family - CENSUSED by M300: 21 truth-branch, 2 stored, 1 mask-converted; only 0x51dffd gates [+4]) | witness block `evidence/m299_visitgate.txt:175-181` + `evidence/m300_callers.txt` | lead -> V (M300) |
-| ACCEPTANCE `python3 scripts/m299_visitgate.py` -> **PASS M299: 7/7** (zero box, zero /proc, zero gdb; `scripts/gate.py --base main` GREEN) | `evidence/m299_visitgate.txt:183` | V |
-
-## M300 (s255, STATIC, zero box) - census of the 24 callers of FUN_005832b0: which paths can reach the slot [+4] write
-| claim | evidence | conf |
-|---|---|---|
-| 24 `call 0x5832b0` sites in the full .text dump == index.csv n_callers=24 (objdump + Ghidra agree); the address NEVER appears outside a call rel32 => no indirect/vtable use of the predicate | `evidence/m300_callers.txt` S1 | V |
-| the 24 sites span 13 caller functions; gates supplied: 21 truth-branch (test eax,eax + je/jne; 0x50e216 also pushes raw value as arg, leg-ambiguous), 2 store raw to frame slot (0x4cf907->[ebp-0x1c], 0x5858fa->[ebp-0x7c]), 1 neg/sbb/and sign->0x200 mask (0x568567); biggest caller FUN_0055f650 (7 sites, contains the OPEN 0x56c6de continue-leg lead) | S2/S3w tables + raw windows | V (containment via index.csv; class = label, windows = witness) |
-| the [+4] counter dword has NO writer outside FUN_0051dcb0: all 5 whole-dump mentions of 0x989cec are in FUN_0051dcb0 (lone STORE 0x51e01b) and the only slot-base materialization elsewhere is 0x51dd05 `mov eax,0x989ce8`, same function. LIMIT (declared): pointer-passthrough / non-literal addressing outside static scope; the live any-other-writer watchpoint remains OPEN | S4/S5 | V (static scope) |
-| reach of callers to the write's owner (reverse BFS, DIRECT call edges only; 11 direct call sites of 0x51dcb0): 1 site feeds the counter gate (0x51dffd); 1 reaches directly (0x59ddf4 FUN_0059ce10, M94 per-player walker); 15 sites / 7 fns transitive depth 2-8 (FUN_0055f650x7, FUN_00585720x3, FUN_0050d140x2, FUN_004c40e0, FUN_004cf4c0, FUN_0051c750, FUN_0059e2c0); 6 sites CANNOT-REACH: FUN_0046a610, FUN_004e63b0 (M53q scan-pool rebuild), FUN_0058b1b0x3, FUN_005aff90 (B18 value body = SIBLING consumer of the same (x,y) fold, not nested in the counter path) | S6/S7 | V (direct edges; indirect calls not in the graph) |
-| LEADS: which loop in FUN_0055f650 chooses among its 7 predicate sites + readers of the stored predicate slots [ebp-0x7c]/[ebp-0x1c] + the 0x56c6de continue-leg **CLOSED by M304** (case ladder + per-arm loops; the slots are FOREIGN frames, one reader each; the leg = 8-pred common exit) - see ## M304; sibling 0x5831a0 called with the same (x,y) right after the predicate at 0x4c4901/0x50e216 still OPEN | - | lead -> V (M304) |
-| ACCEPTANCE `python3 scripts/m300_callers.py` -> **PASS M300: 12/12** (zero box, zero /proc, zero gdb) | `evidence/m300_callers.txt` tail | V |
-
+## M299 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `5bde05a3c36fda99`, 2193 B)
+## M300 — VERBATIM at `docs/named-archive-m365-rows.md` (sha1 `c74e41cb6d064a9e`, 2440 B)
 ## M301 (s256, STATIC, zero box) - the lead "ebx's walked table 0x51de2c-0x51df1d" REFUTED: it is a base_array walk, not a table
 | claim | evidence | conf |
 |---|---|---|
@@ -1552,6 +1536,18 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | `Difficulty`<2 (0x92bde8) ORs Preferences bit 5 in the LOADER default only, guarded | `:59-60` | V MU2,MU3,MU21 |
 | APPLY 0x492464/0x49246f ORs +0xa30 -> ds:0x92befc, +0xa34 -> ds:0x92bf00 (11 sites) | `:92-100` | V MU6,MU7,MU9,MU11,MU16,MU17,MU23 |
 | OPEN: bit->option NAMES; other re-derivers | - | lead |
+
+## M365 (s334-c3) — `0x94d5dc` = a per-(fac,tgt) dword at faction-record **+0x1ac**: the relation writer ZEROES it, contact paths ++ it, and consumers turn it into a round-fraction DEADLINE compared across the two directions. ev `evidence/m365_pair_slot.txt:141`
+| claim | ev | conf |
+|---|---|---|
+| census: 23 instructions (8 W / 15 R) in 7 fns, 4 abs-indexed + 19 base+disp, 0 unclassified | `:8-29` | V MU1,16,17,18 |
+| slot = block+0x1ac = mask+0x194; FUN_004da2c0 fills 6 displacements: 0x94d554 (8 B before) + five per-target slots 0x20 apart ending at 0x94d5dc | `:34-40` | V MU8,19 |
+| 12 folded sites index as 4*(fac*0x82f+tgt) bytes {0x20bc,4} = {0x82f,1} elements; 11 take a record pointer | `:47-74` | V MU9,15,20,22,23 |
+| writers: 2 zero-stores (only constant ever stored = 0), 2 carried ebx, 3 `++`, 1 `+= 2*signed byte` | `:76-87` | V MU2,24 |
+| 0x94d5bc (block+0x18c) moves WITH it: same block, same delta class, same base register 5/5 | `:90-104` | V MU3,4,21 |
+| consumers: deadline = value + round/50 + 1 (sibling + round/25 + 2), 4 distinct cmp across the directions, 4 add/lea terms | `:106-128` | V MU5,6,7 |
+| RIVALS refuted on the numbers: per-faction scalar, mask array, -1 sentinel, aliased 0x20 row | `:131-139` | V MU10,11,12,13 |
+| INFERRED: the NOUN (treaty/contact age). The key emitted at 0x54a373 is the 4-byte string `"a"` inside .data's diplomacy action-name table (HALFBRIBE/WEASELOUT/DEMANDTECH/AGREEDENERGY...), not a label | `:129` | INF |
 
 ## M362 (s333-c3) — the 0x4db1xx sibling IS the FACTION RELATIONS page; its +0x15a0 group = 13 checkboxes whose ids ARE the bits. ev `evidence/m362_sibling.txt:100`
 | claim | ev | conf |
