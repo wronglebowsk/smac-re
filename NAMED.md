@@ -1649,14 +1649,14 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | marker noun INF = "unit-of-interest" tile; PARTNER gate why = OPEN | `:51` | INF/lead |
 | OPEN: 9 dynamic-mask inline sites (`test [mem],reg`) unread; register-through-copy / stack-copy readers and uses beyond the 8-insn window unwalked | `:9` | OPEN |
 
-## M384 (s342-c2, 33/33) -- WHO SETS 0x400: 2 hardcoded ORs + the pair-mask API; never at the field displacement. `scripts/m384_bit400_writer.py` -> **`PASS M384: 33/33`** `341b46ff72a492b3` (`evidence/m384_bit400_writer.txt:275`), 19 mutants (`evidence/m384_mutate.txt:23`). `:N` = evidence line.
+## M384 (s342-c2, 33/33) -- WHO SETS 0x400: 2 hardcoded ORs + the pair-mask API; never at the field displacement. `scripts/m384_bit400_writer.py` -> **`PASS M384: 39/39`** `2c2e226fe292f0f6` (`evidence/m384_bit400_writer.txt:280`), 23 mutants (`evidence/m384_mutate.txt:26`). `:N` = evidence line.
 
 | claim | ev | conf/mutant |
 |---|---|---|
 | 42 pair writes = 27 direct whole-dword movs at `[..+0x94d448]` + 15 through `lea [idx*4+0x94d448]`; ZERO and/or/xor at the displacement | `:10` `:16` | V MU8 MU10 MU19 |
-| hardcoded setters: 0x5534ae `or ch,0x4` (FUN_00553350), 0x555a6b `or ah,0x4` -> 0x555a6e (FUN_005551e0), both onto a reloaded pair | `:80` `:219` | V MU1 MU2 MU3 MU9 |
-| 0x555a6e gate: `test ah,0xc` jne out, `test al,0x20` -> 0x800 arm, else 0x400 | `:230` | V MU12 MU13 |
+| hardcoded setters: 0x5534ae `or ch,0x4` (FUN_00553350), 0x555a6b `or ah,0x4` -> 0x555a6e (FUN_005551e0), both onto a reloaded pair | `:80` `:224` | V MU1 MU2 MU3 MU9 |
+| 0x555a6e gate: `test ah,0xc` jne out, `test al,0x20` -> 0x800 arm, else 0x400 | `:235` | V MU12 MU13 |
 | API: FUN_00551a20(0x551be8 0x551c0d) + FUN_00551cf0(0x551d22) OR arg2; arg3=1 set / 0 clear | `:81` `:88` | V MU7 |
-| 106 callers, 95 masks resolve: 5 set 0x400 (0x41b2d2 0x4cd6f6 0x5470d6 0x59aef0; 0x594cf7 0x420), 2 clear (0x4db11b 0xc20, 0x519bb5 0xc00) | `:198` `:208` | V MU4 MU5 MU6 MU15 |
-| FUN_00551a20: one arm ANDs `0xfaeef378` (~0x05110c87 carries bit 10 -> wipes 0x400), then ORs `mask\|0x80000108` | `:86` | V MU20 |
-| OPEN: 7 runtime mask args (0x4dadxx, `[ebx+0x18]`), 4 passthrough; FUN_004dacc0 is a caller-mask SET/CLEAR gate whose 0x400 caller is M385 `:55` (8th setter, behind the arg) | `:210` | OPEN |
+| 106 callers, 95 masks resolve: 5 set 0x400 (0x41b2d2 0x4cd6f6 0x5470d6 0x59aef0; 0x594cf7 0x420), 2 clear (0x4db11b 0xc20, 0x519bb5 0xc00) | `:199` `:210` | V MU4 MU5 MU6 MU15 |
+| FUN_00551a20: one arm ANDs `0xfaeef378` (~0x05110c87 carries bit 10 -> wipes 0x400), then ORs `mask\|0x80000108` | `:87` | V MU20 |
+| OPEN: 7 runtime mask args (0x4dadxx, `[ebx+0x18]`), 4 passthrough; FUN_004dacc0 is a caller-mask SET/CLEAR gate whose 0x400 caller is M385 `:55` (8th setter, behind the arg) | `:215` | OPEN |

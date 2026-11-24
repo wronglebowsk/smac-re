@@ -531,7 +531,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 - **ACCEPT** `python3 -u scripts/m380_diplo_power.py` -> **`PASS M380: 7/7`** `5dfd436fe4093015`
   (`evidence/m380_diplo_power.txt:135`; re-run same, `evidence/m380_twice.txt` sha1
-  `7455c8e2b5767fc9`); `scripts/m380_mutate.py` **19/19 killed** (`evidence/m380_mutate.txt:23`).
+  `7455c8e2b5767fc9`); `scripts/m380_mutate.py` **23/23 killed** (`evidence/m380_mutate.txt:23`).
   All 3 M377 OPENs answered.
 - **NOUN (OPEN #1)**: per-faction dword at block+0x105c (70 operands, 67R/3W; stride 0x82f dwords,
   base 0x94d430). Its one two-faction compare picks a string: `cmp
@@ -640,7 +640,7 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 
 - **ACCEPT** `python3 -u scripts/m388_agenda_slot0.py` -> **`PASS M388: 39/39`** `e03bfb351d33c64e`
   (`evidence/m388_agenda_slot0.txt:164`), two runs identical (`evidence/m388_twice.txt:3`);
-  `scripts/m388_mutate.py` **19/19 killed** (`evidence/m388_mutate.txt:22`), kill = the gate's own FAIL line. Static only, zero box.
+  `scripts/m388_mutate.py` **23/23 killed** (`evidence/m388_mutate.txt:22`), kill = the gate's own FAIL line. Static only, zero box.
 - **GEOMETRY** (`:12`,`:20`): the bit-24 randomizer's own imms — seed 0x9280b8, stride 0x59c,
   `mov ebx,0x1` / `cmp ebx,0x8` — give **7** records, bases 0x927b2c..0x929cd4, end 0x92a270;
   slot 0 = 0x927590 and its pair 0x927b14 (CAT +0x584) / 0x927b1c (CHOICE +0x58c) fall out of that
@@ -734,9 +734,9 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
 - **OPEN**: FUN_004dabb0's entry mechanism (INF) and 0x551cf0's boolean-arg noun.
 ## Session 342-chain2 — M384: 0x400 has 7 setters; 5 of them hide behind a mask ARGUMENT
 
-- **ACCEPT** `python3 -u scripts/m384_bit400_writer.py` -> **`PASS M384: 33/33`** `341b46ff72a492b3`
-  (`evidence/m384_bit400_writer.txt:275`; re-run `cmp`-identical, `evidence/m384_twice.txt`);
-  `scripts/m384_mutate.py` -> **19/19 killed**, baseline green (`evidence/m384_mutate.txt:23`). Static, zero box.
+- **ACCEPT** `python3 -u scripts/m384_bit400_writer.py` -> **`PASS M384: 39/39`** `2c2e226fe292f0f6`
+  (`evidence/m384_bit400_writer.txt:280`; re-run `cmp`-identical, `evidence/m384_twice.txt`);
+  `scripts/m384_mutate.py` -> **23/23 killed**, baseline green (`evidence/m384_mutate.txt:26`). Static, zero box.
 - **CENSUS** (`:10` `:16`): the pair dword has **42 writers** = 27 whole-dword `mov` at the
   displacement + 15 through a `lea r,[idx*4+0x94d448]` pointer (found by a 2-pass CFG
   dataflow, tags intersected at joins). **Zero** `and/or/xor/add` at the displacement --

@@ -43,7 +43,7 @@ FIELD = 0x94D448
 BIT = 0x400                        # bit 10 = the bit under study
 ALGO = int(os.environ.get("M384_ALGO", "0") or 0)
 PATCH = os.environ.get("M384_PATCH", "")
-DIGEST_PIN = "341b46ff72a492b3"
+DIGEST_PIN = "2c2e226fe292f0f6"
 
 MASK_API = 0x551A20                # FUN_00551a20(owner, other, mask): pair writer
 MASK_API2 = 0x551CF0               # FUN_00551cf0(owner, other, mask, set?1:0)
@@ -206,7 +206,8 @@ def pair_pointers(ins, fns, preds):
                         for k, v in first.items():
                             if v and all(states.get(p, {}).get(k) == v for p in ps[1:]):
                                 cur[k] = v
-                cur.update({("s", k[1]): v for k, v in seeds.items()})
+                if n == lo:
+                    cur.update({("s", k[1]): v for k, v in seeds.items()})
                 a, b = ins[n]
                 mn, ops = split_ops(b)
                 if mn == "lea" and len(ops) == 2:
@@ -464,15 +465,16 @@ def resolve_mask(operand, defs, depth=0):
         mn, ops = split_ops(b)
         if mn == "mov" and len(ops) == 2 and imm_of(ops[1]) is not None:
             return imm_of(ops[1]), "reg:=imm"
-        if mn in ("or", "and", "add") and len(ops) == 2:
-            if ops[1] in defs:
-                inner, how = resolve_mask(ops[1], defs, depth + 1)
-            else:
-                inner, how = imm_of(ops[1]), "imm"
+        if mn == "or" and len(ops) == 2:
+            # an OR of an immediate ADDS bits -- the only op that yields a value
+            # without knowing the prior register content
+            inner, how = (resolve_mask(ops[1], defs, depth + 1) if ops[1] in defs
+                          else (imm_of(ops[1]), "imm"))
             if inner is None:
                 return None, "opaque(%s)" % b
-            bits = {"or": inner, "and": (~inner) & 0xFFFFFFFF, "add": inner}[mn]
-            return bits, "%s%s" % (mn, "~" if mn == "and" else "")
+            return inner, "or"
+        # `and`/`add`/`xor` cannot be turned into a value without the prior
+        # content (and can invent bits) -> stay OPAQUE
         return None, "opaque(%s)" % b
     return None, "opaque"
 
@@ -589,6 +591,9 @@ def main():
           [r[0] for r in hard] == [0x5534B1, 0x555A6E], str([hex(r[0]) for r in hard]))
     check("G3 both OR exactly 0x400 into a field-derived value",
           [r[3][2] for r in hard] == [0x400, 0x400], str([hex(r[3][2]) for r in hard]))
+    check("G3 the two hardcoded setters sit in FUN_00553350 and FUN_005551e0",
+          [fn_of(fns, a)[2] for a in (0x5534AE, 0x555A6B)] == ["FUN_00553350", "FUN_005551e0"],
+          str([fn_of(fns, a)[2] for a in (0x5534AE, 0x555A6B)]))
     check("G3 exactly 3 parameterised OR writers",
           sorted(r[0] for r in parm) == [0x551BE8, 0x551C0D, 0x551D22],
           str([hex(r[0]) for r in parm]))
@@ -640,6 +645,9 @@ def main():
     print("  masks carrying 0x400 with the SET flag: %d" % len(setters_api))
     for a, t, mask, mv, how, flag in sorted(setters_api):
         print("  0x%-8x FUN_%08x mask=0x%x (%s) flag=%s" % (a, t, mv, how, flag))
+    check("G4 mask resolution is 95 resolved / 4 passthrough / 7 opaque",
+          (len(known), len(pt), len(unk) - len(pt)) == (95, 4, 7),
+          str((len(known), len(pt), len(unk) - len(pt))))
     check("G4 106 mask-API call sites (70 + 36)", len(api) == 106, str(len(api)))
     check("G4 exactly 5 callers set 0x400 through the API", len(setters_api) == 5,
           str(len(setters_api)))
@@ -649,7 +657,23 @@ def main():
     clr_api = [x for x in known if x[3] & BIT and x[5] == "0x0"]
     print("  masks carrying 0x400 with the CLEAR flag: %d %s"
           % (len(clr_api), [hex(x[0]) for x in clr_api]))
-    check("G4 two API callers clear 0x400", len(clr_api) == 2, str(len(clr_api)))
+    check("G4 the two clearers are 0x4db11b (mask 0xc20) and 0x519bb5 (mask 0xc00)",
+          [(x[0], x[3]) for x in clr_api] == [(0x4DB11B, 0xC20), (0x519BB5, 0xC00)],
+          str([(hex(x[0]), hex(x[3])) for x in clr_api]))
+    # callee wiring, read off the bytes: arg2 is the OR source, arg3 the set/clear flag
+    f51 = fn_of(fns, 0x551A20)
+    f52 = fn_of(fns, 0x551CF0)
+    call_a = " ".join(t for a, t in ins[at[f51[0]]:at.get(f51[1], len(ins))])
+    call_b = " ".join(t for a, t in ins[at[f52[0]]:at.get(f52[1], len(ins))])
+    check("G4 FUN_00551a20 takes mask=arg2 (`mov ebx,[ebp+0x10]`) and ORs it (`or edx,ebx`)",
+          "mov ebx,DWORD PTR [ebp+0x10]" in call_a and "or edx,ebx" in call_a,
+          "arg2 -> ebx -> or")
+    check("G4 FUN_00551a20 also ORs the fixed 0x80000108 into the mask before the store",
+          "or ebx,0x80000108" in call_a, "or ebx,0x80000108")
+    check("G4 FUN_00551cf0 takes mask=arg2 (ecx) and flag=arg3 ([ebp+0x14], tested to branch)",
+          "mov ecx,DWORD PTR [ebp+0x10]" in call_b and "or edx,ecx" in call_b
+          and "mov eax,DWORD PTR [ebp+0x14]" in call_b and "je 0x551d36" in call_b,
+          "arg2 -> ecx -> or; arg3 -> the branch")
     print("  opaque mask registers (unresolved, OPEN): %d" % (len(unk) - len(pt)))
     for a, t, mask, mv, how, flag in sorted(unk):
         if not str(how).startswith("arg"):
@@ -713,8 +737,8 @@ def main():
           mn_census == {"mov": 27} and len(setters_api) == 5)
 
     # ---------------- G7 ---------------------------------------------------
-    body = "\n".join("0x%x:0x%x:%s:0x%x" % (a, b if isinstance(b, int) else 0, c[0], c[3])
-                     for a, b, s, c in rows)
+    body = "\n".join("0x%x:%s:%s:%s:0x%x:0x%x:0x%x:%d"
+                     % (a, b, s, c[0], c[1], c[2], c[4], c[5]) for a, b, s, c in rows)
     d1 = hashlib.sha1(body.encode()).hexdigest()[:16]
     print("\nG7  digest of the %d-row pair-write table = %s" % (len(rows), d1))
     check("G7 digest pinned", d1 == DIGEST_PIN, d1)

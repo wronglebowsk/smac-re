@@ -81,6 +81,7 @@ G3  pair-write census + value classification (CFG backward dataflow)
   parameterised OR writers: 3 ['0x551be8', '0x551c0d', '0x551d22']
   ok   G3 exactly 2 hardcoded 0x400 setters (0x5534b1, 0x555a6e) — ['0x5534b1', '0x555a6e']
   ok   G3 both OR exactly 0x400 into a field-derived value — ['0x400', '0x400']
+  ok   G3 the two hardcoded setters sit in FUN_00553350 and FUN_005551e0 — ['FUN_00553350', 'FUN_005551e0']
   ok   G3 exactly 3 parameterised OR writers — ['0x551be8', '0x551c0d', '0x551d22']
   ok   G3 they sit in FUN_00551a20 (x2) and FUN_00551cf0 (x1) — ['FUN_00551a20', 'FUN_00551a20', 'FUN_00551cf0']
   FUN_00551a20 clear arms: 0x551b1d clr=0xfaeef378, 0x551b4a clr=0xfaeef378
@@ -202,11 +203,15 @@ G4  mask-argument census of the parameterised writers (arg2 = mask)
   0x5470d6   FUN_00551cf0 mask=0x400 (imm) flag=0x1
   0x594cf7   FUN_00551cf0 mask=0x420 (imm) flag=0x1
   0x59aef0   FUN_00551cf0 mask=0x400 (imm) flag=0x1
+  ok   G4 mask resolution is 95 resolved / 4 passthrough / 7 opaque — (95, 4, 7)
   ok   G4 106 mask-API call sites (70 + 36) — 106
   ok   G4 exactly 5 callers set 0x400 through the API — 5
   ok   G4 the five are 0x41b2d2 0x4cd6f6 0x5470d6 0x594cf7 0x59aef0 — ['0x41b2d2', '0x4cd6f6', '0x5470d6', '0x594cf7', '0x59aef0']
   masks carrying 0x400 with the CLEAR flag: 2 ['0x4db11b', '0x519bb5']
-  ok   G4 two API callers clear 0x400 — 2
+  ok   G4 the two clearers are 0x4db11b (mask 0xc20) and 0x519bb5 (mask 0xc00) — [('0x4db11b', '0xc20'), ('0x519bb5', '0xc00')]
+  ok   G4 FUN_00551a20 takes mask=arg2 (`mov ebx,[ebp+0x10]`) and ORs it (`or edx,ebx`) — arg2 -> ebx -> or
+  ok   G4 FUN_00551a20 also ORs the fixed 0x80000108 into the mask before the store — or ebx,0x80000108
+  ok   G4 FUN_00551cf0 takes mask=arg2 (ecx) and flag=arg3 ([ebp+0x14], tested to branch) — arg2 -> ecx -> or; arg3 -> the branch
   opaque mask registers (unresolved, OPEN): 7
     0x4dad30   edi opaque
     0x4daedd   ebx opaque
@@ -269,7 +274,7 @@ G6  rivals
   ok   R4 'or esi,0x400 at 0x519f0d writes the pair' — refuted: it stores ds:0x95da44
   ok   R5 'the writers are greppable at the field displacement' — refuted: 0 and/or/xor at [..+0x94d448]; 5 of the 7 setters are mask-API callers
 
-G7  digest of the 42-row pair-write table = 341b46ff72a492b3
-  ok   G7 digest pinned — 341b46ff72a492b3
+G7  digest of the 42-row pair-write table = 2c2e226fe292f0f6
+  ok   G7 digest pinned — 2c2e226fe292f0f6
 
-PASS M384: 34/34
+PASS M384: 39/39

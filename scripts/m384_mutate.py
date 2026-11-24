@@ -27,7 +27,7 @@ MUTANTS = [
     ("MU5",  {"M384_PATCH": "594cf0|push 0x20"},
      "G4 the five are"),                               # 0x420 -> 0x20
     ("MU6",  {"M384_PATCH": "4db11b|push 0x400"},
-     "G4 two API callers clear 0x400"),                # a clearer becomes a third clearer
+     "G4 the two clearers are"),                # a clearer becomes a third clearer
     ("MU7",  {"M384_PATCH": "551d1d|or edx,0x800"},
      "G3 exactly 3 parameterised OR writers"),         # the param OR becomes an imm OR
     ("MU8",  {"M384_PATCH": "555394|and DWORD PTR [edi+0x94d448],ecx"},
@@ -54,6 +54,12 @@ MUTANTS = [
      "G2 15 pointer stores"),                          # tags kept across calls
     ("MU19", {"M384_PATCH": "555a6e|mov DWORD PTR [ebx+0x94d44c],eax"},
      "G3 42 pair writes"),                             # the setter's store leaves the field
+    ("MU21", {"M384_PATCH": "551b11|or ebx,0x80000100"},
+     "G4 FUN_00551a20 also ORs the fixed 0x80000108"),   # the API's fixed OR changes
+    ("MU22", {"M384_PATCH": "551d1d|or edx,esi"},
+     "G4 FUN_00551cf0 takes mask=arg2"),                 # the OR source is no longer arg2
+    ("MU23", {"M384_PATCH": "519bae|push 0xc10"},
+     "G4 the two clearers are"),                         # a clearer's mask changes
     ("MU20", {"M384_PATCH": "551b17|and edx,0xffffffff"},
      "G3 FUN_00551a20's clear arm ANDs 0xfaeef378"),  # the API no longer wipes 0x400 first
 ]
