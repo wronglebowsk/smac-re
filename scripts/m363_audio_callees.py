@@ -42,7 +42,7 @@ HANDLER = 0x493FF0
 JT_HANDLER = 0x4941EC
 ROW_FLAGS = (0x136D4, 0x14220, 0x14D6C, 0x158B8)
 CMD_FLAG = {0x4B: 0x136D4, 0x4C: 0x14220, 0x4D: 0x14D6C, 0x4E: 0x158B8}
-DATA_LO, DATA_HI = 0x800000, 0xB00000
+DATA_LO, DATA_HI = 0x800000, 0xC00000
 
 LINE = re.compile(r"^\s*([0-9a-f]{6,8}):\s+([0-9a-f ]*?)\s{2,}([a-z][a-z0-9]*)\s*(.*)$")
 HEX = re.compile(r"0x([0-9a-f]+)")
@@ -90,12 +90,12 @@ def rng(lo, hi):
 
 
 def absdata(items):
-    """absolute data-window operands, branch/call targets excluded"""
+    """absolute data-window operands; a PLAIN-immediate branch/call target is code, any
+    memory-indirect form (e.g. `call DWORD PTR ds:0x985ab8`) is data and is counted"""
     out = {}
     for a, m, o in items:
-        if m in ("call", "jmp") or m.startswith("j"):
-            if not o.startswith("DWORD PTR [") and not o.startswith("BYTE PTR ["):
-                continue
+        if (m in ("call", "jmp") or m.startswith("j")) and re.fullmatch(r"0x[0-9a-f]+", o):
+            continue
         for h in HEX.findall(o):
             v = int(h, 16)
             if DATA_LO <= v <= DATA_HI:
@@ -234,16 +234,17 @@ def main():
         fns = sorted(set(fnof(a)[0] for a, _m, _o in hits))
         inside = [(a, m, o) for a, m, o in hits if fnof(a)[0] in clo]
         site[cell] = hits
-        P("0x%06x sites=%d functions=%d inside_closure=%d"
-          % (cell, len(hits), len(fns), len(inside)))
-        P("         functions: %s" % " ".join("0x%06x" % x for x in fns))
+        P("0x%06x sites=%d functions=%d (outside any indexed function: %d sites)"
+          % (cell, len(hits), len([x for x in fns if x]), len([1 for a, _m, _o in hits if not fnof(a)[0]])))
+        P("         functions: %s" % " ".join("0x%06x" % x for x in fns if x))
         if inside:
             P("         INSIDE: %s" % inside)
     n_in = sum(len([1 for a, _m, _o in site[c] if fnof(a)[0] in clo]) for c in PREF)
-    pins = {0x985AB8: (121, 62), 0x985ABC: (99, 34)}
-    got = {c: (len(site[c]), len(set(fnof(a)[0] for a, _m, _o in site[c]))) for c in PREF}
+    pins = {0x985AB8: (121, 61), 0x985ABC: (99, 33)}
+    got = {c: (len(site[c]), len([x for x in set(fnof(a)[0] for a, _m, _o in site[c]) if x])) for c in PREF}
     check("G5 both cells are read/written across .text but NOT ONE site lies in the closure "
-          "(counts pinned)", n_in == 0 and got == pins,
+          "(counts pinned; function count EXCLUDES the no-function sentinel 0)",
+          n_in == 0 and got == pins,
           "inside=%d got=%s pins=%s" % (n_in, {hex(k): v for k, v in got.items()}, {hex(k): v for k, v in pins.items()}))
 
     # ---------------- G6 the handler's own pref sites ----------------------
@@ -288,21 +289,27 @@ def main():
           "n=%d in_handler=%d outside=%s" % (n_calls, in_handler, outside))
 
     # ---------------- G8 `this` at the handler sites -----------------------
-    P("\n-- G8 the `this` argument at each handler call site (nearest preceding ecx write) --")
+    P("\n-- G8 the `this` argument at each handler call site (first preceding ecx KILL, <=12 insns) --")
+    ECX_WRITE = ("mov", "lea", "xor", "or", "and", "add", "sub", "imul", "movzx", "pop", "inc", "dec")
     g8 = True
     for t in TARGETS:
         for a, f in calls_by[t]:
             if f[0] != HANDLER:
                 continue
-            pre = [x for x in hw if x[0] < a][-6:]
-            src = None
-            for _aa, m, o in pre:
-                if m == "mov" and o.split(",")[0].strip() == "ecx":
-                    src = o.split(",", 1)[1].strip()
+            pre = [x for x in hw if x[0] < a][-12:]
+            src, at = None, None
+            for _aa, m, o in reversed(pre):
+                if m == "call":          # a call clobbers ecx: the value is not live across it
+                    break
+                if m in ECX_WRITE and o.split(",")[0].strip() == "ecx":
+                    src, at = o.split(",", 1)[1].strip(), _aa
+                    break
             ok = src == "0x%x" % SINGLETON
             g8 &= ok
-            P("0x%06x call 0x%06x  this<-%s  %s" % (a, t, src, "OK" if ok else "NOT the singleton"))
-    check("G8 all six handler call sites pass the static sound object 0x8a7920 in ecx", g8)
+            P("0x%06x call 0x%06x  last ecx write 0x%06x: %s  %s"
+              % (a, t, at or 0, src, "OK" if ok else "NOT the singleton"))
+    check("G8 at all six handler call sites the last ecx write before the call (any writing "
+          "opcode) is mov ecx,0x8a7920", g8)
 
     # ---------------- G9 voice-table shape ---------------------------------
     P("\n-- G9 the per-slot voice table in 0x4b8a60 (start) / 0x4b8af0 (stop) --")
@@ -319,12 +326,16 @@ def main():
           % (t, [o for _a, o in imuls], [a for a, _o in bound], [a for a, _o in flag_rd],
              [(a, o.split(",")[-1]) for a, o in flag_wr], [o for _a, o in lea]))
     (i3, b3, r3, w3, l3), (i4, b4, r4, w4, l4) = shape[F3], shape[F4]
-    check("G9 both take index*0x18 (every imul by 0x18), bound the index at 0xf, read the byte flag "
-          "at slot+0x24 and lea the slot+0x2c entry", len(i3) >= 2 and len(i4) >= 2
-          and all(o.endswith(",0x18") for _a, o in i3 + i4)
-          and len(b3) == len(b4) == 1 and len(r3) == len(r4) == 1
-          and len(w3) == len(w4) == 1 and len(l3) == len(l4) == 2,
-          "imul=%d/%d lea=%d/%d" % (len(i3), len(i4), len(l3), len(l4)))
+    imul_pin = sorted(["eax,eax,0x18", "eax,eax,0x18", "eax,eax,0x18", "ecx,ecx,0x18"])
+    lea_pin = sorted(["ecx,[ecx+eax*1+0x2c]", "ecx,[edx+ecx*1+0x2c]"])
+    check("G9 both arms scale the slot index by 0x18 in EXACTLY these register forms "
+          "(3x eax,eax,0x18 + 1x ecx,ecx,0x18), bound it at 0xf, read the byte flag at "
+          "slot+0x24 and lea the slot+0x2c entry",
+          sorted(o for _a, o in i3) == imul_pin and sorted(o for _a, o in i4) == imul_pin
+          and sorted(o for _a, o in l3) == lea_pin and sorted(o for _a, o in l4) == lea_pin
+          and len(b3) == len(b4) == 1 and len(r3) == len(r4) == 1 and len(w3) == len(w4) == 1,
+          "imul=%s/%s lea=%s/%s" % (sorted(o for _a, o in i3), sorted(o for _a, o in i4),
+                                    sorted(o for _a, o in l3), sorted(o for _a, o in l4)))
     check("G9c the two arms are byte-symmetric: the same imul/lea displacement multiset",
           sorted(o for _a, o in i3) == sorted(o for _a, o in i4)
           and sorted(o for _a, o in l3) == sorted(o for _a, o in l4),
@@ -340,14 +351,19 @@ def main():
         w = win(t)
         ic = indirect_calls(t)
         dc = direct_calls(t)
-        guard = [(a, o) for a, m, o in w if m == "cmp" and o.startswith("DWORD PTR [eax+0x14],")]
+        guard = [(a, o) for a, m, o in w if m == "cmp" and o == "DWORD PTR [eax+0x14],0x0"]
         jcc = [(a, m, o) for a, m, o in w if m.startswith("j")]
-        ok = len(ic) == 1 and ic[0][1] == "DWORD PTR [edx+%s]" % slot and not dc and len(guard) == 1
+        callat = ic[0][0] if ic else 0
+        skip = [(a, m, o) for a, m, o in jcc if guard and guard[0][0] < a < callat]
+        ok = (len(ic) == 1 and ic[0][1] == "DWORD PTR [edx+%s]" % slot and not dc
+              and len(guard) == 1 and len(skip) == 1
+              and re.fullmatch(r"0x[0-9a-f]+", skip[0][2]) is not None
+              and int(skip[0][2], 16) > callat and int(skip[0][2], 16) < w[-1][0])
         g10 &= ok
-        P("0x%06x indirect=%s direct=%d guard=%s branch=%s"
-          % (t, ic, len(dc), guard, jcc[:1]))
-    check("G10 each pair member makes exactly ONE call, into slot 0x60 / 0x64 of [this+0x14], "
-          "guarded by cmp [this+0x14],0", g10)
+        P("0x%06x indirect=%s direct=%d guard=%s skip-branch=%s (target beyond the call: %s)"
+          % (t, ic, len(dc), guard, skip, bool(skip) and int(skip[0][2], 16) > callat))
+    check("G10 each pair member makes exactly ONE call, into slot 0x60 / 0x64 of [this+0x14], and "
+          "one `cmp DWORD PTR [eax+0x14],0x0` + a conditional branch PAST the call guards it", g10)
 
     # ---------------- G11 no import-form call anywhere in the closure ------
     P("\n-- G11 call forms over the closure: vtable only, no import thunk --")
@@ -382,13 +398,14 @@ def main():
           % (0x4B + k, CMD_FLAG[0x4B + k], v, tgt[j + 1],
              ["0x%06x->0x%06x" % (a, int(o, 16)) for a, m, o in rng(v, tgt[j + 1])
               if m == "call" and o in ("0x%x" % F1, "0x%x" % F2, "0x%x" % F3, "0x%x" % F4)]))
-    check("G12 the jump table maps 0x4b..0x4e to four distinct case blocks",
-          len(set(tbl)) == 4 and tbl[0] == 0x494154 and tbl[3] == 0x4940C3, "tbl=%s" % [hex(x) for x in tbl])
+    check("G12 the jump table maps 0x4b..0x4e to these four case blocks, in this order "
+          "(0x4b->0x494154 master, 0x4c->0x494068, 0x4d->0x49400e, 0x4e->0x4940c3)",
+          tuple(tbl) == (0x494154, 0x494068, 0x49400E, 0x4940C3), "tbl=%s" % [hex(x) for x in tbl])
 
     # ---------------- G13 which cases reach the audio object --------------
     P("\n-- G13 which rows reach the audio object, and the row-flag value they pair with --")
     pairs = []
-    g13 = True
+    case_ok = True
     for cmd, (v, e) in cases.items():
         w = rng(v, e)
         ac = [(a, o) for a, m, o in w if m == "call" and o in ("0x%x" % F1, "0x%x" % F2, "0x%x" % F3, "0x%x" % F4)]
@@ -398,14 +415,14 @@ def main():
         P("case 0x%x row 0x%x: audio=%s row_flag_stores=%s row_flag_loads=%s"
           % (cmd, flag, ["0x%06x->0x%06x" % (a, int(o, 16)) for a, o in ac],
              [(a, o.split(",")[-1]) for a, o in st], [a for a, _o in gd]))
-        g13 &= (len(st) == 2 and len(gd) == 1)
+        case_ok &= (len(st) == 2 and len(gd) == 1)
         for a, o in ac:
             t = int(o, 16)
             if t not in (F3, F4):
                 continue
             near = min(st, key=lambda x: abs(x[0] - a)) if st else None
             if near is None:
-                g13 = False
+                case_ok = False
                 continue
             reg = near[1].split(",")[-1]
             kind, val, at = defuse(w, near[0], reg)
@@ -414,19 +431,21 @@ def main():
                                for c, a, t, r, k, v, _p, _q in pairs])
     start_sites = [p for p in pairs if p[2] == F3]
     stop_sites = [p for p in pairs if p[2] == F4]
-    g13 = (all(p[5] == 1 for p in start_sites) and all(p[5] == 0 for p in stop_sites)
+    g13 = (case_ok and all(p[5] == 1 for p in start_sites) and all(p[5] == 0 for p in stop_sites)
            and len(start_sites) == 2 and len(stop_sites) == 2)
-    check("G13 the start call (0x4b8a60) is only reached from the turn-ON branch (row flag <- 1) "
-          "and stop (0x4b8af0) only from turn-OFF (row flag <- 0)", g13,
-          "start=%s stop=%s" % ([(hex(p[0]), p[5]) for p in start_sites], [(hex(p[0]), p[5]) for p in stop_sites]))
+    check("G13 every case block holds exactly 2 row-flag stores + 1 row-flag load, and the start "
+          "call (0x4b8a60) is only reached from the turn-ON branch (row flag <- 1) while stop "
+          "(0x4b8af0) only from turn-OFF (row flag <- 0)", g13,
+          "cases_ok=%s start=%s stop=%s" % (case_ok, [(hex(p[0]), p[5]) for p in start_sites],
+                                            [(hex(p[0]), p[5]) for p in stop_sites]))
 
     case_4e = rng(*cases[0x4E])
     c4e = [(a, o) for a, m, o in case_4e if m == "call"]
     P("case 0x4e (row 0x158b8) calls: %s" % ["0x%06x:%s" % (a, o) for a, o in c4e])
-    check("G13b the fourth row (0x4e, flag 0x158b8) is NOT wired to the audio object",
-          not any(o in ("0x%x" % F1, "0x%x" % F2, "0x%x" % F3, "0x%x" % F4) for _a, o in c4e)
-          and any(o == "0x446490" for _a, o in c4e),
-          "calls=%s" % ["0x%06x" % a for a, _o in c4e])
+    check("G13b the fourth row (0x4e, flag 0x158b8) is NOT wired to the audio object: its whole "
+          "call list is the 2 vtable slots + 0x493ec0 + 0x446490",
+          [o for _a, o in c4e] == ["DWORD PTR [edx+0x8]", "0x493ec0", "0x446490", "DWORD PTR [edx+0x12c]"],
+          "calls=%s" % ["0x%06x:%s" % (a, o) for a, o in c4e])
 
     # ---------------- G14 rivals ------------------------------------------
     P("\n-- G14 rivals that must FAIL on the printed numbers --")

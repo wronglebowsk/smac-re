@@ -38,6 +38,8 @@ MUTANTS = [
     ("MU10", "G9", "4b8a6c", "[ebp+0x8],0xf", "[ebp+0x8],0xe", "the voice index bound narrows to 15 slots"),
     ("MU11", "G10", "4b8813", "[edx+0x60]", "[edx+0x61]", "one enable/disable thunk calls a shifted vtable slot"),
     ("MU13", "G13", "494020", "[esi+0x14d6c],ebx", "[esi+0x14d6c],edi", "the stop arm pairs with a turn-ON row store"),
+    ("MU18", "G9c", "4b8b29", "[ecx+eax*1+0x2c]", "[ecx+eax*1+0x30]", "one arm's slot lea moves off +0x2c -> the arms stop being symmetric"),
+    ("MU19", "G13b", "49412f", "call 0x446490", "call 0x4b8a60", "the 0x4e row becomes wired to the audio object"),
 ]
 
 # inserted synthetic instructions: (id, gate, address-free slot, text, what it breaks)
@@ -46,12 +48,14 @@ INSERT_MUTANTS = [
     ("MU7", "G7", "4469a3", "call 0x4b87f0", "a ninth caller of 0x4b87f0 appears outside the handler"),
     ("MU12", "G11", "4b9332", "call DWORD PTR ds:0x9b0e30", "a closure member gains an import-form call"),
     ("MU16", "G1", "4b87f4", "int3", "a target extent gains one instruction -> count != index"),
+    ("MU17", "G3", "4b9463", "call 0x4b8b80", "a closure leaf gains a callee -> the closure is no longer the measured 8"),
 ]
 
 # image mutants: (id, gate, [4 dwords at 0x4941ec], what it breaks)
 IMAGE_MUTANTS = [
     ("MU14", "G13", [0x494154, 0x4940C3, 0x49400E, 0x494068], "cmds 0x4c and 0x4e swap case blocks"),
     ("MU15", "G12", [0x494154, 0x494068, 0x49400E, 0x49400E], "cmd 0x4e falls into the 0x4d block"),
+    ("MU21", "G12", [0x494154, 0x49400E, 0x494068, 0x4940C3], "cmds 0x4c and 0x4d swap (the middle two entries)"),
 ]
 
 INS = re.compile(r"^\s*([0-9a-f]{6,8}):\s+[0-9a-f ]+\t([a-z][a-z0-9]*)\s+(.*)$")

@@ -629,11 +629,11 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
 ## Session 334-chain1 (2026-11-24) — M363: the four A/V audio callees touch the MIXER ONLY (0 pref-cell sites in the closure, 6 in the handler)
 
 - **ACCEPT** `python3 -u scripts/m363_audio_callees.py` -> **`PASS  M363: 18/18 gates`
-  `00277b4215de2a60`** (`evidence/m363_audio_callees.txt:132`), rerun byte-identical;
-  `scripts/m363_mutate.py` -> **`RUN PASS 16 mutants, NO-OP []`** (`evidence/m363_mutate.txt:38`).
+  `66b923f06f4e8866`** (`evidence/m363_audio_callees.txt:132`), rerun byte-identical;
+  `scripts/m363_mutate.py` -> **`RUN PASS 20 mutants, NO-OP []`** (`evidence/m363_mutate.txt:38`).
 - **ANSWER**: the four are mixer methods, not preference toggles. Their bodies hold ZERO
   absolute data operands and their 8-function closure (them + 0x4b9330/0x4b9370/0x4b9460/
-  0x4b94a0) holds ZERO too; the cells have 121 sites/62 fns (0x985ab8) and 99/34 (0x985abc)
+  0x4b94a0) holds ZERO too; the cells have 121 sites/61 fns (0x985ab8) and 99/33 (0x985abc)
   across .text with 0 in the closure (`:11-53`).
 - **SHAPE**: 0x4b8a60 = voice-slot START (byte flag slot+0x24 <- 1, play via buffer vtable
   +0x8c), 0x4b8af0 = STOP (flag <- 0, +0x14); index*0x18, bound `cmp [ebp+0x8],0xf`
@@ -653,3 +653,13 @@ re-run identical); harness 13/13, NO-OP `[]` (`evidence/b34_mutate.txt:16`). Ans
   could not see).
 - NAMED: `## B27` rotated VERBATIM (docs/named-archive-b27-rows.md, sha1 `c327508bcd76`,
   `--verify` 10/10 claims), 247,217 -> 244,834 B; NEXT_PROMPT trimmed to the 12,000 fail.
+- **Review #392 round (10 findings, 4 P1, all FIXED in place, no threshold moved)**: G2/G4's
+  data window is now 0x800000..0xbfffff as the prose says and `absdata()` no longer drops
+  memory-indirect call forms; G5's function count EXCLUDES the no-function sentinel (61/33, was
+  62/34); G8 walks back to the first ecx KILL (12 insns, stops at a call) instead of 6; G9 pins
+  the exact imul/lea register multisets; G10 requires the `,0x0` compare AND a branch PAST the
+  call; G12 pins all four jump-table dwords (found by a new image mutant); G13's per-case
+  store/load counts are ANDed in instead of overwritten; G13b pins the whole 0x4e call list.
+  Four mutants added (MU17/G3, MU18/G9c, MU19/G13b, MU21/G12) — 20/20 RED, `[]`; the rival
+  gate R is reddened by MU1. Digest moved `00277b42` -> `66b923f0` (measurement changed, answer
+  unchanged).
