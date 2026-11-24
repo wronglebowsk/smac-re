@@ -1,27 +1,27 @@
 M351 mutation harness (scripts/m351_mutate.py) - baseline row MU0
 MU0 baseline exit=0 reds=[]
 
-MU1   ok     reds G1                 sign test -> 0x10
-MU2   ok     reds G1,G9              the negation itself
-MU3   ok     reds G2                 second site's sign test
-MU4   ok     reds G3                 type stride 0x30 -> 0x34
-MU5   ok     reds G3,G10             cost field +0xc -> +0x10
-MU6   ok     reds G3                 unit rows get the facility bit
-MU7   ok     reds G3                 append the design id, not the type
-MU8   ok     reds G4,G11             flag fn returns 0x20
-MU9   ok     reds G5                 facility rows lose the +bit
-MU10  ok     reds G6                 node item stored at +8
-MU11  ok     reds G7                 flags read the item field
-MU12  ok     reds G8                 store to queue slot 1
-MU13  ok     reds G8,G9,G12          negate at the store
-MU14  ok     reds G13                cell <- a different field
-MU15  ok     reds G14                facility compare off the slot
-MU16  ok     reds G3                 unit loop bound 72 -> 71
-MU17  ok     reds G15                owner tag 6 bits -> 5
-MU18  ok     reds G5                 facility loop bound 128 -> 64
-MU19  ok     reds G14                queue compare uses +i
+MU1   ok     reds G1                 expected G1   sign test -> 0x10
+MU2   ok     reds G1,G9              expected G1   the negation itself
+MU3   ok     reds G2                 expected G2   second site's sign test
+MU4   ok     reds G3                 expected G3   type stride 0x30 -> 0x34
+MU5   ok     reds G3,G10             expected G3   cost field +0xc -> +0x10
+MU6   ok     reds G3                 expected G3   unit rows get the facility bit
+MU7   ok     reds G3                 expected G3   append the design id, not the type
+MU8   ok     reds G4,G11             expected G4   flag fn returns 0x20
+MU9   ok     reds G5                 expected G5   facility rows lose the +bit
+MU10  ok     reds G6                 expected G6   node item stored at +8
+MU11  ok     reds G7                 expected G7   flags read the item field
+MU12  ok     reds G8                 expected G8   store to queue slot 1
+MU13  ok     reds G8,G9,G12          expected G9   negate at the store
+MU14  ok     reds G13                expected G13  cell <- a different field
+MU15  ok     reds G14                expected G14  facility compare off the slot
+MU16  ok     reds G3                 expected G3   unit loop bound 72 -> 71
+MU17  ok     reds G15                expected G15  owner tag 6 bits -> 5
+MU18  ok     reds G5                 expected G5   facility loop bound 128 -> 64
+MU19  ok     reds G14                expected G14  queue compare uses +i
 MU20  ok    NO-OP stays green (an instruction no gate pins)
-MU21  ok     reds G11                classifier: sign bit 0x20 -> 0x10
+MU21  ok     reds G11                expected G11  classifier: sign bit 0x20 -> 0x10
 
 scored=20 missed=0 NO-OP=['MU20'] covered=15/15 uncovered=[]
 PASS HARNESS M351: 20/20 scored, NO-OP ['MU20'], uncovered []

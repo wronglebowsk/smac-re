@@ -41,6 +41,7 @@ parsed value against a declared literal, so a drift in binary, listing or trace 
 """
 import argparse
 import hashlib
+import json
 import os
 import re
 import sys
@@ -106,6 +107,7 @@ BASE_CUR = 0x8F0D60
 STORE_GUARD = 0xFFFFFFD9                        # cmp [base+0x50],-39 / jg at the store
 
 PASS, FAIL = [], []
+LISTING_SHA = ""
 
 
 def gate(name, ok, detail=""):
@@ -120,10 +122,11 @@ def main():
         return 2
     L = Listing(TEXT)
 
+    global LISTING_SHA
+    LISTING_SHA = hashlib.sha1(open(TEXT, "rb").read()).hexdigest()[:16]
     print("M351 - the chooser-side producer of the negative queue head (static)")
     print("listing: %s" % os.path.relpath(TEXT, ROOT))
-    print("listing sha1 %s  insns %d" % (
-        hashlib.sha1(open(TEXT, "rb").read()).hexdigest()[:16], len(L.order)))
+    print("listing sha1 %s  insns %d" % (LISTING_SHA, len(L.order)))
     print()
 
     # ---------------------------------------------------------------- TABLE 1 windows
@@ -201,13 +204,11 @@ def main():
           % (BASE_CUR, store_off or 0))
     print()
 
-    print("TABLE 3  the sign law, computed over the whole flag space")
+    print("TABLE 3  the sign law, computed over ALL 256 flag bytes (plus the reachable rows)")
     print("  0x4960f0 return immediates: %s  (from %d sites)" % (unit_flags_vals, len(rets)))
-    rows = []
-    for f in unit_flags_vals:
-        rows.append((FLAG_UNIT | f, "unit row (0x4960f0(i)|0x10)", f))
-    rows.append((FLAG_POS | 0, "facility row (0x496050(item)|0x20)", 0))
-    rows.append((FLAG_POS | FLAG_MISC | 0, "facility row, 0x80 also set", 0))
+    rows = [(f, "flag byte", f) for f in range(256)]        # the WHOLE 8-bit flag space
+    rows += [(FLAG_UNIT | f, "unit row", f) for f in unit_flags_vals]
+    rows += [(FLAG_POS | f, "facility row", f) for f in (0, FLAG_MISC)]
     sign_rows = []
     sign_bit = FLAG_UNIT if MUT == "sign" else FLAG_POS      # MU21: classifier mutant
     if MUT == "sign":
@@ -216,24 +217,40 @@ def main():
         for item in (1, 3, 6, 71):
             ret = item if (flags & sign_bit) else -item
             sign_rows.append((flags, item, ret))
-    print("  flags 0x20 set?  item  ->  returned")
+    n_clear = sum(1 for f in range(256) if not (f & FLAG_POS))
+    n_neg_all = sum(1 for f, i, r in sign_rows if f < 256 and not (f & sign_bit) and r < 0)
+    n_pos_all = sum(1 for f, i, r in sign_rows if f < 256 and (f & sign_bit) and r > 0)
+    print("  256 flag bytes: %d with 0x20 clear, %d with 0x20 set" % (n_clear, 256 - n_clear))
+    print("  of the 1024 (flag,item) samples: %d returned -item, %d returned +item"
+          % (n_neg_all, n_pos_all))
+    seen = set()
     for flags, item, ret in sign_rows:
-        if item in (3, 6):
-            print("    0x%02x  %-3s %6d  ->  %+d" % (flags, "yes" if flags & FLAG_POS else "no", item, ret))
+        if flags in (FLAG_UNIT, FLAG_UNIT | 3, FLAG_POS, FLAG_POS | FLAG_MISC) and item == 6 \
+                and flags not in seen:
+            seen.add(flags)
+            print("    reachable flags 0x%02x  item 6 -> %+d" % (flags, ret))
     n_neg = sum(1 for f, i, r in sign_rows if not (f & sign_bit) and r < 0)
-    print("  unit flags (0x10|0..3) negative: %d/%d items" % (n_neg, 4 * len(unit_flags_vals)))
     print()
 
     # ---------------------------------------------------------------- TABLE 4 rivals
     recorded = read_recorded()
+    pairs = read_pairs()
     print("TABLE 4  rivals against the recorded heads")
     print("  recorded B31 heads: %s" % (recorded,))
     r1_dead = any(r > 0 for r in recorded)                     # a positive head exists
     print("  R1 'return is always -item'        -> recorded %s holds positives: dead=%s"
           % (recorded, r1_dead))
-    r2 = {195: -3, 196: -4}
-    print("  R2 'negative is -(design id - 192)' -> predicts 195->-3, 196->-4 ; recorded 195/196 -> -3/-6 : %s"
-          % (r2[196] == -6,))
+    r2_hits = []
+    for tag, item, cell_entry, stored, cell in pairs:
+        if item is None or stored is None:
+            continue
+        pred = -(item - 192)
+        r2_hits.append((tag, item, cell, stored, pred, pred == stored))
+    print("  R2 'negative is -(design id - 192)', tested on the parsed trace pairs:")
+    for tag, item, cell, stored, pred, hit in r2_hits:
+        print("    %s item=%s cell=%s stored=%s  predicts %+d  %s"
+              % (tag, item, cell, stored, pred, "MATCH" if hit else "MISMATCH"))
+    r2_ok = bool(r2_hits) and all(h for *_, h in r2_hits)
     r3 = neg_call == 0
     print("  R3 'the store site negates'        -> neg count in the store path = %d : %s"
           % (neg_call, r3))
@@ -319,12 +336,19 @@ def main():
          % (hex(m349.get("base") or 0), m349.get("stride"), hex(TYPE_COST), stride_name))
 
     # G11 sign table
-    ok = (n_neg == 4 * len(unit_flags_vals)) and (sign_rows[-1][2] > 0)
-    gate("G11 every reachable unit flag value yields -item; a facility flag yields +item", ok,
-         "unit flags %s -> all negative" % (unit_flags_vals,))
+    ok = (all(r < 0 for f, i, r in sign_rows if not (f & sign_bit))
+          and all(r > 0 for f, i, r in sign_rows if (f & sign_bit))
+          and all(((FLAG_UNIT | v) & sign_bit) == 0 for v in unit_flags_vals)
+          and all(((FLAG_POS | v) & sign_bit) != 0 for v in (0, FLAG_MISC)))
+    gate("G11 every flag byte with 0x20 clear yields -item, every one with it set yields +item,"
+         " and the reachable unit flags are all in the clear set", ok,
+         "%d/%d samples negative, %d/%d positive" % (n_neg_all, n_clear * 4,
+                                                     len(sign_rows) - n_neg_all,
+                                                     (256 - n_clear) * 4))
 
     # G12 rivals
-    gate("G12 R1/R2/R3 fail on the printed numbers", r1_dead and (r2[196] != -6) and r3,
+    gate("G12 R1/R2/R3 fail on the printed numbers",
+         bool(recorded) and r1_dead and bool(r2_hits) and not r2_ok and r3,
          "facility +2 ; 196 predicts -4 ; 0 negs at the store")
 
     # G13 cell != item
@@ -332,9 +356,15 @@ def main():
           and L.get(0x495AFA) == "mov edx,DWORD PTR [ecx+0xa818]"
           and L.get(0x495B69) == "test eax,eax" and L.get(0x495B6B) == "jne 0x495b6f"
           and L.get(0x495B6D) == "jmp 0x495b30")
-    note = "re-sorted between the read and the click" in open(M68, "r", errors="replace").read() if os.path.exists(M68) else False
-    gate("G13 the selection cell is the ROW counter and rows are filtered, so cell != item", ok,
-         "trace's own note present: %s" % note)
+    trace = open(M68, "r", errors="replace").read() if os.path.exists(M68) else ""
+    verdict = [l for l in trace.splitlines() if l.lstrip().startswith("FAIL")]
+    stale = [p for p in pairs if p[0] == "m68" and p[1] is not None and p[3] is not None
+             and p[1] != p[3]]
+    note_ok = bool(verdict) and "re-sorted" in " ".join(str(v) for v in verdict) and bool(stale)
+    gate("G13 the selection cell is the ROW counter and rows are filtered, so cell != item",
+         ok and note_ok,
+         "m68 verdict states the re-sort: %s ; intent %s vs stored %s"
+         % (note_ok, stale[0][1] if stale else None, stale[0][3] if stale else None))
 
 
     # G14 the type row is already represented as -i in QUEUE space (the chooser compares
@@ -359,7 +389,10 @@ def main():
 
     print()
     print("%d/%d gates" % (len(PASS), len(PASS) + len(FAIL)))
-    dg = hashlib.sha1(("|".join(PASS) + "|" + TEXT).encode()).hexdigest()[:16]
+    facts = "|".join(str(x) for x in (loop_init, loop_bound, fac_bound, stride_name, base_name,
+                                      base_cost, cand_base, store_off, neg_call, neg_modal,
+                                      calls_401940, unit_flags_vals, recorded, pairs))
+    dg = hashlib.sha1(("|".join(PASS) + "|" + TEXT + "|" + LISTING_SHA + "|" + facts).encode()).hexdigest()[:16]
     print("DIGEST %s  universe=%d gates=%d" % (dg, len(PASS) + len(FAIL), len(PASS)))
     if FAIL:
         print("FAIL M351: %d/%d gates" % (len(PASS), len(PASS) + len(FAIL)))
@@ -369,14 +402,39 @@ def main():
 
 
 def read_recorded():
-    """the recorded B31 head sequence (transcribed from evidence/m349_unit_id.txt TABLE 3)"""
+    """the recorded B31 head sequence, PARSED from evidence/m349_unit_id.txt TABLE 3 (no fallback)"""
     heads = []
-    if os.path.exists(os.path.join(ROOT, "evidence", "m349_unit_id.txt")):
-        for line in open(os.path.join(ROOT, "evidence", "m349_unit_id.txt"), "r", errors="replace"):
+    path = os.path.join(ROOT, "evidence", "m349_unit_id.txt")
+    if os.path.exists(path):
+        for line in open(path, "r", errors="replace"):
             m = re.match(r"\s+head=(-?\d+)", line)
             if m:
                 heads.append(int(m.group(1)))
-    return heads or [321, -2, -8, 2, -3, -6]
+    return heads
+
+
+def read_pairs():
+    """the two recorded intents, PARSED from the m68/m69 traces:
+       m68 insert_4: item / cell_entry / stored_id ; m69 insert + verdict: item + stored."""
+    out = []
+    if os.path.exists(M68):
+        for line in open(M68, "r", errors="replace"):
+            if not line.lstrip().startswith("{") or '"insert_4"' not in line:
+                continue
+            d = json.loads(line)
+            out.append(("m68", d.get("item"), d.get("cell_entry"), d.get("stored_id"), d.get("cell")))
+    m69 = os.path.join(ROOT, "evidence", "m69_cursor2.jsonl")
+    if os.path.exists(m69):
+        stored = None
+        for line in open(m69, "r", errors="replace"):
+            if not line.lstrip().startswith("{"):
+                continue
+            d = json.loads(line)
+            if d.get("tag") == "insert":
+                stored = d.get("stored")
+            if d.get("tag") == "verdict" and stored is not None:
+                out.append(("m69", d.get("item"), d.get("item"), stored, d.get("poked_cursor")))
+    return out
 
 
 def read_m349():
