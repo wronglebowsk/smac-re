@@ -1,4 +1,4 @@
-M386 mutation harness - 12 mutants against scripts/m386_marker_pair.py
+M386 mutation harness - 15 mutants against scripts/m386_marker_pair.py
 id    mutation                                                       rc   want verdict
 MU1   0x55fce0 clear-sentinel: X=-1 -> 0                             1    G2   KILLED
 MU2   0x558e12 unit-Y store retargeted to the wrong dword            1    G1   KILLED
@@ -12,5 +12,8 @@ MU9   0x4e3501 callee bounds-check Y -> X bound                      1    G3   K
 MU10  0x558dfe unit-X load -> +0x95da14                              1    G2   KILLED
 MU11  0x5a5786 sentinel -1 -> -2 on the clear pair                   1    G2   KILLED
 MU12  0x557a5f base-relative load -> absolute ds form                1    G6   KILLED
+MU13  0x5552ff -> a REAL 0x20000 reader on the relations dword       1    G7   KILLED
+MU14  0x557cf6 base register dropped -> [0x94d820] absolute bracket  1    G6   KILLED
+MU15  0x558e0c stores the Y register into X (operand swap)           1    G2   KILLED
 
-PASS m386_mutate: 12/12 killed
+PASS m386_mutate: 15/15 killed

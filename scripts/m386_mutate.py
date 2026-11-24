@@ -41,6 +41,12 @@ MUTANTS = [
      "0x5a5786|or     esi,0xfffffffe", "G2"),
     ("MU12", "0x557a5f base-relative load -> absolute ds form",
      "0x557a5f|mov    ecx,DWORD PTR ds:0x94d820", "G6"),
+    ("MU13", "0x5552ff -> a REAL 0x20000 reader on the relations dword",
+     "0x5552ff|test   DWORD PTR [edi+0x94d448],0x20000", "G7"),
+    ("MU14", "0x557cf6 base register dropped -> [0x94d820] absolute bracket",
+     "0x557cf6|mov    eax,DWORD PTR [0x94d820]", "G6"),
+    ("MU15", "0x558e0c stores the Y register into X (operand swap)",
+     "0x558e0c|mov    DWORD PTR [ecx+0x94d820],eax", "G2"),
 ]
 
 

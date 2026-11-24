@@ -48,6 +48,7 @@ ok   G2 the lone reset carries the same -1 (0x55fce0)
    0x558e0c  mov    DWORD PTR [ecx+0x94d820],edx
    0x558e12  mov    DWORD PTR [ecx+0x94d824],eax
 ok   G2 one pair (0x558e0c/0x558e12) takes a UNIT's x,y (0x95da10/0x95da12, stride 0x130)
+ok   G2 the stores carry exactly those registers: edx(X<-+0x95da10), eax(Y<-+0x95da12)
 
 -- G3 readers: the pair is fed to map arithmetic
    ok  0x557cf6  mov    eax,DWORD PTR [ebx+0x94d820]
@@ -71,7 +72,10 @@ ok   G3 the tile stride is 0x2c, the 0x92ae14 record size
 ok   G3 the same bounds pair is INLINED at 0x557a69/0x557a75 (a second coordinate reader)
    0x4e3501  cmp    edi,DWORD PTR ds:0x92a37c
    0x4e3518  cmp    esi,DWORD PTR ds:0x92a378
-ok   G3 FUN_004e34f0 bounds-checks arg1(y) < [0x92a37c] and arg0(x) < [0x92a378]
+ok   G3 FUN_004e34f0 cmp's arg1(y) vs [0x92a37c] and arg0(x) vs [0x92a378]
+   0x4e3507  jge    0x4e3617
+   0x4e351e  jge    0x4e3617
+ok   G3 both comparisons branch to the same reject exit 0x4e3617 (the `<` bound)
 
 -- G4 the 0x20000 arm's guard reads the PARTNER's row
    branches into 0x555405: 0x5553ac jge
@@ -88,7 +92,10 @@ ok   G4 the compared register is loaded from the field at 0x5553a4
    ebx = ((131*esi)<<4 - esi)<<2 = 8380 = 0x20bc
 ok   G4 the ebx chain parses instruction-for-instruction
 ok   G4 the guard's base is 0x20bc*esi (row stride 0x20bc)
-ok   G4 no other write to ebx between the def and the guard (none)
+   ebx writes in the region: ['0x555375']; of those reaching the guard: none
+ok   G4 the guard is reachable from the loop entry 0x555266
+ok   G4 no ebx write between the def and the guard lies on ANY path to 0x5553a4
+ok   G4 0x55531d DOMINATES the guard (cutting that node disconnects it from the loop entry)
    in-range branch targets: 0x555344, 0x555349, 0x55536b, 0x55536b, 0x5553a4
 ok   G4 every entry into the guard region lands after the ebx def (0x55531d)
    0x555282  shl    eax,cl
@@ -110,13 +117,15 @@ ok   G5 turn parity gates a per-turn BYTE decrement at 0x5552f0 - the field is n
 
 -- G6 rival SCALAR GLOBAL: refuted
 ok   G6 0 absolute ds:0x94d820/824 forms (none)
-ok   G6 all 54 references are base-register-relative [reg+0x94d820/824]
+ok   G6 every one of the 54 references carries a BASE REGISTER (none have none)
    R3 scalar: refuted (every access is row-relative)
 
 -- G7 0x20000: the request bit behind the guard
-ok   G7 0x20000 has 0 direct readers (0 inline, 0 register-form: [])
+ok   G7 the relations-dword scanner is not blind: 373 inline tests, 22 of them ask 0x400|0x800
+ok   G7 0x20000 has 0 readers ON THE RELATIONS DWORD (0 inline, 0 register-form: [])
 ok   G7 the arm ORs into a fresh load of the relations dword: mov    eax,DWORD PTR [edi+0x94d448]
-ok   G7 the treaty arm's AND 0xfffdfbff clears 0x20000
+ok   G7 the treaty arm is `and edx,0xfffdfbff` - the exact mask that clears 0x20000|0x400
+ok   G7 that mask clears bit 0x20000
    0x5553e7  and    edx,0xfffdfbff
    => 0x20000 noun: INFERRED (no reader); the arm's gate is the partner's marker, not a counter
 
@@ -131,7 +140,7 @@ ok   G8 R3 refuted
 ok   G8 R4 refuted: the pair indexes the tile array
 
 -- G9 digest
-digest deb7ca6b1006ecf6
-ok   G9 the printed table hash is the pinned deb7ca6b1006ecf6
+digest 401580f3c8ad292e
+ok   G9 the printed table hash is the pinned 401580f3c8ad292e
 
-PASS M386: 49/49 gates digest 59589b3a42bc1caa
+PASS M386: 55/55 gates digest 3e6d87261b7fe88e

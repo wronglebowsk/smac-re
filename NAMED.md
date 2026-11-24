@@ -1639,10 +1639,12 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | the ask: `(pair & mask) != 0` = an accord standing -> veto hostile action (0x4ec9c3 -> 0x4ed94e; 0x5859ae -> 0x587078) or cooperative selector (0x563165, 0x56a8a2, 0x523a7c) | `:75` | V MU16 MU23 MU11 / INF for the action nouns |
 | hosts: the 15 span 8 functions (5 for the named 6); AI hub FUN_0055f650 holds 5 of 15; 2095-fold proved at all 5 inline sites (seed mov + register used as the index) | `:107` `:100` | V MU12 MU14 MU15 MU19 |
 | OPEN: 9 dynamic-mask inline sites (`test [mem],reg`) unread; register-through-copy / stack-copy readers and uses beyond the 8-insn window unwalked | `:9` | OPEN |
-## M386 (s342-c4, 49/49) — +0x94d820 = X of a per-faction coordinate PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's guard reads the PARTNER row. ACCEPT `scripts/m386_marker_pair.py` `59589b3a42bc1caa` (`evidence/m386_marker_pair.txt:137`), 12 mutants (`evidence/m386_mutate.txt:16`). `:N` = same file.
-| PAIR: 6 paired writers (5 write -1 both, 1 copies a UNIT x,y) + lone X=-1 0x55fce0 | `:35-50` | V MU1 MU2 MU10 MU11 |
-| MAP COORDS: (Y*0x692184+X>>1)*44+3 tile 0x92ae14; FUN_004e34f0 bounds 0x92a378/7c, inlined 0x557a69/75 | `:65-74` | V MU3 MU9 |
-| 0x20000 arm's only entry `jge 0x5553ac` tests [ebx+0x94d820], ebx=0x20bc*esi = PARTNER row | `:90` | V MU4 MU8 |
-| NOT deadline/counter: 0 RMW, 0 0x985afc compares, 0 absolute ds: forms (54 base-relative) | `:101-112` | V MU6 MU12 |
-| 0x20000: 0 readers, set alone, cleared by 0xfffdfbff; gate = partner marker, noun INF | `:117` | V MU7 |
-| marker noun INFERRED = "unit-of-interest" tile; why the arm reads the PARTNER = OPEN | `:50` | INF/lead |
+## M386 (s342-c4, 55/55) — +0x94d820 = X of a per-faction PAIR (+0x94d824 = Y) at +0x3d8 — not a deadline/counter; M378's guard reads the PARTNER row. ACCEPT `scripts/m386_marker_pair.py` `401580f3c8ad292e` (`evidence/m386_marker_pair.txt:143`), 15 mutants (`evidence/m386_mutate.txt:19`). `:N` = same file.
+| claim | ev | conf |
+|---|---|---|
+| PAIR: 6 paired writers (5 -1 both, 1 copies a UNIT x,y) + lone X=-1 0x55fce0 | `:35-51` | V MU1 MU2 MU10 MU11 MU15 |
+| MAP COORDS: (Y*0x692184+X>>1)*44+3 tile 0x92ae14; FUN_004e34f0 bounds x/y vs 0x92a378/7c | `:69-75` | V MU3 MU9 |
+| 0x20000 arm's only entry `jge 0x5553ac` tests [ebx+0x94d820], ebx=0x20bc*esi = PARTNER row | `:98` | V MU4 MU8 |
+| NOT deadline/counter: 0 RMW, 0 0x985afc compares, 0 absolute forms | `:108-120` | V MU5 MU6 MU12 MU14 |
+| 0x20000: 0 readers on the RELATIONS dword (control: 373 tests); clear `and 0xfffdfbff`; gate = partner marker | `:125-127` | V MU7 MU13 |
+| marker noun INF = "unit-of-interest" tile; PARTNER gate why = OPEN | `:51` | INF/lead |

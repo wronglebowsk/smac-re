@@ -47,8 +47,9 @@ TILE = 0x92AE14                   # 44-byte tile array base
 MAXX = 0x92A378                   # map bound X (FUN_004e34f0)
 MAXY = 0x92A37C                   # map bound Y (FUN_004e34f0)
 TICK = 0x94D4C8                   # the 50-tick cell (B37) - the REAL per-turn countdown
+REL = 0x94D448                    # the relations dword of partner 0 (row base)
 ALGO = int(os.environ.get("M386_ALGO", "0") or 0)
-DIGEST_PIN = "deb7ca6b1006ecf6"
+DIGEST_PIN = "401580f3c8ad292e"
 
 PAT = re.compile(r'^\s*([0-9a-f]+):\t([0-9a-f ]+?)(?:\t(.*))?$')
 FAM = {"eax": ("eax", "al", "ah"), "ebx": ("ebx", "bl", "bh"), "ecx": ("ecx", "cl", "ch"),
@@ -103,6 +104,52 @@ def base_reg(s):
 
 RMW = ("add", "sub", "inc", "dec", "and", "or", "xor", "neg", "not", "adc", "sbb",
        "shl", "shr", "sar", "lea", "imul", "mul", "idiv", "div")
+
+def cfg(ins, by, lo, hi):
+    """instruction-level CFG over [lo,hi]: calls fall through, jcc has both edges."""
+    addrs = [i.addr for i in ins if lo <= i.addr <= hi]
+    S = set(addrs)
+    succ = {}
+    for idx, a in enumerate(addrs):
+        i = ins[by[a]]
+        nxt = addrs[idx + 1] if idx + 1 < len(addrs) else None
+        if i.mn == "ret":
+            succ[a] = []
+        elif i.mn == "jmp":
+            t = imm2(i.ops)
+            succ[a] = [t] if t in S else []
+        elif i.mn.startswith("j"):
+            t = imm2(i.ops)
+            succ[a] = ([t] if t in S else []) + ([nxt] if nxt else [])
+        else:
+            succ[a] = [nxt] if nxt else []
+    return addrs, succ
+
+
+def reach(addrs, succ, start, target=None):
+    """forward reachability from `start`, or (target given) the set of nodes that reach `target`."""
+    if target is None:
+        seen, stack = set(), [start]
+        while stack:
+            a = stack.pop()
+            if a in seen:
+                continue
+            seen.add(a)
+            stack.extend(succ.get(a, []))
+        return seen
+    radj = {}
+    for a, v in succ.items():
+        for b in v:
+            radj.setdefault(b, []).append(a)
+    seen, stack = set(), [target]
+    while stack:
+        a = stack.pop()
+        if a in seen:
+            continue
+        seen.add(a)
+        stack.extend(radj.get(a, []))
+    return seen
+
 
 OUT = []
 fails = []
@@ -225,8 +272,14 @@ def main():
     say("   0x%x  %s" % (0x558E12, ins[by[0x558E12]].raw))
     stride = [i for i in ins[by[0x558DF2]:by[0x558E12]]
              if i.mn == "shl" and dst(i) == "eax" and imm2(src(i)) == 4]
+    sx = ins[by[0x558E0C]]
+    sy = ins[by[0x558E12]]
     chk(bool(lx) and bool(ly) and bool(stride), "G2",
         "one pair (0x558e0c/0x558e12) takes a UNIT's x,y (0x95da10/0x95da12, stride 0x130)")
+    chk(sx.ops.replace("  ", " ") == "DWORD PTR [ecx+0x94d820],edx"
+        and sy.ops.replace("  ", " ") == "DWORD PTR [ecx+0x94d824],eax"
+        and lx[0].addr == 0x558DFE and ly[0].addr == 0x558E05, "G2",
+        "the stores carry exactly those registers: edx(X<-+0x95da10), eax(Y<-+0x95da12)")
 
     # ---------- G3 coordinate arithmetic
     say("")
@@ -269,9 +322,17 @@ def main():
     x1 = ins[by[0x4E34F6]]
     say("   0x%x  %s" % (c1.addr, c1.raw))
     say("   0x%x  %s" % (c2.addr, c2.raw))
-    chk(x1.ops.strip() == "edi,DWORD PTR [ebp+0xc]" and "0x92a37c" in c1.ops
+    j1 = ins[by[0x4E3501] + 1]
+    j2 = ins[by[0x4E3518] + 1]
+    chk(x1.ops.strip() == "edi,DWORD PTR [ebp+0xc]" and c1.mn == "cmp" and c2.mn == "cmp"
+        and dst(c1) == "edi" and dst(c2) == "esi" and "0x92a37c" in c1.ops
         and "0x92a378" in c2.ops, "G3",
-        "FUN_004e34f0 bounds-checks arg1(y) < [0x92a37c] and arg0(x) < [0x92a378]")
+        "FUN_004e34f0 cmp's arg1(y) vs [0x92a37c] and arg0(x) vs [0x92a378]")
+    say("   0x%x  %s" % (j1.addr, j1.raw))
+    say("   0x%x  %s" % (j2.addr, j2.raw))
+    chk(j1.mn == "jge" and j2.mn == "jge" and imm2(j1.ops) == 0x4E3617
+        and imm2(j2.ops) == 0x4E3617, "G3",
+        "both comparisons branch to the same reject exit 0x4e3617 (the `<` bound)")
 
     # ---------- G4 the 0x20000 guard
     say("")
@@ -299,10 +360,20 @@ def main():
     chk(ok, "G4", "the ebx chain parses instruction-for-instruction")
     chk(stride_val == law_stride, "G4", "the guard's base is 0x%x*esi (row stride 0x%x)"
         % (law_stride, law_stride))
-    chain_addrs = {a for a, _, _ in sim}
-    over = [i.addr for i in ins[by[0x55532A]:by[0x555373]]
-            if dst(i).strip() == "ebx" and i.mn != "push" and i.addr not in chain_addrs]
-    chk(not over, "G4", "no other write to ebx between the def and the guard (%s)" % (over or "none"))
+    addrs, succ = cfg(ins, by, 0x555266, 0x555420)
+    fwd = reach(addrs, succ, 0x555266)
+    back = reach(addrs, succ, None, target=0x5553A4)
+    writes = [a for a in addrs if dst(ins[by[a]]).strip() == "ebx"
+              and ins[by[a]].mn != "push" and a not in {x for x, _, _ in sim}]
+    live = [a for a in writes if a in back]
+    say("   ebx writes in the region: %s; of those reaching the guard: %s"
+        % ([hex(a) for a in writes] or "none", [hex(a) for a in live] or "none"))
+    chk(0x5553A4 in fwd, "G4", "the guard is reachable from the loop entry 0x555266")
+    chk(not live, "G4", "no ebx write between the def and the guard lies on ANY path to 0x5553a4")
+    cut = {k: [x for x in v if x != 0x55531D] for k, v in succ.items()}
+    fwd_cut = reach(addrs, cut, 0x555266)
+    chk(0x55531D in back and 0x5553A4 not in fwd_cut, "G4",
+        "0x55531d DOMINATES the guard (cutting that node disconnects it from the loop entry)")
     targ = [(i.addr, imm2(i.ops)) for i in ins[by[0x555302]:by[0x5553A4]]
             if i.mn.startswith("j") and i.mn != "jmp"]
     inner = [t for a, t in targ if 0x555300 < t <= 0x5553A4]
@@ -350,19 +421,21 @@ def main():
     say("-- G6 rival SCALAR GLOBAL: refuted")
     absolute = [i.addr for i in ins if re.search(r'ds:0x94d82', i.ops)]
     chk(not absolute, "G6", "0 absolute ds:0x94d820/824 forms (%s)" % (absolute or "none"))
-    formok = all(re.search(r'\[[^\]]*0x94d82[04]\]', i.ops) for i in rx + ry)
-    chk(formok, "G6", "all %d references are base-register-relative [reg+0x94d820/824]"
-        % (len(rx) + len(ry)))
+    BASE = re.compile(r'\[\s*(e[a-d]x|e[sd]i|ebp|eip|[abcd][lh]|si|di)\s*[+\-]\s*0x94d82[04]\]')
+    nobase = [i.addr for i in rx + ry if not BASE.search(i.ops)]
+    chk(not nobase, "G6", "every one of the %d references carries a BASE REGISTER (%s have none)"
+        % (len(rx) + len(ry), [hex(a) for a in nobase] or "none"))
     say("   R3 scalar: refuted (every access is row-relative)")
 
     # ---------- G7 0x20000
     say("")
     say("-- G7 0x20000: the request bit behind the guard")
-    inline = [i for i in rx if i.mn == "test" and imm2(i.ops) is not None]
+    rel = [i for i in ins if names(i.ops, REL)]
+    inline = [i for i in rel if i.mn == "test" and imm2(i.ops) is not None]
     r20000 = [i for i in inline if (imm2(i.ops) or 0) & 0x20000]
     reg20000 = []
-    for i in rx:
-        if i.mn == "mov" and names(src(i), FIELD_X):
+    for i in rel:
+        if i.mn == "mov" and names(src(i), REL):
             for j in range(by[i.addr] + 1, min(len(ins), by[i.addr] + 4)):
                 q = ins[j]
                 if q.mn not in ("test", "cmp"):
@@ -375,14 +448,20 @@ def main():
                 v = imm2(src(q))
                 if v is not None and v & 0x20000:
                     reg20000.append(i.addr)
+    pos = [i for i in inline if (imm2(i.ops) or 0) & (0x400 | 0x800)]
+    chk(len(inline) >= 5 and bool(pos), "G7",
+        "the relations-dword scanner is not blind: %d inline tests, %d of them ask 0x400|0x800"
+        % (len(inline), len(pos)))
     chk(not r20000 and not reg20000, "G7",
-        "0x20000 has 0 direct readers (%d inline, %d register-form: %s)" % (len(r20000), len(reg20000), [hex(a) for a in reg20000]))
+        "0x20000 has 0 readers ON THE RELATIONS DWORD (%d inline, %d register-form: %s)"
+        % (len(r20000), len(reg20000), [hex(a) for a in reg20000]))
     src_ld = ins[by[0x55536B]]
     chk(src_ld.raw.strip() == "mov    eax,DWORD PTR [edi+0x94d448]", "G7",
         "the arm ORs into a fresh load of the relations dword: %s" % src_ld.raw)
     andm = ins[by[0x5553E7]]
-    chk(andm.mn == "and" and not (imm2(src(andm)) & 0x20000), "G7",
-        "the treaty arm's AND 0x%x clears 0x20000" % imm2(src(andm)))
+    chk(andm.mn == "and" and imm2(src(andm)) == 0xFFFDFBFF, "G7",
+        "the treaty arm is `and edx,0xfffdfbff` - the exact mask that clears 0x20000|0x400")
+    chk(not (imm2(src(andm)) & 0x20000), "G7", "that mask clears bit 0x20000")
     say("   0x%x  %s" % (andm.addr, andm.raw))
     say("   => 0x20000 noun: INFERRED (no reader); the arm's gate is the partner's marker, not a counter")
 
