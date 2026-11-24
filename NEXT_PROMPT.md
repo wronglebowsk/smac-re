@@ -26,7 +26,7 @@ C1/C2 of `scripts/s292_cap_check.py` fail BY DESIGN (its STATUS note); only C3 s
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B29 MERGED** (B25 #319, B26 #328,
 B27 #344, B28 #351; per-rung cmds `NAMED` §CHAIN-BUILDS, `## B25`-`## B29` govern; B26's ACCEPT+LAW verbatim at
-`docs/pick-archive.md` §trim-s308-chain1 (a)). **B29 = the PR opened from `milestone/b29` (s319): the item table
+`docs/pick-archive.md` §trim-s308-chain1 (a)). **B29 = #356 (s319): the item table
 DERIVED through M337's loader law, `ALPHA_SHIFT=1` measured, B4's four DIFFERS rows closed** — its squash hash is
 main's tip (`git log --oneline -1 origin/main`). **Next build B30**: the spine ends at B29 - author its rung text in
 `BUILD_SPINE.md` BEFORE probing, as B14-B29 did.
