@@ -1605,5 +1605,5 @@ ACCEPT `python3 -u scripts/m353_numeric_band.py` -> **`PASS M353: 11/11 gates`**
 | +0x28 has TWO writers: 0x595d1c (literal) + 0x57a041 (`[esi-0xa]`, esi=0x98adba+0x34*i) — M356 G14 row RETRACTED | `:56,103` | V MU5,12 |
 | +0x27 = reactor level INFERRED: constant 1 for basic units; 127 loads, compare band {1:53,3:54} over 52 clamp sites; UI health scale clamp(v,1,3)*10/3 | `:90,93` | I (MU8,9 pin the band+chain) |
 | +0x2a = PLAN (M354 called it "class"): loader Plan token -> +0x2a; Planet-Buster branch hard-sets +0x2a=5 (alpha Plan 5); 43 sites compare it with 12 | `:96,98` | V MU10,11 |
-| RIVALS: "+0x27 is the Plan column" FAILS (plan is +0x2a, +0x27 gets a literal); "+0x28 one writer" FAILS | `:101,103` | V |
+| RIVALS: "+0x27 is the Plan column" FAILS (plan is +0x2a, +0x27 gets a literal); "+0x28 one writer" FAILS | `:101,103` | V MU3,5 |
 | OPEN: #REACTORS has 4 rows but the health readers clamp 1..3; +0x27's noun rests on elimination + the constant 1 | `:90` | lead |
