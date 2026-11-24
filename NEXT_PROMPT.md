@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B30 MERGED s321: 6/6 print `29f408c79329a5a8`, harness 11/11 `76a481b5d8a7d8b0`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B31 + M54A-M349 (`## B31`, `## M348`, `## M349`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
+# NEXT_PROMPT.md - footing (B32 MERGED s327: 10/10 print `e6875c63c8c2f911`, harness 13/13 `1dcf0db1e02d1ee6`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B32 + M54A-M350 (`## B32`, `## M349`, `## M350`); only (ix) left, box-GATED; (x) OPEN-LEADS is the analysis-only option; #180 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -23,11 +23,12 @@ VERBATIM to a reference / `NAMED.md` section; RULES + pointer stay; re-run `budg
 
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>`. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
-box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B30 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B25`-`## B30` govern).
-**B30 = the COMPLETION leg**; **B31 MERGED = the recorded-run ORACLE** (6 gains/2 losses, head->bit
-0/6, so B30's setter is UNVERIFIED against the game's own run - `## B31`). **Next build B32**:
-author its rung text in `BUILD_SPINE.md` BEFORE probing - the spine's live question is the UNIT-ID
-decoding (M68/M69 `NEG_TYPE` OPEN) or a recorded facility completion in a fresh trace.
+box/`/proc`/gdb time; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B32 MERGED** (per-rung cmds `NAMED` §CHAIN-BUILDS; `## B29`-`## B32` govern).
+**B31 = the recorded-run ORACLE** (6 gains/2 losses; bulk head->bit 0/6) and **B32 MERGED = the UNIT
+leg** (M349's decode attached: 4/4 unit heads stamp the mapper bit, facility-range 0/2, post-pop 0/6 -
+`## B32`). **Next build B33**: author its rung text in `BUILD_SPINE.md` BEFORE probing - walk the
+facility leg's own branch to the shared OR at `0x4f0ec0` (WHY facility 2 at Virgin Soil does not
+stamp), or a fresh recorded facility completion.
 
   **DOC CAP (s327): `NAMED.md` 243,972/250,000 = 6,028 B (M314 -> `docs/named-archive-m350-rows.md`, `--verify`). NEXT_PROMPT <=12,000.**
 
@@ -119,7 +120,8 @@ warn), every addition paired with a deletion. 5 sync the skill ONLY if edited (`
 triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PASS (docs/AI-REVIEW.md).
 Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`); per-id `NAMED ## <id>` GOVERN.
 - M348 (s326) MERGED: slots 1/2 -> Script.txt `#PRODUCEXQ/G`; M346 `drainer` RETRACTED (Create Session dialog). 12/12 `a3d46c017673526a`, harness 13/13. NEXT: writers of 0x999fa4.
-- M334-M340: M334 = the 0x4f47f0 upkeep-FAILURE is a difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded) 7/7 5b5ece39af02baba, 45/45; M335 ladder = alpha #DIFF 6 rows @0x94d2ac, idx = ds:0x985aec 7/7 fb58bdc3307d6258, 20/20; M336 ds:0x8f0090 = PLAYER RECORD 1's difficulty byte, ONE unclamped reader 7/7 f4ca00c55c833539, 14/14; M337 item row order = alpha #FACILITIES (rec i = alpha i-1) 8/8 39d82f0771690e15, 13/13; M338 the last two #DIFF readers (loop counter / HoF rec +0x20) 8/8 1ae1563d47d0039e, 16/16; M339 0x5f1394 = the modal SCREEN RUNNER 7/7 d76a5e83770b77bb, 13/13; M340 a `Difficulty` pref >=6 is ADMITTED 7/7 1cc44d0146a8b419, 12/12.
+- B32 (s327) MERGED: the UNIT leg on the recorded trace - 4/4 unit heads stamp the M349 mapper bit, facility-range 0/2, post-pop head 0/6. 10/10 `e6875c63c8c2f911`, harness 13/13 `1dcf0db1e02d1ee6`. NEXT BUILD B33 = the facility leg's branch to the shared OR.
+- M334-M340: upkeep AUTO-SELL, #DIFF ladder, PLAYER RECORD 1 difficulty byte, item order, the last #DIFF readers, the modal screen runner, pref>=6 - per-id rows + digests in `NAMED ## M334`-`## M340`.
 - M339 MERGED: 0x5f1394 = the modal SCREEN RUNNER; return = the screen obj's +0xa40 cell; FUN_004ddaa0 writes it to ds:0x985aec + 8 faction blocks. 7/7 d76a5e83770b77bb, harness 13/13.
 - M345 (s324-chain2): dialog `+0x64` slot has NO .text dispatcher (5 slot dwords, 0 refs, 37 sites); 12/12 `833faf38e189ad40`, harness 11/11
 - M347 (s324-chain2): HoF page writer = the +0x5970 child selector, ids 1..7 (page bound 7); 12/12 `3fadfd6e6d26e64c`, 20/20

@@ -647,3 +647,27 @@ whether a facility completion stamps at all.
   MU15 = pred mutant, MU14 = read-probe mutant.
 - **Docs:** NAMED 243,972 B (M314 4,399 B VERBATIM -> `docs/named-archive-m350-rows.md`, sha1
   `decdd34b`, `--verify` PASS). OPEN: who sets ds:0x6926ec.
+
+## Session 327 (2026-11-24) — B32: the UNIT leg RUN on the recorded trace (milestone/b32)
+
+- ACCEPT `python3 -u -m sim.unitoracle` -> `PASS B32: 10/10 gates`, rows `e6875c63c8c2f911`,
+  score `59b0b5e3647555b7`, leg `26d1c63c2861b182`, map `9bb77d0bcf3b918e`
+  (`evidence/b32_unitoracle.txt:54`), two runs byte-identical (same file, re-run `diff` clean);
+  harness `python3 -u scripts/b32_mutate.py` -> `PASS HARNESS B32: 13/13` `1dcf0db1e02d1ee6`
+  (`evidence/b32_mutate.txt:16`).
+- B32 attaches M349's decode to B31's oracle. Heads `[321,-2,-8,2,-3,-6]` = 4 UNIT / 1 FACILITY /
+  1 BIGITEM (`:43`). Scored on the BEFORE-sample (pre-pop) head PER LEG: 4/4 unit heads gain
+  exactly the mapper bit (-2->bit2, -8->bit8, -3->bit3, -6->bit6); 0/2 facility-range heads do;
+  B31's bulk rule reproduces 0/6 on the same rows (`:25`, `:44`). B31's 0 was an undeclared
+  decode, not a refutation of the stamp.
+- The AFTER-sample (post-pop) head scores 0/6 (`:28`): the stamp reads the head BEFORE the pop,
+  so M344's spend->stamp->pop order now holds on all six recorded rows, not only B31's 2-deep
+  fixture.
+- Write replayed: before window OR mask == the recorded after window at 4/4 unit boundaries and
+  only the mapper byte moves (`:35-39`, `:47`). Virgin Soil: facility 2 predicts
+  `04 00 00 08 00`, the record holds `10 00 00 00 00`; head 321 maps to byte 40, off the 8-byte
+  map (1 refusal) (`:34`, `:37`, `:48`). The 2 losses sit on the 2 non-unit rows only (`:49`).
+- QUALIFIES `## B31` (its OPEN "unit-id decoding" is closed by M349 + this run) and `## B30`
+  (the facility setter stays UNVERIFIED and is now CONTRASTED: side-by-side unit completions DO
+  stamp). Pitfall: a new module's `HEAD_OFF` is dead code if it reads through `fa.head_of` - the
+  head-offset mutant scored green until the module unpacked its own constant.

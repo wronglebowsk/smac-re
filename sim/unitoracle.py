@@ -46,7 +46,7 @@ BIG = 0x40              # the facility leg's item<0x40 gate (M349 G2)
 ROWS_ANCHOR = "e6875c63c8c2f911"
 SCORE_ANCHOR = "59b0b5e3647555b7"
 LEG_ANCHOR = "26d1c63c2861b182"
-MAP_ANCHOR = "c8062d95315f550f"
+MAP_ANCHOR = "9bb77d0bcf3b918e"
 
 # The six mapper rows M349's derived form pins (evidence/m349_unit_id.txt:99 area).
 MAP_ROWS = ((321, 40, 2), (-3, 0, 32), (-8, -1, 1), (2, 0, 4), (8, 1, 1), (6, 0, 64))
@@ -123,7 +123,8 @@ def measure(samples=None):
         key = (idx, name)
         before, after = _record(samples, si - 1, key), _record(samples, si, key)
         assert before is not None and after is not None, key
-        bh, ah = fa.head_of(before), fa.head_of(after)
+        bh = struct.unpack_from("<i", before, HEAD_OFF)[0]
+        ah = struct.unpack_from("<i", after, HEAD_OFF)[0]
         kb, ib, byb, bitb = head_bit(bh)
         ka, ia, bya, bita = head_bit(ah)
         rows.append((si, rr, idx, name, bh, ah, kb, ib, byb, bitb, ka, ia, bya, bita,
@@ -242,13 +243,13 @@ def main(argv=None):
     p("")
     p("GATES")
     d_rows, d_sc, d_leg = _sha(rows), _sha(sc_before), _sha((uhits, len(unit), fhits, len(fac)))
-    d_map = _sha([head_bit(h)[:2] for h, _b, _m in MAP_ROWS])
+    d_map = _sha([(h,) + head_bit(h) for h, _b, _m in MAP_ROWS])
     heads = [r[4] for r in rows]
     kinds = [r[6] for r in rows]
 
-    g(len(rows) == 6 and len(heads) == 6,
+    g(len(rows) == 6 and len(samples) == 20 and all(r[16] != r[17] for r in rows),
       "G1 the six changed boundaries are READ with both heads (counts pinned)",
-      "rows=%d digest=%s" % (len(rows), d_rows))
+      "rows=%d samples=%d digest=%s" % (len(rows), len(samples), d_rows))
     same = all(tbl.decode(h)[:2] == decode(h) for h in tbl.UNIVERSE)
     g(same and heads == [321, -2, -8, 2, -3, -6]
       and kinds.count("UNIT") == 4 and kinds.count("FACILITY") == 1 and kinds.count("BIGITEM") == 1,
