@@ -726,3 +726,25 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (2) only `and` clears bit 15 and `or` never does — an `ah` blind spot invents 3 droppers.
   (3) a linear backward walk crosses blocks; stop at a `jmp`.
 - Rotated `## M283` VERBATIM -> `docs/named-archive-m380-m283-rows.md` (sha1 `884865b3`).
+
+## Session 341-chain2 — M382: the 0xc00 cluster has 15 readers, not seven; 0x5468c7 asks bits 2|16
+
+- ACCEPT `python3 -u scripts/m382_treaty_readers.py` -> **`PASS M382: 31/31`** `90cb89f84ce7feeb`
+  (`evidence/m382_treaty_readers.txt:125`; re-run cmp-identical, `evidence/m382_twice.txt`); harness
+  **18/18 killed** (`evidence/m382_mutate.txt:23`). Static only, zero box.
+- **CENSUS** (`:9`,`:22`): 36 immediate-mask inline `test [..+0x94d448],imm` + 9 dynamic-mask; **5 pair**
+  (0xc30, 0x40c30, 0xc30, 0xc10, 0xc11) and 2 that ask 0x800 alone (0x558cbd/0x56c153, mask 0x810).
+  Register readers: 144 loads def-use walked, **8 meet 0xc00** (0x503727 0x546cde 0x5552ff 0x5567bb
+  0x558b9d 0x559d04 0x560b77 0x56b652). Population = **15**; the shortlist named 7, of which 6 are readers.
+- **RETRACTION (shortlist premise):** 0x5468c7 does NOT ask 0xc00 — `test al,0x4` (bit 2) then
+  `test eax,0x10000` -> `[ebp-0x50]` at-war flag. The cluster reader in FUN_00546800 is 0x546cde
+  (`test ah,0x8` = 0x800). The census, not the list, is the population.
+- **THE ASK** (`:94`): every inline site asks `(pair_dword & mask) != 0` with mask ⊇ 0xc00 and per-caller
+  extras {0x30, 0x40030, 0x10, 0x11}. Nonzero = "an accord standing exists" -> **veto on hostile action**
+  (0x4ec9c3 bails 0x4ed94e; 0x5859ae clears 0x933289 and jumps 0x58a748 only when it is ABSENT) or a
+  **cooperative selector** (0x563165 unit target, 0x56a8a2 nearest-unit counter, 0x523a7c accept the choice).
+- 0x5552ff is the **sole 0x400-only** reader and it gates M378's proposal roll (0x840 arm / 0x20000 arm /
+  pact clear); 0x560b77 is the sole 0xc00-only (both bits) reader. 5 host functions; AI hub FUN_0055f650
+  hosts 5 of 15 (`:101`).
+- **LIMIT (OPEN):** the 9 dynamic-mask inline sites (`test [mem],reg`) are unread — a runtime mask could
+  name 0xc00; register-through-copy and stack-copy readers are not walked.

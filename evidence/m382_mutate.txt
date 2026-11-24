@@ -1,0 +1,23 @@
+M382 mutants — 18 claims
+  MU1   KILL     G1/G4 0x4ec9c3 asks 0xc30                                  failing: G1 five 0xc00-paired sites, G4 inline masks equal the pinned 
+  MU2   KILL     G4 0x523a7c's extra 0x40000                                failing: G4 paired-mask extras are 0x10|0x11|0x30|0x40030, G4 inline m
+  MU3   KILL     G4 0x563165's extra 0x20                                   failing: G4 inline masks equal the pinned per-site table
+  MU4   KILL     G1 0x56a8a2 is a paired reader                             failing: G1 five 0xc00-paired sites, G4 paired-mask extras are 0x10|0x
+  MU5   KILL     G4 0x5859ae's extra 0x1                                    failing: G4 paired-mask extras are 0x10|0x11|0x30|0x40030, G4 inline m
+  MU6   KILL     G4 0x5567bb's mask is 0xc10                                failing: G4 register masks equal the pinned per-site table
+  MU7   KILL     G3 0x5552ff is the sole 0x400-only reader                  failing: G2 register readers 8, G3 six of seven are cluster readers, G
+  MU8   KILL     G3 0x5468c7 asks bits 2|16, not 0xc00                      failing: G2 register readers 8, G3 six of seven are cluster readers, G
+  MU9   KILL     G4 three single-bit register readers                       failing: G4 register readers may ask one bit alone, G4 register masks 
+  MU10  KILL     G2 high-byte masks are shifted (algorithm)                 failing: G2 register readers 8, G3 six of seven are cluster readers, G
+  MU11  KILL     G5 polarity law: je falls through on zero (algorithm)      failing: G5 polarity equals the pinned per-site table
+  MU12  KILL     G9 attribution law: the containing range is inclusive-left failing: G9 every named site sits in its pinned function, G9 the AI hu
+  MU13  KILL     G0 the field-ref count is 653 not 658 (algorithm)          failing: G0 field refs 653
+  MU14  KILL     R2 the 2095 fold (0x4ec9c3)                                failing: R2 '0x94d448 is the faction record base' — refuted: each inli
+  MU15  KILL     R2 the 2095 fold (0x563165)                                failing: R2 '0x94d448 is the faction record base' — refuted: each inli
+  MU16  KILL     G5/G8 branch polarity is part of the table                 failing: G5 polarity equals the pinned per-site table, G8 digest pinne
+  MU17  KILL     G6 the 0x810-only sites are not 0xc00                      failing: G1 five 0xc00-paired sites, G4 inline masks equal the pinned 
+  MU18  KILL     G1 nine dynamic-mask inline sites                          failing: G1 inline immediate-mask total 36, G1 dynamic-mask inline sit
+
+  baseline PASS (31/31)
+
+PASS M382 harness: 18/18 killed, baseline green
