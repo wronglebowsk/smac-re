@@ -1444,3 +1444,42 @@ DECLARED UNMODELED: the noun of 0x800000 ("lock/proposal", cleared by every 0x17
 transition in a live game (the census is 169 call sites, M368); the 0x94d5dc slot's meaning
 (M365: deadlines) and why war zeroes it only when a ladder bit was set. No box time, no /proc,
 no gdb.
+
+**B37 - THE TREATY LIFECYCLE: `0x40` arms a 50-tick cell, and the countdown is the only writer that
+expires it** (`sim/treaty.py` = the timer state machine and its gates; s339-chain1 authors this
+rung, as B14-B36 did). B36 modelled the WORD: a diplomacy action is a mask, the writer applies it,
+the classifier reads it back. It could not model TIME, and M375 measured that exactly one bit has
+any: the 4 stores that leave `0x40` set all write `0x32` (50) to the parallel cell at `0x94d4c8`,
+and the upkeep pass at `0x5552b6` decrements it and clears `0x40` at zero. This rung extracts that
+countdown block from the SAME dump and runs it: the `lf` at `0x5552b6`/`0x5552bc` is a null-test,
+`dec`+`test`+`mov`+`jne` is the decrement-and-store, and the `and al,0xbf` at `0x5552d1` fires ONLY
+on the tick that reaches zero. `sim/treaty.py`'s `Lifecycle.tick()` is written independently, with
+the immediates as literals, so the two can disagree.
+
+The lifecycle is then closed end to end: arm on a `0x40` request (`0x551d22`, masked by `test
+cl,0x40`), arm on the two literal `or ...,0x840` sites inside `FUN_005551e0`, count down once per
+upkeep pass, expire at tick 50, and - the measured asymmetry - a STATUS WRITE does not disarm the
+cell: the peace mask `0xffee7faf` clears `0x40` from the word but never touches `0x94d4c8`, so the
+expiry store finds `0x40` already gone and writes the word back byte-identical (a NULL write).
+
+`python3 -u -m sim.treaty` must print `PASS B37: <n>/<n> gates` (and `python3 -u -m sim.selftest
+--b37` only relays) with: **G0** the countdown block is pinned by address, instruction count and
+three immediates, digest printed twice from two decodes; **G1** the arm census over the WHOLE dump:
+every `0x94d4c8` reference classified (arm-read-back), exactly the sites M375 counted, and each
+arm's neighbouring relations-word store PROVED to carry `0x40` by evaluating its mask chain
+(`or ebx,ecx` guarded by `test cl,0x40`, or a literal `or ...,0x840`) rather than by looking at the
+address; **G2** parity of the extracted decrement against `Lifecycle.tick` on every cell value
+0..255 x a pre-state sweep, 0 disagreements, and the expiry tick is exactly the 50th (49 keeps
+`0x40`, 50 clears it); **G3** a replayed lifecycle transcript (arm, 49 ticks, arm again at tick 30,
+status write at tick 40, run to 120) whose every post-word and cell value equals the model's;
+**G4** the asymmetry measured, not asserted: after a status write the later expiry is a null write
+(word before == word after) on every arm/status interleaving swept, and the cell is non-zero at that
+moment; **G5** `0x800000` (TREATY ON) is cleared by every `0x17` status write and NEVER restored by
+expiry - the `0xbf` byte mask cannot reach bit 23; **G6** rivals FAIL on the printed numbers (a
+per-turn deadline that clears on any write; expiry that also clears `0x800000`; an arm that only
+initialises an unarmed cell; a countdown that decrements before testing); **G7** the digests are
+pinned and reproduced on a second decode. Each gate has a named mutant in `scripts/b37_mutate.py`.
+DECLARED UNMODELED: what `0x800` (set by both `0x840` arms) and `0x20000`/`0x400` (cleared by the
+same masks) mean; whether a live game reaches the upkeep pass once per turn per pair (the loop
+stride is modelled as one pass = one tick, never measured on the box); which of the four arms a
+given treaty action takes; the `0x551d2a` site's caller. No box time, no /proc, no gdb.
