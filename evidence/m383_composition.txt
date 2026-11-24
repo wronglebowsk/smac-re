@@ -1,0 +1,153 @@
+K0  store census - the field's direct stores, and which one adds
+  0x94e48c operands 70, direct stores 3: 5566d5 5579ea 59efb1
+    FUN_00556690: 0x5566d5 0x5579ea
+    FUN_0059ec90: 0x59efb1
+  ok  K0 exactly 3 direct stores; the ADDer is 0x5579ea (the other two are the creation/reset zeroing runs M380 proved)
+  pinned instructions 13/13 present with the expected mnemonic
+  the accumulator window 0x557972..0x5579eb: 40 instructions
+    0x557972 mov    eax,DWORD PTR [ebp-0x8]
+    0x557975 push   edi
+    0x557976 movsx  eax,WORD PTR [eax+0x933282]
+    0x55797d lea    ecx,[eax+eax*2]
+    0x557980 lea    edx,[eax+ecx*4]
+    0x557983 xor    eax,eax
+    0x557985 mov    al,BYTE PTR [edx*4+0x98adad]
+    0x55798c push   eax
+    0x55798d call   0x5706c0
+    0x557992 mov    ecx,DWORD PTR [ebp-0x8]
+    0x557995 mov    esi,eax
+    0x557997 push   edi
+    0x557998 movsx  eax,WORD PTR [ecx+0x933282]
+    0x55799f xor    ecx,ecx
+    0x5579a1 lea    edx,[eax+eax*2]
+    0x5579a4 lea    eax,[eax+edx*4]
+    0x5579a7 mov    cl,BYTE PTR [eax*4+0x98adae]
+    0x5579ae push   ecx
+    0x5579af call   0x570670
+    0x5579b4 mov    edx,DWORD PTR [ebp-0x4]
+    0x5579b7 push   0x0
+    0x5579b9 push   0x0
+    0x5579bb push   edx
+    0x5579bc mov    DWORD PTR [ebp-0x18],eax
+    0x5579bf call   0x5ac0a0
+    0x5579c4 mov    ecx,eax
+    0x5579c6 mov    eax,DWORD PTR [ebp-0x18]
+    0x5579c9 add    ecx,0x6
+    0x5579cc add    eax,esi
+    0x5579ce imul   eax,ecx
+    0x5579d1 cdq    
+    0x5579d2 and    edx,0x7
+    0x5579d5 add    esp,0x1c
+    0x5579d8 add    eax,edx
+    0x5579da mov    edx,DWORD PTR [ebx+0x94e48c]
+    0x5579e0 sar    eax,0x3
+    0x5579e3 add    edx,eax
+    0x5579e5 mov    eax,DWORD PTR [ebp-0x18]
+    0x5579e8 cmp    esi,eax
+    0x5579ea mov    DWORD PTR [ebx+0x94e48c],edx
+
+K1  term algebra - parse the stored value into an expression tree
+  stored value parsed as: (FIELD+((((ARM_RATE(b[eax*4+0x98adae], edi)+OFF_RATE(b[edx*4+0x98adad], edi))*(SITE_FACTOR(slot-4, #0, #0)+0x6))+lowbits)>>3))
+  term = mul(<ARM_RATE+OFF_RATE>, <rate>) where rate = SITE_FACTOR(slot-4, #0, #0); shifted >>3
+  ok  K1 addend = (OFF_RATE + ARM_RATE) * (SITE_FACTOR + 6) >> 3, added to the loaded field and stored back
+
+K2  the two leaves - who OFF_RATE and ARM_RATE are called with
+  call sites: 0x55798d->0x5706c0, 0x5579af->0x570670
+  0x5706c0 arg0 <- 0x557985 al,BYTE PTR [edx*4+0x98adad]  (displacement 0x98adad)
+  0x570670 arg0 <- 0x5579a7 cl,BYTE PTR [eax*4+0x98adae]  (displacement 0x98adae)
+  ok  K2 OFF_RATE <- byte[0x98ad88+0x25+52*type], ARM_RATE <- byte[0x98ad88+0x26+52*type] (one type record, both ids)
+  0x5706c0 type index: table load 0x557985 [edx*4+...], symbol coeffs {'@557976': 13} -> stride [52]
+  0x570670 type index: table load 0x5579a7 [eax*4+...], symbol coeffs {'@557998': 13} -> stride [52]
+  ok  K2 both indices measure 13*type*4 = 52*type off the SAME word load at unit+0xa (0x34 = the type-record stride)
+
+K3  the tables behind the two ratings
+  0x5706c0 (OFF): table load 0x5706c9 [eax+0x92b950], index coeffs {'m[dword ptr [ebp+0x8]]': 16} -> stride 16
+  0x570670 (ARM): table load 0x570679 [eax+0x92fd18], index coeffs {'m[dword ptr [ebp+0x8]]': 16} -> stride 16
+  ok  K3 two DIFFERENT 0x10-stride byte tables: 0x92b950 and 0x92fd18 (M356's offense / armor id tables; the NOUN is inherited, INFERRED here)
+
+K4  the sibling accumulator - what distinguishes the two summed inputs
+    0x5579f0 jg     0x5579fe
+    0x5579f2 mov    edx,DWORD PTR [ebp-0x8]
+    0x5579f5 cmp    BYTE PTR [edx+0x933289],0x2
+    0x5579fc je     0x557a3e
+    0x5579fe mov    eax,ecx
+    0x557a00 mov    ecx,DWORD PTR [ebp-0x10]
+    0x557a03 imul   eax,esi
+    0x557a06 cdq    
+    0x557a07 and    edx,0x7
+    0x557a0a add    eax,edx
+    0x557a0c mov    edx,DWORD PTR [ebx+0x94e490]
+    0x557a12 sar    eax,0x3
+    0x557a15 add    edx,eax
+    0x557a17 test   ecx,ecx
+    0x557a19 mov    DWORD PTR [ebx+0x94e490],edx
+  sibling term: imul eax,esi at 0x557a03
+  rate register ecx is the SAME (SITE_FACTOR+6); only the additive input differs:  +0x105c takes A+B, +0x1060 takes A alone
+  ok  K4 the sibling dword takes ONE of the two ratings at the same rate -> the pair (A,B) are two distinct summed inputs
+
+K5  the unit the term is charged to
+  writes of [ebp-8] in the enclosing function: 0x556c98 0x557fa5 0x558646 0x5586b1 0x558775 0x5590d9
+  def at 0x556c98 DWORD PTR [ebp-0x8],esi: esi = {'m[dword ptr [ebp-0x4]]': 52}
+  unit-relative reads inside the window: 0x557976 movsx eax,WORD PTR [eax+0x933282] 0x557998 movsx eax,WORD PTR [ecx+0x933282]
+  ok  K5 [ebp-8] = 52*unit index (the emitted 52u chain at 0x556c8d), so the type word read at [ebp-8]+0x933282 is unit[..] +0xa and the term is charged per UNIT
+
+R0  the 27 relations-dword rewrites - must-dataflow over the function CFG
+  direct stores to 0x94d448: 27
+  site    src  verdict       b15  b16   nearest linear def
+  52b9c7 edx  unknown       unk  unk  52b9c4 mov edx,DWORD PTR [ebp-0x50]
+  52b9d0 edx  unknown       unk  unk  52b9cd mov edx,DWORD PTR [ebp-0x4c]
+  551b1d edx  DROP 0x10000  in   out  551b17 and edx,0xfaeef378
+  551d22 edx  PRESERVE      in   in   551d1d or edx,ecx
+  552cca edx  PRESERVE      in   in   552cc8 and edx,ecx
+  552cd8 edx  PRESERVE      in   in   552cd6 and edx,ecx
+  552ce6 eax  PRESERVE      in   in   552ce4 or al,0x40
+  552d6f edx  PRESERVE      in   in   552d6d and edx,ecx
+  552d7d edx  PRESERVE      in   in   552d7b and edx,ecx
+  5530c3 eax  PRESERVE      in   in   5530be and eax,0xfeeffffe
+  55487f ecx  PRESERVE      in   in   554879 or ecx,0x40020
+  554d42 esi  PRESERVE      in   in   554d3c or esi,0xc0020
+  5552d3 eax  PRESERVE      in   in   5552d1 and al,0xbf
+  555394 ecx  PRESERVE      in   in   55538c and ecx,0xfffdf3ff
+  5553f3 edx  PRESERVE      in   in   5553ed or edx,0x840
+  55540a eax  PRESERVE      in   in   555405 or eax,0x20000
+  555430 eax  DROP 0x8000   out  in   55542d and ah,0x7f
+  5556eb eax  PRESERVE      in   in   5556e6 or eax,0x840
+  555758 eax  PRESERVE      in   in   555750 and eax,0x7fffffff
+  5557d9 ebx  PRESERVE      in   in   5557d3 and ebx,0xfbffffff
+  55580f eax  PRESERVE      in   in   555809 and ah,0xdf
+  5558f5 ecx  PRESERVE      in   in   5558ef and ecx,0xfbffffff
+  555a45 eax  PRESERVE      in   in   555a42 or ah,0x8
+  555a60 eax  PRESERVE      in   in   555a5d or ah,0x8
+  555a6e eax  PRESERVE      in   in   555a6b or ah,0x4
+  555f39 eax  PRESERVE      in   in   555f36 and ah,0xfd
+  555f4b edx  PRESERVE      in   in   555f48 and dh,0xfd
+  totals: 27 stores, PRESERVE 23, DROP 2, unknown 2
+  reason 52b9c7: source is stack slot slot:-0x50, written 0x52affb from the field (0x52aff5); FUN_0052a720 carries 5 INDIRECT jump-table edges, so the predecessor set is not closed and no value can be proved on every path
+  reason 52b9d0: source is stack slot slot:-0x4c, written 0x52b004 from the field (0x52affe); FUN_0052a720 carries 5 INDIRECT jump-table edges, so the predecessor set is not closed and no value can be proved on every path
+  ok  R0 25/27 resolve; the only 2 that do not are stack-slot copies whose slot is not written on every path (reason above)
+
+R1  the 14 M380 left unknown (it stopped at the first branch/call)
+  M380's 14: 14 present in the store set; now resolved 12: 552cca=PRESERVE, 552cd8=PRESERVE, 552d6f=PRESERVE, 552d7d=PRESERVE, 55540a=PRESERVE, 5556eb=PRESERVE, 555758=PRESERVE, 55580f=PRESERVE, 555a45=PRESERVE, 555a60=PRESERVE, 555a6e=PRESERVE, 555f39=PRESERVE
+  still unknown: 52b9c7, 52b9d0
+  new droppers among the 14: 0 []
+  ok  R1 12/14 resolve past the branch/call; M380's 'unknown' was a linear-walk bound, not a property of the bytes
+
+R2  rivals - each measured against the numbers above
+  S1 linear walk (M380)              killed  (leaves 14 unknown, this run leaves 2)
+  S2 stamps are erasable everywhere  killed  (2 of 27 stores provably clear a stamp bit)
+  S3 the scalar is a per-turn counter killed  (addend = (ARM_RATE+OFF_RATE) x rate, keyed by the unit's type word and 52*unit offset)
+  S4 one stat read twice             killed  (two call targets 0x5706c0 and 0x570670 into 0x92b950 / 0x92fd18)
+  S5 ah reaches bit 16               killed  (0x555430 `and ah,0x7f` clears 0x8000 only; a dword reading would also drop 0x10000)
+  ok  R2 all five rivals are killed by the printed numbers
+
+R3  digest
+  k0:70,3,5579ea
+  k1:((ARM_RATE(b[eax*4+0x98adae], edi)+OFF_RATE(b[edx*4+0x98adad], edi))*(SITE_FACTOR(slot-4, #0, #0)+0x6))
+  k2:5706c0:98adad,570670:98adae:[52]
+  k3:92b950,92fd18
+  k5:{'m[dword ptr [ebp-0x4]]': 52}
+  r0:52b9c7:unknown,52b9d0:unknown,551b1d:DROP 0x10000,551d22:PRESERVE,552cca:PRESERVE,552cd8:PRESERVE,552ce6:PRESERVE,552d6f:PRESERVE,552d7d:PRESERVE,5530c3:PRESERVE,55487f:PRESERVE,554d42:PRESERVE,5552d3:PRESERVE,555394:PRESERVE,5553f3:PRESERVE,55540a:PRESERVE,555430:DROP 0x8000,5556eb:PRESERVE,5557
+  r1:12,2
+  digest 1d419b65323aec6c
+
+PASS M383: 9/9  1d419b65323aec6c

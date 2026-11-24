@@ -726,3 +726,30 @@ PITFALLS: shard_001.c has TWO identical `for (local_c = 1; local_c < 8; ...)` he
   (2) only `and` clears bit 15 and `or` never does — an `ah` blind spot invents 3 droppers.
   (3) a linear backward walk crosses blocks; stop at a `jmp`.
 - Rotated `## M283` VERBATIM -> `docs/named-archive-m380-m283-rows.md` (sha1 `884865b3`).
+
+## Session 341-chain3 — M383: 0x94e48c is a per-UNIT (offense+armor) sum; 12 of M380's 14 rewrites resolve
+
+- **ACCEPT** `python3 -u scripts/m383_composition.py` -> **`PASS M383: 9/9`** digest
+  `1d419b65323aec6c` (`evidence/m383_composition.txt:153`); two re-runs byte-identical
+  (`evidence/m383_twice.txt:1`); `scripts/m383_mutate.py` **24/24 killed**
+  (`evidence/m383_mutate.txt:28`, 13 code mutants + 11 algorithm mutants).
+- **COMPOSITION (M380 OPEN #1 closed)**: the single ADDer 0x5579ea stores
+  `field + ((A+B)*(C+6))>>3`; the term was PARSED, not inferred: A = FUN_005706c0,
+  B = FUN_00570670, both called with `(byte[0x98ad88+0x25/0x26 + 52*type], faction)`;
+  type = word[52*unit + 0x933282] (unit array 0x933278, [ebp-8] = 52*u measured
+  13*4). C = FUN_005ac0a0(unit,0,0) = SITE_FACTOR. So the scalar is the sum over the
+  faction's units of (offense+armor rating) x a site rate — NOT a per-turn counter;
+  the sibling +0x1060 takes A alone (same rate), which is what makes A and B two
+  distinct inputs. Table bases 0x92b950/0x92fd18 + the +0x25/+0x26 fields are
+  M356's (nouns INFERRED); each indexes 16*id, negative entries falling back to a
+  faction stat (0x94dc58 x ds:0x92a2e8/ds:0x92a2dc).
+- **THE 14 (M380 OPEN #2 closed to 12/14)**: M380's walker stopped at the first
+  branch/call; a must-dataflow over the whole function CFG resolves **12 of 14 to
+  PRESERVE, 0 new droppers** (`:133`). Totals 23 PRESERVE / 2 DROP / 2 unknown; the
+  last 2 (0x52b9c7/0x52b9d0) copy stack slots -0x50/-0x4c that ARE written from the
+  field at 0x52affb/0x52b004, but FUN_0052a720 has **5 indirect jump-table edges**
+  (`jmp DWORD PTR [eax*4+0x52ba1c]` etc.), so the predecessor set is not closed.
+- **PITFALLS**: (1) cdecl — the LAST push is arg0; reversing the arg list swaps the
+  table id with the faction silently. (2) a `mov` to memory must be routed to the
+  slot store BEFORE the register-move branch, else stack slots are never tracked.
+  (3) `or r,reg` with an opaque mask PRESERVEs; "unknown" re-invents M380's bound.

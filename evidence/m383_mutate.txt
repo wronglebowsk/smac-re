@@ -1,0 +1,28 @@
+BASELINE PASS rc=0
+id    kind  gate  result   detail
+MU1   code  K0    killed   'K0 not 3 stores'
+MU2   code  K1    killed   'K1 term is not'
+MU3   code  K1    killed   'K1 term is not'
+MU4   code  K1    killed   'K1 term is not'
+MU5   code  K2    killed   'do not read the type record'
+MU6   code  K2    killed   'do not read the type record'
+MU7   code  K4    killed   'K4 the sibling accumulator does not take A alone'
+MU8   code  K5    killed   'K5 [ebp-8] is not the 52*unit'
+MU9   code  K3    killed   'does not index a 0x10-stride byte table'
+MU10  code  R0    killed   'R0 the provable droppers are not the 2'
+MU11  code  R0    killed   'R0 the unresolved set changed'
+MU12  code  R0    killed   'R0 the provable droppers are not the 2'
+MU13  code  R0    killed   'R0 the provable droppers are not the 2'
+A1    algo  K0    killed   'K0 not 3 stores'
+A2    algo  K1    killed   'K1 the stored value does not parse'
+A3    algo  K1    killed   'K1 the stored value does not parse'
+A4    algo  K1    killed   'K1 the stored value does not parse'
+A5    algo  K1    killed   'K1 term is not'
+A6    algo  K2    killed   'the type index is not 52*type'
+A7    algo  K4    killed   'K4 the sibling accumulator does not take A alone'
+A8    algo  K5    killed   'K5 [ebp-8] is not the 52*unit'
+A9    algo  R0    killed   'R0 the unresolved set changed'
+A10   algo  R1    killed   'R1 resolved'
+A11   algo  R0    killed   'R0 the provable droppers are not the 2'
+
+SUMMARY M383: 24/24 killed

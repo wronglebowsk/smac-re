@@ -923,6 +923,17 @@ ACCEPT `scripts/m314_tour_family.py` 18/18 `cf54a7ca907344c6` x2; `scripts/m314_
 - ACCEPT `PASS M332: 9/9` digest `d2691dc5abb39240` (`evidence/m332_difficulty_census.txt:110-111`); harness 20 scored + 1 NO-OP `a9a944201849d026` (`evidence/m332_mutate.txt:25`) - V
 - OPEN, now ANSWERED by `## M370`: the other writers of the 0x92bde8..0x92bf14 block (11 cells, 43 stores, 32 non-loader); 0x5f1394's semantics stay chain-2's - lead
 
+## M383 (s341-c3, 9/9) — 0x94e48c = a per-UNIT military sum; 12 of M380's 14 rewrites resolve. **`PASS M383: 9/9`** 1d419b65323aec6c (`evidence/m383_composition.txt:153`); harness 24/24 (`evidence/m383_mutate.txt:28`); re-run identical (`evidence/m383_twice.txt:1`). `:N` = acceptance-file line; NOUNS INF (s341).
+| claim | ev | conf |
+|---|---|---|
+| addend = (OFF+ARM)*(FACTOR+6)>>3 added to the field @0x5579ea; 1 ADDer of 3 stores | `:52` | V MU2-MU4 A2-A5 |
+| leaves read type rec 0x98ad88: +0x25 -> 0x92b950, +0x26 -> 0x92fd18, index 13*4 = 52*type | `:58-61` | V MU5 MU6 A6 |
+| each callee indexes a 16*id table; the bases differ | `:66` | V MU9 A6 |
+| sibling +0x1060 takes OFF alone at the same rate -> two inputs | `:86` | V MU7 A7 |
+| per UNIT: [ebp-8] = 52*u, type word at unit+0xa | `:92` | V MU8 A8 |
+| 23 PRESERVE / 2 DROP / 2 unknown of 27; unknowns = stack copies in the 5-jump-table fn | `:124-127` | V MU10-MU13 A9 A11 |
+| M380's 14: 12 resolve PRESERVE, 0 new droppers | `:132` | V MU11 A10 |
+
 ## M380 (s340-c3, 7/7) — 0x94e48c = MIGHTY/MEEK strength scalar; hub mode-3 refusal; 2/27 rel rewrites DO drop a stamp. **`PASS M380: 7/7`** `5dfd436fe4093015` (`evidence/m380_diplo_power.txt:135`), re-run same; harness 19/19 (`evidence/m380_mutate.txt:23`).
 - block+0x105c: 70 operands (67R/3W); stride 2095 dwords measured 19/19 — V MU1 MU2 MU18 (`:9`)
 - 3 writers; create/reset zero +0x1054..+0x1068/+0x1070, zeroing proved; accumulator @0x5579ea shape 7/7 — V MU3 MU15 MU16 (`:14-26`)

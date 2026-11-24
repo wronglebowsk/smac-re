@@ -45,8 +45,7 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics in `NA
   `docs/field-atlas-faction.md` (read §M297 first - the 0x94d104 phrasing is WRONG).
 - **ISOLATION (s254)**: if a fire is live (`ps` for 'bash -l' + `gh pr list` + `git status`), use `git worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
 - **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE.
-  M378 CLOSED B37's lead: 0x800 = TREATY IN FORCE, 0x20000 = an OUTSTANDING request, FUN_00552970 is no 0x800
-  setter. Next (ANALYSE, static, zero box): (a) who asks the 0xc00 cluster - the 5 field-inline tests
+  Next (ANALYSE, static, zero box): (a) who asks the 0xc00 cluster - the 5 field-inline tests
   (0x4ec9c3 0x523a7c 0x563165 0x56a8a2 0x5859ae) and the 2 register readers (0x5468c7/0x5552ff); (c) bit 13 (M373). ANSWERED: M227-M340,M344,M346 + B1-B37 + M378 (M241 FAIL 2/5 #180).
   CLOSED enumeration + pick rows + open-lead census (v..x4, B27) VERBATIM at `docs/pick-archive.md`
   §trim-s270 / §trim-s313-chain1 region-A (sha1 `8332dd50ba16`, `scripts/m333_nextprompt_trim.py --verify`).
@@ -117,3 +116,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - OPEN LEADS: bit 13's noun (M373); the 0xc00 cluster's 5 readers + 0x5468c7/0x5552ff (M378).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
 - M380 (s340-c3): 0x94e48c = MIGHTY/MEEK scalar; 2/27 rel rewrites drop a stamp; hub 3 = TREATY validator. 7/7 `5dfd436fe4093015`, 19/19 mutants.
+- M383 (s341-c3): 0x94e48c = per-unit (OFF+ARM) sum; 12/14 rewrites resolve, 2 = jump-table fn. 9/9 `1d419b65323aec6c`, 24/24.
