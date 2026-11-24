@@ -1646,14 +1646,14 @@ ACCEPT `scripts/m379_field594.py` -> **`PASS M379: 31/31`** `256603d5fb70d2ad` (
 | RETRACTION: 0x92a7fc = terminal POINTER (seed+7*0x59c), never an immediate or store | `:75-76` | V MU18 MU2 MU3 |
 | EXTENT: 8 rec = 0x2ce0 B (save x2; walks end 0x92a270 = scalar global; no rec-8 operand) => no 9th slot | `:80-83` | V MU13 MU14 MU16 MU20 |
 | OPEN: copied-record readers / split displacements not excluded | `:22-23` | OPEN |
-## M382 (s341-c2, 31/31) — the 0xc00 cluster = **15** readers, masks ⊇ {0x400,0x800}; 0x5468c7 is NOT one; 0x5552ff is the only 0x400-only reader. ACCEPT `scripts/m382_treaty_readers.py` -> **`PASS M382: 31/31`** `90cb89f84ce7feeb` (`evidence/m382_treaty_readers.txt:125`), 18 mutants (`evidence/m382_mutate.txt:23`). `:N` = evidence line.
+## M382 (s341-c2, 35/35) — the 0xc00 cluster = **15** readers (every mask meets 0xc00); 0x5468c7 is NOT one; 0x5552ff is the only 0x400-only reader. ACCEPT `scripts/m382_treaty_readers.py` -> **`PASS M382: 35/35`** `90cb89f84ce7feeb` (`evidence/m382_treaty_readers.txt:131`), 24 mutants (`evidence/m382_mutate.txt:29`). `:N` = evidence line.
 | claim | ev | conf/mutant |
 |---|---|---|
 | POPULATION 15 = 5 inline pair-tests (0x4ec9c3 0x523a7c 0x563165 0x56a8a2 0x5859ae) + 8 register + 2 that ask 0x800 alone (0x558cbd/0x56c153, 0x810) | `:9` `:22` | V MU1 MU4 MU6 MU10 MU17 |
-| masks: 0xc30 / 0x40c30 / 0xc30 / 0xc10 / 0xc11; extras {0x30,0x40030,0x10,0x11} are per-caller | `:46` | V MU2 MU3 MU5 |
-| RETRACTION: 0x5468c7 asks bits **2|16** (`test al,0x4`, `test eax,0x10000` -> at-war flag); the cluster reader in FUN_00546800 is 0x546cde (`ah,0x8`) | `:33` | V MU8 |
-| register readers: 144 loads def-use walked -> 8 (0x503727 0x546cde 0x5552ff 0x5567bb 0x558b9d 0x559d04 0x560b77 0x56b652) | `:22` | V MU7 MU9 MU11 MU13 |
-| 0x5552ff = lone 0x400-only -> gates M378's proposal roll; 0x560b77 = lone 0xc00-only | `:22` `:46` | V MU7 MU9 |
-| the ask: `(pair & mask) != 0` = an accord standing -> veto hostile action (0x4ec9c3 -> 0x4ed94e; 0x5859ae -> 0x58a748) or cooperative selector (0x563165, 0x56a8a2, 0x523a7c) | `:68` | V MU16 (polarity table) / INF for the action nouns |
-| hosts: 5 functions, AI hub FUN_0055f650 holds 5 of 15; 2095-fold (stride 0x20bc) at all 5 inline sites | `:101` `:94` | V MU12 MU14 MU15 |
-| OPEN: 9 dynamic-mask inline sites (`test [mem],reg`) unread; register-through-copy / stack-copy readers unwalked | `:9` | OPEN |
+| paired inline masks: 0xc30 / 0x40c30 / 0xc30 / 0xc10 / 0xc11 — all five ⊇ {0x400,0x800}; extras {0x30,0x40030,0x10,0x11} per-caller | `:51` | V MU2 MU3 MU5 |
+| RETRACTION: 0x5468c7 asks bits **2|16** (`test al,0x4`, `test eax,0x10000` -> at-war flag); the cluster reader in FUN_00546800 is 0x546cde (`ah,0x8`) | `:35` | V MU8 |
+| register readers: 144 loads scanned (bounded 8-insn, stops on a write to the base) -> 8 (0x503727 0x546cde 0x5552ff 0x5567bb 0x558b9d 0x559d04 0x560b77 0x56b652) | `:22` | V MU7 MU9 MU11 MU13 |
+| 0x5552ff = lone 0x400-only -> gates M378's proposal roll; 0x560b77 = lone 0xc00-only | `:22` `:46` | V MU7 MU9 MU22 |
+| the ask: `(pair & mask) != 0` = an accord standing -> veto hostile action (0x4ec9c3 -> 0x4ed94e; 0x5859ae -> 0x587078) or cooperative selector (0x563165, 0x56a8a2, 0x523a7c) | `:75` | V MU16 MU23 MU11 / INF for the action nouns |
+| hosts: the 15 span 8 functions (5 for the named 6); AI hub FUN_0055f650 holds 5 of 15; 2095-fold proved at all 5 inline sites (seed mov + register used as the index) | `:107` `:100` | V MU12 MU14 MU15 MU19 |
+| OPEN: 9 dynamic-mask inline sites (`test [mem],reg`) unread; register-through-copy / stack-copy readers and uses beyond the 8-insn window unwalked | `:9` | OPEN |

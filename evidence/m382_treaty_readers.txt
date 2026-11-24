@@ -28,7 +28,9 @@ G2  loaded-register readers: 144 loads test the dword, 8 meet 0xc00
   load 0x559cfd   test 0x559d04   mask=0xc10    test   eax,0xc10
   load 0x560b71   test 0x560b77   mask=0xc00    test   ah,0xc
   load 0x56b64c   test 0x56b652   mask=0xc10    test   ecx,0xc10
+  ok   G2 loads scanned 144 — 144
   ok   G2 register readers 8 — 8
+  (scan: 8-instruction bounded, stops on any write to the base register — a HEURISTIC, not full def-use)
 
 G3  shortlist classification (7 named)
   0x4ec9c3   CLUSTER mask=0xc30    test   DWORD PTR [edx*4+0x94d448],0xc30
@@ -39,7 +41,10 @@ G3  shortlist classification (7 named)
   0x5468c7   NOT-0xc00  test   al,0x4 / je     0x5468d9
   0x5552ff   CLUSTER mask=0x400    test   ah,0x4
   ok   G3 six of seven are cluster readers — 6
+  0x5468c7 gate: test   al,0x4 / test   eax,0x10000
   ok   G3 0x5468c7 asks bits 2|16 otherwise
+  ok   G3 0x5468c7 tests al,0x4 (bit 2) — test   al,0x4
+  ok   G3 0x5468c7 then tests eax,0x10000 (bit 16) — test   eax,0x10000
   ok   G3 0x5552ff is the sole 0x400-only reader — ('CLUSTER', 1024)
   ok   G3 cluster total 15 — 15
 
@@ -64,8 +69,10 @@ G4  mask algebra
   ok   G4 paired-mask extras are 0x10|0x11|0x30|0x40030 — ['0x10', '0x11', '0x30', '0x40030']
   ok   G4 inline masks equal the pinned per-site table — {'0x4ec9c3': '0xc30', '0x523a7c': '0x40c30', '0x558cbd': '0x810', '0x563165': '0xc30', '0x56a8a2': '0xc10', '0x56c153': '0x810', '0x5859ae': '0xc11'}
   ok   G4 register masks equal the pinned per-site table — {'0x503727': '0x800', '0x546cde': '0x800', '0x5552ff': '0x400', '0x5567bb': '0xc10', '0x558b9d': '0xc14', '0x559d04': '0xc10', '0x560b77': '0xc00', '0x56b652': '0xc10'}
+  ok   G4 exactly one reader asks 0x400 alone (0x5552ff) — ['0x503727', '0x546cde', '0x5552ff', '0x5567bb', '0x558b9d', '0x559d04', '0x560b77', '0x56b652']
+  ok   G4 exactly one reader asks 0xc00 alone (0x560b77) — ['0x503727', '0x546cde', '0x5552ff', '0x5567bb', '0x558b9d', '0x559d04', '0x560b77', '0x56b652']
 
-G5  branch polarity (accord -> ?)
+G5  branch polarity (accord -> ?)  [jcc must be the branch of THAT test]
   0x4ec9c3   jne  0x4ed94e   accord TAKES the branch
   0x503727   je   0x5037f0   accord FALLS THROUGH
   0x523a7c   je   0x523b11   accord FALLS THROUGH
@@ -81,9 +88,8 @@ G5  branch polarity (accord -> ?)
   0x56b652   jne  0x56b6b5   accord TAKES the branch
   0x56c153   je   0x56c696   accord FALLS THROUGH
   0x5859ae   je   0x587078   accord FALLS THROUGH
-  ok   G5 all 15 sites carry a jcc — 15
+  ok   G5 all 15 sites' jcc is the instruction right after the test
   ok   G5 polarity equals the pinned per-site table — {'0x4ec9c3': True, '0x503727': False, '0x523a7c': False, '0x546cde': True, '0x5552ff': False, '0x5567bb': False, '0x558b9d': False, '0x558cbd': False, '0x559d04': True, '0x560b77': True, '0x563165': False, '0x56a8a2': False, '0x56b652': True, '0x56c153': False, '0x5859ae': False}
-  ok   G5 five inline sites guard by jne/je on the same word
 
 G6  near misses
   0x558cbd   mask=0x810  asks 0x800 alone
@@ -93,7 +99,7 @@ G6  near misses
 
 G7  rivals
   ok   R1 'the cluster is one bit' — refuted: masks include 0x400 alone at 0x5552ff
-  ok   R2 '0x94d448 is the faction record base' — refuted: each inline site folds 2095*(owner)+other — [2095, 2095, 2095, 2095, 2095]
+  ok   R2 each inline site folds 2095*owner+other AND indexes the field with that register — [(2095, 'edx'), (2095, 'ecx'), (2095, 'edi'), (2095, 'edi'), (2095, 'ecx')]
   ok   R3 '0x5468c7 asks 0xc00' — refuted: it asks 0x4 and 0x10000
   ok   R4 'every reader is field-inline' — refuted: 8 register readers
   ok   R5 'the seven named are the population' — refuted: 15 readers, 6 named
@@ -116,10 +122,10 @@ G9  function attribution (index.csv: 10284 functions)
   0x5859ae   FUN_00585720
   ok   G9 five distinct host functions for the 6 named cluster sites — ['FUN_004ebef0', 'FUN_00523a20', 'FUN_005551e0', 'FUN_0055f650', 'FUN_00585720']
   ok   G9 every named site sits in its pinned function
+  ok   G9 the 15 readers span 8 host functions — ['FUN_004ebef0', 'FUN_00502cd0', 'FUN_00523a20', 'FUN_00546800', 'FUN_005551e0', 'FUN_00556690', 'FUN_0055f650', 'FUN_00585720']
   ok   G9 the AI hub FUN_0055f650 hosts five readers — 5
 
 G8  digest of 15 (site,target,mnemonic) rows = 90cb89f84ce7feeb
-  ok   G8 digest stable across two computations — 90cb89f84ce7feeb vs 90cb89f84ce7feeb
-  ok   G8 digest pinned — 90cb89f84ce7feeb
+  ok   G8 digest pinned (whole printed table; re-run identity is evidence/m382_twice.txt) — 90cb89f84ce7feeb
 
-PASS M382: 31/31
+PASS M382: 35/35

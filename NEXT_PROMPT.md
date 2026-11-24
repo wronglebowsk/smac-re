@@ -117,4 +117,4 @@ Results: `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`
 - OPEN LEADS: bit 13's noun (M373); the 0xc00 cluster's 5 readers + 0x5468c7/0x5552ff (M378).
 - M379 (s340-c2): +0x594 = 2 AI readers; M376 8th write RETRACTED (7 bodies; 0x92a7fc = terminal). 31/31.
 - M380 (s340-c3): 0x94e48c = MIGHTY/MEEK scalar; 2/27 rel rewrites drop a stamp; hub 3 = TREATY validator. 7/7 `5dfd436fe4093015`, 19/19 mutants.
-- M382 (s341-c2): the 0xc00 cluster = 15 readers (5 inline 0xc00-paired + 8 register + 2 at 0x810); **0x5468c7 is NOT one** (bits 2|16); 0x5552ff = lone 0x400-only. 31/31 `90cb89f84ce7feeb`. Next: who SETS 0x400.
+- M382 (s341-c2): the 0xc00 cluster = 15 readers (5 inline 0xc00-paired + 8 register + 2 at 0x810); **0x5468c7 is NOT one** (bits 2|16); 0x5552ff = lone 0x400-only. 35/35 `90cb89f84ce7feeb`. Next: who SETS 0x400.

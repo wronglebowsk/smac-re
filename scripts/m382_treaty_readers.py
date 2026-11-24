@@ -129,43 +129,47 @@ def census_register(ins):
                 bb, mask = effective_mask(tm.group(1), int(tm.group(2), 16))
                 out.append((a, a2, mask, b2))
                 break
-            mw = re.match(r"mov\s+(\w+),", b2)
+            mw = re.match(r"(?:mov|or|xor|add|sub|and|lea|imul|pop|inc|dec)\s+(\w+),", b2)
             if mw and PART.get(mw.group(1), ("", 0, 0))[0] == base:
                 break
     return out
 
 
 def fold_2095(ins, site):
-    """Recognise the 2095-fold: shl A,6 / add A,B / lea C,[B+A*2] / shl C,4 / sub C,B.
+    """Prove the 2095-fold and that it is the index the site actually uses.
 
-    Returns the multiplier the sequence computes, or None.
+    The sequence is `mov A,B / shl A,6 / add A,B / lea C,[B+A*2] / shl C,4 / sub C,B`,
+    which computes B*((2^(s1+1)+3)*2^s2 - 1).  The seed `mov A,B` is REQUIRED (without it
+    the coefficient of A and B differ); the result is accepted only if the site's memory
+    operand is `[C*4+0x94d448]`.  Returns (coefficient, C) or None.
     """
     k = [i for i, (x, b) in enumerate(ins) if x == site][0]
-    S = r"shl\s+(\w+),0x6$"
-    for i in range(max(0, k - 14), k):
-        m = re.match(S, ins[i][1])
+    for i in range(max(1, k - 14), k):
+        m = re.match(r"shl\s+(\w+),0x6$", ins[i][1])
         if not m:
             continue
         A = m.group(1)
         if i + 4 >= len(ins):
             continue
+        seed = re.match(r"mov\s+(\w+),(\w+)$", ins[i - 1][1])
         m1 = re.match(r"add\s+(\w+),(\w+)$", ins[i + 1][1])
         m2 = re.match(r"lea\s+(\w+),\[(\w+)\+(\w+)\*2\]$", ins[i + 2][1])
         m3 = re.match(r"shl\s+(\w+),0x4$", ins[i + 3][1])
         m4 = re.match(r"sub\s+(\w+),(\w+)$", ins[i + 4][1])
-        if not (m1 and m2 and m3 and m4):
+        if not (seed and m1 and m2 and m3 and m4):
             continue
-        B = m1.group(2)
-        if m1.group(1) != A or m2.group(3) != A or m2.group(2) != B \
-                or m4.group(1) != m3.group(1) or m4.group(2) != B:
+        B = seed.group(2)
+        C = m3.group(1)
+        if seed.group(1) != A or m1.group(1) != A or m1.group(2) != B \
+                or m2.group(3) != A or m2.group(2) != B or m4.group(1) != C or m4.group(2) != B:
+            continue
+        used = ins[k][1]
+        if ("[%s*4+0x94d448]" % C) not in used:
             continue
         s1 = int(re.search(r",0x([0-9a-f]+)$", ins[i][1]).group(1), 16)
         sc = int(re.search(r"\*\s*(\d+)\]$", ins[i + 2][1]).group(1))
         s2 = int(re.search(r",0x([0-9a-f]+)$", ins[i + 3][1]).group(1), 16)
-        v = (2 ** s1) + 1
-        v = v * sc + 1
-        v = v * (2 ** s2) - 1
-        return v
+        return (((2 ** s1) + 1) * sc + 1) * (2 ** s2) - 1, C
     return None
 
 
@@ -203,7 +207,9 @@ def main():
     print("\nG2  loaded-register readers: %d loads test the dword, %d meet 0x%x" % (len(reg), len(rhit), CORE))
     for l, t, m, b in rhit:
         print("  load 0x%-8x test 0x%-8x mask=0x%-6x %s" % (l, t, m, b))
+    check("G2 loads scanned 144", len(reg) == 144, str(len(reg)))
     check("G2 register readers 8", len(rhit) == 8, str(len(rhit)))
+    print("  (scan: 8-instruction bounded, stops on any write to the base register — a HEURISTIC, not full def-use)")
 
     # ---------------- G3 shortlist ----------------------------------------
     cluster = set(a for a, m, b in hit if m & CORE) | set(t for l, t, m, b in rhit)
@@ -223,7 +229,13 @@ def main():
             named[a] = ("OTHER", 0)
     in_short = sum(1 for a in SHORT if named[a][0] == "CLUSTER")
     check("G3 six of seven are cluster readers", in_short == 6, str(in_short))
+    k7 = [i for i, (x, b) in enumerate(ins) if x == 0x5468C7][0]
+    t1 = ins[k7][1]
+    t2 = next(b for x, b in ins[k7 + 1:k7 + 4] if b.startswith("test"))
+    print("  0x5468c7 gate: %s / %s" % (t1, t2))
     check("G3 0x5468c7 asks bits 2|16 otherwise", named[0x5468C7] == ("OTHER", 0))
+    check("G3 0x5468c7 tests al,0x4 (bit 2)", t1 == "test   al,0x4", t1)
+    check("G3 0x5468c7 then tests eax,0x10000 (bit 16)", t2 == "test   eax,0x10000", t2)
     check("G3 0x5552ff is the sole 0x400-only reader", named[0x5552FF] == ("CLUSTER", 0x400),
           str(named[0x5552FF]))
     check("G3 cluster total 15", len(cluster) == 15, str(len(cluster)))
@@ -254,23 +266,33 @@ def main():
     got_reg = {t: m for l, t, m, b in rhit}
     check("G4 register masks equal the pinned per-site table", got_reg == reg_pin,
           str({hex(k): hex(v) for k, v in got_reg.items()}))
+    all_masks = list(got_inline.values()) + list(got_reg.values())
+    check("G4 exactly one reader asks 0x400 alone (0x5552ff)",
+          [a for a in got_reg if got_reg[a] == 0x400] == [0x5552FF], str([hex(a) for a in got_reg]))
+    check("G4 exactly one reader asks 0xc00 alone (0x560b77)",
+          [a for a in got_reg if got_reg[a] == 0xC00] == [0x560B77], str([hex(a) for a in got_reg]))
 
     # ---------------- G5 polarity -----------------------------------------
-    print("\nG5  branch polarity (accord -> ?)")
+    print("\nG5  branch polarity (accord -> ?)  [jcc must be the branch of THAT test]")
     pol = {}
     for a in sorted(cluster):
-        k = [i for i, (x, b) in enumerate(ins) if x == a][0]
-        j = k + 1
-        while j < len(ins) and not re.match(r"j\w+\s+0x", ins[j][1]):
-            j += 1
-        mn, tgt = ins[j][1].split()[0], int(ins[j][1].split()[1], 16)
-        # jne/ja => nonzero takes the branch; je/jz => zero takes it
+        if a in got_inline:
+            k = [i for i, (x, b) in enumerate(ins) if x == a][0]
+        else:
+            k = [i for i, (x, b) in enumerate(ins) if x == a][0] + 0   # register: site IS the test
+        nxt = ins[k + 1][1]
+        jm = re.match(r"(j\w+)\s+0x([0-9a-f]+)$", nxt)
+        ok_adj = bool(jm)
+        mn, tgt = (jm.group(1), int(jm.group(2), 16)) if jm else ("NONE", 0)
         nz_taken = mn.startswith("jn") or mn in ("ja", "jb", "jg", "jl")
         if ALGO == 15:                       # law mutant: polarity read backwards
             nz_taken = not nz_taken
         pol[a] = (mn, tgt, nz_taken)
-        print("  0x%-8x %-4s 0x%-8x accord %s" % (a, mn, tgt, "TAKES the branch" if nz_taken else "FALLS THROUGH"))
-    check("G5 all 15 sites carry a jcc", len(pol) == 15, str(len(pol)))
+        print("  0x%-8x %-4s 0x%-8x accord %s%s" % (a, mn, tgt,
+              "TAKES the branch" if nz_taken else "FALLS THROUGH",
+              "" if ok_adj else "   <-- NOT ADJACENT"))
+    check("G5 all 15 sites' jcc is the instruction right after the test", len(pol) == 15 and
+          all(re.match(r"j\w+$", v[0]) for v in pol.values()))
     pol_pin = {0x4EC9C3: True, 0x503727: False, 0x523A7C: False, 0x546CDE: True,
                0x5552FF: False, 0x5567BB: False, 0x558B9D: False, 0x558CBD: False,
                0x559D04: True, 0x560B77: True, 0x563165: False, 0x56A8A2: False,
@@ -278,8 +300,6 @@ def main():
     check("G5 polarity equals the pinned per-site table",
           {a: v[2] for a, v in pol.items()} == pol_pin,
           str({hex(a): v[2] for a, v in pol.items()}))
-    check("G5 five inline sites guard by jne/je on the same word",
-          all(pol[a][0] in ("jne", "je") for a in SHORT if a in pol))
 
     # ---------------- G6 near misses --------------------------------------
     print("\nG6  near misses")
@@ -298,8 +318,9 @@ def main():
           any(m == 0x400 for l, t, m, b in rhit))
     paired_sites = [x for x, m, b in hit if (m & CORE) == CORE]
     folds = [fold_2095(ins, x) for x in paired_sites]
-    check("R2 '0x94d448 is the faction record base' — refuted: each inline site folds 2095*(owner)+other",
-          folds == [2095] * 5, str(folds))
+    check("R2 each inline site folds 2095*owner+other AND indexes the field with that register",
+          len(folds) == 5 and all(f is not None and f[0] == 2095 for f in folds),
+          str([(f[0], f[1]) if f else None for f in folds]))
     check("R3 '0x5468c7 asks 0xc00' — refuted: it asks 0x4 and 0x10000",
           named[0x5468C7] == ("OTHER", 0))
     check("R4 'every reader is field-inline' — refuted: 8 register readers",
@@ -342,6 +363,9 @@ def main():
           str(sorted(x for x in {attr[a] for a in SHORT if a in cluster} if x)))
     check("G9 every named site sits in its pinned function",
           all(attr.get(a) == n for a, n in want.items() if a in attr))
+    check("G9 the 15 readers span 8 host functions",
+          len({attr[a] for a in cluster}) == 8,
+          str(sorted({attr[a] for a in cluster})))
     check("G9 the AI hub FUN_0055f650 hosts five readers",
           sum(1 for a in cluster if attr[a] == "FUN_0055f650") == 5,
           str(sum(1 for a in cluster if attr[a] == "FUN_0055f650")))
@@ -350,10 +374,9 @@ def main():
     rows = ["0x%x:0x%x:%s" % (a, pol[a][1], pol[a][0]) for a in sorted(pol)]
     body = "\n".join(rows)
     d1 = hashlib.sha1(body.encode()).hexdigest()[:16]
-    d2 = hashlib.sha1("\n".join(rows).encode()).hexdigest()[:16]
     print("\nG8  digest of 15 (site,target,mnemonic) rows = %s" % d1)
-    check("G8 digest stable across two computations", d1 == d2, d1 + " vs " + d2)
-    check("G8 digest pinned", d1 == DIGEST_PIN, d1)
+    check("G8 digest pinned (whole printed table; re-run identity is evidence/m382_twice.txt)",
+          d1 == DIGEST_PIN, d1)
 
     print("\n%s M382: %d/%d" % ("PASS" if not FAILS else "FAIL", TOTAL[0] - len(FAILS), TOTAL[0]))
     if FAILS:

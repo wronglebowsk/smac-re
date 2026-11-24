@@ -49,6 +49,17 @@ MUTANTS = [
      {"M382_PATCH": "0x523a87|jne    0x523b11"}, "G8 digest pinned"),
     ("MU17", "G6 the 0x810-only sites are not 0xc00",
      {"M382_PATCH": "0x558cbd|test   DWORD PTR [edx*4+0x94d448],0xc10"}, "G6 two 0x810-only"),
+    ("MU19", "R2 the fold's seed mov A,B", {"M382_PATCH": "0x4ec9b2|mov    ecx,esi"}, "R2"),
+    ("MU20", "G3 0x5468c7's first test is bit 2", {"M382_PATCH": "0x5468c7|test   al,0x8"},
+     "G3 0x5468c7 tests al,0x4"),
+    ("MU21", "G3 0x5468c7's second test is bit 16", {"M382_PATCH": "0x5468cb|test   eax,0x20000"},
+     "G3 0x5468c7 then tests eax,0x10000"),
+    ("MU22", "G4 one reader asks 0x400 alone", {"M382_PATCH": "0x560b77|test   ah,0x4"},
+     "G4 exactly one reader asks 0x400 alone"),
+    ("MU23", "G5 the jcc is adjacent to its test", {"M382_PATCH": "0x523a87|nop"},
+     "G5 all 15 sites' jcc"),
+    ("MU24", "G2 load count 144", {"M382_PATCH": "0x546cd8|mov    eax,DWORD PTR [ecx+0x94d44c]"},
+     "G2 loads scanned 144"),
     ("MU18", "G1 nine dynamic-mask inline sites",
      {"M382_PATCH": "0x4db0f0|test   DWORD PTR [edx*4+0x94d448],edi"}, "G1 dynamic-mask inline sites 9"),
 ]
@@ -69,14 +80,14 @@ def main():
     rows = []
     for mid, claim, env, want in MUTANTS:
         rc, out = run(env)
-        ok = rc != 0 and want in out
+        ok = rc != 0 and want in out and "Traceback" not in out
         line = out.strip().splitlines()[-1] if out.strip() else ""
         rows.append((mid, "KILL" if ok else "SURVIVED", claim, line[:70]))
         print("  %-5s %-8s %-58s %s" % (mid, "KILL" if ok else "SURVIVED", claim[:58], line[:70]))
         killed += ok
     base_rc, base_out = run({})
-    base_ok = base_rc == 0 and "PASS M382: 31/31" in base_out
-    print("\n  baseline %s" % ("PASS (31/31)" if base_ok else "BROKEN"))
+    base_ok = base_rc == 0 and "PASS M382: 35/35" in base_out
+    print("\n  baseline %s" % ("PASS (35/35)" if base_ok else "BROKEN"))
     print("\n%s M382 harness: %d/%d killed, baseline %s"
           % ("PASS" if killed == len(MUTANTS) and base_ok else "FAIL",
              killed, len(MUTANTS), "green" if base_ok else "red"))

@@ -1,4 +1,4 @@
-M382 mutants — 18 claims
+M382 mutants — 24 claims
   MU1   KILL     G1/G4 0x4ec9c3 asks 0xc30                                  failing: G1 five 0xc00-paired sites, G4 inline masks equal the pinned 
   MU2   KILL     G4 0x523a7c's extra 0x40000                                failing: G4 paired-mask extras are 0x10|0x11|0x30|0x40030, G4 inline m
   MU3   KILL     G4 0x563165's extra 0x20                                   failing: G4 inline masks equal the pinned per-site table
@@ -12,12 +12,18 @@ M382 mutants — 18 claims
   MU11  KILL     G5 polarity law: je falls through on zero (algorithm)      failing: G5 polarity equals the pinned per-site table
   MU12  KILL     G9 attribution law: the containing range is inclusive-left failing: G9 every named site sits in its pinned function, G9 the AI hu
   MU13  KILL     G0 the field-ref count is 653 not 658 (algorithm)          failing: G0 field refs 653
-  MU14  KILL     R2 the 2095 fold (0x4ec9c3)                                failing: R2 '0x94d448 is the faction record base' — refuted: each inli
-  MU15  KILL     R2 the 2095 fold (0x563165)                                failing: R2 '0x94d448 is the faction record base' — refuted: each inli
+  MU14  KILL     R2 the 2095 fold (0x4ec9c3)                                failing: R2 each inline site folds 2095*owner+other AND indexes the fi
+  MU15  KILL     R2 the 2095 fold (0x563165)                                failing: R2 each inline site folds 2095*owner+other AND indexes the fi
   MU16  KILL     G5/G8 branch polarity is part of the table                 failing: G5 polarity equals the pinned per-site table, G8 digest pinne
   MU17  KILL     G6 the 0x810-only sites are not 0xc00                      failing: G1 five 0xc00-paired sites, G4 inline masks equal the pinned 
+  MU19  KILL     R2 the fold's seed mov A,B                                 failing: R2 each inline site folds 2095*owner+other AND indexes the fi
+  MU20  KILL     G3 0x5468c7's first test is bit 2                          failing: G3 0x5468c7 tests al,0x4 (bit 2)
+  MU21  KILL     G3 0x5468c7's second test is bit 16                        failing: G3 0x5468c7 then tests eax,0x10000 (bit 16)
+  MU22  KILL     G4 one reader asks 0x400 alone                             failing: G4 register readers may ask one bit alone, G4 register masks 
+  MU23  KILL     G5 the jcc is adjacent to its test                         failing: G5 all 15 sites' jcc is the instruction right after the test,
+  MU24  KILL     G2 load count 144                                          failing: G0 field refs 653, G2 loads scanned 144, G2 register readers 
   MU18  KILL     G1 nine dynamic-mask inline sites                          failing: G1 inline immediate-mask total 36, G1 dynamic-mask inline sit
 
-  baseline PASS (31/31)
+  baseline PASS (35/35)
 
-PASS M382 harness: 18/18 killed, baseline green
+PASS M382 harness: 24/24 killed, baseline green
