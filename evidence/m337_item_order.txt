@@ -1,0 +1,91 @@
+M337 — the item table's runtime row order (static, zero box)
+exe=terran.exe alpha=alpha.txt
+VIEW 0x984d48 = record field +0x10 of the array at 0x984d38 (stride 0x30)
+LOADER 0x57a7ef-0x57a899: push "FACILITIES" -> INI open; cursor esi = record+0xc
+  start 0x984d74 (rec 1)  branch 0x985494 (rec 39)  end 0x985ac4 (rec 72)
+
+rec  alpha_ln  name                             cost upk tech      nf
+  0      - <placeholder: this loop never writes record 0>    -   - -         -
+  1    591 Headquarters                        5   0 None      6
+  2    592 Children's Creche                   5   1 EthCalc   6
+  3    593 Recycling Tanks                     4   0 Biogen    6
+  4    594 Perimeter Defense                   5   0 DocLoy    6
+  5    595 Tachyon Field                      12   2 ProbMec   6
+  6    596 Recreation Commons                  4   1 Psych     6
+  7    597 Energy Bank                         8   1 IndEcon   6
+  8    598 Network Node                        8   1 InfNet    6
+  9    599 Biology Lab                         6   1 CentEmp   6
+ 10    600 Skunkworks                          6   1 Subat     6
+ 11    601 Hologram Theatre                    6   3 PlaNets   6
+ 12    602 Paradise Garden                    12   4 SentEco   6
+ 13    603 Tree Farm                          12   3 EnvEcon   6
+ 14    604 Hybrid Forest                      24   4 PlaEcon   6
+ 15    605 Fusion Lab                         12   3 Fusion    6
+ 16    606 Quantum Lab                        24   4 Quantum   6
+ 17    607 Research Hospital                  12   3 Gene      6
+ 18    608 Nanohospital                       24   4 HomoSup   6
+ 19    609 Robotic Assembly Plant             20   4 IndRob    6
+ 20    610 Nanoreplicator                     32   6 NanEdit   6
+ 21    611 Quantum Converter                  20   5 QuanMac   6
+ 22    612 Genejack Factory                   10   2 Viral     6
+ 23    613 Punishment Sphere                  10   2 MilAlg    6
+ 24    614 Hab Complex                         8   2 IndAuto   6
+ 25    615 Habitation Dome                    16   4 Solids    6
+ 26    616 Pressure Dome                       8   0 DocFlex   6
+ 27    617 Command Center                      4   1 Mobile    6
+ 28    618 Naval Yard                          8   2 DocInit   7
+ 29    619 Aerospace Complex                   8   2 DocAir    7
+ 30    620 Bioenhancement Center              10   2 Neural    6
+ 31    621 Centauri Preserve                  10   2 CentMed   6
+ 32    622 Temple of Planet                   20   3 AlphCen   6
+ 33    623 Psi Gate                           10   2 Matter    6
+ 34    624 Sky Hydroponics Lab                12   0 Orbital   6
+ 35    625 Nessus Mining Station              12   0 HAL9000   6
+ 36    626 Orbital Power Transmitter          12   0 Space     6
+ 37    627 Orbital Defense Pod                12   0 HAL9000   6
+ 38    628 Stockpile Energy                    0   0 None      6
+ 39    629 The Human Genome Project           20   0 Biogen   11
+ 40    630 The Command Nexus                  20   0 DocLoy   11
+ 41    631 The Weather Paradigm               20   0 Ecology  11
+ 42    632 The Merchant Exchange              20   0 Indust   11
+ 43    633 The Empath Guild                   20   0 CentEmp  11
+ 44    634 The Citizens' Defense Force        30   0 Integ    11
+ 45    635 The Virtual World                  30   0 PlaNets  11
+ 46    636 The Planetary Transit System       30   0 IndAuto  11
+ 47    637 The Xenoempathy Dome               30   0 CentMed  11
+ 48    638 The Neural Amplifier               30   0 Neural   11
+ 49    639 The Maritime Control Center        30   0 DocInit   6
+ 50    640 The Planetary Datalinks            30   0 Cyber    11
+ 51    641 The Supercollider                  30   0 E=Mc2    11
+ 52    642 The Ascetic Virtues                30   0 PlaEcon   6
+ 53    643 The Longevity Vaccine              30   0 BioEng   11
+ 54    644 The Hunter-Seeker Algorithm        30   0 Algor    11
+ 55    645 The Pholus Mutagen                 40   0 CentGen   6
+ 56    646 The Cyborg Factory                 40   0 MindMac  11
+ 57    647 The Theory of Everything           40   0 Unified  11
+ 58    648 The Dream Twister                  40   0 WillPow  11
+ 59    649 The Universal Translator           40   0 HomoSup  11
+ 60    650 The Network Backbone               40   0 DigSent  11
+ 61    651 The Nano Factory                   40   0 IndRob    6
+ 62    652 The Living Refinery                40   0 Space    11
+ 63    653 The Cloning Vats                   50   0 BioMac   11
+ 64    654 The Self-Aware Colony              50   0 HAL9000   6
+ 65    655 Clinical Immortality               50   0 NanEdit  11
+ 66    656 The Space Elevator                 50   0 Solids   11
+ 67    657 The Singularity Inductor           60   0 ConSing  11
+ 68    658 The Bulk Matter Transmitter        60   0 Matter   11
+ 69    659 The Telepathic Matrix              60   0 Eudaim    6
+ 70    660 The Voice of Planet                60   0 Thresh   11
+ 71    661 The Ascent to Transcendence       200   0 Thresh   11
+
+PASS G1 loader opens the FACILITIES section and steps 0x30 section=FACILITIES @0x691ccc stride=0x30 back-edge-jl
+PASS G2 window: records 1..71 written, branch at 39, end at 72 start=rec1 branch=rec39 end=rec72 iterations=71
+PASS G3 alpha row count == loop iterations == 71 rows=71 census={"6": 42, "7": 2, "11": 27}
+PASS G4 the 6-vs-11 token branch pins record i == alpha row i-1 alpha first >7-token row=38 (The Human Genome Project, alpha.txt:629) -> record 39; short rows before=38/38, 11-token rows at/after=27/33 (6 later rows carry a ';' comment, so their tails are text-only)
+PASS G5 one advancing token cursor => store order == column order converters->0x5ea985; stores +0x00,+0x0c,+0x10,+0x14,+0x18,+0x04; trailing read order +0x1c,+0x2c,+0x24,+0x28,+0x20
+PASS G6 the 0x984d48 view is the array's +0x10 dword +0x10 field; fold = 48*idx + 0x984d48; int2 stored to rec+0x10
+PASS G7 rival row-order models fail on the printed numbers 5 rivals refuted: R1-array-is-39: loader end = record 72, not 39 | R2-projects-elsewhere: the same loop writes the 5 project-only fields for records >=39 (5/5 stores) | R3-cost-sorted: cost inversions in file order: 13 (first costs [5, 5, 4, 5, 12, 4, 8, 8, 6, 6]) | R4-starts-at-record-0: cursor starts at record 1 (+0x3c from base) | R5-trailing-monotone: trailing store order 0x10,0x20,0x18,0x1c,0x14 is not monotone
+PASS G8 two passes give the pinned table digest table digest 39d82f0771690e15e5d9e3828f7b5cc000fd1c68 (x2)
+
+table digest 39d82f0771690e15e5d9e3828f7b5cc000fd1c68
+PASS M337: 8/8 gates

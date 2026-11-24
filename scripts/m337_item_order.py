@@ -130,18 +130,18 @@ def main():
     rows = parse_alpha(alpha_path)
     gates, results = {}, {}
 
-    def gate(name, fn):
+    def gate(gid, label, fn):
         try:
             num = fn()
-            gates[name] = "PASS"
-            results[name] = num
+            gates[gid] = "PASS"
+            results[gid] = num
             if not as_json:
-                print("PASS %s %s" % (name, num))
+                print("PASS %s %s %s" % (gid, label, num))
         except AssertionError as e:
-            gates[name] = "FAIL"
-            results[name] = str(e)
+            gates[gid] = "FAIL"
+            results[gid] = str(e)
             if not as_json:
-                print("FAIL %s %s" % (name, e))
+                print("FAIL %s %s %s" % (gid, label, e))
 
     def bytes_at(site):
         va, want = SITES[site]
@@ -193,7 +193,7 @@ def main():
         _, wb, gb = bytes_at("back_edge")
         assert gb.hex(" ") == wb, "back edge moved"
         return "section=%s @0x%x stride=0x%x back-edge-jl" % (name, sec_va, STRIDE)
-    gate("G1 loader opens the FACILITIES section and steps 0x30", g1)
+    gate("G1", "loader opens the FACILITIES section and steps 0x30", g1)
 
     # ---- G2: the window arithmetic (base is the recorded array base, not re-derived) ----
     def g2():
@@ -212,7 +212,7 @@ def main():
         assert iters == 71, "loop writes %d records" % iters
         return "start=rec%d branch=rec%d end=rec%d iterations=%d" % (
             rec["start"], rec["branch"], rec["end"], iters)
-    gate("G2 window: records 1..71 written, branch at 39, end at 72", g2)
+    gate("G2", "window: records 1..71 written, branch at 39, end at 72", g2)
 
     # ---- G3: alpha has exactly as many rows as the loop writes ----
     def g3():
@@ -233,7 +233,7 @@ def main():
             assert ref == mine, "in-tree parse differs from data/alpha.json on %d rows" % sum(
                 1 for a, b in zip(ref, mine) if a != b)
         return "rows=%d census=%s" % (n, json.dumps(census, sort_keys=True))
-    gate("G3 alpha row count == loop iterations == 71", g3)
+    gate("G3", "alpha row count == loop iterations == 71", g3)
 
     # ---- G4: the 11-token branch lands exactly on alpha's first 11-token row ----
     def g4():
@@ -254,7 +254,7 @@ def main():
                 "(6 later rows carry a ';' comment, so their tails are text-only)"
                 % (first_long, rows[first_long][1][0], rows[first_long][0], branch_rec,
                    short_before, first_long, long_after, len(rows) - first_long))
-    gate("G4 the 6-vs-11 token branch pins record i == alpha row i-1", g4)
+    gate("G4", "the 6-vs-11 token branch pins record i == alpha row i-1", g4)
 
     # ---- G5: token order is file order (one cursor, advances on ',') ----
     def g5():
@@ -285,7 +285,7 @@ def main():
         return "converters->0x%x; stores %s; trailing read order %s" % (
             NEXT_TOK, ",".join(s.replace("rec+", "+") for s in seen),
             ",".join("+0x%02x" % t for t in trail))
-    gate("G5 one advancing token cursor => store order == column order", g5)
+    gate("G5", "one advancing token cursor => store order == column order", g5)
 
     # ---- G6: 0x984d48 is this array's +0x10 field, not a second table ----
     def g6():
@@ -295,11 +295,12 @@ def main():
         disp = u32(0x4F48D0)                                  # the mov's disp32
         assert disp == VIEW, "consumer disp 0x%x != 0x%x" % (disp, VIEW)
         assert VIEW - BASE == REC_FIELD == 0x10, "view offset 0x%x" % (VIEW - BASE)
-        second_int = SITES["st_upkeep"][1]                     # 89 46 04 with esi = rec+0xc
-        assert second_int == "89 46 04", "second int store is %s" % second_int
+        _, w_up, g_up = bytes_at("st_upkeep")                  # 89 46 04 with esi = rec+0xc
+        assert g_up.hex(" ") == w_up, "second int store moved"
+        assert w_up == "89 46 04", "second int store is %s" % w_up
         assert 0xC + 4 == REC_FIELD, "second int lands at +0x%x" % (0xC + 4)
         return "+0x%x field; fold = 48*idx + 0x%x; int2 stored to rec+0x10" % (REC_FIELD, VIEW)
-    gate("G6 the 0x984d48 view is the array's +0x10 dword", g6)
+    gate("G6", "the 0x984d48 view is the array's +0x10 dword", g6)
 
     # ---- G7: rival explanations, each refuted on printed numbers ----
     def g7():
@@ -335,7 +336,7 @@ def main():
         dead = [k for k, (survives, _) in rivals.items() if survives]
         assert not dead, "rival(s) survived: %s" % dead
         return "5 rivals refuted: " + " | ".join("%s: %s" % (k, msg) for k, (_, msg) in rivals.items())
-    gate("G7 rival row-order models fail on the printed numbers", g7)
+    gate("G7", "rival row-order models fail on the printed numbers", g7)
 
     # ---- G8: determinism ----
     def g8():
@@ -351,7 +352,7 @@ def main():
         assert d2 == tbl_digest, "second pass digest %s != %s" % (d2, tbl_digest)
         assert tbl_digest == "39d82f0771690e15e5d9e3828f7b5cc000fd1c68", "table digest %s" % tbl_digest
         return "table digest %s (x2)" % tbl_digest
-    gate("G8 two passes give the pinned table digest", g8)
+    gate("G8", "two passes give the pinned table digest", g8)
 
     if as_json:
         print(json.dumps({"gates": gates, "detail": results, "table_digest": tbl_digest},

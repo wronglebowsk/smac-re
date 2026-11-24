@@ -1,4 +1,4 @@
-# NEXT_PROMPT.md - footing (B28 MERGED #351: 8/8 print `99c52201f073499d`, harness 18/18 `3974d739da3af55f`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B28 + M54A-M333 done (energy round executable + carried, `NAMED ## B27`; feeder-slot noun + carried half-unit, `NAMED ## M333`; the feeder EXECUTABLE and the container's own +300 octet = its full-price total, `NAMED ## B28`); only (ix) left, box-GATED, and the **(x) OPEN-LEADS** list below is the analysis-only option (x1/x2/x3/x4 answered); #180/#105 pre-existing.)
+# NEXT_PROMPT.md - footing (B28 MERGED #351: 8/8 print `99c52201f073499d`, harness 18/18 `3974d739da3af55f`; old header/CLOSED-enumeration/traps VERBATIM at `docs/nextprompt-archive-m299-b20.md` + `docs/pick-archive.md`. STATE: B1-B28 + M54A-M337 done (energy round executable + carried, `NAMED ## B27`; feeder-slot noun + carried half-unit, `NAMED ## M333`; the feeder EXECUTABLE and the container's own +300 octet = its full-price total, `NAMED ## B28`); only (ix) left, box-GATED; **(x) OPEN-LEADS** below is the analysis-only option; #180/#105 pre-existing.)
 Overflow: pick-archive + nextprompt-archive-m299-b20 (VERBATIM blocks - read only the picked section); NAMED.md
 (§CHAIN-BUILDS/§CHAIN-PICKS - grep only); skill instrument-laws.md.
 
@@ -25,9 +25,9 @@ C1/C2 of `scripts/s292_cap_check.py` fail BY DESIGN (its STATUS note); only C3 s
 `python3 scripts/track_mode.py` prints `MODE=BUILD|ANALYSE` + `next_rung=B<n>` from merged history. BUILD ⇒ build
 that rung from `BUILD_SPINE.md` in `sim/` (runnable acceptance, parity vs a recorded trace, never a censusim; no
 box/`/proc`/gdb time; box-debt pre-step N/A; PR titled `B<n>`); ANALYSE ⇒ pick from this file. **B1-B26 MERGED**
-(B25 = #319 main 1556ce9; B26 = #328 main dd704d0; B26's full ACCEPT + THE LAW + the three retractions + the `found_units` 69->0 open question VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a) with its sha1, and its per-rung cmds at `NAMED.md` §CHAIN-BUILDS + the per-id `## B<n>` blocks; `NAMED ## B25`/`## B26` govern; earlier build-track detail §trim-s298 (a), §trim-s299 (b)/(d)). **B27 = #344 main 1db42cf; B28 = #351 (s316) MERGED — its squash hash is main's tip (`git log --oneline -1 origin/main`); B28's review round re-pinned the print digest and grew the harness to 18/18 (`NAMED ## B28` governs)**. **Next build B29**: the spine ends at B28 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B28 did.
+(B25 = #319; B26 = #328; B26's ACCEPT + THE LAW + retractions VERBATIM at `docs/pick-archive.md` §trim-s308-chain1 (a), per-rung cmds `NAMED` §CHAIN-BUILDS; `NAMED ## B25`/`## B26` govern). **B27 = #344 main 1db42cf; B28 = #351 (s316) MERGED — its squash hash is main's tip (`git log --oneline -1 origin/main`); B28's review round re-pinned the print digest and grew the harness to 18/18 (`NAMED ## B28` governs)**. **Next build B29**: the spine ends at B28 - that fire authors its rung text in `BUILD_SPINE.md` BEFORE probing, as B14-B28 did.
 
- **DOC CAP (`wc -c` s316): `NAMED.md` 245,048/250,000 = 4,952 B headroom AFTER the #351 review round (rotation-3 = M250-M254, 7,461 B → `docs/named-archive-b28-rows.md:41` §rotation-2, sha1 `c839a606651b`, `scripts/b28_named_rotate2.py --verify`) — UNDER the 5 KB trigger: B29 ROTATES before authoring a new block. NEXT_PROMPT trimmed to 12,000 this fire.**
+ **DOC CAP (`wc -c` s318): `NAMED.md` 246,438/250,000 = 3,562 B headroom after M337's block (M277 rotated VERBATIM to `docs/named-archive-m337-rows.md:8`, sha1 `653c93cda817`, `scripts/m337_named_rotate.py --verify`) — UNDER the 5 KB trigger: B29 ROTATES first. NEXT_PROMPT trimmed to <=12,000.**
 
 ## THE LEDGER
 
@@ -37,9 +37,9 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
 ## THE INSTRUMENTS (run FIRST)
 
 1. **accept_ready.py** = readiness oracle (`test_accept_ready.py`): screen, running gdb, evidence headroom, then per
-   base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm** (screen fixes in TRAPS).
-2. Writer/flag chain (BOX ONLY, the chain is zero-box now) - VERBATIM at `docs/pick-archive.md`
-   §trim-s295 (b): the m94/m97/m100/m102/m103 + m92/m95/m98/m117 family, `--predict` = model table.
+   base `pending > 0`, `minerals < price`, `credit > 0` — **re-read it before you arm**.
+2. Writer/flag chain (BOX ONLY) - VERBATIM `docs/pick-archive.md` §trim-s295 (b): m94/m97/m100/m102/m103
+   + m92/m95/m98/m117, `--predict` = model table.
 3. Static-first kit (zero box time): `field_census.py` (a global's shape from its addressing form + index math),
    `name_global.py` (every reader/writer + containment), `m118_flag_never_set.py` (gate satisfiability: test sites, OR
    immediates, register bit ops, save-carry), `fn.py 0xADDR`, `scratch/m71/dis.py LO HI [cap]` (objdump window;
@@ -53,14 +53,13 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   for a live 'bash -l' + `gh pr list` + `git status`; if live, `git
   worktree add ~/reverse/wt-s<N> -b milestone/<id> origin/main` and work ONLY
   there (`ln -sfn ~/reverse/smac/scratch scratch`); NEVER `git add -A` - stage explicit paths.
-- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M333 + B1-B28 (M241 FAIL 2/5 #180).
+- **THE PICK: pick from the OPEN shortlist below** (collision check FIRST per ISOLATION). track_mode is AUTHORITATIVE. ANSWERED: M227-M337 + B1-B28 (M241 FAIL 2/5 #180).
   CLOSED enumeration (M220..M308, what each settled, incl. the M308 SITE-list shapes) VERBATIM at
   `docs/pick-archive.md` §trim-s270.
   NEVER bp mid-instruction (s213). NAMED cap: see §BUDGET's DOC CAP line.
-  CLOSED pick rows + the superseded open-lead census they sat in (v = M319, vi = M321, vii = M327,
-  viii = M329, x2 = M332, x3/x4 = M331, B27) VERBATIM at `docs/pick-archive.md` §trim-s313-chain1
-  region-A (sha1 `8332dd50ba16`, byte-exact asserted by `scripts/m333_nextprompt_trim.py --verify`); the
-  per-id `NAMED ## <id>` blocks GOVERN and carry every ACCEPT/harness digest.
+  CLOSED pick rows + their open-lead census (v=M319, vi=M321, vii=M327, viii=M329, x2=M332, x3/x4=M331,
+  B27) VERBATIM at `docs/pick-archive.md` §trim-s313-chain1 region-A (sha1 `8332dd50ba16`,
+  `scripts/m333_nextprompt_trim.py --verify`); the per-id `NAMED ## <id>` blocks GOVERN.
   **NO STATIC PICKS LEFT** except **(ix)** (live-box, operator-GATED), so the analysis-only
   option is this OPEN-LEADS
   list, each with a NAMED question: (x1) ANSWERED by M333 — slot noun = a facility the base HAS
@@ -70,10 +69,10 @@ Full list + reasons: `docs/pick-archive.md` §trim-s202; per-id semantics `NAMED
   at >=5); other writers of the 0x92bde8..0x92bf14 pref block; `0x8f0090`'s consumer; callee
   `0x5f1394`; (x7) ANSWERED by M334 — the REMOVAL path is the difficulty-gated AUTO-SELL
   (ENERGY ASSIGNED, not refunded; `ds:0x985ba0`'s WRITER outside .text is still OPEN);
-  (x8) NEW (B28): the 39-row item table's runtime row order
-  (alpha has 71 `#FACILITIES` rows; only ids 1/3/6/7/8 are live-pinned) — B28's +300 parity covers
-  only the ids this save charges. Generate a combat/tech/victory pick before taking one: no footing exists.
-  Lists live in NAMED ## M310-M325 + the `## B<n>` blocks. READER LAWS still BIND:
+  (x8) ANSWERED by M337 — the item table IS the +0x10 field of the 72-record array at `0x984d38`;
+  its row order is alpha `#FACILITIES` file order (record i = alpha row i-1, loader `0x57a7ef..0x57a899`,
+  branch at record 39 == alpha's first 11-token row); B28's +300 parity covers ids 1..38 by construction.
+  Lists live in NAMED ## M310-M337 + `## B<n>`. READER LAWS still BIND:
   every kickoff + skill `instrument-laws.md` + §CHAIN-PICKS.
 
 ## LIVE FACTS / KIT
@@ -124,7 +123,6 @@ triage ALL findings in one reply, re-measure at head -> merge ONLY on a real PAS
 Result one-liners M320/M323/M324/M325/M326/M330/M331 + the M330 #340 sidecar note:
 `docs/pick-archive.md` §trim-s313-chain1 region-B (sha1 `6f2ddbe32478`, `--verify`); the per-id
 `NAMED ## <id>` blocks GOVERN.
-M334 (s316-chain2): 0x4f47f0 upkeep-FAILURE = difficulty-gated AUTO-SELL; ENERGY := 0x4e40a0(owner,1,-1)*row+12 (ASSIGNED, not refunded); block+0x8 = effective difficulty (AI=3). 7/7 5b5ece39af02baba x2; harness 45/45 a5a5091e533f7883; ST 6/6. NAMED ## M334.
-
-M334 MERGED fc2569d (#350, gate pass 15s pre-merge, review 10/10 accepted); sidecar adds the raw pr350 review .json.
+M334 (s316-chain2, MERGED fc2569d #350): 0x4f47f0 upkeep-FAILURE = difficulty-gated AUTO-SELL (ENERGY ASSIGNED, not refunded; block+0x8 = effective difficulty) — 7/7 5b5ece39af02baba, harness 45/45 a5a5091e533f7883. NAMED ## M334.
+M337 (s318-chain1, pick x8): item table row order = alpha `#FACILITIES` file order (record i = alpha row i-1) — 8/8 `39d82f0771690e15`, harness 11/11; M53i's +0x20/+0x28 labels superseded. NAMED ## M337.
 M335 (s317-chain2): difficulty ladder = alpha.txt #DIFF, 6 rows @0x94d2ac (loader 0x57ac56), ds:0x985aec indexes it (0x599405); 4=Thinker 5=Transcend so M330 k=2 is LIVE; only clamp FUN_00423af0(0,6) is INCLUSIVE at the array end. 7/7 fb58bdc3307d6258; 20/20 6e0e05a8ffb388d8. NAMED ## M335 (rotation: chain 1 landed M246-M254 as docs/named-archive-b28-rows.md; my duplicate dropped).

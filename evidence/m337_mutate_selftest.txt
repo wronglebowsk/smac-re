@@ -1,0 +1,4 @@
+PASS selftest: exe_off maps 0x57a811 to a readable imm
+PASS selftest: red_set reads a FAIL row
+PASS selftest: a pristine run is 8/8
+SELFTEST 3/3

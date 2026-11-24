@@ -1,0 +1,12 @@
+PASS control pristine copies: 8/8 gates, digest 39d82f0771690e15e5d9e3828f7b5cc000fd1c68
+PASS MU1 0x57a811 74 4d 98 00 -> 44 4d 98 00 -> red ['G2', 'G3', 'G7']
+PASS MU2 0x57a85f 94 54 98 00 -> 24 55 98 00 -> red ['G2', 'G4', 'G7']
+PASS MU3 0x57a895 c4 5a 98 00 -> 94 54 98 00 -> red ['G2', 'G3', 'G7']
+PASS MU4 0x691cd4 45 -> 5a -> red ['G1']
+PASS MU5 0x4f48d0 48 4d 98 00 -> 4c 4d 98 00 -> red ['G6']
+PASS MU6 0x57a833 89 46 04 -> 89 46 08 -> red ['G5', 'G6']
+PASS MU7 0x5eaa40 41 ff ff ff -> 00 00 00 00 -> red ['G5']
+PASS MU8 0x57a875 89 46 20 -> 89 46 28 -> red ['G5', 'G7']
+PASS MU9 alpha:596 'Recreation Commons,' -> 'Recreation Commons, 1,2,3,4,5,' -> red ['G3', 'G4', 'G7', 'G8']
+PASS MU10 0x9ac010 03 -> 90 -> red [] (NO-OP)
+HARNESS PASS 11/11
