@@ -1,0 +1,20 @@
+M391 mutation harness - baseline then 14 mutants
+  id   mutation                                                   killed by
+  --   baseline (no mutation)                                     GREEN
+  MU1  the +0x94d468 sibling field counted as the pair            G1.1  (rc=1, 9 FAIL)
+  MU2  cleared-bit test inverted (mask bit SET means cleared)     G3.2  (rc=1, 5 FAIL)
+  MU3  the WAR arm's 0xfaeef378 clear dropped                     G5.11  (rc=1, 2 FAIL)
+  MU4  dominance gate skipped (no guard attributed)               G2.2  (rc=1, 9 FAIL)
+  MU5  mask argument read at the wrong cdecl slot                 G4.4  (rc=1, 8 FAIL)
+  MU6  the final mask restore neutralised                         G5.9  (rc=1, 1 FAIL)
+  MU7  apply_api ORs the mask before the ANDs                     G5.13  (rc=1, 1 FAIL)
+  MU8  third arm's gate read as test bl,0x7f                      G2.3  (rc=1, 1 FAIL)
+  MU9  blanket row A neutralised                                  G3.2  (rc=1, 10 FAIL)
+  MU10 the only bit-11-only bigger mask neutralised               G3.3  (rc=1, 5 FAIL)
+  MU11 treaty-stage guard rewritten to 0x0                        G2.1  (rc=1, 4 FAIL)
+  MU12 one of the 3 masks replaced by all-ones                    G1.2  (rc=1, 6 FAIL)
+  MU13 the WAR arm's mask identity changed                        G5.0  (rc=1, 9 FAIL)
+  MU14 a third ebx definition injected before the restore         G5.10  (rc=1, 1 FAIL)
+
+14/14 mutants killed
+PASS M391-mutate: 14/14 killed, baseline green

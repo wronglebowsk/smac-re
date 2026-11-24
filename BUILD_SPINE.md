@@ -1521,3 +1521,31 @@ DECLARED UNMODELED: which live event selects each category (the UI path); whethe
 reachable at all (M376: the agenda consumer never samples Future Society); any arithmetic between
 the 11 totals and the unit/energy stats — no such consumer is measured, so none is invented. No box
 time, no /proc, no gdb.
+
+**B39 — THE RELATIONS API FAMILY: four entry points, TWO words** (`sim/relapi.py`). Every rung from
+M364 to M388 has mapped ONE dword, `0x94d448`. The peace host that M368 left open (`0x523f4c`)
+calls three APIs in a row — `0x551a20(esi,edx,0x50)`, `0x551a20(esi,edi,0x1)`, `0x551c40(esi,edi,
+0x2000)` — and `0x551c40`'s stores land at `0x94d468`: eight dwords deeper in the SAME 2095-dword
+faction block (M297's identity). A sibling API at `0x551d70` writes `0x94d468` too, and `0x551cf0`
+writes `0x94d448` plus the B37 lease cell `0x94d4c8`. So the pair is a PAIR OF WORDS, not a mirror,
+and each API has a measured field home, an arg guard and a verb. This rung extracts the four bodies
+from the dump, censuses every relation store in each, and runs the peace host's own three-call
+sequence on a constructed pair of words.
+
+`python3 -u -m sim.relapi` must print `PASS B39: <n>/<n> gates` with: **G0** pins (dump row count,
+the four entries, each body push-ebp..ret at a pinned instruction count); **G1** the STORE CENSUS per
+body — every relation displacement printed with its verb and partner register, field homes separated
+(`0x551a20`->A, `0x551cf0`->A+lease, `0x551c40`->B, `0x551d70`->B) and `0x551c40`'s two OR stores
+proved to take DIFFERENT partner registers; **G2** the index algebra decoded from each body's
+`shl/add/lea/sub` chain equals the 2095-dword row scale for all four, and `0x94d468-0x94d448 = 0x20`
+= 8 dwords; **G3** the arg guards measured as immediates (`test bl,0x7`, `test bl,0x20`,
+`test cl,0x40`, the mode arg at `+0x14`); **G3b** the lease store's own immediate (`0x32`) and the
+`0x20` arm's AND constant (`0xffffffbf`) read out of the census, not the model; **G4** the model
+EXECUTES the measured verbs including the census immediate; **G5a** the peace block's call sequence
+with its masks; **G5b** the `je 0x523f46` skipping both the `0x1` and the `0x2000` write; **G5c** the
+executed truth table (pair / self-pair / bit0 clear / bit0+`0x2000000` / `0x2000000` without bit0);
+**G5d** the three host guards pinned by address, operand and target; **G6** four rivals FAIL on the
+printed numbers (one-matrix, B-as-mirror, unconditional `0x1`, `0x94d468` as padding); **G7** digests
+twice. DECLARED UNMODELED: the ladder body of `0x551a20` (B36 owns it — only its field home and
+stores are censused here); the noun of the `0x1` write on A; every noun on word B; B's readers. No
+box time, no /proc, no gdb.

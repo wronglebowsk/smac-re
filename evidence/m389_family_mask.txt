@@ -1,0 +1,113 @@
+G0  parse and ranges
+  .text dump: 781429 instructions, 0x401000..0x6703ef
+  ok   G0 the dump is one ascending address list
+  ok   G0 the censused exe is 3,067,904 B - 3067904
+  FUN_004dab90      32 B   12 insns (index)   12 insns (dump) 1 callers
+  ok   G0 FUN_004dab90 frame matches the index - 12 vs 12
+  FUN_004dacc0     126 B   50 insns (index)   50 insns (dump) 4 callers
+  ok   G0 FUN_004dacc0 frame matches the index - 50 vs 50
+  FUN_004dadd0     985 B  329 insns (index)  329 insns (dump) 2 callers
+  ok   G0 FUN_004dadd0 frame matches the index - 329 vs 329
+  FUN_004db480    2024 B  614 insns (index)  614 insns (dump) 1 callers
+  ok   G0 FUN_004db480 frame matches the index - 614 vs 614
+
+G1  the five OPEN sites: four register masks + one argument
+  site 0x4daedd  ebx <- 0x4daea3  4        mov-imm  intervening-writes=0
+  site 0x4daf41  ebx <- 0x4daf07  2        mov-imm  intervening-writes=0
+  site 0x4db02d  edi <- 0x4dafcf  4096     mov-imm  intervening-writes=0
+  site 0x4db08d  edi <- 0x4db035  8192     mov-imm  intervening-writes=0
+  ok   G1 all four register masks resolve to a literal mov
+  ok   G1 every def is a `mov reg,imm` - ['mov-imm', 'mov-imm', 'mov-imm', 'mov-imm']
+  ok   G1 no write to the register between def and site (straight-line order; CFG dominance NOT proven) - [0, 0, 0, 0]
+  ok   G1 the resolved masks are {0x4,0x2,0x1000,0x2000} - ['0x4', '0x2', '0x1000', '0x2000']
+  ok   G1 the defs are 0x4daea3/0x4daf07/0x4dafcf/0x4db035 - ['0x4daea3', '0x4daf07', '0x4dafcf', '0x4db035']
+  FUN_004dacc0 callers: 0x4db099 push@0x4db095=0x20, 0x4db0a5 push@0x4db09e=0x2000000, 0x4db0b1 push@0x4db0aa=0x400, 0x4db0bd push@0x4db0b6=0x40000
+  its mask register: 0x4dacc5  mov    edi,DWORD PTR [ebp+0x8]
+  ok   G1 FUN_004dacc0's mask is edi=[ebp+0x8] - mov    edi,DWORD PTR [ebp+0x8]
+  ok   G1 its four callers each push exactly one literal - 4
+  ok   G1 the four pushed masks are {0x20,0x2000000,0x400,0x40000} - ['0x20', '0x2000000', '0x400', '0x40000']
+  ok   G1 every caller pushes exactly once - [1, 1, 1, 1]
+  ok   G1 every caller's push is adjacent to its call (<= 8 bytes away) - [4, 7, 7, 7]
+  0x4dad30 feeds: 0x4dad2b:push 0x0, 0x4dad2d:push edi, 0x4dad2e:push esi, 0x4dad2f:push eax
+  ok   G1 at the CLEAR arm 0x4dad30 the mask operand IS edi (2nd of 4 pushes) - [(5090603, '0x0'), (5090605, 'edi'), (5090606, 'esi'), (5090607, 'eax')]
+  ok   G1 at the SET arm 0x4dad05 the mask operand IS edi (2nd of 4 pushes) - [(5090560, '0x1'), (5090562, 'edi'), (5090563, 'esi'), (5090564, 'eax')]
+  ok   G1 edi's nearest def at 0x4dad30 is still 0x4dacc5 (any other write is an epilogue pop+ret) - [(5090573, 'pop    edi')]
+  => 0x4dad30 (mask edi at the CLEAR arm, 0x4dad30) carries {0x20,0x400,0x40000,0x2000000};
+     0x4dad05 (SET arm) carries the same set. Both are 0x551cf0 calls.
+
+G2  the seven guarded arms: mask ladder and direction
+  guards (call 0x6051fa): 7  test sites: 16  apply calls: 15
+  unguarded tail test (0x2000000): 0x4db0f0
+  ok   G2 exactly one unguarded 0x2000000 tail test in FUN_004dadd0
+  mask 0x8     guard 0x4daddf  je->0x4dae1a  tests=2  SET@0x4dae13, CLEAR@0x4dae37  two 3-arg calls
+  mask 0x10    guard 0x4dae43  je->0x4dae7e  tests=2  SET@0x4dae77, CLEAR@0x4dae9b  two 3-arg calls
+  mask 0x4     guard 0x4daeab  je->0x4daee4  tests=2  SET@0x4daedd, CLEAR@0x4daeff  two 3-arg calls
+  mask 0x2     guard 0x4daf0f  je->0x4daf48  tests=2  SET@0x4daf41, CLEAR@0x4daf63  two 3-arg calls
+  mask 0x1     guard 0x4daf6f  je->0x4dafaa  tests=2  SET@0x4dafa3, CLEAR@0x4dafc7  two 3-arg calls
+  mask 0x1000  guard 0x4dafdd  je->0x4db010  tests=2  SET@0x4db00c, CLEAR@0x4db028  one 0x551cf0 call @0x4db02d
+  mask 0x2000  guard 0x4db03d  je->0x4db070  tests=2  SET@0x4db06c, CLEAR@0x4db088  one 0x551cf0 call @0x4db08d
+  ok   G2 exactly one push in the 3 insns before each guard call
+  ok   G2 exactly one `mov ecx,<this>` in that same window (arg slot 1)
+  ok   G2 the fall-through block ends in a `jmp` past the CLEAR witness (two blocks, one je)
+  ok   G2 big arms: 4 pushes feed 0x551cf0 as (flag 0/1, mask edi, other, owner) - [['0x0', 'edi', 'ecx', 'eax'], ['0x0', 'edi', 'ecx', 'eax']]
+  ok   G2 seven guarded arms - 7
+  ok   G2 the ladder is {0x1,0x2,0x4,0x8,0x10,0x1000,0x2000} - ['0x1', '0x10', '0x1000', '0x2', '0x2000', '0x4', '0x8']
+  ok   G2 no arm asks 0x400 - [8, 16, 4, 2, 1, 4096, 8192]
+  ok   G2 no arm asks 0x800 - [8, 16, 4, 2, 1, 4096, 8192]
+  ok   G2 every arm tests its own mask on both paths - [2, 2, 2, 2, 2, 2, 2]
+  ok   G2 both test sites of an arm carry the guard's mask
+  ok   G2 every arm witnesses exactly one SET and one CLEAR - [['SET', 'CLEAR'], ['SET', 'CLEAR'], ['SET', 'CLEAR'], ['SET', 'CLEAR'], ['SET', 'CLEAR'], ['SET', 'CLEAR'], ['SET', 'CLEAR']]
+  ok   G2 the five small arms use 0x551a20 to SET and 0x5518f0 to CLEAR
+  ok   G2 the two big arms use one 0x551cf0 call with flag=1 to SET and flag=0 to CLEAR
+  ok   G2 in every arm the SET witness precedes the je target (SET on 0x6051fa!=0) - 0
+  applies outside the seven arms: 0x4db101->0x551a20, 0x4db11b->0x551cf0, 0x4db165->0x551a20
+  ok   G2 exactly three applies sit outside the aka ladder (the 0x2000000 tail + the 0x10 stamp) - ['0x4db101', '0x4db11b', '0x4db165']
+
+G3  the verbs: operand-level, not mnemonic-level
+  0x551a20: mask<-[ebp+0x10] ['0x551a2a', '0x551c4a'], or->ebx ['0x551be6', '0x551c09', '0x551cba', '0x551cd7'], stores to 0x94d448 ['0x551a8e', '0x551ab5', '0x551b1d', '0x551b4a', '0x551b9e', '0x551bc5', '0x551be8', '0x551c0d', '0x551cbc']
+  0x5518f0: mask<-[ebp+0x10] ['0x5518f3'], not ['0x55196e'], and->edx ['0x551988', '0x5519a5'], stores ['0x55193e', '0x551965', '0x55198a', '0x5519f1']
+  0x551cf0: flag<-[ebp+0x14] ['0x551cf3'], je->0x551d36, or ['0x551d1d'] / not ['0x551d50'] and ['0x551d60'] / stores ['0x551d22', '0x551d62']
+  ok   G3 0x551a20 loads the MASK into ebx from [ebp+0x10] (prologue load) - ['0x551a2a', '0x551c4a']
+  ok   G3 0x551a20 ORs that same ebx and stores the result to [..+0x94d448]
+  ok   G3 0x5518f0 loads the MASK into edx, NOTs edx, ANDs it out, stores to [..+0x94d448]
+  ok   G3 0x551cf0 reads the flag from [ebp+0x14] and tests it
+  ok   G3 flag!=0 falls through to `or edx,ecx` + store; flag==0 (je target) runs `not ecx`/`and edx,ecx` + store
+  FUN_004dacc0's 0x551cf0 calls: 0x4dad05, 0x4dad30
+  ok   G3 FUN_004dacc0 has two 0x551cf0 arms (set 0x4dad05, clear 0x4dad30) - ['0x4dad05', '0x4dad30']
+
+G4  the gate FUN_004dacc0: 4 literal callers, mask=arg
+  ok   G4 the gate's callers carry no 0x800
+  ok   G4 the gate's callers never carry the 0xc00 pair
+  ok   G4 0x400 appears exactly once among the gate's callers
+  push 0x400 in the family: 0x4db0aa
+  ok   G4 the family pushes 0x400 exactly once, from FUN_004dadd0 @0x4db0aa - ['0x4db0aa']
+
+G5  which entry into FUN_004dadd0 is live
+  call sites into FUN_004dadd0: 0x4dab96, 0x4dbc5a
+  ok   G5 FUN_004dadd0 has exactly two direct callers - ['0x4dab96', '0x4dbc5a']
+  caller 0x4dab96  in FUN_004dab90 call-sites=0  dword-refs=1  at VA 0x677ff8 index-callers=1
+  caller 0x4dbc5a  in FUN_004db480 call-sites=1  dword-refs=0  at VA 0x0 index-callers=1
+  ok   G5 exactly one entry is directly called (FUN_004db480) - ['0x4db480']
+  ok   G5 the directly called entry is FUN_004db480 - ['0x4db480']
+  ok   G5 FUN_004dab90 has no direct call site - [[]]
+  ok   G5 FUN_004dab90 is address-taken exactly once - [1]
+  ok   G5 that reference sits past the .text end (0x6703ef) - a dispatch table, not code - 0x677ff8
+  ok   G5 the table's neighbours are all .text pointers - ['0x402120', '0x402120', '0x404e70', '0x404ed0', '0x4dab90', '0x404ed0', '0x402120', '0x5ce5bd']
+  ok   G5 FUN_004db480's measured call count equals the index (1) - [1]
+  note: index says FUN_004dab90 has 1 caller; the "caller" is the .rdata slot at
+        VA 0x677ff8 - the wrapper is reachable only by indirect dispatch.
+
+G6  rivals
+  ok   R1 'the four register masks are runtime values' refuted - all four are mov-imm
+  ok   R2 'FUN_004dab90 is the ladder's live entry' refuted - 0 direct calls (1 data pointer) vs 1 direct call into FUN_004db480
+  ok   R3 'the ladder can ask 0x400 or 0x800' refuted - union is exactly the seven lows
+  ok   R4 'one API serves both directions' refuted - two distinct 3-arg callees, OR vs NOT+AND
+  ok   R5 'FUN_004dacc0 inherits the ladder's mask' refuted - 4 literal pushes, none in the ladder
+
+G7  digest
+  20 rows  digest=05a36a50540466f3  recomputed=05a36a50540466f3
+  ok   G7 digest is stable across two computations
+  ok   G7 digest matches the pin - 05a36a50540466f3
+
+60 checks, 0 failed
+PASS M389: 60/60  05a36a50540466f3
